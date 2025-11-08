@@ -1,5 +1,6 @@
 "use client"
 
+import Link from 'next/link';
 import { useEffect, useRef, useState } from "react"
 
 type Stat = { label: string; target: number; suffix?: string }
@@ -172,8 +173,10 @@ export default function Home() {
           <p>We create projects, support ideas, and grow together. Honestly.</p>
 
           <div className="cta-buttons">
+            <Link href="/projects" passHref>
             <button className="btn btn-primary">Help Someone Grow</button>
             <button className="btn btn-secondary">Start Your Journey</button>
+            </Link>
           </div>
         </section>
 
