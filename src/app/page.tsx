@@ -217,7 +217,9 @@ export default function Home() {
           <div className="energy-bar-container">
             <div className="energy-bar-fill" />
           </div>
-          <button className="btn btn-primary">Start Something</button>
+          <Link href="/collective" passHref>
+          <button className="btn btn-primary">collective</button>
+          </Link>
         </div>
       </div>
     </div>
