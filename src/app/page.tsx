@@ -21,7 +21,7 @@ export default function Home() {
 
   // -------- Stripe Modal State --------
   const [openStripeCard, setOpenStripeCard] = useState(false);
-  const [amountAud, setAmountAud] = useState<number | NaN>(NaN); // dólares AUD (permite limpiar campo)
+  const [amountAud, setAmountAud] = useState<number | null>(null); // AUD dólares; null cuando el input está vacío
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -29,7 +29,7 @@ export default function Home() {
   // Crear sesión de Stripe (el servidor valida y usa AUD)
   async function handleConfirmContribution() {
     if (!agreed || loading) return;
-    const dollars = Number.isNaN(amountAud) ? MIN_AMOUNT_AUD : Math.max(MIN_AMOUNT_AUD, amountAud);
+    const dollars = Math.max(MIN_AMOUNT_AUD, amountAud ?? MIN_AMOUNT_AUD);
     const amountCents = toCents(dollars);
 
     try {
@@ -41,8 +41,9 @@ export default function Home() {
         body: JSON.stringify({
           intent: "home-cta",
           amount: amountCents,         // centavos AUD
-          project_id: "collective-fund"
-        })
+          project_id: "collective-fund",
+          currency: "AUD",
+        }),
       });
       const data = await res.json();
       if (data?.url) window.location.href = data.url;
@@ -185,6 +186,8 @@ export default function Home() {
   /* =========================================
      Render
   ========================================= */
+  const isValidAmount = (amountAud ?? 0) >= MIN_AMOUNT_AUD;
+
   return (
     <div>
       {/* Intro */}
@@ -331,21 +334,21 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Custom amount (AUD) — FIX para poder borrar/escribir libremente */}
+            {/* Custom amount (AUD) — permite borrar/escribir libremente */}
             <label style={{ display: "block", fontSize: 12, color: "rgba(255,255,255,0.8)", marginBottom: 6 }}>
               Custom amount ({CURRENCY})
             </label>
             <input
               type="number"
               min={MIN_AMOUNT_AUD}
-              value={Number.isNaN(amountAud) ? "" : amountAud}
+              value={amountAud === null ? "" : amountAud}
               onChange={(e) => {
                 const val = e.target.value;
                 if (val === "") {
-                  setAmountAud(NaN);           // permite limpiar
+                  setAmountAud(null); // limpiar
                 } else {
                   const num = parseFloat(val);
-                  setAmountAud(num < MIN_AMOUNT_AUD ? MIN_AMOUNT_AUD : num);
+                  setAmountAud(Number.isFinite(num) ? Math.max(MIN_AMOUNT_AUD, num) : MIN_AMOUNT_AUD);
                 }
               }}
               className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-[#29ABE2]"
@@ -394,7 +397,7 @@ export default function Home() {
 
               <button
                 onClick={handleConfirmContribution}
-                disabled={!agreed || loading}
+                disabled={!agreed || !isValidAmount || loading}
                 style={{
                   flex: 1,
                   padding: "12px 16px",
@@ -402,8 +405,8 @@ export default function Home() {
                   background: "linear-gradient(90deg,#29ABE2 0%, #00E0C7 100%)",
                   color: "#0B1D26",
                   fontWeight: 600,
-                  opacity: !agreed || loading ? 0.6 : 1,
-                  boxShadow: !agreed || loading ? "none" : "0 0 24px rgba(41,171,226,0.45)",
+                  opacity: !agreed || !isValidAmount || loading ? 0.6 : 1,
+                  boxShadow: !agreed || !isValidAmount || loading ? "none" : "0 0 24px rgba(41,171,226,0.45)",
                 }}
                 aria-busy={loading}
               >
