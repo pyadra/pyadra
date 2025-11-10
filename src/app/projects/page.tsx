@@ -151,7 +151,7 @@ function InviteCoffeeModal({
   project: Project | null;
   onClose: () => void;
 }) {
-  const [amountAud, setAmountAud] = useState<number | NaN>(NaN);
+  const [amountAud, setAmountAud] = useState<number | null>(null);
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
