@@ -158,7 +158,7 @@ function InviteCoffeeModal({
 
   async function handleStripe() {
     if (!project || !agreed || loading) return;
-    const dollars = Number.isNaN(amountAud) ? MIN_AMOUNT_AUD : Math.max(MIN_AMOUNT_AUD, amountAud);
+    const dollars = amountAud === null ? MIN_AMOUNT_AUD : Math.max(MIN_AMOUNT_AUD, amountAud);
     const amount = toCents(dollars);
 
     try {
