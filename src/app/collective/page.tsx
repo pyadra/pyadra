@@ -1,215 +1,101 @@
-'use client'
-
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 
 /** =========================================
- *  DATA: The Collective — demo members
+ *  DATA: The Collective — core collaborators (6)
  *  ========================================= */
 const MEMBERS = [
   {
     id: 1,
-    name: "Maria Santos",
-    role: "Seeder",
-    avatar: "https://i.pravatar.cc/150?img=1",
+    name: "Pablo el mago",
+    role: "Creator",
+    avatar: "https://i.pravatar.cc/150?img=15",
     color: "#66FFB2",
     contributions: {
-      money: "$15,000",
-      projects: ["Solar Hub", "Clean Ocean", "Food Co-op"],
-      hours: 0,
-      type: "Financial Support",
+      money: "$0",
+      projects: ["Orbit 77", "EterniCapsule"],
+      hours: 240,
+      type: "Talent Contribution",
     },
-    bio: "Passionate about sustainable energy and community development.",
-    achievements: ["Top Supporter 2024", "Early Adopter"],
+    bio: "Working and contributing creative talent to shape playful experiences and narrative flow.",
+    achievements: ["Story Architect", "Vision Keeper"],
   },
   {
     id: 2,
-    name: "Alex Chen",
+    name: "Cristian el campecino",
     role: "Builder",
-    avatar: "https://i.pravatar.cc/150?img=2",
+    avatar: "https://i.pravatar.cc/150?img=22",
     color: "#29ABE2",
     contributions: {
       money: "$0",
-      projects: ["Urban Garden", "Code for Kids", "Tech Lab"],
-      hours: 340,
-      type: "Development & Design",
+      projects: ["Seeds", "Nurture"],
+      hours: 300,
+      type: "Talent Contribution",
     },
-    bio: "Full-stack developer building the future one commit at a time.",
-    achievements: ["500+ Commits", "Core Contributor"],
+    bio: "Working and contributing hands-on talent for growth systems and operational soil.",
+    achievements: ["Growth Gardener", "Ops Anchor"],
   },
   {
     id: 3,
-    name: "Jordan Lee",
-    role: "Creator",
-    avatar: "https://i.pravatar.cc/150?img=3",
+    name: "Chaverra el Ogro",
+    role: "Harvester",
+    avatar: "https://i.pravatar.cc/150?img=31",
     color: "#00E0C7",
     contributions: {
-      money: "$2,500",
-      projects: ["Code for Kids", "Mental Health Circles", "Local Library"],
-      hours: 120,
-      type: "Project Leadership",
+      money: "$0",
+      projects: ["Harvest", "Collective"],
+      hours: 190,
+      type: "Talent Contribution",
     },
-    bio: "Educator and project founder with 3 successful initiatives launched.",
-    achievements: ["450+ Supporters", "Project Founder"],
+    bio: "Working and contributing talent in community activation and energy flow.",
+    achievements: ["Impact Amplifier", "Community Pulse"],
   },
   {
     id: 4,
-    name: "Emma Rivera",
-    role: "Harvester",
-    avatar: "https://i.pravatar.cc/150?img=4",
+    name: "Edu el bufon",
+    role: "Creator",
+    avatar: "https://i.pravatar.cc/150?img=13",
     color: "#7B61FF",
     contributions: {
-      money: "$500",
-      projects: ["Clean Ocean", "Community Hub", "Green City"],
-      hours: 89,
-      type: "Network Building",
+      money: "$0",
+      projects: ["PhD Edu", "Orbit 77"],
+      hours: 270,
+      type: "Talent Contribution",
     },
-    bio: "Community connector bringing people and ideas together.",
-    achievements: ["89 Connections Made", "Network Catalyst"],
+    bio: "Working and contributing playful talent—turning complexity into light and learning.",
+    achievements: ["Learning Catalyst", "Culture Spark"],
   },
   {
     id: 5,
-    name: "Sam Taylor",
+    name: "Cejas el obediente",
     role: "Builder",
-    avatar: "https://i.pravatar.cc/150?img=5",
+    avatar: "https://i.pravatar.cc/150?img=25",
     color: "#29ABE2",
     contributions: {
       money: "$0",
-      projects: [
-        "Tech Lab",
-        "Urban Garden",
-        "Code for Kids",
-        "Solar Hub",
-        "Food Co-op",
-        "Mental Health",
-      ],
-      hours: 280,
-      type: "Backend Development",
+      projects: ["Tech Lab", "Seeds"],
+      hours: 220,
+      type: "Talent Contribution",
     },
-    bio: "Backend engineer specializing in scalable systems and APIs.",
-    achievements: ["28 Features Shipped", "Performance Hero"],
+    bio: "Working and contributing reliable talent in delivery, iteration and care for details.",
+    achievements: ["Reliable Builder", "Quality Focus"],
   },
   {
     id: 6,
-    name: "Amir Hassan",
-    role: "Creator",
-    avatar: "https://i.pravatar.cc/150?img=6",
-    color: "#00E0C7",
-    contributions: {
-      money: "$8,000",
-      projects: ["Refugee Skills Academy", "Language Bridge"],
-      hours: 200,
-      type: "Social Impact",
-    },
-    bio: "Social entrepreneur focused on education and refugee integration.",
-    achievements: ["$40K Raised", "2 Projects Launched"],
-  },
-  {
-    id: 7,
-    name: "Lisa Wong",
+    name: "Julian el Religioso",
     role: "Seeder",
-    avatar: "https://i.pravatar.cc/150?img=7",
+    avatar: "https://i.pravatar.cc/150?img=28",
     color: "#66FFB2",
-    contributions: {
-      money: "$22,000",
-      projects: [
-        "Food Co-op",
-        "Urban Garden",
-        "Local Library",
-        "Community Hub",
-      ],
-      hours: 0,
-      type: "Strategic Funding",
-    },
-    bio: "Angel investor supporting local community initiatives.",
-    achievements: ["24 Projects Funded", "Impact Investor"],
-  },
-  {
-    id: 8,
-    name: "Dev Patel",
-    role: "Harvester",
-    avatar: "https://i.pravatar.cc/150?img=8",
-    color: "#7B61FF",
-    contributions: {
-      money: "$1,200",
-      projects: ["Tech Lab", "Code for Kids", "Digital Literacy"],
-      hours: 150,
-      type: "Community Outreach",
-    },
-    bio: "Tech advocate connecting developers with social causes.",
-    achievements: ["120+ Connections", "Community Builder"],
-  },
-  {
-    id: 9,
-    name: "Sofia Martinez",
-    role: "Builder",
-    avatar: "https://i.pravatar.cc/150?img=9",
-    color: "#29ABE2",
     contributions: {
       money: "$0",
-      projects: [
-        "Urban Garden",
-        "Food Co-op",
-        "Community Hub",
-        "Green City",
-        "Solar Hub",
-      ],
-      hours: 310,
-      type: "UI/UX Design",
+      projects: ["EterniCapsule", "Collective"],
+      hours: 160,
+      type: "Talent Contribution",
     },
-    bio: "Product designer creating beautiful and accessible experiences.",
-    achievements: ["5 Design Systems", "User Experience Award"],
-  },
-  {
-    id: 10,
-    name: "Kai Johnson",
-    role: "Creator",
-    avatar: "https://i.pravatar.cc/150?img=10",
-    color: "#00E0C7",
-    contributions: {
-      money: "$5,000",
-      projects: [
-        "Community Hub",
-        "Local Library",
-        "Youth Center",
-        "Sports Initiative",
-      ],
-      hours: 180,
-      type: "Community Leadership",
-    },
-    bio: "Community organizer building spaces for people to connect.",
-    achievements: ["4 Initiatives Founded", "Community Hero"],
-  },
-  {
-    id: 11,
-    name: "Priya Sharma",
-    role: "Seeder",
-    avatar: "https://i.pravatar.cc/150?img=11",
-    color: "#66FFB2",
-    contributions: {
-      money: "$18,500",
-      projects: ["Code for Kids", "Tech Lab", "Digital Literacy", "Youth Center"],
-      hours: 0,
-      type: "Education Funding",
-    },
-    bio: "Education philanthropist supporting tech literacy programs.",
-    achievements: ["31 Creators Supported", "Education Champion"],
-  },
-  {
-    id: 12,
-    name: "Marcus Brown",
-    role: "Harvester",
-    avatar: "https://i.pravatar.cc/150?img=12",
-    color: "#7B61FF",
-    contributions: {
-      money: "$3,000",
-      projects: ["All Active Projects"],
-      hours: 220,
-      type: "Growth Strategy",
-    },
-    bio: "Growth strategist helping the collective expand and thrive.",
-    achievements: ["200+ Members Onboarded", "Network Architect"],
+    bio: "Working and contributing talent centered on meaning, values and long-term rituals.",
+    achievements: ["Ritual Designer", "Values Guardian"],
   },
 ] as const;
 
@@ -416,14 +302,33 @@ export default function CollectivePage() {
           animation: titlePulse 4s ease-in-out infinite;
         }
 
-        @keyframes titlePulse {
-          0%,
-          100% {
-            transform: scale(1);
-          }
-          50% {
-            transform: scale(1.02);
-          }
+        .topbar {
+          position: fixed;
+          top: 16px;
+          left: 16px;
+          z-index: 20;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 14px;
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 14px;
+          backdrop-filter: blur(12px);
+        }
+        .brand {
+          font-family: "Space Grotesk", sans-serif;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          color: #f4f6f8;
+          text-decoration: none;
+        }
+        .brand-dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #29abe2, #00e0c7);
+          box-shadow: 0 0 14px rgba(41, 171, 226, 0.8);
         }
 
         .hero-btn {
@@ -501,19 +406,14 @@ export default function CollectivePage() {
         }
 
         .orbit-ring-1 {
-          width: 350px;
-          height: 350px;
+          width: 400px;
+          height: 400px;
         }
         .orbit-ring-2 {
-          width: 500px;
-          height: 500px;
+          width: 560px;
+          height: 560px;
           animation-duration: 40s;
           animation-direction: reverse;
-        }
-        .orbit-ring-3 {
-          width: 650px;
-          height: 650px;
-          animation-duration: 50s;
         }
 
         @keyframes rotate {
@@ -590,34 +490,27 @@ export default function CollectivePage() {
           }
         }
 
-        .modal {
+       .modal {
           position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.85);
+          inset: 0;
+          display: grid;
+          place-items: center;
+          background: rgba(0,0,0,0.85);
           backdrop-filter: blur(10px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
           z-index: 1000;
           padding: 20px;
           overflow-y: auto;
         }
 
         .modal-content {
-          background: rgba(11, 29, 38, 0.95);
+          width: min(640px, 92vw);
+          max-height: 90vh;
+          background: rgba(11,29,38,0.95);
           backdrop-filter: blur(40px);
-          border: 1px solid rgba(41, 171, 226, 0.3);
+          border: 1px solid rgba(41,171,226,0.3);
           border-radius: 24px;
           padding: 48px;
-          max-width: 600px;
-          width: 100%;
-          box-shadow: 0 30px 80px rgba(41, 171, 226, 0.4);
-          max-height: 90vh;
-          overflow-y: auto;
-          position: relative;
+          box-shadow: 0 30px 80px rgba(41,171,226,0.4);
         }
 
         .stat-badge {
@@ -665,30 +558,34 @@ export default function CollectivePage() {
             font-size: 48px;
           }
           .orbit-ring-1 {
-            width: 250px;
-            height: 250px;
+            width: 260px;
+            height: 260px;
           }
           .orbit-ring-2 {
-            width: 350px;
-            height: 350px;
-          }
-          .orbit-ring-3 {
-            width: 450px;
-            height: 450px;
+            width: 380px;
+            height: 380px;
           }
           .node {
-            width: 60px;
-            height: 60px;
+            width: 64px;
+            height: 64px;
           }
           .node img {
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
           }
         }
       `}</style>
 
       {/* Background canvas */}
       <canvas id="neural-canvas" ref={canvasRef} aria-hidden="true" />
+
+      {/* Top-left brand back to Home */}
+      <div className="topbar">
+        <div className="brand-dot" />
+        <Link href="/" className="brand" aria-label="Go to Home — Pyadra">
+          Pyadra
+        </Link>
+      </div>
 
       {/* Glowing orbs */}
       <div className="orb orb-1" />
@@ -714,14 +611,18 @@ export default function CollectivePage() {
               marginBottom: "48px",
             }}
           >
-            Real people, growing together through collective action.
+            Real people, working and contributing talent to grow together.
           </p>
-          <button className="hero-btn" onClick={() => setIsModalOpen(true)}>
-            Join the Collective
+          <button
+            className="hero-btn"
+            onClick={() => setIsModalOpen(true)}
+            aria-label="Launch your orbit — join the collective"
+          >
+            Launch Your Orbit
           </button>
         </section>
 
-        {/* ORBITS */}
+        {/* ORBITS (6 members, 3 + 3) */}
         <section
           style={{
             position: "relative",
@@ -745,12 +646,12 @@ export default function CollectivePage() {
             </div>
           </div>
 
+          {/* Inner ring — first 3 */}
           <div className="orbit-ring orbit-ring-1" aria-hidden="true">
-            {[0, 1, 2, 3].map((i) => {
+            {[0, 1, 2].map((i) => {
               const member = MEMBERS[i];
               const positions = [
                 { top: 0, left: "50%", transform: "translate(-50%, -50%)" },
-                { bottom: 0, left: "50%", transform: "translate(-50%, 50%)" },
                 { left: 0, top: "50%", transform: "translate(-50%, -50%)" },
                 { right: 0, top: "50%", transform: "translate(50%, -50%)" },
               ] as const;
@@ -768,43 +669,21 @@ export default function CollectivePage() {
             })}
           </div>
 
+          {/* Outer ring — next 3 */}
           <div className="orbit-ring orbit-ring-2" aria-hidden="true">
-            {[4, 5, 6, 7].map((i) => {
+            {[3, 4, 5].map((i) => {
               const member = MEMBERS[i];
+              const idx = i - 3;
               const positions = [
-                { top: "10%", left: "20%" },
-                { top: "10%", right: "20%" },
-                { bottom: "10%", left: "20%" },
-                { bottom: "10%", right: "20%" },
+                { top: "8%", left: "50%", transform: "translate(-50%, -50%)" },
+                { bottom: "8%", left: "20%" },
+                { bottom: "8%", right: "20%" },
               ] as const;
               return (
                 <button
                   key={member.id}
                   className="node"
-                  style={{ borderColor: member.color, ...positions[i - 4] }}
-                  onClick={() => setSelectedMember(member)}
-                  aria-label={`Open ${member.name} profile`}
-                >
-                  <img src={member.avatar} alt={member.name} />
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="orbit-ring orbit-ring-3" aria-hidden="true">
-            {[8, 9, 10, 11].map((i) => {
-              const member = MEMBERS[i];
-              const positions = [
-                { top: "5%", left: "50%", transform: "translate(-50%, 0)" },
-                { bottom: "5%", left: "50%", transform: "translate(-50%, 0)" },
-                { left: "5%", top: "50%", transform: "translate(0, -50%)" },
-                { right: "5%", top: "50%", transform: "translate(0, -50%)" },
-              ] as const;
-              return (
-                <button
-                  key={member.id}
-                  className="node"
-                  style={{ borderColor: member.color, ...positions[i - 8] }}
+                  style={{ borderColor: member.color, ...positions[idx] }}
                   onClick={() => setSelectedMember(member)}
                   aria-label={`Open ${member.name} profile`}
                 >
@@ -815,7 +694,7 @@ export default function CollectivePage() {
           </div>
         </section>
 
-        {/* ROLES */}
+        {/* ROLES (se mantiene) */}
         <section style={{ marginBottom: "80px" }}>
           <h2
             style={{
@@ -995,6 +874,15 @@ export default function CollectivePage() {
               >
                 {selectedMember.role}
               </span>
+              <p
+                style={{
+                  marginTop: "12px",
+                  color: "rgba(244,246,248,0.75)",
+                  fontSize: "14px",
+                }}
+              >
+                Working and contributing talent to the collective.
+              </p>
             </div>
 
             <p
@@ -1093,7 +981,7 @@ export default function CollectivePage() {
               </div>
             </div>
 
-            <div style={{ marginBottom: "32px" }}>
+            <div>
               <h3
                 style={{
                   fontSize: "18px",
@@ -1120,7 +1008,7 @@ export default function CollectivePage() {
               </div>
             </div>
 
-            <div>
+            <div style={{ marginTop: "24px" }}>
               <h3
                 style={{
                   fontSize: "18px",
