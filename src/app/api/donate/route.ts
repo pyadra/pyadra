@@ -1,38 +1,51 @@
-import Stripe from "stripe";
 import { NextResponse } from "next/server";
+import Stripe from "stripe";
+
+export const runtime = "nodejs";
 
 const key = process.env.STRIPE_SECRET_KEY || "";
-const stripe = new Stripe(key, { apiVersion: "2024-06-20" });
+if (!key) throw new Error("Missing STRIPE_SECRET_KEY");
+
+const stripe = new Stripe(key); // ← sin apiVersion
 
 export async function POST(req: Request) {
   try {
-    const { amount, project_id, intent } = await req.json();
-    const origin = process.env.NEXT_PUBLIC_APP_URL || new URL(req.url).origin;
+    const { amount, currency = "AUD", intent = "home-cta", project_id = "" } =
+      await req.json();
 
-    // amount en CENTAVOS AUD (min $2)
-    const cents = Number.isFinite(amount) ? Math.round(amount) : NaN;
-    if (!cents || cents < 200) return NextResponse.json({ error: "Min $2 AUD" }, { status: 400 });
+    const origin =
+      req.headers.get("origin") ||
+      process.env.NEXT_PUBLIC_BASE_URL ||
+      "https://pyadra.io";
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
-      currency: "aud",
-      line_items: [{
-        price_data: {
-          currency: "aud",
-          unit_amount: cents,
-          product_data: { name: "Invite a Coffee — Pyadra" },
+      line_items: [
+        {
+          price_data: {
+            currency,
+            unit_amount: Math.max(200, Number(amount) || 0), // mínimo $2 AUD
+            product_data: {
+              name: "Pyadra Contribution",
+              description:
+                "Support the collective fund — symbolic shares (no financial return).",
+            },
+          },
+          quantity: 1,
         },
-        quantity: 1,
-      }],
-      metadata: { project_id: project_id || "collective-fund", intent: intent || "home-cta" },
+      ],
       success_url: `${origin}/thankyou?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/`,
-    }, { idempotencyKey: crypto.randomUUID() });
+      cancel_url: `${origin}/?canceled=1`,
+      metadata: { intent, project_id },
+    });
 
-    return NextResponse.json({ url: session.url });
-  } catch (e: any) {
-    console.error("Stripe checkout error →", e.message);
-    return NextResponse.json({ error: e.message || "Stripe session failed" }, { status: 500 });
+    return NextResponse.json({ url: session.url }, { status: 200 });
+  } catch (err: any) {
+    console.error("Stripe session error:", err);
+    return NextResponse.json(
+      { error: "Stripe session failed" },
+      { status: 500 }
+    );
   }
 }
