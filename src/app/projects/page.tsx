@@ -287,7 +287,7 @@ function InviteCoffeeModal({
 function BuySharesModal({ project, onClose }: { project: Project; onClose: () => void }) {
   const min = project.minShares ?? 1;
   const price = project.pricePerShare ?? 0;
-  const [quantity, setQuantity] = useState<number | NaN>(min);
+  const [quantity, setQuantity] = useState<number>(min);
   const [agreed, setAgreed] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -368,13 +368,13 @@ function BuySharesModal({ project, onClose }: { project: Project; onClose: () =>
                   min={min}
                   value={Number.isNaN(quantity) ? "" : quantity}
                   onChange={(e) => {
-                    const val = e.target.value;
-                    if (val === "") setQuantity(NaN);
-                    else {
-                      const num = parseInt(val, 10);
-                      setQuantity(num < min ? min : num);
-                    }
-                  }}
+                            const val = e.target.value;
+                            if (val === "") setQuantity(null as unknown as number); // permite limpiar el campo
+                            else {
+                              const num = parseInt(val, 10);
+                              setQuantity(num < min ? min : num);
+                            }
+                          }}
                   className="flex-1 h-10 bg-white/10 border border-white/20 rounded-lg px-4 text-white text-center focus:outline-none focus:border-[#29ABE2]"
                   aria-label="Share quantity"
                 />
