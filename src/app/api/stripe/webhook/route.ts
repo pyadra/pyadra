@@ -1,41 +1,51 @@
-import Stripe from "stripe";
 import { NextResponse } from "next/server";
+import Stripe from "stripe";
 
-export const runtime = "nodejs"; // ✅ permitido
-export const config = { api: { bodyParser: false } } as any;
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
-// ✅ Elimina el apiVersion antiguo o usa el correcto
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
-// o si prefieres fijarlo explícitamente:
-// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", { apiVersion: "2025-10-29.clover" });
+let stripeClient: Stripe | null = null;
+function getStripe(): Stripe | null {
+  if (stripeClient) return stripeClient;
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) return null;
+  stripeClient = new Stripe(key);
+  return stripeClient;
+}
 
 export async function POST(req: Request) {
-  const sig = req.headers.get("stripe-signature") || "";
-
-  let event;
-
   try {
-    const body = await req.text();
-    event = stripe.webhooks.constructEvent(
-      body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET || ""
-    );
-  } catch (err: any) {
-    console.error("Webhook signature verification failed:", err);
-    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
-  }
-
-  try {
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object;
-      console.log("✅ Payment completed for session:", session.id);
-      // Aquí podrías actualizar tu base de datos o enviar un email, etc.
+    const stripe = getStripe();
+    const whSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    if (!stripe || !whSecret) {
+      return NextResponse.json(
+        { error: "Missing Stripe env vars on server" },
+        { status: 500 }
+      );
     }
 
-    return NextResponse.json({ received: true }, { status: 200 });
-  } catch (err) {
-    console.error("Error processing webhook event:", err);
+    const sig = req.headers.get("stripe-signature") || "";
+    const rawBody = await req.text();
+
+    let event: Stripe.Event;
+    try {
+      event = stripe.webhooks.constructEvent(rawBody, sig, whSecret);
+    } catch (err: any) {
+      return NextResponse.json(
+        { error: `Webhook signature verification failed: ${err?.message}` },
+        { status: 400 }
+      );
+    }
+
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object as Stripe.Checkout.Session;
+      // TODO: registra la contribución / emite “shares simbólicos”, etc.
+      console.log("✅ checkout.session.completed", session.id);
+    }
+
+    return NextResponse.json({ received: true });
+  } catch (err: any) {
+    console.error("Webhook error:", err?.message || err);
     return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 });
   }
 }

@@ -1,54 +1,72 @@
-// src/app/api/donate/route.ts
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
+// cache opcional
+let stripeClient: Stripe | null = null;
+function getStripe(): Stripe | null {
+  if (stripeClient) return stripeClient;
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) return null; // ← no throw en top-level
+  stripeClient = new Stripe(key);
+  return stripeClient;
+}
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json().catch(() => ({}));
-    const amount = Number(body?.amount);
-    const currency = (body?.currency || "AUD").toLowerCase();
-
-    if (!process.env.STRIPE_SECRET_KEY) {
-      return NextResponse.json({ error: "Missing STRIPE_SECRET_KEY" }, { status: 500 });
-    }
-    if (!Number.isInteger(amount) || amount < 200) {
+    const { amount, intent, project_id } = await req.json();
+    if (!amount || isNaN(amount)) {
       return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
     }
 
-    const origin = process.env.NEXT_PUBLIC_BASE_URL || new URL(req.url).origin;
+    const stripe = getStripe();
+    if (!stripe) {
+      return NextResponse.json(
+        { error: "Missing STRIPE_SECRET_KEY (server env)" },
+        { status: 500 }
+      );
+    }
+
+    const origin =
+      req.headers.get("origin") ||
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      "http://localhost:3000";
+
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      success_url: `${origin}/thankyou?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url:  `${origin}/?canceled=1`,
-      currency,
+      payment_method_types: ["card"],
+      currency: "aud",
       line_items: [
         {
           price_data: {
-            currency,
-            product_data: { name: "Pyadra — Collective Contribution" },
-            unit_amount: amount,
+            currency: "aud",
+            unit_amount: Number(amount),
+            product_data: {
+              name: "Pyadra — Contribution",
+              description: "Symbolic shares to support the Pyadra collective fund",
+              metadata: { project_id, intent },
+            },
           },
           quantity: 1,
         },
       ],
-      payment_method_types: ["card"],
-      metadata: {
-        intent: body?.intent || "home-cta",
-        project_id: body?.project_id || "collective-fund",
-      },
+      success_url: `${origin}/thankyou?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/?canceled=1`,
+      metadata: { project_id, intent },
     });
 
     return NextResponse.json({ url: session.url });
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message || "Stripe session failed" }, { status: 500 });
+  } catch (err: any) {
+    console.error("Stripe error:", err?.message || err);
+    return NextResponse.json(
+      { error: "Stripe session failed", details: err?.message },
+      { status: 500 }
+    );
   }
 }
 
 export async function GET() {
-  return NextResponse.json({ error: "Method Not Allowed" }, { status: 405 });
+  return NextResponse.json({ ok: true });
 }

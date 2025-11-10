@@ -1,10 +1,12 @@
-// src/app/thankyou/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
+
+/* === Render dinámico (evita prerender) === */
+export const dynamic = "force-dynamic";
 
 /* === Fondo Neural === */
 function NeuralBackground() {
@@ -39,7 +41,8 @@ function NeuralBackground() {
       raf = requestAnimationFrame(tick);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       for (const p of ps) {
-        p.x += p.vx; p.y += p.vy;
+        p.x += p.vx;
+        p.y += p.vy;
         if (p.x < 0 || p.x > window.innerWidth) p.vx *= -1;
         if (p.y < 0 || p.y > window.innerHeight) p.vy *= -1;
         ctx.beginPath();
@@ -74,38 +77,44 @@ function NeuralBackground() {
   return <canvas id="neural-thanks" className="fixed inset-0 w-full h-full pointer-events-none opacity-30" />;
 }
 
-/* === Página Principal === */
-export default function ThankYou() {
+/* === Contenido real === */
+function ThankYouInner() {
   const params = useSearchParams();
   const session_id = params.get("session_id");
   const [amount, setAmount] = useState<number | null>(null);
 
-  // Consultar el monto real del pago
   useEffect(() => {
     if (!session_id) return;
-    fetch(`/api/session?session_id=${session_id}`)
-      .then((res) => res.json())
-      .then((data) => setAmount(data.amount_total / 100))
-      .catch(() => {});
+    (async () => {
+      try {
+        const r = await fetch(`/api/session?session_id=${encodeURIComponent(session_id)}`);
+        if (!r.ok) return;
+        const data = await r.json();
+        const cents = Number(data?.amount_total);
+        if (!Number.isNaN(cents)) setAmount(cents / 100);
+      } catch {
+        /* ignore */
+      }
+    })();
   }, [session_id]);
 
   return (
     <main className="min-h-screen relative overflow-hidden bg-[#0B1D26] text-white flex flex-col items-center justify-center">
       <NeuralBackground />
 
-      {/* Glow pulsante */}
+      {/* Glow */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: [0, 1, 0.5, 1], scale: [0.8, 1.05, 1] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vmin] h-[60vmin] rounded-full blur-3xl"
-        style={{
-          background: "radial-gradient(circle, rgba(0,224,199,0.2), rgba(0,0,0,0))",
-        }}
+        style={{ background: "radial-gradient(circle, rgba(0,224,199,0.2), rgba(0,0,0,0))" }}
       />
 
-      <div className="relative z-10 text-center max-w-xl bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-8 mx-4"
-           style={{ boxShadow: "0 30px 80px rgba(41,171,226,0.25)" }}>
+      <div
+        className="relative z-10 text-center max-w-xl bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-8 mx-4"
+        style={{ boxShadow: "0 30px 80px rgba(41,171,226,0.25)" }}
+      >
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -115,9 +124,9 @@ export default function ThankYou() {
           Thank you for contributing ✨
         </motion.h1>
 
-        {amount ? (
+        {amount !== null ? (
           <p className="text-white/70 mb-6 leading-relaxed">
-            You contributed <span className="text-[#66FFB2] font-semibold">${amount}</span> to the collective flow.
+            You contributed <span className="text-[#66FFB2] font-semibold">${amount.toFixed(2)}</span> to the collective flow.
           </p>
         ) : (
           <p className="text-white/60 mb-6">Your contribution nourishes our collective mind.</p>
@@ -127,10 +136,8 @@ export default function ThankYou() {
           <Link href="/projects">
             <button
               className="px-6 py-3 rounded-xl font-semibold text-[#0B1D26]"
-              style={{
-                background: "linear-gradient(90deg,#29ABE2 0%, #00E0C7 100%)",
-                boxShadow: "0 0 24px rgba(41,171,226,0.45)"
-              }}>
+              style={{ background: "linear-gradient(90deg,#29ABE2 0%, #00E0C7 100%)", boxShadow: "0 0 24px rgba(41,171,226,0.45)" }}
+            >
               Explore Projects
             </button>
           </Link>
@@ -146,5 +153,14 @@ export default function ThankYou() {
         </p>
       </div>
     </main>
+  );
+}
+
+/* === Export con Suspense === */
+export default function ThankYou() {
+  return (
+    <Suspense fallback={<main className="min-h-screen flex items-center justify-center p-8 text-white">Loading…</main>}>
+      <ThankYouInner />
+    </Suspense>
   );
 }
