@@ -233,10 +233,10 @@ function InviteCoffeeModal({
         <input
           type="number"
           min={MIN_AMOUNT_AUD}
-          value={Number.isNaN(amountAud) ? "" : amountAud}
+          value={amountAud === null ? "" : amountAud}
           onChange={(e) => {
             const val = e.target.value;
-            if (val === "") setAmountAud(NaN);
+            if (val === "") setAmountAud(null);
             else {
               const num = parseFloat(val);
               setAmountAud(num < MIN_AMOUNT_AUD ? MIN_AMOUNT_AUD : num);
