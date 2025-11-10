@@ -1,38 +1,41 @@
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
 
+export const runtime = "nodejs"; // ✅ permitido
 export const config = { api: { bodyParser: false } } as any;
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", { apiVersion: "2024-06-20" });
+// ✅ Elimina el apiVersion antiguo o usa el correcto
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
+// o si prefieres fijarlo explícitamente:
+// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", { apiVersion: "2025-10-29.clover" });
 
 export async function POST(req: Request) {
   const sig = req.headers.get("stripe-signature") || "";
-  const secret = process.env.STRIPE_WEBHOOK_SECRET || "";
-  const raw = await req.text();
 
-  let event: Stripe.Event;
+  let event;
+
   try {
-    event = stripe.webhooks.constructEvent(raw, sig, secret);
+    const body = await req.text();
+    event = stripe.webhooks.constructEvent(
+      body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET || ""
+    );
   } catch (err: any) {
-    console.error("Webhook signature verify failed:", err.message);
-    return new NextResponse("Bad signature", { status: 400 });
+    console.error("Webhook signature verification failed:", err);
+    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
   try {
     if (event.type === "checkout.session.completed") {
-      const s = event.data.object as Stripe.Checkout.Session;
-      // TODO: Persistir en tu DB (project_id, amount_total, currency, customer_email, created)
-      // Ejemplo:
-      // await db.insertContribution({
-      //   projectId: s.metadata?.project_id ?? "collective-fund",
-      //   amount: s.amount_total, currency: s.currency,
-      //   email: s.customer_details?.email ?? null, sessionId: s.id, createdAt: new Date()
-      // });
-      console.log("✅ Contribution confirmed:", s.id, s.amount_total, s.currency, s.metadata);
+      const session = event.data.object;
+      console.log("✅ Payment completed for session:", session.id);
+      // Aquí podrías actualizar tu base de datos o enviar un email, etc.
     }
-    return new NextResponse("ok", { status: 200 });
-  } catch (e: any) {
-    console.error("Webhook handler error:", e.message);
-    return new NextResponse("server error", { status: 500 });
+
+    return NextResponse.json({ received: true }, { status: 200 });
+  } catch (err) {
+    console.error("Error processing webhook event:", err);
+    return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 });
   }
 }
