@@ -1,4 +1,7 @@
 import './globals.css'
+import CustomCursor from "./components/CustomCursor";
+import Preloader from "./components/Preloader";
+import AmbientAudio from "./components/AmbientAudio";
 import { Inter, Space_Grotesk } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' })
@@ -12,7 +15,12 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" className={`${inter.variable} ${space.variable}`}>
-      <body>{children}</body>
+      <body>
+        <Preloader />
+        <CustomCursor />
+        {children}
+        <AmbientAudio />
+      </body>
     </html>
   )
 }

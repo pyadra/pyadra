@@ -5,52 +5,63 @@ import { Environment, Float, MeshTransmissionMaterial, RoundedBox } from "@react
 import { useRef } from "react";
 import * as THREE from "three";
 
-// The Artifact: A Warm, Smooth, Glowing Amber Capsule
-function AmberCapsule() {
+// The Artifact: Dense, heavy Smoky Quartz / Dark Olive Obsidian mapping to the Alien Orbit vibe inherently
+function LithicCapsule({ hovered }: { hovered: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
+  const internalLightRef = useRef<THREE.PointLight>(null);
   const { mouse } = useThree();
 
   useFrame((state, delta) => {
     if (groupRef.current) {
-      // Very smooth, gentle tilt following mouse (Connected & Organic)
-      const targetRotateX = -(mouse.y * 0.12);
-      const targetRotateY = mouse.x * 0.12;
+      // Heavy Gravitational Inertia. Smaller numbers feel like immense weight.
+      const targetRotateX = -(mouse.y * 0.08); 
+      const targetRotateY = mouse.x * 0.08;
       
-      // Floating gentle breath on top of mouse tilt to give it "life"
-      const breathX = Math.sin(state.clock.elapsedTime * 0.4) * 0.05;
-      const breathY = Math.cos(state.clock.elapsedTime * 0.6) * 0.05;
+      // Extremely slow respiration
+      const breathX = Math.sin(state.clock.elapsedTime * 0.2) * 0.03;
+      const breathY = Math.cos(state.clock.elapsedTime * 0.3) * 0.03;
       
-      groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetRotateX + breathX, delta * 2.5);
-      groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetRotateY + breathY, delta * 2.5);
+      // Damped lerp for sheer physical lag/weight
+      groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetRotateX + breathX, delta * 1.5);
+      groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetRotateY + breathY, delta * 1.5);
+    }
+    
+    // The Catalyst: A warm amber glow erupts from deep inside the stone when hovered
+    if (internalLightRef.current) {
+       const targetIntensity = hovered ? 15 : 0;
+       internalLightRef.current.intensity = THREE.MathUtils.lerp(internalLightRef.current.intensity, targetIntensity, delta * 2.5);
     }
   });
 
   return (
     <group ref={groupRef}>
-      {/* Perfect Capsule / Pill shape (Soft, deeply human form factor) */}
-      <RoundedBox args={[2.5, 4.0, 0.4]} radius={1.25} smoothness={10}>
+      {/* Physical Heavy Mineral Chamber */}
+      <RoundedBox args={[3.0, 4.5, 0.4]} radius={1.5} smoothness={16}>
         <MeshTransmissionMaterial 
           backside
           samples={4}
-          thickness={4}
-          chromaticAberration={0.03}
-          anisotropy={0.1}
-          distortion={0.3} // Subtle inner fluid flow
-          distortionScale={0.5}
-          temporalDistortion={0.05} // Very gentle internal movement
-          clearcoat={1}
-          clearcoatRoughness={0.1}
-          color="#FCA880" // Soft Rose Gold / Amber Core
+          thickness={8} // Massive thickness to create dense stone optical density
+          chromaticAberration={0.04}
+          anisotropy={0.5} // High anisotropy generates a perfectly cloudy core inside
+          distortion={1.2} // High distortion -> swirling physical interior minerals/cracks
+          distortionScale={0.3}
+          temporalDistortion={hovered ? 0.3 : 0.05} // Physically vibrates faster when Catalyst is active
+          clearcoat={1} // Polished obsidian exterior reflection
+          clearcoatRoughness={0.15} // Micro-grain stone reflection
+          roughness={0.25} // Traps the interior light severely
+          color="#1B2421" // Dark Olive-Oil Green / Smoky core
           transparent
-          opacity={0.8}
+          opacity={0.99} // Barely translucent, almost pure heavy stone block
         />
       </RoundedBox>
+      {/* Internal Catalyst Spark (Trapped light) */}
+      <pointLight ref={internalLightRef} color="#FFB000" distance={6} position={[0, 0, -0.1]} />
     </group>
   );
 }
 
-// Emitting a soft, warm peach glow instead of a sharp flashlight
-function WarmSunrise() {
+// Pale Champagne / Silver light striking the stone edges
+function ShadowEarthLighting() {
   const lightRef = useRef<THREE.PointLight>(null);
   const { mouse, viewport } = useThree();
   
@@ -58,44 +69,43 @@ function WarmSunrise() {
     if (lightRef.current) {
       const x = (mouse.x * viewport.width) / 2;
       const y = (mouse.y * viewport.height) / 2;
-      // Delay tracking intentionally to feel dreamy
-      lightRef.current.position.lerp(new THREE.Vector3(x, y, 4), 0.05); 
+      // Heavy light inertia to match stone lag
+      lightRef.current.position.lerp(new THREE.Vector3(x, y, 4), 0.03); 
     }
   });
 
   return (
     <pointLight 
       ref={lightRef} 
-      intensity={8} // High intensity but extremely soft falloff
+      intensity={8} 
       distance={15} 
-      color="#FFDFD3" // Soft Peach illumination
+      color="#ECE0D1" // Pale Champagne/Silver Highlight
     />
   );
 }
 
-export default function Scene() {
+export default function Scene({ hovered = false }: { hovered?: boolean }) {
   return (
     <div className="absolute inset-0 w-full h-full pointer-events-auto z-0 touch-none">
       <Canvas camera={{ position: [0, 0, 8], fov: 35 }}>
-        {/* Deep, grounding Warm Mahogany base (Not cold black) */}
-        <color attach="background" args={["#171211"]} />
+        {/* Absolute Void Black to create ultra high-end focus isolation */}
+        <color attach="background" args={["#000000"]} />
         
-        {/* Highly pervasive warm ambient light so there are no cold shadows */}
-        <ambientLight intensity={0.8} color="#FFD0BA" />
+        {/* Extremely low ambient light to force spotlight contrast reading on the edges */}
+        <ambientLight intensity={0.1} color="#ECE0D1" />
         
-        <WarmSunrise />
+        <ShadowEarthLighting />
 
-        {/* Soft, blushing rim lights replacing the sharp neon rims */}
-        <spotLight position={[-5, 8, -5]} angle={0.6} penumbra={1} intensity={6} color="#E07A5F" /> {/* Terracotta Rim */}
-        <spotLight position={[5, -8, -5]} angle={0.6} penumbra={1} intensity={4} color="#F4F1DE" /> {/* Warm Ivory Highlight */}
+        {/* Deep Smoky Quartz reflections slicing the ambient void edges from behind */}
+        <spotLight position={[-5, 8, -5]} angle={0.6} penumbra={1} intensity={6} color="#2D2926" /> 
+        <spotLight position={[5, -8, -5]} angle={0.6} penumbra={1} intensity={4} color="#1B2421" /> 
 
-        {/* Soft floating geometry taking the breath of the user */}
-        <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.2}>
-           <AmberCapsule />
+        <Float speed={1} rotationIntensity={0.05} floatIntensity={0.1}>
+           <LithicCapsule hovered={hovered} />
         </Float>
 
-        {/* Warm sunrise HDRI for soft, glowing sunrise reflections */}
-        <Environment preset="dawn" />
+        {/* Studio environment heavily darkened so the stone feels realistically heavy and lit physically, not mirrored perfectly */}
+        <Environment preset="studio" environmentIntensity={0.2} />
       </Canvas>
     </div>
   );
