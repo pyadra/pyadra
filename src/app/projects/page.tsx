@@ -1,152 +1,209 @@
 "use client";
 
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
-const projects = [
+// Project Constellation Data
+const nodes = [
   {
-    id: "01",
+    id: "orbit-77",
     name: "Orbit 77",
-    status: "Active Node",
-    href: "/projects/orbit",
-    pos: { top: "30%", left: "50%" },
-    posMd: { top: "40%", left: "30%" },
-    color: "#FCA880",
-    size: 400,
+    x: "50%",
+    y: "35%",
+    size: 260,
+    color: "#39FF14", // Alien Green
+    status: "BROADCASTING",
+    category: "Podcast & Global Entertainment",
+    availability: "Equity (10-100%) • Talent Required • Retail Open",
     delay: 0,
-    active: true
+    href: "/projects/orbit"
   },
   {
-    id: "02",
-    name: "Eternicapsule",
-    status: "Conceptual",
-    href: "#",
-    pos: { top: "60%", left: "50%" },
-    posMd: { top: "30%", left: "70%" },
-    color: "#DCA88F",
-    size: 250,
-    delay: 2,
-    active: false
+    id: "project-02",
+    name: "EtherniCapsule",
+    x: "28%",
+    y: "70%",
+    size: 160,
+    color: "#FFB000", // Amber Catalyst
+    status: "ENCRYPTED",
+    category: "Digital Memory Vault",
+    availability: "A final message left before ascending. A digital memory capsule for the ones you love.",
+    delay: 0.5,
+    href: "#"
   },
   {
-    id: "03",
-    name: "Manuscript",
-    status: "Dormant",
-    href: "#",
-    pos: { top: "85%", left: "50%" },
-    posMd: { top: "70%", left: "55%" },
-    color: "#F4EFEA",
-    size: 300,
-    delay: 4,
-    active: false
+    id: "project-03",
+    name: "Figurines",
+    x: "72%",
+    y: "70%",
+    size: 120,
+    color: "#ECE0D1", // Pale Champagne
+    status: "OFFLINE",
+    category: "Physical Artifacts",
+    availability: "Personalized 3D-printed avatars. Your physical extension in reality.",
+    delay: 0.8,
+    href: "#"
   }
 ];
 
 export default function ProjectsConstellation() {
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(true);
-  
-  // Parallax interactivo suave (Sensación de flotar en una galaxia/ecosistema)
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  
-  const springConfig = { damping: 100, stiffness: 50 };
-  const parallaxX = useSpring(useTransform(mouseX, [-1, 1], [-30, 30]), springConfig);
-  const parallaxY = useSpring(useTransform(mouseY, [-1, 1], [-30, 30]), springConfig);
 
   useEffect(() => {
     setMounted(true);
-    setIsDesktop(window.innerWidth > 768);
-    
-    const handleResize = () => setIsDesktop(window.innerWidth > 768);
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set((e.clientX / window.innerWidth) * 2 - 1);
-      mouseY.set((e.clientY / window.innerHeight) * 2 - 1);
-    };
-
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, [mouseX, mouseY]);
-
-  if (!mounted) return null;
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#171211] overflow-hidden relative font-sans">
+    // BRAND PYADRA CORE INTEGRATION: PURE OLED BLACK FOR HDR CONTRAST
+    <div className="min-h-screen bg-[#000000] text-[#E3DAC9] overflow-hidden font-sans selection:bg-[#FFB000]/20 selection:text-[#FFB000] relative w-full flex items-center justify-center">
       
-      {/* Background Base (Warm Umber Void) */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(23,18,17,0.9)_100%)] pointer-events-none z-10 mix-blend-multiply" />
-      
-      <header className="absolute top-0 left-0 w-full p-8 md:p-12 z-50 flex justify-between items-start pointer-events-none">
-        <Link href="/" className="pointer-events-auto text-[10px] uppercase font-sans font-light tracking-[0.3em] text-[#DCA88F] hover:text-[#F4EFEA] transition-colors duration-500">
-          [ Return ]
-        </Link>
-        <span className="text-[9px] uppercase tracking-[0.3em] text-[#F4EFEA]/30">
-          The Ecosystem Constellation
-        </span>
-      </header>
-
-      {/* Interactive Constellation Layer (All projects float as orbs here) */}
+      {/* Background Deep Amber Pulse (Shadow Earth Lithic Vibe) */}
       <motion.div 
-        style={{ x: parallaxX, y: parallaxY }}
-        className="absolute w-full h-full top-0 left-0"
+        animate={{ opacity: [0.1, 0.4, 0.1] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute inset-0 pointer-events-none z-0 mix-blend-screen opacity-50"
+        style={{ 
+          background: "radial-gradient(circle at 50% 30%, rgba(255,176,0,0.08) 0%, rgba(45,41,38,0.5) 30%, rgba(0,0,0,1) 80%)" 
+        }}
+      />
+      
+      {/* Global Navigation - Champagne Colored */}
+      <nav className="absolute top-0 left-0 w-full p-8 md:p-12 z-50 flex justify-between items-start pointer-events-none">
+        <Link href="/" className="pointer-events-auto text-[10px] uppercase font-sans font-light tracking-[0.3em] text-[#ECE0D1] hover:text-[#FFB000] transition-colors duration-500 hover:drop-shadow-[0_0_10px_rgba(255,176,0,0.8)]">
+          [ Return to Main ]
+        </Link>
+        <span className="text-[10px] uppercase font-mono tracking-widest text-[#ECE0D1]/60">
+           The Ecosystem
+        </span>
+      </nav>
+
+      {/* HEADER TITLE (Top Left) - Premium Metallic Gradient Typography */}
+      <motion.h1 
+         initial={{ opacity: 0, y: -20 }}
+         animate={{ opacity: 1, y: 0 }}
+         transition={{ duration: 1.5, ease: "easeOut" }}
+         className="absolute top-32 left-8 md:left-12 text-3xl md:text-5xl font-serif italic font-light z-40 pointer-events-none"
       >
-        {projects.map((p) => (
-          <motion.div
-            key={p.id}
-            animate={{ y: [0, -15, 0] }}
-            transition={{ duration: 8 + p.delay, repeat: Infinity, ease: "easeInOut", delay: p.delay }}
-            className="absolute flex flex-col items-center group/node"
-            style={{ 
-              top: isDesktop ? p.posMd.top : p.pos.top, 
-              left: isDesktop ? p.posMd.left : p.pos.left,
-              transform: "translate(-50%, -50%)"
-            }}
-          >
-            {/* The Floating Organic Aura behind the node */}
-            <motion.div 
-              animate={p.active ? { opacity: [0.1, 0.4, 0.1], scale: [0.9, 1.1, 0.9] } : { opacity: 0.05 }}
-              transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[80px] pointer-events-none mix-blend-screen"
-              style={{ 
-                width: p.size, 
-                height: p.size, 
-                backgroundColor: p.color
-              }}
-            />
+        <span className="bg-gradient-to-br from-[#FFFFFF] via-[#ECE0D1] to-[#FFB000]/60 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(255,176,0,0.15)] leading-tight">
+           The Ecosystem
+        </span>
+      </motion.h1>
 
-            {/* The Interactive Node Container (Glassmorphic Halo) */}
-            <Link 
-              href={p.href}
-              className={`relative z-10 flex flex-col items-center justify-center w-40 h-40 md:w-56 md:h-56 rounded-full border ${p.active ? 'border-[#DCA88F]/20 hover:border-[#DCA88F]/50 bg-[#171211]/30 hover:bg-[#171211]/60' : 'border-white/5 bg-transparent cursor-not-allowed'} backdrop-blur-md transition-all duration-[1500ms] shadow-[0_20px_40px_rgba(0,0,0,0.3)]`}
+      {/* FLOATING CONSTELLATION NODES */}
+      <div className="relative w-full h-[100dvh] max-w-[1400px] z-10 pointer-events-none">
+         {mounted && nodes.map((node) => (
+            <motion.div
+               key={node.id}
+               className="absolute z-20 flex flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 pointer-events-auto"
+               style={{ left: node.x, top: node.y }}
+               initial={{ opacity: 0, scale: 0.8 }}
+               animate={{ opacity: 1, scale: 1, y: ["-15px", "15px", "-15px"] }}
+               transition={{ 
+                 opacity: { duration: 1, delay: node.delay },
+                 scale: { duration: 1, delay: node.delay },
+                 y: { duration: 8 + node.delay * 2, repeat: Infinity, ease: "easeInOut" }
+               }}
+               onMouseEnter={() => setHoveredNode(node.id)}
+               onMouseLeave={() => setHoveredNode(null)}
             >
-               {/* Internal Bright Ring for active nodes */}
-               {p.active && (
-                 <div className="absolute inset-0 rounded-full border border-transparent group-hover/node:border-[#FCA880]/70 group-hover/node:shadow-[0_0_30px_rgba(252,168,128,0.3)] transition-all duration-[1000ms] pointer-events-none scale-[0.9] group-hover/node:scale-100" />
-               )}
+               <Link href={node.href} className="relative group flex items-center justify-center">
+                  
+                  {/* The Physical Node Sphere (Polished Obsidian Glass) */}
+                  <motion.div 
+                     className="rounded-full border border-white/5 flex flex-col items-center justify-center backdrop-blur-xl relative z-10 transition-all duration-700 bg-gradient-to-br from-[#1A1816]/90 to-[#0A0908]/90 shadow-[0_15px_50px_rgba(0,0,0,0.9)]"
+                     style={{ 
+                        width: node.size, 
+                        height: node.size,
+                        borderColor: hoveredNode === node.id ? `${node.color}50` : 'rgba(255, 255, 255, 0.08)',
+                        boxShadow: hoveredNode === node.id ? `0 0 50px ${node.color}30 inset, 0 20px 50px rgba(0,0,0,0.9)` : `0 0 20px rgba(255,176,0,0.05) inset, 0 20px 50px rgba(0,0,0,0.9)`
+                     }}
+                  >
+                     {/* Node Text - Ultra Luminous Effect */}
+                     <span 
+                       className="font-serif italic transition-all duration-500 font-light text-center px-4" 
+                       style={{ 
+                         fontSize: `${node.size * 0.16}px`,
+                         lineHeight: 1.1,
+                         color: hoveredNode === node.id ? node.color : '#FFFFFF',
+                         textShadow: hoveredNode === node.id 
+                           ? `0 0 40px ${node.color}80, 0 0 80px ${node.color}40` 
+                           : '0 0 20px rgba(255,255,255,0.4), 0 0 40px rgba(255,176,0,0.2)'
+                       }}
+                     >
+                       {node.name}
+                     </span>
+                     
+                     {/* Mini Pulse Indicator inside the orb */}
+                     <span 
+                        className={`w-2.5 h-2.5 rounded-full absolute bottom-[22%] transition-all duration-500 ${node.status !== 'OFFLINE' ? 'animate-[pulse_1.5s_infinite]' : ''}`}
+                        style={{ 
+                          backgroundColor: hoveredNode === node.id ? node.color : '#FFB000', 
+                          boxShadow: `0 0 15px ${hoveredNode === node.id ? node.color : '#FFB000'}`,
+                          opacity: hoveredNode === node.id ? 1 : 0.6 
+                        }}
+                     />
+                  </motion.div>
 
-               <span className="text-[9px] tracking-[0.4em] font-sans text-[#F4EFEA]/30 mb-2 md:mb-4">{p.id}</span>
-               
-               <h2 className={`text-2xl md:text-3xl font-serif italic text-center ${p.active ? 'text-[#F4EFEA] group-hover/node:text-[#FCA880]' : 'text-white/20'} transition-colors duration-1000`}>
-                 {p.name}
-               </h2>
+                  {/* Ambient Background Glow (Revealed on Hover) */}
+                  <div 
+                     className="absolute inset-0 rounded-full blur-[100px] -z-10 transition-opacity duration-1000 opacity-0 group-hover:opacity-40"
+                     style={{ backgroundColor: node.color }}
+                  />
 
-               <div className="absolute -bottom-10 md:-bottom-12 opacity-0 group-hover/node:opacity-100 transition-opacity duration-1000 flex flex-col items-center gap-3">
-                 <div className={`h-1.5 w-1.5 rounded-full ${p.active ? 'bg-[#FCA880] shadow-[0_0_8px_rgba(252,168,128,0.8)] animate-pulse' : 'bg-white/20'}`} />
-                 <span className="text-[8px] uppercase tracking-[0.2em] font-sans text-[#DCA88F]/80 whitespace-nowrap">
-                   {p.status}
-                 </span>
-               </div>
-            </Link>
+                  {/* HIGH-END METADATA HUD (Ultra Frosted Glass) */}
+                  <motion.div 
+                     initial={{ opacity: 0, scale: 0.95, y: parseInt(node.y) > 50 ? 20 : -20 }}
+                     animate={{ 
+                       opacity: hoveredNode === node.id ? 1 : 0, 
+                       scale: hoveredNode === node.id ? 1 : 0.95,
+                       y: hoveredNode === node.id ? 0 : (parseInt(node.y) > 50 ? 20 : -20),
+                     }}
+                     transition={{ duration: 0.4, ease: "easeOut" }}
+                     style={{
+                        ...(parseInt(node.y) > 50 ? { bottom: "110%" } : { top: "110%" })
+                     }}
+                     className="absolute w-72 md:w-80 bg-[#0A0A0A]/80 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-8 shadow-[0_30px_60px_rgba(0,0,0,0.95)] pointer-events-none z-50 text-left"
+                  >
+                     {/* HUD Header */}
+                     <div className="flex justify-between items-center mb-5">
+                        <span className="text-[9px] font-mono tracking-widest uppercase text-white/50">{node.category}</span>
+                        <span className="text-[10px] font-mono uppercase tracking-[0.2em] font-bold" style={{ color: node.color }}>
+                          {node.status}
+                        </span>
+                     </div>
+                     
+                     <h4 className="text-3xl font-serif italic mb-5 tracking-tight font-light" style={{ color: node.color, textShadow: `0 0 20px ${node.color}40` }}>
+                       {node.name}
+                     </h4>
+                     
+                     <div className="w-full h-[1px] bg-gradient-to-r from-white/20 to-transparent my-5" />
+                     
+                     {/* Internal Dashboard Data */}
+                     <div className="flex flex-col text-[10px] font-mono uppercase tracking-widest text-white/50 space-y-3">
+                       <span className="mb-1 text-[8px] text-[#FFB000]/60">Active Resource Parameters:</span>
+                       <span className="text-white/90 leading-relaxed font-sans font-light normal-case text-xs tracking-wide">
+                          {node.availability}
+                       </span>
+                     </div>
+                     
+                     {/* Action Text */}
+                     <div className="mt-8 flex justify-between items-center text-[10px] uppercase font-bold tracking-[0.3em]">
+                          <span className="transition-colors duration-500" style={{ color: node.color }}>
+                            {node.status === 'ENCRYPTED' || node.status === 'OFFLINE' ? 'Access Denied' : 'Enter Node'}
+                          </span>
+                          <span className="transition-all duration-500 group-hover:translate-x-1 group-hover:-translate-y-1" style={{ color: node.color }}>
+                            ↗
+                          </span>
+                     </div>
+                  </motion.div>
 
-          </motion.div>
-        ))}
-      </motion.div>
+               </Link>
+            </motion.div>
+         ))}
 
+      </div>
     </div>
   );
 }

@@ -30,9 +30,10 @@ export async function POST(req: Request) {
     let event: Stripe.Event;
     try {
       event = stripe.webhooks.constructEvent(rawBody, sig, whSecret);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
       return NextResponse.json(
-        { error: `Webhook signature verification failed: ${err?.message}` },
+        { error: `Webhook signature verification failed: ${errorMessage}` },
         { status: 400 }
       );
     }
@@ -44,8 +45,9 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ received: true });
-  } catch (err: any) {
-    console.error("Webhook error:", err?.message || err);
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error("Webhook error:", errorMessage);
     return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 });
   }
 }

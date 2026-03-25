@@ -52,16 +52,17 @@ export async function POST(req: Request) {
           quantity: 1,
         },
       ],
-      success_url: `${origin}/thankyou?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${origin}/transmission-confirmed?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/?canceled=1`,
       metadata: { project_id, intent },
     });
 
     return NextResponse.json({ url: session.url });
-  } catch (err: any) {
-    console.error("Stripe error:", err?.message || err);
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error("Stripe error:", errorMessage);
     return NextResponse.json(
-      { error: "Stripe session failed", details: err?.message },
+      { error: "Stripe session failed", details: errorMessage },
       { status: 500 }
     );
   }

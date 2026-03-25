@@ -7,39 +7,40 @@ export class AudioEngine {
 
   init() {
     if (this.ctx) return;
-    this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    this.ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
     if (this.ctx.state === 'suspended') {
       this.ctx.resume();
     }
     this.startAmbient();
   }
 
-  // 1. Ambient Base (The Void) - 30Hz cinematic sub-bass
+  // 1. Harmonious Ethereal Chords (432Hz Healing Frequency Base)
   startAmbient() {
     if (!this.ctx || this.droneOsc) return;
     
+    // Base singing bowl (A4 = 432Hz)
     this.droneOsc = this.ctx.createOscillator();
     this.droneOsc.type = 'sine';
-    this.droneOsc.frequency.value = 35; // Sub-bass
+    this.droneOsc.frequency.value = 432; 
     
     this.droneGain = this.ctx.createGain();
-    this.droneGain.gain.value = 0.3; // Low rumble
+    this.droneGain.gain.value = 0.03; // Very soft, harmonious
 
     this.droneOsc.connect(this.droneGain);
     this.droneGain.connect(this.ctx.destination);
     this.droneOsc.start();
 
-    // 2. Proximity Audio (Electromagnetic Hum)
+    // 2. Secondary Harmonic (Ethereal overtone - Perfect Fifth)
     this.humOsc = this.ctx.createOscillator();
-    this.humOsc.type = 'triangle';
-    this.humOsc.frequency.value = 60; // Slightly higher frequency hum
+    this.humOsc.type = 'sine';
+    this.humOsc.frequency.value = 648; // Perfect fifth above 432Hz
     
     const filter = this.ctx.createBiquadFilter();
     filter.type = 'lowpass';
-    filter.frequency.value = 150;
+    filter.frequency.value = 1000;
 
     this.humGain = this.ctx.createGain();
-    this.humGain.gain.value = 0; // Starts at 0 volume
+    this.humGain.gain.value = 0; // Starts at 0 volume and swells on hover
 
     this.humOsc.connect(filter);
     filter.connect(this.humGain);

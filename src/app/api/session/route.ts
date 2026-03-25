@@ -31,9 +31,10 @@ export async function GET(req: Request) {
   try {
     const session = await stripe.checkout.sessions.retrieve(session_id);
     return NextResponse.json({ session });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : String(err);
     return NextResponse.json(
-      { error: "Failed to retrieve session", details: err?.message },
+      { error: "Failed to retrieve session", details: errorMessage },
       { status: 500 }
     );
   }

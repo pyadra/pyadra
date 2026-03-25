@@ -1,66 +1,89 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Environment, Float, MeshTransmissionMaterial, RoundedBox } from "@react-three/drei";
-import { useRef } from "react";
+import { Environment, Float, Sparkles } from "@react-three/drei";
+import { useRef, Suspense } from "react";
 import * as THREE from "three";
 
-// The Artifact: Dense, heavy Smoky Quartz / Dark Olive Obsidian mapping to the Alien Orbit vibe inherently
+// The Artifact: The Genesis Portal (Massive Obsidian Stargate Ring & Golden Human Nucleus)
 function LithicCapsule({ hovered }: { hovered: boolean }) {
-  const groupRef = useRef<THREE.Group>(null);
+  const portalRef = useRef<THREE.Mesh>(null);
+  const nucleusRef = useRef<THREE.Mesh>(null);
   const internalLightRef = useRef<THREE.PointLight>(null);
   const { mouse } = useThree();
 
   useFrame((state, delta) => {
-    if (groupRef.current) {
-      // Heavy Gravitational Inertia. Smaller numbers feel like immense weight.
-      const targetRotateX = -(mouse.y * 0.08); 
-      const targetRotateY = mouse.x * 0.08;
+    if (portalRef.current) {
+      // Interactive Portal tracking
+      const targetRotateX = -(mouse.y * 0.2); 
+      const targetRotateY = mouse.x * 0.2;
       
-      // Extremely slow respiration
-      const breathX = Math.sin(state.clock.elapsedTime * 0.2) * 0.03;
-      const breathY = Math.cos(state.clock.elapsedTime * 0.3) * 0.03;
+      // The massive heavy gate spinning endlessly
+      const ritualSpinY = state.clock.elapsedTime * 0.15;
+      const ritualSpinZ = Math.sin(state.clock.elapsedTime * 0.1) * 0.1;
       
-      // Damped lerp for sheer physical lag/weight
-      groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetRotateX + breathX, delta * 1.5);
-      groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetRotateY + breathY, delta * 1.5);
+      portalRef.current.rotation.x = THREE.MathUtils.lerp(portalRef.current.rotation.x, targetRotateX, delta * 2.0);
+      portalRef.current.rotation.y = THREE.MathUtils.lerp(portalRef.current.rotation.y, targetRotateY + ritualSpinY, delta * 2.0);
+      portalRef.current.rotation.z = THREE.MathUtils.lerp(portalRef.current.rotation.z, ritualSpinZ, delta * 2.0);
+    }
+
+    if (nucleusRef.current) {
+       // The human heart/core beating
+       const beat = Math.sin(state.clock.elapsedTime * 2.0) * 0.05;
+       nucleusRef.current.scale.setScalar(1.0 + beat);
     }
     
-    // The Catalyst: A warm amber glow erupts from deep inside the stone when hovered
+    // The Catalyst: A warm amber glow erupts when entering the core
     if (internalLightRef.current) {
-       const targetIntensity = hovered ? 15 : 0;
-       internalLightRef.current.intensity = THREE.MathUtils.lerp(internalLightRef.current.intensity, targetIntensity, delta * 2.5);
+       const targetIntensity = hovered ? 20 : 3; // Drastically lowered to preserve typography
+       internalLightRef.current.intensity = THREE.MathUtils.lerp(internalLightRef.current.intensity, targetIntensity, delta * 5);
     }
   });
 
   return (
-    <group ref={groupRef}>
-      {/* Physical Heavy Mineral Chamber */}
-      <RoundedBox args={[3.0, 4.5, 0.4]} radius={1.5} smoothness={16}>
-        <MeshTransmissionMaterial 
-          backside
-          samples={4}
-          thickness={8} // Massive thickness to create dense stone optical density
-          chromaticAberration={0.04}
-          anisotropy={0.5} // High anisotropy generates a perfectly cloudy core inside
-          distortion={1.2} // High distortion -> swirling physical interior minerals/cracks
-          distortionScale={0.3}
-          temporalDistortion={hovered ? 0.3 : 0.05} // Physically vibrates faster when Catalyst is active
-          clearcoat={1} // Polished obsidian exterior reflection
-          clearcoatRoughness={0.15} // Micro-grain stone reflection
-          roughness={0.25} // Traps the interior light severely
-          color="#1B2421" // Dark Olive-Oil Green / Smoky core
-          transparent
-          opacity={0.99} // Barely translucent, almost pure heavy stone block
+    <group>
+      
+      {/* 1. THE OBSIDIAN PORTAL (A massive, ancient stone doorway) */}
+      <mesh ref={portalRef}>
+        <torusGeometry args={[2.5, 0.45, 64, 100]} />
+        <meshPhysicalMaterial 
+          color="#0A0A0A"
+          roughness={0.2}
+          metalness={0.8}
+          clearcoat={1.0}
+          clearcoatRoughness={0.1}
+          ior={2} 
         />
-      </RoundedBox>
-      {/* Internal Catalyst Spark (Trapped light) */}
-      <pointLight ref={internalLightRef} color="#FFB000" distance={6} position={[0, 0, -0.1]} />
+      </mesh>
+
+      {/* 2. THE HUMAN SPARK (The Ethereal Nucleus) */}
+      <mesh ref={nucleusRef} position={[0, 0, 0]}>
+        <sphereGeometry args={[0.35, 64, 64]} />
+        {/* Transparent glowing plasma so the PYADRA text shines through it */}
+        <meshPhysicalMaterial 
+          color="#FFB000" 
+          emissive="#FFB000" 
+          emissiveIntensity={1.5} 
+          transparent 
+          opacity={0.15} 
+          transmission={0.9}
+          roughness={0.1}
+          ior={1.5}
+        />
+      </mesh>
+      
+      {/* Internal Catalyst Spark (The light from the people) */}
+      <pointLight ref={internalLightRef} color="#FFB000" distance={15} position={[0, 0, 0]} />
+      
+      {/* THE AMBER SAND DUST (People/Connection Spores floating around the portal) */}
+      <Sparkles count={200} scale={8} size={0.6} speed={0.3} opacity={0.4} color="#E3DAC9" noise={1} />
+      {/* Massive hover Catalyst dust storm as you cross the threshold */}
+      {hovered && <Sparkles count={150} scale={6} size={1.5} speed={2} opacity={0.8} color="#FFB000" noise={3} />}
     </group>
   );
 }
 
-// Pale Champagne / Silver light striking the stone edges
+// Pale Champagne light striking the edges of the obsidian ring
 function ShadowEarthLighting() {
   const lightRef = useRef<THREE.PointLight>(null);
   const { mouse, viewport } = useThree();
@@ -69,17 +92,16 @@ function ShadowEarthLighting() {
     if (lightRef.current) {
       const x = (mouse.x * viewport.width) / 2;
       const y = (mouse.y * viewport.height) / 2;
-      // Heavy light inertia to match stone lag
-      lightRef.current.position.lerp(new THREE.Vector3(x, y, 4), 0.03); 
+      lightRef.current.position.lerp(new THREE.Vector3(x, y, 6), 0.05); 
     }
   });
 
   return (
     <pointLight 
       ref={lightRef} 
-      intensity={8} 
-      distance={15} 
-      color="#ECE0D1" // Pale Champagne/Silver Highlight
+      intensity={12} 
+      distance={25} 
+      color="#ECE0D1" 
     />
   );
 }
@@ -87,25 +109,23 @@ function ShadowEarthLighting() {
 export default function Scene({ hovered = false }: { hovered?: boolean }) {
   return (
     <div className="absolute inset-0 w-full h-full pointer-events-auto z-0 touch-none">
-      <Canvas camera={{ position: [0, 0, 8], fov: 35 }}>
-        {/* Absolute Void Black to create ultra high-end focus isolation */}
-        <color attach="background" args={["#000000"]} />
-        
-        {/* Extremely low ambient light to force spotlight contrast reading on the edges */}
-        <ambientLight intensity={0.1} color="#ECE0D1" />
-        
-        <ShadowEarthLighting />
+       {/* Cap DPR to 2 maximum to prevent 4k retina lag and force 60fps locking */}
+      <Canvas camera={{ position: [0, 0, 8], fov: 40 }} dpr={[1, 2]}>
+        <Suspense fallback={null}>
+          <color attach="background" args={["#000000"]} />
+          <ambientLight intensity={0.15} color="#ECE0D1" />
+          <ShadowEarthLighting />
 
-        {/* Deep Smoky Quartz reflections slicing the ambient void edges from behind */}
-        <spotLight position={[-5, 8, -5]} angle={0.6} penumbra={1} intensity={6} color="#2D2926" /> 
-        <spotLight position={[5, -8, -5]} angle={0.6} penumbra={1} intensity={4} color="#1B2421" /> 
+          {/* Outer Edge Spotlights tracing the obsidian ring perfectly */}
+          <spotLight position={[-6, 8, -5]} angle={0.8} penumbra={1} intensity={6} color="#2D2926" /> 
+          <spotLight position={[6, -8, -5]} angle={0.8} penumbra={1} intensity={6} color="#1B2421" /> 
 
-        <Float speed={1} rotationIntensity={0.05} floatIntensity={0.1}>
-           <LithicCapsule hovered={hovered} />
-        </Float>
+          <Float speed={1.2} rotationIntensity={0.1} floatIntensity={0.15}>
+             <LithicCapsule hovered={hovered} />
+          </Float>
 
-        {/* Studio environment heavily darkened so the stone feels realistically heavy and lit physically, not mirrored perfectly */}
-        <Environment preset="studio" environmentIntensity={0.2} />
+          <Environment preset="studio" environmentIntensity={0.2} />
+        </Suspense>
       </Canvas>
     </div>
   );

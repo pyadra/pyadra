@@ -17,7 +17,10 @@ export default function AmbientAudio() {
   const isOrbit = pathname?.includes("/orbit");
   const color = isOrbit ? "text-[#39FF14]" : "text-[#DCA88F]";
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
 
   const toggleAudio = () => {
     if (!active) {
