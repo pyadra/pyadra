@@ -26,6 +26,7 @@ export default function AmbientAudio() {
     if (!active) {
       if (!audioCtxRef.current) {
         // Initialize synthetic drone (Warm, cinematic 40Hz sub-drone to mimic deep space/incubator hum)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
         
         oscRef.current = audioCtxRef.current.createOscillator();

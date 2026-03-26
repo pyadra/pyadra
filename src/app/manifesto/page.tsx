@@ -1,10 +1,12 @@
+import Link from "next/link";
+
 export default function Manifesto() {
   return (
     <main className="min-h-screen bg-[#000000] text-[#E3DAC9] font-sans selection:bg-[#FFB000]/20 selection:text-[#FFB000] flex justify-center py-24 md:py-32 px-6">
       <div className="max-w-2xl w-full">
-        <a href="/" className="text-[10px] uppercase font-mono tracking-widest text-[#FFB000]/60 hover:text-[#FFB000] transition-colors mb-12 block">
+        <Link href="/" className="text-[10px] uppercase font-mono tracking-widest text-[#FFB000]/60 hover:text-[#FFB000] transition-colors mb-12 block">
           [ Return to Core ]
-        </a>
+        </Link>
         
         <h1 className="text-4xl md:text-5xl font-serif italic font-light mb-16 text-[#F4EFEA] tracking-wider drop-shadow-[0_0_15px_rgba(255,176,0,0.2)]">
           The Manifesto
@@ -22,7 +24,7 @@ export default function Manifesto() {
           <section>
             <h2 className="text-[10px] font-mono tracking-[0.3em] uppercase text-[#FFB000] mb-4">02. The Ritual of Support</h2>
             <p>
-              We believe in "people helping people." The modern internet has commercialized connection. Pyadra returns it to a ritualistic state. When you deploy capital into a Pyadra node—whether buying a coffee for Orbit 77 or funding a digital memory vault—you are not just executing a transaction. You are participating in a ritual of collective nourishment.
+              We believe in &quot;people helping people.&quot; The modern internet has commercialized connection. Pyadra returns it to a ritualistic state. When you deploy capital into a Pyadra node—whether buying a coffee for Orbit 77 or funding a digital memory vault—you are not just executing a transaction. You are participating in a ritual of collective nourishment.
             </p>
           </section>
 

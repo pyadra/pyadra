@@ -1,10 +1,12 @@
+import Link from "next/link";
+
 export default function Privacy() {
   return (
     <main className="min-h-screen bg-black text-[#E3DAC9] font-sans selection:bg-[#FFB000]/20 selection:text-[#FFB000] flex justify-center py-24 md:py-32 px-6">
       <div className="max-w-2xl w-full">
-        <a href="/" className="text-[10px] uppercase font-mono tracking-widest text-[#FFB000]/60 hover:text-[#FFB000] transition-colors mb-12 block">
+        <Link href="/" className="text-[10px] uppercase font-mono tracking-widest text-[#FFB000]/60 hover:text-[#FFB000] transition-colors mb-12 block">
           [ Return to Core ]
-        </a>
+        </Link>
         <h1 className="text-3xl font-serif italic mb-12">Privacy Protocol</h1>
         <div className="space-y-8 font-light text-sm text-white/50 leading-loose">
           <p>Effective Date: 2026</p>
