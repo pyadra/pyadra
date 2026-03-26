@@ -1,7 +1,7 @@
 import './globals.css'
 import CustomCursor from "./components/CustomCursor";
 import Preloader from "./components/Preloader";
-import AmbientAudio from "./components/AmbientAudio";
+import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/react";
 import { Inter, Space_Grotesk } from 'next/font/google'
 
@@ -17,14 +17,7 @@ export const metadata = {
     description: 'A ritual of people helping people. Enter the ecosystem.',
     url: 'https://pyadra.io',
     siteName: 'Pyadra',
-    images: [
-      {
-        url: '/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Pyadra Core Portal',
-      },
-    ],
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Pyadra Core Portal' }],
     locale: 'en_US',
     type: 'website',
   },
@@ -40,11 +33,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es" className={`${inter.variable} ${space.variable}`}>
       <body>
-        <Preloader />
-        <CustomCursor />
-        {children}
-        <AmbientAudio />
-        <Analytics />
+         <Providers>
+            <Preloader />
+            <CustomCursor />
+            {children}
+            <Analytics />
+         </Providers>
       </body>
     </html>
   )

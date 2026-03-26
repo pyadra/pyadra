@@ -6,7 +6,7 @@ import { useRef, Suspense } from "react";
 import * as THREE from "three";
 
 // The Artifact: The Genesis Portal (Massive Obsidian Stargate Ring & Golden Human Nucleus)
-function LithicCapsule({ hovered }: { hovered: boolean }) {
+function LithicCapsule({ hovered, audioActive }: { hovered: boolean, audioActive: boolean }) {
   const portalRef = useRef<THREE.Mesh>(null);
   const nucleusRef = useRef<THREE.Mesh>(null);
   const internalLightRef = useRef<THREE.PointLight>(null);
@@ -19,8 +19,10 @@ function LithicCapsule({ hovered }: { hovered: boolean }) {
       const targetRotateY = mouse.x * 0.2;
       
       // The massive heavy gate spinning endlessly
-      const ritualSpinY = state.clock.elapsedTime * 0.15;
-      const ritualSpinZ = Math.sin(state.clock.elapsedTime * 0.1) * 0.1;
+      // If audio is active, the portal spins ~10% faster
+      const speedMult = audioActive ? 1.1 : 1.0;
+      const ritualSpinY = state.clock.elapsedTime * 0.15 * speedMult;
+      const ritualSpinZ = Math.sin(state.clock.elapsedTime * 0.1 * speedMult) * 0.1;
       
       portalRef.current.rotation.x = THREE.MathUtils.lerp(portalRef.current.rotation.x, targetRotateX, delta * 2.0);
       portalRef.current.rotation.y = THREE.MathUtils.lerp(portalRef.current.rotation.y, targetRotateY + ritualSpinY, delta * 2.0);
@@ -76,12 +78,14 @@ function LithicCapsule({ hovered }: { hovered: boolean }) {
       <pointLight ref={internalLightRef} color="#FFB000" distance={15} position={[0, 0, 0]} />
       
       {/* THE AMBER SAND DUST (People/Connection Spores floating around the portal) */}
-      <Sparkles count={200} scale={8} size={0.6} speed={0.3} opacity={0.4} color="#E3DAC9" noise={1} />
+      <Sparkles count={200} scale={8} size={0.6} speed={audioActive ? 0.35 : 0.3} opacity={0.4} color="#E3DAC9" noise={1} />
       {/* Massive hover Catalyst dust storm as you cross the threshold */}
-      {hovered && <Sparkles count={150} scale={6} size={1.5} speed={2} opacity={0.8} color="#FFB000" noise={3} />}
+      {hovered && <Sparkles count={150} scale={6} size={1.5} speed={audioActive ? 2.5 : 2} opacity={0.8} color="#FFB000" noise={3} />}
     </group>
   );
 }
+
+
 
 // Pale Champagne light striking the edges of the obsidian ring
 function ShadowEarthLighting() {
@@ -106,7 +110,7 @@ function ShadowEarthLighting() {
   );
 }
 
-export default function Scene({ hovered = false }: { hovered?: boolean }) {
+export default function Scene({ hovered = false, audioActive = false }: { hovered?: boolean, audioActive?: boolean }) {
   return (
     <div className="absolute inset-0 w-full h-full pointer-events-auto z-0 touch-none">
        {/* Cap DPR to 2 maximum to prevent 4k retina lag and force 60fps locking */}
@@ -121,7 +125,7 @@ export default function Scene({ hovered = false }: { hovered?: boolean }) {
           <spotLight position={[6, -8, -5]} angle={0.8} penumbra={1} intensity={6} color="#1B2421" /> 
 
           <Float speed={1.2} rotationIntensity={0.1} floatIntensity={0.15}>
-             <LithicCapsule hovered={hovered} />
+             <LithicCapsule hovered={hovered} audioActive={audioActive} />
           </Float>
 
           <Environment preset="studio" environmentIntensity={0.2} />
