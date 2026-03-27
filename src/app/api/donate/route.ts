@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { sanitizeString, validateAmount } from "@/app/lib/validation";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,15 +17,19 @@ function getStripe(): Stripe | null {
 
 export async function POST(req: Request) {
   try {
-    const { amount, intent, project_id } = await req.json();
-    if (!amount || isNaN(amount)) {
+    const { amount, intent, project_id, supporter_name, supporter_email, is_anonymous, support_message } = await req.json();
+    // ---- Validation ----
+    if (!validateAmount(amount)) {
       return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
     }
+    const safeName = sanitizeString(supporter_name);
+    const safeEmail = sanitizeString(supporter_email, 100);
+    const safeMessage = sanitizeString(support_message, 120);
 
     const stripe = getStripe();
     if (!stripe) {
       return NextResponse.json(
-        { error: "Missing STRIPE_SECRET_KEY (server env)" },
+        { error: "Server configuration error" },
         { status: 500 }
       );
     }
@@ -34,9 +39,20 @@ export async function POST(req: Request) {
       process.env.NEXT_PUBLIC_SITE_URL ||
       "http://localhost:3000";
 
+    const sessionMetadata = {
+      project_id: project_id || "orbit-77",
+      intent: intent || "orbit-support", 
+      supporter_name: safeName || "Anonymous",
+      supporter_email: safeEmail || "",
+      is_anonymous: String(!!is_anonymous),
+      support_message: safeMessage || "",
+      season_label: "Season 1"
+    };
+
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
+      customer_email: safeEmail ? safeEmail : undefined,
       currency: "aud",
       line_items: [
         {
@@ -44,27 +60,25 @@ export async function POST(req: Request) {
             currency: "aud",
             unit_amount: Number(amount),
             product_data: {
-              name: "Pyadra — Contribution",
-              description: "Symbolic shares to support the Pyadra collective fund",
-              metadata: { project_id, intent },
+              name: "Orbit 77 — Season Credential",
+              description: "Supporting the distribution of Season 1. A permanent archive entry.",
+              metadata: sessionMetadata,
             },
           },
           quantity: 1,
         },
       ],
       success_url: `${origin}/transmission-confirmed?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/?canceled=1`,
-      metadata: { project_id, intent },
+      cancel_url: `${origin}/projects/orbit`,
+      metadata: sessionMetadata,
     });
 
+    // Minimal response – only the URL needed by the client
     return NextResponse.json({ url: session.url });
   } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : String(err);
-    console.error("Stripe error:", errorMessage);
-    return NextResponse.json(
-      { error: "Stripe session failed", details: errorMessage },
-      { status: 500 }
-    );
+    // Log full error on server, but return generic message to client
+    console.error("Stripe error:", err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: "Payment processing failed" }, { status: 500 });
   }
 }
 

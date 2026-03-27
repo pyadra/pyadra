@@ -19,6 +19,7 @@ export default function ShadowEarthHome() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     // Stage 1: Pre-Loader timeout (1.5s of pure anticipation)
     const timer = setTimeout(() => {
@@ -28,7 +29,7 @@ export default function ShadowEarthHome() {
   }, []);
 
   useEffect(() => {
-    // Fetch Live Project Data (Nodes and Stripe Founding Members)
+    // Fetch Live Project Data (Nodes and Stripe Founding Members/Supporters)
     fetch('/api/stats')
       .then(res => res.json())
       .then(data => setStats(data))
@@ -50,7 +51,6 @@ export default function ShadowEarthHome() {
         .then(data => {
            const formatted = `#${String(data.id).padStart(4, '0')}`;
            window.localStorage.setItem("pyadra_observer_id", formatted);
-           // eslint-disable-next-line react-hooks/set-state-in-effect
            setObserverId(formatted);
         })
         .catch(() => {});
@@ -128,7 +128,7 @@ export default function ShadowEarthHome() {
                    This number is yours.<br/>You arrived early.
                  </p>
                  <p className="text-xs font-sans font-light text-[#E3DAC9]/50 leading-relaxed mb-10">
-                   If you choose to enter the ecosystem —<br/>as a Founding Member or part of the Crew —<br/>this becomes your permanent identity.
+                   If you choose to enter the ecosystem —<br/>as a Supporter or part of the Crew —<br/>this becomes your permanent identity.
                  </p>
                  <p className="text-[10px] font-mono uppercase tracking-widest text-[#E3DAC9]/40 mb-12 pb-4 border-b border-white/5">
                    The ecosystem remembers who arrived first.
@@ -268,7 +268,7 @@ export default function ShadowEarthHome() {
                         
                         <div className="flex flex-col items-center gap-1">
                            <div className="flex items-center gap-3">
-                             Founding Members <span className="text-white/20">—</span> <span className="text-[#FFB000] font-bold">{stats.members || '--'}</span>
+                             Supporters <span className="text-white/20">—</span> <span className="text-[#FFB000] font-bold">{stats.members || '--'}</span>
                            </div>
                         </div>
                         

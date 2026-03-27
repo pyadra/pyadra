@@ -2,7 +2,6 @@
 
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
 import Link from "next/link";
 
 // Form Component wrapped in Suspense to handle `useSearchParams` properly in App Router
@@ -141,17 +140,17 @@ export default function JoinCrewPage() {
           </div>
         </div>
 
-        {/* SECTION 4 - REMINDER / FOUNDING MEMBERS */}
+        {/* SECTION 4 - SUPPORT ORBIT 77 */}
         <div className="bg-gradient-to-br from-[#101A14] to-[#0A120D] backdrop-blur-xl border border-[#39FF14]/30 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden shadow-[0_0_30px_rgba(57,255,20,0.1)]">
            <div className="absolute top-0 right-0 w-48 h-48 bg-[#39FF14]/10 rounded-full blur-[60px] pointer-events-none" />
            <div className="relative z-10">
-             <h4 className="font-serif italic text-[#39FF14] text-2xl lg:text-3xl mb-4 drop-shadow-[0_0_10px_rgba(57,255,20,0.3)]">Not ready to apply yet?</h4>
+             <h4 className="font-serif italic text-[#39FF14] text-2xl lg:text-3xl mb-4 drop-shadow-[0_0_10px_rgba(57,255,20,0.3)]">Not ready to apply?</h4>
              <p className="text-sm border border-[#39FF14]/20 bg-[#39FF14]/5 p-4 rounded-xl inline-block font-sans text-[#F4EFEA]/90 leading-relaxed mb-8 font-light">
-                Become a Founding Member instead.<br />
-                <span className="font-mono text-[#39FF14]">$10/month. 50 spots. 2 already claimed.</span>
+               Support Orbit 77 directly.<br />
+               <span className="font-mono text-[#39FF14]">Season 1 is complete. Help it reach further.</span>
              </p>
-             <Link href="/projects/orbit" className="block w-full py-4 bg-[#39FF14]/10 hover:bg-[#39FF14] border border-[#39FF14]/40 hover:text-[#060B08] text-[#39FF14] rounded-xl text-[10px] md:text-xs font-mono uppercase tracking-[0.2em] font-bold transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)]">
-               CLAIM YOUR SPOT →
+             <Link href="/projects/orbit#support" className="block w-full py-4 bg-[#39FF14]/10 hover:bg-[#39FF14] border border-[#39FF14]/40 hover:text-[#060B08] text-[#39FF14] rounded-xl text-[10px] md:text-xs font-mono uppercase tracking-[0.2em] font-bold transition-all shadow-[0_0_15px_rgba(57,255,20,0.2)]">
+               SUPPORT ORBIT 77 →
              </Link>
            </div>
         </div>

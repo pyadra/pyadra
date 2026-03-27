@@ -1,6 +1,6 @@
 import './globals.css'
 import CustomCursor from "./components/CustomCursor";
-import Preloader from "./components/Preloader";
+// import Preloader from "./components/Preloader"; // removed unused component
 import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/react";
 import { Inter, Space_Grotesk } from 'next/font/google'
@@ -34,7 +34,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es" className={`${inter.variable} ${space.variable}`}>
       <body>
          <Providers>
-            <Preloader />
             <CustomCursor />
             {children}
             <Analytics />

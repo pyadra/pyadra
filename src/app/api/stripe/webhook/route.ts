@@ -40,8 +40,87 @@ export async function POST(req: Request) {
 
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
-      // TODO: registra la contribución / emite “shares simbólicos”, etc.
       console.log("✅ checkout.session.completed", session.id);
+
+      // Extract metadata safely
+      const metadata = session.metadata || {};
+      if (metadata.project_id === "orbit-77") {
+         try {
+           const { getSupabase } = await import('@/app/lib/db');
+           // eslint-disable-next-line @typescript-eslint/no-explicit-any
+           const supabase = getSupabase() as any;
+           
+           // Generate a unique collectible code deterministically from Stripe session
+           // to guarantee perfectly matching UI and email without race conditions
+           const suffix = session.id.replace(/[^A-Z0-9]/gi, "").toUpperCase().slice(-6);
+           const credentialCode = `O77-S1-${suffix}`;
+           const amountAud = (session.amount_total || 0) / 100;
+           
+           const supporterName = metadata.supporter_name || 'Anonymous';
+           const isAnonymous = metadata.is_anonymous === 'true';
+           const displayName = isAnonymous ? 'Anonymous' : supporterName;
+           const supporterEmail = metadata.supporter_email || session.customer_details?.email || '';
+           
+           let emailSent = false;
+           
+           // If we have a DB connection, persist it
+           if (supabase) {
+             const { error: dbError } = await supabase
+               .from('orbit_support_credentials')
+               .insert({
+                 stripe_checkout_session_id: session.id,
+                 stripe_payment_intent_id: session.payment_intent as string,
+                 payment_status: 'paid',
+                 supporter_name: supporterName,
+                 supporter_email: supporterEmail,
+                 display_name: displayName,
+                 is_anonymous: isAnonymous,
+                 amount_aud: amountAud,
+                 currency: 'aud',
+                 support_message: metadata.support_message || null,
+                 credential_code: credentialCode,
+                 season_label: metadata.season_label || 'Season 1',
+                 project_slug: metadata.project_id,
+                 paid_at: new Date().toISOString()
+               });
+               
+               if (dbError) {
+                 console.error("Supabase Insertion Error (Webhook):", dbError);
+               }
+           }
+           
+           // Trigger Email
+           if (supporterEmail) {
+             const { sendCredentialEmail } = await import('@/app/lib/email');
+             
+             // Date string for the email
+             const dateStr = new Date().toLocaleDateString("en-AU", {
+                day: "numeric", month: "long", year: "numeric",
+             });
+             
+             emailSent = await sendCredentialEmail({
+                to: supporterEmail,
+                supporterName: displayName,
+                amountAud,
+                credentialCode,
+                seasonLabel: metadata.season_label || 'Season 1',
+                dateStr
+             });
+             
+             // Optionally update DB to mark email as sent
+             if (supabase && emailSent) {
+                await supabase.from('orbit_support_credentials')
+                  .update({ email_sent: true, email_sent_at: new Date().toISOString() })
+                  .eq('stripe_checkout_session_id', session.id);
+             }
+           }
+           
+         } catch(e) {
+           console.error("Failed to process Orbit 77 credential issuance:", e);
+           // We do NOT throw here because we don't want Stripe to retry and fail if the 
+           // payment was already successfully captured.
+         }
+      }
     }
 
     return NextResponse.json({ received: true });

@@ -46,24 +46,19 @@ const EPISODES = [
   { id: 10, title: "The Part You Don't See", thumb: "https://img.youtube.com/vi/hvCCHVRK9iU/maxresdefault.jpg", link: "https://youtu.be/hvCCHVRK9iU?si=Ii6Byk0Tg_r9aNLC", latest: true },
 ];
 
-// Data for Roles
-const ROLES = [
-  { id: "social-media-operator", indicator: "URGENT", color: "red", label: "SOCIAL MEDIA", title: "Social Media Operator", desc: "Cut clips. Post reels. Grow TikTok and Instagram. You know what makes people stop scrolling. We need that skill now.", time: "~5 hrs/week", reward: "Founding Crew credit + Pyadra participation units" },
-  { id: "marketing-strategist", indicator: "URGENT", color: "red", label: "MARKETING", title: "Marketing Strategist", desc: "Build the growth plan. Find the audience. You don't need a degree — you need to know how people move online.", time: "~3 hrs/week", reward: "Founding Crew credit + Pyadra participation units" },
-  { id: "video-editor", indicator: "NEEDED", color: "yellow", label: "POST-PRODUCTION", title: "Video Editor", desc: "Take raw footage and make it hit. Reels, shorts, promos. Fast turnaround. Clean aesthetic.", time: "~4 hrs/week", reward: "Founding Crew credit + Pyadra participation units" },
-  { id: "community-manager", indicator: "NEEDED", color: "yellow", label: "COMMUNITY", title: "Community Manager", desc: "Own the comments, the DMs, the community. Be the voice of Orbit 77 online.", time: "~3 hrs/week", reward: "Founding Crew credit + Pyadra participation units" },
-  { id: "sponsor-outreach", indicator: "OPEN", color: "green", label: "PARTNERSHIPS", title: "Sponsor Outreach", desc: "Find brands that align. Send the pitch. Close the deal. Commission-based on top of participation units.", time: "Flexible", reward: "% of deals closed + Pyadra participation units" }
-];
-
 export default function OrbitEntertainmentDashboard() {
   const [stripeOpen, setStripeOpen] = useState(false);
   const [amountAud, setAmountAud] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
-  
-  // Simulated dynamic state for Founding Members
-  const totalFounders = 50;
-  const currentFounders = 2; // Connected to Stripe count in a real DB
-  const percentageFounders = (currentFounders / totalFounders) * 100;
+  const [supporterName, setSupporterName] = useState("");
+  const [supporterEmail, setSupporterEmail] = useState("");
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  const [supportMessage, setSupportMessage] = useState("");
+
+  // Support goal progress — in AUD
+  const supportGoalAud = 1000;
+  const supportRaisedAud = 0; // Driven by Stripe webhook in production
+  const supportPercentage = Math.min((supportRaisedAud / supportGoalAud) * 100, 100);
   
   // Bioluminescence tied to scroll depth - blending Green and Amber
   const { scrollY } = useScroll();
@@ -71,6 +66,11 @@ export default function OrbitEntertainmentDashboard() {
 
   const handleSupport = async () => {
     if (!amountAud || amountAud < 2 || loading) return;
+    if (!supporterEmail || !supporterEmail.includes('@')) {
+      alert("Please provide a valid email for your season credential.");
+      return;
+    }
+    
     try {
       setLoading(true);
       const res = await fetch("/api/donate", {
@@ -81,6 +81,10 @@ export default function OrbitEntertainmentDashboard() {
           amount: Math.round(amountAud * 100),
           project_id: "orbit-77",
           currency: "AUD",
+          supporter_name: supporterName.trim() || "Anonymous",
+          supporter_email: supporterEmail.trim(),
+          is_anonymous: isAnonymous,
+          support_message: supportMessage.trim()
         }),
       });
       const data = await res.json();
@@ -158,10 +162,10 @@ export default function OrbitEntertainmentDashboard() {
            
            <div className="flex flex-col sm:flex-row items-center gap-6 mt-6 w-full md:w-auto">
              <button 
-               onClick={() => { setAmountAud(10); setStripeOpen(true); }}
+               onClick={() => { setAmountAud(20); setStripeOpen(true); }}
                className="w-full sm:w-auto px-8 py-4 rounded-full text-[9px] md:text-[10px] uppercase font-mono tracking-[0.2em] transition-all border border-[#39FF14]/40 hover:border-[#39FF14] text-[#060B08] bg-[#39FF14] shadow-[0_0_20px_rgba(57,255,20,0.3)] hover:shadow-[0_0_30px_rgba(57,255,20,0.5)] font-bold"
              >
-               BECOME A FOUNDING MEMBER
+               SUPPORT ORBIT 77
              </button>
              <a href="#latest-episode" className="text-[10px] md:text-[11px] uppercase font-mono tracking-[0.2em] text-[#AEFFA1]/80 hover:text-[#FFB000] transition-colors md:mr-4 font-bold border-b border-transparent hover:border-[#FFB000]">
                Watch the latest episode ↓
@@ -308,7 +312,7 @@ export default function OrbitEntertainmentDashboard() {
                <div className="space-y-8 mt-10 md:mt-0">
                    <ProgressBar label="Clothing Brand" status="ACTIVE" percentage={40} color="orbit" />
                    <ProgressBar label="Marketing & Distribution" status="CRITICAL" percentage={10} color="alert" />
-                   <ProgressBar label="Founding Members" status="OPEN — BE FIRST" percentage={0} fraction="0 / 50" color="pyadra" />
+                    <ProgressBar label="Support Goal" status="OPEN" percentage={supportPercentage} fraction={`$${supportRaisedAud} / $${supportGoalAud} AUD`} color="pyadra" />
                </div>
            </div>
            
@@ -320,145 +324,121 @@ export default function OrbitEntertainmentDashboard() {
            </div>
         </motion.div>
 
-        {/* SECTION 6: JOIN THE CREW (Role Directory Accordion) */}
+        {/* SECTION 6: WHO WE NEED */}
         <motion.div {...fadeUp} transition={{ delay: 0.5 }} className="w-full mb-16">
-          <div className="bg-[#050A07]/80 backdrop-blur-xl border border-white/5 rounded-2xl md:rounded-3xl p-6 lg:p-10 shadow-[0_15px_40px_rgba(0,0,0,0.5)]">
-            <div className="mb-8 border-b border-[#39FF14]/20 pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-              <div>
-                <span className="text-[9px] md:text-[10px] font-mono tracking-widest uppercase text-[#AEFFA1]/70 mb-4 block font-bold">Join The Crew</span>
-                <h4 className="font-serif italic text-[#F4EFEA] text-2xl lg:text-3xl mb-2">Crew Roster</h4>
-                <p className="text-sm text-[#AEFFA1]/80 font-light font-sans max-w-lg">
-                   We don&apos;t pay in promises. We pay in participation. Pick a role and stop watching from the sidelines.
-                </p>
-              </div>
-              <div className="hidden md:flex flex-col gap-2 items-end">
-                 <span className="flex items-center gap-2 text-[9px] font-mono text-[#AEFFA1]/50"><span className="w-1.5 h-1.5 rounded-full bg-[#FF4444]" /> URGENT</span>
-                 <span className="flex items-center gap-2 text-[9px] font-mono text-[#AEFFA1]/50"><span className="w-1.5 h-1.5 rounded-full bg-[#FFB000]" /> NEEDED</span>
-                 <span className="flex items-center gap-2 text-[9px] font-mono text-[#AEFFA1]/50"><span className="w-1.5 h-1.5 rounded-full bg-[#39FF14]" /> OPEN</span>
-              </div>
+          <div className="mb-8 flex flex-col md:flex-row justify-between items-end gap-4 border-b border-[#39FF14]/10 pb-6">
+            <div>
+              <span className="text-[9px] md:text-[10px] font-mono tracking-widest uppercase text-[#AEFFA1]/50 mb-3 block font-bold">Build It With Us</span>
+              <h4 className="font-serif italic text-[#F4EFEA] text-2xl lg:text-3xl">Three roles. All urgent.</h4>
             </div>
-            
-            <div className="flex flex-col gap-3">
-              {ROLES.map((role) => {
-                const dotColors = {
-                   red: "bg-[#FF4444] shadow-[0_0_10px_rgba(255,68,68,0.8)]",
-                   yellow: "bg-[#FFB000] shadow-[0_0_10px_rgba(255,176,0,0.8)]",
-                   green: "bg-[#39FF14] shadow-[0_0_10px_rgba(57,255,20,0.8)]"
-                };
-                const dotStyle = dotColors[role.color as keyof typeof dotColors];
-                const activeBorder = role.color === 'red' ? 'focus-within:border-[#FF4444]/60' : role.color === 'yellow' ? 'focus-within:border-[#FFB000]/60' : 'focus-within:border-[#39FF14]/60';
-                
-                return (
-                  <details key={role.id} className={`group bg-[#0A120D]/60 border border-white/5 hover:border-white/20 ${activeBorder} rounded-xl overflow-hidden cursor-pointer transition-colors max-w-full`}>
-                     <summary className="flex items-center justify-between p-4 md:p-5 outline-none list-none marker:hidden">
-                        <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
-                           <span className={`w-2 h-2 rounded-full flex-shrink-0 ${dotStyle}`} />
-                           <span className="text-sm md:text-base font-serif italic text-[#F4EFEA] truncate">{role.title}</span>
-                        </div>
-                        <div className="flex items-center gap-4 md:gap-6 flex-shrink-0">
-                           <span className="hidden sm:inline-block text-[8px] md:text-[9px] font-mono uppercase tracking-widest text-[#AEFFA1]/40 border border-white/5 px-2 py-1 rounded bg-black/20 whitespace-nowrap">
-                             {role.indicator}
-                           </span>
-                           <span className="text-[#39FF14] text-xs font-mono group-open:rotate-180 transition-transform duration-300">▼</span>
-                        </div>
-                     </summary>
-                     <div className="p-4 md:p-5 pt-0 border-t border-white/5 mt-2 bg-black/40">
-                        <p className="text-xs font-light font-sans text-[#AEFFA1]/80 leading-relaxed mb-6 max-w-3xl">{role.desc}</p>
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                           <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 bg-[#050A07] px-5 py-3 rounded-lg border border-[#39FF14]/10 w-full md:w-auto">
-                             <div className="flex flex-col gap-1">
-                               <span className="text-[8px] font-mono uppercase text-[#AEFFA1]/50">Time</span>
-                               <span className="text-[10px] font-mono text-[#39FF14]">{role.time}</span>
-                             </div>
-                             <div className="hidden sm:block w-[1px] h-8 bg-white/5" />
-                             <div className="flex flex-col gap-1">
-                               <span className="text-[8px] font-mono uppercase text-[#AEFFA1]/50">Get</span>
-                               <span className="text-[10px] font-mono text-[#F4EFEA]">{role.reward}</span>
-                             </div>
-                           </div>
-                           <Link href={`/projects/orbit/join?role=${role.id}`} className="w-full md:w-auto text-center px-8 py-4 rounded-xl text-[9px] uppercase font-mono tracking-widest font-bold transition-all border border-[#39FF14]/40 hover:bg-[#39FF14] hover:text-[#000] text-[#39FF14] shadow-[0_0_15px_rgba(57,255,20,0.1)] hover:shadow-[0_0_20px_rgba(57,255,20,0.4)] whitespace-nowrap">
-                              APPLY FOR THIS ROLE →
-                           </Link>
-                        </div>
-                     </div>
-                  </details>
-                );
-              })}
-              
-              {/* EXTRA OPEN APPLICATION ROW */}
-              <Link href="/projects/orbit/join?role=open-application" className="mt-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 p-4 md:p-5 bg-[#39FF14]/5 hover:bg-[#39FF14]/10 border border-[#39FF14]/20 rounded-xl transition-colors group">
-                 <div className="overflow-hidden">
-                    <span className="text-sm font-serif italic text-[#39FF14]">Not the right role?</span>
-                    <p className="text-[9px] text-[#AEFFA1]/60 mt-1 font-mono uppercase tracking-widest truncate">Tell us what you do. We&apos;ll find where you fit.</p>
-                 </div>
-                 <span className="flex-shrink-0 text-[9px] font-mono font-bold text-[#39FF14] sm:group-hover:translate-x-1 transition-transform border-b border-transparent group-hover:border-[#39FF14] pb-0.5 whitespace-nowrap">
-                   SEND OPEN APPLICATION →
-                 </span>
+            <Link href="/projects/orbit/join" className="flex-shrink-0 text-[9px] font-mono uppercase tracking-[0.2em] text-[#AEFFA1]/50 hover:text-[#39FF14] transition-colors border-b border-transparent hover:border-[#39FF14] pb-0.5 font-bold">
+              Open application →
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Role 1 */}
+            <div className="bg-[#050A07]/80 backdrop-blur-xl border border-[#FF4444]/20 hover:border-[#FF4444]/50 rounded-2xl p-6 flex flex-col gap-4 transition-colors group shadow-[0_10px_30px_rgba(0,0,0,0.4)]">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FF4444] shadow-[0_0_8px_rgba(255,68,68,0.8)]" />
+                <span className="text-[8px] font-mono uppercase tracking-widest text-[#FF4444] font-bold">Urgent</span>
+              </div>
+              <div>
+                <h5 className="font-serif italic text-[#F4EFEA] text-lg mb-2">Social Media Operator</h5>
+                <p className="text-xs font-light font-sans text-[#AEFFA1]/60 leading-relaxed">Cut clips. Post reels. Make people stop scrolling.</p>
+              </div>
+              <Link href="/projects/orbit/join?role=social-media-operator" className="mt-auto text-[8px] font-mono uppercase tracking-widest text-[#39FF14] hover:text-[#F4EFEA] transition-colors font-bold border-b border-[#39FF14]/20 hover:border-[#F4EFEA]/40 pb-0.5 w-fit">
+                Apply →
+              </Link>
+            </div>
+
+            {/* Role 2 */}
+            <div className="bg-[#050A07]/80 backdrop-blur-xl border border-[#FF4444]/20 hover:border-[#FF4444]/50 rounded-2xl p-6 flex flex-col gap-4 transition-colors group shadow-[0_10px_30px_rgba(0,0,0,0.4)]">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FF4444] shadow-[0_0_8px_rgba(255,68,68,0.8)]" />
+                <span className="text-[8px] font-mono uppercase tracking-widest text-[#FF4444] font-bold">Urgent</span>
+              </div>
+              <div>
+                <h5 className="font-serif italic text-[#F4EFEA] text-lg mb-2">Marketing Strategist</h5>
+                <p className="text-xs font-light font-sans text-[#AEFFA1]/60 leading-relaxed">Build the growth plan. Find the audience. Make noise.</p>
+              </div>
+              <Link href="/projects/orbit/join?role=marketing-strategist" className="mt-auto text-[8px] font-mono uppercase tracking-widest text-[#39FF14] hover:text-[#F4EFEA] transition-colors font-bold border-b border-[#39FF14]/20 hover:border-[#F4EFEA]/40 pb-0.5 w-fit">
+                Apply →
+              </Link>
+            </div>
+
+            {/* Role 3 */}
+            <div className="bg-[#050A07]/80 backdrop-blur-xl border border-[#FFB000]/20 hover:border-[#FFB000]/50 rounded-2xl p-6 flex flex-col gap-4 transition-colors group shadow-[0_10px_30px_rgba(0,0,0,0.4)]">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FFB000] shadow-[0_0_8px_rgba(255,176,0,0.8)]" />
+                <span className="text-[8px] font-mono uppercase tracking-widest text-[#FFB000] font-bold">Needed</span>
+              </div>
+              <div>
+                <h5 className="font-serif italic text-[#F4EFEA] text-lg mb-2">Video Editor</h5>
+                <p className="text-xs font-light font-sans text-[#AEFFA1]/60 leading-relaxed">Raw footage to reels. Fast turnaround. Clean aesthetic.</p>
+              </div>
+              <Link href="/projects/orbit/join?role=video-editor" className="mt-auto text-[8px] font-mono uppercase tracking-widest text-[#39FF14] hover:text-[#F4EFEA] transition-colors font-bold border-b border-[#39FF14]/20 hover:border-[#F4EFEA]/40 pb-0.5 w-fit">
+                Apply →
               </Link>
             </div>
           </div>
         </motion.div>
 
-        {/* SECTION 7, 8, 9: FOUNDING MEMBERS, STORE, FOLLOW GRID */}
+        {/* SECTION 7, 8, 9: SUPPORT ORBIT 77, STORE, FOLLOW GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-           
-           {/* SECTION 7: FOUNDING MEMBERS (CRITICAL SECTION - Spans 2 cols on tablet/desktop) */}
-           <motion.div {...fadeUp} transition={{ delay: 0.6 }} className="md:col-span-2 bg-gradient-to-br from-[#101A14] to-[#0A120D] backdrop-blur-xl border border-[#39FF14]/40 hover:border-[#39FF14] rounded-2xl p-8 lg:p-10 flex flex-col justify-between shadow-[0_0_30px_rgba(57,255,20,0.1)] relative overflow-hidden group transition-colors">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-[#39FF14]/15 rounded-full blur-[80px] pointer-events-none" />
-              
-              <div>
-                <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-[#39FF14] mb-6 block font-bold drop-shadow-[0_0_8px_rgba(57,255,20,0.4)]">Founding Members</span>
-                
-                <h4 className="font-serif italic text-[#39FF14] text-3xl mb-4 drop-shadow-[0_0_10px_rgba(57,255,20,0.3)]">Secure Your Spot</h4>
-                
-                <p className="text-xs md:text-sm font-sans text-[#F4EFEA]/90 leading-relaxed mb-6 font-light bg-[#39FF14]/5 p-5 rounded-xl border border-[#39FF14]/20">
-                   Each member receives <strong>100 Pyadra Units</strong>. These represent your early participation in the ecosystem.
-                </p>
-                
-                {/* IMPROVEMENT 1: Foundation Members Counter */}
-                <div className="my-8 border-t border-[#39FF14]/20 pt-6">
-                   <div className="flex justify-between items-center mb-3">
-                     <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#39FF14] font-bold">FOUNDING MEMBERS (LIVE)</p>
-                     <span className="text-[9px] font-mono text-[#AEFFA1]/50">{currentFounders} of {totalFounders} spots claimed</span>
-                   </div>
-                   
-                   {/* Visual Progress Bar */}
-                   <div className="w-full h-1.5 bg-[#000] border border-[#39FF14]/10 rounded-full overflow-hidden mb-6 relative">
-                     <motion.div 
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${percentageFounders}%` }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1.5, ease: "easeOut" }}
-                        className="absolute top-0 left-0 h-full bg-[#39FF14] shadow-[0_0_15px_rgba(57,255,20,0.6)]"
-                     />
-                   </div>
 
-                   {/* Live Roster */}
-                   <ul className="space-y-4 text-xs md:text-sm text-[#F4EFEA] font-light font-sans italic bg-black/40 p-5 rounded-xl border border-[#39FF14]/10">
-                     <li className="flex items-center gap-4">
-                       <span className="w-2 h-2 rounded-full bg-[#39FF14] animate-pulse shadow-[0_0_10px_rgba(57,255,20,0.8)]" /> 
-                       <span>Pablo Ramirez <span className="text-[#AEFFA1]/40 ml-2 not-italic text-[10px] font-mono">— Founding Member #001</span></span>
-                     </li>
-                     <li className="flex items-center gap-4">
-                       <span className="w-2 h-2 rounded-full bg-[#39FF14] animate-pulse shadow-[0_0_10px_rgba(57,255,20,0.8)]" /> 
-                       <span>Eduardo Diaz <span className="text-[#AEFFA1]/40 ml-2 not-italic text-[10px] font-mono">— Founding Member #002</span></span>
-                     </li>
-                   </ul>
-                   <p className="text-[10px] font-mono text-[#AEFFA1]/40 mt-4 text-center">Every name here made a decision before it was obvious.</p>
+           {/* SECTION 7: SUPPORT ORBIT 77 — Spans 2 cols */}
+           <motion.div {...fadeUp} transition={{ delay: 0.6 }} id="support" className="md:col-span-2 bg-gradient-to-br from-[#101A14] to-[#0A120D] backdrop-blur-xl border border-[#39FF14]/40 hover:border-[#39FF14] rounded-2xl p-8 lg:p-10 flex flex-col justify-between shadow-[0_0_30px_rgba(57,255,20,0.1)] relative overflow-hidden group transition-colors">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-[#39FF14]/15 rounded-full blur-[80px] pointer-events-none" />
+
+              <div>
+                <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-[#39FF14] mb-6 block font-bold drop-shadow-[0_0_8px_rgba(57,255,20,0.4)]">Support Orbit 77</span>
+
+                <h4 className="font-serif italic text-[#39FF14] text-3xl mb-4 drop-shadow-[0_0_10px_rgba(57,255,20,0.3)]">The signal is strong.<br/>The reach is not.</h4>
+
+                <p className="text-xs md:text-sm font-sans text-[#F4EFEA]/90 leading-relaxed mb-6 font-light bg-[#39FF14]/5 p-5 rounded-xl border border-[#39FF14]/20">
+                  Season 1 is complete. Ten episodes. Real conversations. No script.<br/>
+                  The problem is distribution, not creation.
+                  <span className="block mt-3 text-[#AEFFA1]/60">
+                    If this work means something to you — support it. That&apos;s how it reaches further.
+                  </span>
+                </p>
+
+                {/* Support Progress Bar */}
+                <div className="my-8 border-t border-[#39FF14]/20 pt-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#39FF14] font-bold">Distribution Fund</p>
+                    <span className="text-[9px] font-mono text-[#AEFFA1]/50">
+                      ${supportRaisedAud} of ${supportGoalAud} AUD
+                    </span>
+                  </div>
+
+                  {/* Animated Progress Bar */}
+                  <div className="w-full h-2 bg-[#000] border border-[#39FF14]/10 rounded-full overflow-hidden mb-2 relative">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      whileInView={{ width: supportPercentage === 0 ? "2px" : `${supportPercentage}%` }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1.5, ease: "easeOut" }}
+                      className="absolute top-0 left-0 h-full bg-[#39FF14] shadow-[0_0_12px_rgba(57,255,20,0.5)] rounded-full"
+                    />
+                  </div>
+                  <p className="text-[9px] font-mono text-[#AEFFA1]/40 text-right">
+                    Goal: 1,000 AUD — Season 2 distribution
+                  </p>
                 </div>
               </div>
 
               <div className="mt-6 pt-4 border-t border-white/5">
-                 <button onClick={() => { setAmountAud(10); setStripeOpen(true); }} className="w-full bg-[#39FF14] hover:bg-[#39FF14]/80 border border-[#39FF14] hover:border-white text-[#060B08] py-5 rounded-xl text-[10px] md:text-xs font-mono uppercase tracking-widest font-bold transition-all shadow-[0_0_20px_rgba(57,255,20,0.3)] cursor-pointer">
-                   Become a Member
-                 </button>
-                 <div className="text-center mt-4">
-                    <span className="text-sm md:text-base font-mono text-[#39FF14] font-bold tracking-[0.2em]">$10.00 AUD</span>
-                    <p className="text-[8px] md:text-[9px] font-mono uppercase tracking-widest text-[#AEFFA1]/60 mt-1 font-bold">Early access price. This will not stay this low.</p>
-                 </div>
-                 <p className="text-[7px] md:text-[8px] font-sans uppercase tracking-[0.2em] text-[#AEFFA1]/40 text-center mt-6 leading-relaxed">
-                   Participation units are internal ecosystem units, not financial securities.
-                 </p>
+                <button
+                  onClick={() => { setAmountAud(20); setStripeOpen(true); }}
+                  className="w-full bg-[#39FF14] hover:bg-[#39FF14]/80 border border-[#39FF14] hover:border-white text-[#060B08] py-5 rounded-xl text-[10px] md:text-xs font-mono uppercase tracking-widest font-bold transition-all shadow-[0_0_20px_rgba(57,255,20,0.3)] cursor-pointer"
+                >
+                  Support Orbit 77
+                </button>
+                <p className="text-[8px] md:text-[9px] font-mono text-[#AEFFA1]/40 text-center mt-5 leading-relaxed">
+                  Any amount. No recurring charges. Receive a digital support card.
+                </p>
               </div>
            </motion.div>
 
@@ -490,51 +470,112 @@ export default function OrbitEntertainmentDashboard() {
 
       </main>
 
-      {/* Stripe Modal blending Orbit Energy with Pyadra Luxury */}
+      {/* Stripe Modal — Support Orbit 77 */}
       {stripeOpen && (
          <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-[#020503]/90 backdrop-blur-2xl">
-           <motion.div 
+           <motion.div
              initial={{ opacity: 0, scale: 0.95 }}
              animate={{ opacity: 1, scale: 1 }}
              className="w-full max-w-xl bg-[#09120D] border border-[#39FF14]/40 rounded-2xl p-10 md:p-14 relative flex flex-col shadow-[0_30px_80px_rgba(57,255,20,0.15)] overflow-hidden"
            >
-             <div className="absolute top-0 right-0 w-64 h-64 bg-[#FFB000]/5 rounded-full blur-[80px] pointer-events-none" />
-             <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#39FF14]/10 rounded-full blur-[80px] pointer-events-none" />
-             
-             <button 
-               onClick={() => setStripeOpen(false)} 
+             <div className="absolute top-0 right-0 w-64 h-64 bg-[#39FF14]/5 rounded-full blur-[80px] pointer-events-none" />
+             <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#39FF14]/10 rounded-full blur-[80px] pointer-events-none" />
+
+             <button
+               onClick={() => setStripeOpen(false)}
                className="absolute top-6 right-6 text-[9px] font-mono tracking-[0.2em] uppercase text-[#AEFFA1]/60 hover:text-[#39FF14] transition-colors duration-300 cursor-pointer font-bold z-10"
              >
                Close
              </button>
-             
-             <h3 className="text-3xl md:text-5xl font-serif italic text-[#39FF14] mb-5 text-center drop-shadow-[0_0_15px_rgba(57,255,20,0.2)] relative z-10">
-                Initialize Matrix
+
+             <h3 className="text-3xl md:text-4xl font-serif italic text-[#39FF14] mb-3 text-center drop-shadow-[0_0_15px_rgba(57,255,20,0.2)] relative z-10">
+               Support Orbit 77
              </h3>
-             <p className="text-xs md:text-sm font-light font-sans text-[#F4EFEA]/80 leading-relaxed mb-10 text-center max-w-sm mx-auto relative z-10">
-                Secure your position in the Pyadra collective. You are joining early. No amount is too small.
+             <p className="text-xs font-light font-sans text-[#AEFFA1]/70 leading-relaxed mb-8 text-center max-w-sm mx-auto relative z-10">
+               Season 1 is done. The signal is strong. Help it reach further.
              </p>
-             
-             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12 relative z-10">
-               {[10, 50, 100].map(val => (
-                 <button 
-                   key={val} 
-                   onClick={() => setAmountAud(val)} 
-                   className={`py-5 rounded-xl text-xs md:text-sm font-mono tracking-widest transition-all duration-300 cursor-pointer border-2 ${amountAud === val ? 'bg-[#39FF14] text-[#060B08] border-[#39FF14] shadow-[0_0_20px_rgba(57,255,20,0.4)] font-bold' : 'bg-black/40 text-[#39FF14] border-[#39FF14]/20 hover:bg-[#39FF14]/10 hover:border-[#39FF14]/40'}`}
+
+             {/* Supporter Info Collection */}
+             <div className="relative z-10 flex flex-col gap-5 mb-8">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div>
+                   <label className="text-[9px] uppercase font-mono tracking-widest text-[#AEFFA1]/60 font-bold block mb-2">Display Name</label>
+                   <input
+                     type="text"
+                     value={supporterName}
+                     onChange={e => setSupporterName(e.target.value)}
+                     placeholder="Name for the archive"
+                     className="w-full bg-[#0A120D] border border-[#39FF14]/20 focus:border-[#39FF14] focus:shadow-[0_0_15px_rgba(57,255,20,0.1)] rounded-xl px-5 py-3 text-sm font-sans text-[#F4EFEA] outline-none transition-all placeholder:text-[#AEFFA1]/30"
+                   />
+                 </div>
+                 <div>
+                   <label className="text-[9px] uppercase font-mono tracking-widest text-[#AEFFA1]/60 font-bold block mb-2">Email Address *</label>
+                   <input
+                     type="email"
+                     required
+                     value={supporterEmail}
+                     onChange={e => setSupporterEmail(e.target.value)}
+                     placeholder="To send your season credential"
+                     className="w-full bg-[#0A120D] border border-[#39FF14]/20 focus:border-[#39FF14] focus:shadow-[0_0_15px_rgba(57,255,20,0.1)] rounded-xl px-5 py-3 text-sm font-sans text-[#F4EFEA] outline-none transition-all placeholder:text-[#AEFFA1]/30"
+                   />
+                 </div>
+               </div>
+
+               <div>
+                 <label className="text-[9px] uppercase font-mono tracking-widest text-[#AEFFA1]/60 font-bold block mb-2">Public visibility</label>
+                 <div className="flex gap-4">
+                   <button 
+                     onClick={() => setIsAnonymous(false)}
+                     className={`flex-1 py-3 text-[10px] font-mono tracking-widest uppercase rounded-lg border transition-colors ${!isAnonymous ? 'bg-[#39FF14]/10 border-[#39FF14] text-[#39FF14]' : 'bg-black border-white/10 text-white/40'}`}
+                   >
+                     Public Name
+                   </button>
+                   <button 
+                     onClick={() => setIsAnonymous(true)}
+                     className={`flex-1 py-3 text-[10px] font-mono tracking-widest uppercase rounded-lg border transition-colors ${isAnonymous ? 'bg-[#39FF14]/10 border-[#39FF14] text-[#39FF14]' : 'bg-black border-white/10 text-white/40'}`}
+                   >
+                     Off-Record
+                   </button>
+                 </div>
+               </div>
+
+               <div>
+                  <label className="text-[9px] uppercase font-mono tracking-widest text-[#AEFFA1]/60 font-bold block mb-2">Message <span className="opacity-50">(Optional)</span></label>
+                  <input
+                    type="text"
+                    maxLength={120}
+                    value={supportMessage}
+                    onChange={e => setSupportMessage(e.target.value)}
+                    placeholder="Leave a mark in the registry..."
+                    className="w-full bg-[#0A120D] border border-[#39FF14]/20 focus:border-[#39FF14] focus:shadow-[0_0_15px_rgba(57,255,20,0.1)] rounded-xl px-5 py-3 text-sm font-sans text-[#F4EFEA] outline-none transition-all placeholder:text-[#AEFFA1]/30"
+                  />
+               </div>
+             </div>
+
+             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 relative z-10">
+               {[10, 20, 50].map(val => (
+                 <button
+                   key={val}
+                   onClick={() => setAmountAud(val)}
+                   className={`py-4 rounded-xl text-sm font-mono tracking-widest transition-all duration-300 cursor-pointer border-2 ${amountAud === val ? 'bg-[#39FF14] text-[#060B08] border-[#39FF14] shadow-[0_0_20px_rgba(57,255,20,0.4)] font-bold' : 'bg-black/40 text-[#39FF14] border-[#39FF14]/20 hover:bg-[#39FF14]/10 hover:border-[#39FF14]/40'}`}
                  >
-                   ${val}
+                   ${val} AUD
                  </button>
                ))}
              </div>
-             
-             <button 
-               onClick={handleSupport} 
-               disabled={loading || !amountAud} 
-               className={`w-full py-5 rounded-full text-[10px] md:text-xs font-mono tracking-[0.3em] uppercase transition-all duration-500 flex justify-center items-center gap-4 cursor-pointer border-2 relative z-10 ${!amountAud || loading ? 'bg-black/40 text-[#39FF14]/30 cursor-not-allowed border-[#39FF14]/10' : 'bg-gradient-to-r from-[#FFB000] to-[#E3DAC9] border-transparent text-[#000000] font-bold hover:shadow-[0_0_30px_rgba(255,176,0,0.4)]'}`}
+
+             <button
+               onClick={handleSupport}
+               disabled={loading || !amountAud || !supporterEmail}
+               className={`w-full py-5 rounded-full text-[10px] md:text-xs font-mono tracking-[0.3em] uppercase transition-all duration-500 flex justify-center items-center gap-4 cursor-pointer border-2 relative z-10 ${(!amountAud || !supporterEmail || loading) ? 'bg-black/40 text-[#39FF14]/30 cursor-not-allowed border-[#39FF14]/10' : 'bg-[#39FF14] border-[#39FF14] text-[#060B08] font-bold hover:shadow-[0_0_30px_rgba(57,255,20,0.5)] hover:bg-[#39FF14]/90'}`}
              >
-               {loading ? 'Processing Transaction...' : 'Confirm Trajectory'}
-               {amountAud && !loading && <span className="text-[#000000] text-lg font-bold">→</span>}
+               {loading ? 'Initializing Protocol...' : 'Record Support'}
+               {amountAud && supporterEmail && !loading && <span className="text-[#060B08] text-lg font-bold">→</span>}
              </button>
+
+             <p className="text-[7px] md:text-[8px] font-mono text-[#AEFFA1]/30 text-center mt-5 leading-relaxed uppercase tracking-[0.15em] relative z-10">
+               This support will be archived in Orbit 77. Secure checkout via Stripe.
+             </p>
            </motion.div>
          </div>
       )}
