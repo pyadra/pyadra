@@ -144,89 +144,111 @@ export default function OrbitEntertainmentDashboard() {
       <main className="relative z-10 w-full max-w-[1280px] px-6 lg:px-12 pt-32 pb-24 md:pt-40 mx-auto min-h-screen flex flex-col justify-center items-center">
         
         {/* LOGO WATERMARK (Atmospheric) */}
-        <div className="absolute top-10 md:top-0 left-1/2 -translate-x-1/2 w-[140%] md:w-[120%] max-w-5xl opacity-[0.10] md:opacity-[0.12] pointer-events-none z-0 flex justify-center select-none pt-10">
+        <motion.div 
+          animate={{ y: [0, -20, 0], opacity: [0.10, 0.15, 0.10] }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-10 md:top-0 left-1/2 -translate-x-1/2 w-[140%] md:w-[130%] max-w-6xl pointer-events-none z-0 flex justify-center select-none pt-10"
+        >
            {/* eslint-disable-next-line @next/next/no-img-element */}
            <img 
              src="/orbit-logo.png" 
              alt="Orbit 77 Element" 
-             className="w-full h-auto object-contain blur-[3px]"
+             className="w-full h-auto object-contain blur-[8px] opacity-80"
            />
-        </div>
+        </motion.div>
         
         {/* SECTION 1 — HERO */}
-        <motion.div {...fadeUp} className="w-full mb-16 flex flex-col items-center md:items-start text-center md:text-left gap-5 border-b border-[#39FF14]/20 pb-12">
+        <motion.div {...fadeUp} className="w-full mb-12 flex flex-col items-center md:items-start text-center md:text-left gap-5 border-b border-[#39FF14]/10 pb-16 relative z-10">
            <span className="text-[9px] md:text-[10px] font-mono tracking-[0.3em] uppercase text-[#FFB000] flex items-center justify-center md:justify-start gap-3 w-full md:w-auto drop-shadow-[0_0_10px_rgba(255,176,0,0.5)] font-bold">
              <span className="w-1.5 h-1.5 bg-[#FFB000] rounded-full animate-pulse shadow-[0_0_10px_rgba(255,176,0,0.8)]" /> 
              PYADRA ECOSYSTEM — NODE ACTIVE
            </span>
            
-           <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif italic font-light text-[#F4EFEA] tracking-wider w-full drop-shadow-[0_10px_30px_rgba(57,255,20,0.15)]">
+           <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif italic font-light text-[#F4EFEA] tracking-wider w-full drop-shadow-[0_15px_40px_rgba(57,255,20,0.25)] md:-ml-2">
              Orbit 77
            </h1>
            
-           <p className="text-[10px] md:text-xs font-mono tracking-[0.3em] text-[#39FF14] uppercase w-full font-bold">
+           <p className="text-[10px] md:text-xs font-mono tracking-[0.3em] text-[#39FF14] uppercase w-full font-bold md:pl-2">
              Real conversations. No filters. No script. No bullshit.
            </p>
            
-           <p className="max-w-xl text-xs md:text-sm font-light text-[#AEFFA1]/80 leading-relaxed mt-2 font-sans">
+           <p className="max-w-xl text-xs md:text-sm font-light text-[#AEFFA1]/80 leading-relaxed mt-2 font-sans md:pl-2">
              Born in Australia. Built by a group of friends who decided to stop watching and start creating. 10 episodes in. This is already in motion. We need people to take it further.
            </p>
            
-           <div className="flex flex-col sm:flex-row items-center gap-6 mt-6 w-full md:w-auto">
-             <button 
+           <div className="flex flex-col sm:flex-row items-center gap-8 mt-8 w-full md:w-auto md:pl-2">
+             <motion.button 
                onClick={() => { setAmountAud(20); setStripeOpen(true); }}
-               className="w-full sm:w-auto px-8 py-4 rounded-full text-[9px] md:text-[10px] uppercase font-mono tracking-[0.2em] transition-all border border-[#39FF14]/40 hover:border-[#39FF14] text-[#060B08] bg-[#39FF14] shadow-[0_0_20px_rgba(57,255,20,0.3)] hover:shadow-[0_0_30px_rgba(57,255,20,0.5)] font-bold"
+               animate={{ boxShadow: ["0px 0px 15px rgba(57,255,20,0.3)", "0px 0px 40px rgba(57,255,20,0.6)", "0px 0px 15px rgba(57,255,20,0.3)"] }}
+               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+               className="w-full sm:w-auto px-10 py-5 rounded-full text-[10px] md:text-[11px] uppercase font-mono tracking-[0.3em] transition-all border border-[#39FF14] text-[#060B08] bg-[#39FF14] hover:bg-[#39FF14] hover:shadow-[0_0_50px_rgba(57,255,20,0.9)] font-bold relative overflow-hidden group"
              >
-               SUPPORT ORBIT 77
-             </button>
-             <a href="#latest-episode" className="text-[10px] md:text-[11px] uppercase font-mono tracking-[0.2em] text-[#AEFFA1]/80 hover:text-[#FFB000] transition-colors md:mr-4 font-bold border-b border-transparent hover:border-[#FFB000]">
+               <div className="absolute inset-0 bg-white/20 w-[100%] group-hover:w-[150%] h-[100%] transform -skew-x-12 -translate-x-[150%] group-hover:translate-x-[150%] transition-all duration-1000 ease-in-out z-0" />
+               <span className="relative z-10">SUPPORT ORBIT 77</span>
+             </motion.button>
+             <a href="#latest-episode" className="text-[10px] md:text-[11px] uppercase font-mono tracking-[0.2em] text-[#AEFFA1]/60 hover:text-[#FFB000] transition-colors md:mr-4 font-bold border-b border-transparent hover:border-[#FFB000]">
                Watch the latest episode ↓
              </a>
            </div>
         </motion.div>
 
         {/* SECTION 2 — PROOF */}
-        <motion.div {...fadeUp} transition={{ delay: 0.1 }} className="w-full mb-16">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 lg:gap-6 mb-8">
-            <div className="bg-[#050A07]/80 backdrop-blur-xl border border-[#39FF14]/20 rounded-2xl p-6 text-center shadow-[0_10px_30px_rgba(0,0,0,0.4)] flex flex-col items-center justify-center transition-all hover:border-[#39FF14]/40 group">
-              <span className="text-4xl md:text-5xl font-serif italic text-[#39FF14] mb-3 group-hover:text-[#FFB000] transition-colors drop-shadow-[0_0_15px_rgba(57,255,20,0.3)]">10</span>
-              <span className="text-[8px] md:text-[9px] uppercase font-mono tracking-[0.2em] text-[#AEFFA1]/70 font-bold leading-relaxed">Episodes Live</span>
+        <div className="w-full mb-16 relative">
+          <div className="absolute left-1/2 -top-16 -translate-x-1/2 w-px h-16 bg-gradient-to-b from-[#39FF14]/30 to-transparent" />
+          <motion.div {...fadeUp} transition={{ delay: 0.1 }} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 lg:gap-6 mb-8 items-center">
+            
+            {/* DOMINANT STAT */}
+            <motion.div 
+              animate={{ y: [0, -5, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="bg-[#0A1A0D]/90 backdrop-blur-xl border-2 border-[#39FF14]/60 rounded-2xl p-8 text-center shadow-[0_0_40px_rgba(57,255,20,0.2)] flex flex-col items-center justify-center transition-all hover:bg-[#0A2211] lg:-mt-4 relative z-10"
+            >
+              <div className="absolute inset-0 bg-[#39FF14]/5 rounded-2xl pointer-events-none" />
+              <span className="text-5xl md:text-6xl font-serif italic text-[#39FF14] mb-3 drop-shadow-[0_0_20px_rgba(57,255,20,0.5)]">10</span>
+              <span className="text-[9px] md:text-[10px] uppercase font-mono tracking-[0.2em] text-[#39FF14] font-bold leading-relaxed">Episodes Live</span>
+            </motion.div>
+
+            {/* SECONDARY STATS (Staggered organically via margins) */}
+            <div className="bg-[#050A07]/60 backdrop-blur-xl border border-[#39FF14]/10 rounded-2xl p-5 text-center flex flex-col items-center justify-center transition-all hover:border-[#39FF14]/40 mt-4 h-full">
+              <span className="text-3xl md:text-4xl font-serif italic text-[#AEFFA1]/80 mb-2">26</span>
+              <span className="text-[7px] md:text-[8px] uppercase font-mono tracking-[0.2em] text-[#AEFFA1]/50 font-bold leading-relaxed">Content Pieces Published</span>
             </div>
-            <div className="bg-[#050A07]/80 backdrop-blur-xl border border-[#39FF14]/20 rounded-2xl p-6 text-center shadow-[0_10px_30px_rgba(0,0,0,0.4)] flex flex-col items-center justify-center transition-all hover:border-[#39FF14]/40 group">
-              <span className="text-4xl md:text-5xl font-serif italic text-[#39FF14] mb-3 group-hover:text-[#FFB000] transition-colors drop-shadow-[0_0_15px_rgba(57,255,20,0.3)]">26</span>
-              <span className="text-[8px] md:text-[9px] uppercase font-mono tracking-[0.2em] text-[#AEFFA1]/70 font-bold leading-relaxed">Content Pieces Published</span>
+            
+            <div className="bg-[#050A07]/60 backdrop-blur-xl border border-[#39FF14]/10 rounded-2xl p-5 text-center flex flex-col items-center justify-center transition-all hover:border-[#39FF14]/40 -mt-2 h-full">
+              <span className="text-3xl md:text-4xl font-serif italic text-[#AEFFA1]/80 mb-2">~45m</span>
+              <span className="text-[7px] md:text-[8px] uppercase font-mono tracking-[0.2em] text-[#AEFFA1]/50 font-bold leading-relaxed">Real Conversations</span>
             </div>
-            <div className="bg-[#050A07]/80 backdrop-blur-xl border border-[#39FF14]/20 rounded-2xl p-6 text-center shadow-[0_10px_30px_rgba(0,0,0,0.4)] flex flex-col items-center justify-center transition-all hover:border-[#39FF14]/40 group">
-              <span className="text-3xl md:text-4xl lg:text-5xl font-serif italic text-[#39FF14] mb-3 group-hover:text-[#FFB000] transition-colors drop-shadow-[0_0_15px_rgba(57,255,20,0.3)]">~45m</span>
-              <span className="text-[8px] md:text-[9px] uppercase font-mono tracking-[0.2em] text-[#AEFFA1]/70 font-bold leading-relaxed">Real Conversations</span>
+            
+            <div className="bg-[#050A07]/60 backdrop-blur-xl border border-[#39FF14]/10 rounded-2xl p-5 text-center flex flex-col items-center justify-center transition-all hover:border-[#39FF14]/40 mt-6 h-full">
+              <span className="text-3xl md:text-4xl font-serif italic text-[#AEFFA1]/80 mb-2">50+</span>
+              <span className="text-[7px] md:text-[8px] uppercase font-mono tracking-[0.2em] text-[#AEFFA1]/50 font-bold leading-relaxed">People Behind Orbit</span>
             </div>
-            <div className="bg-[#050A07]/80 backdrop-blur-xl border border-[#39FF14]/20 rounded-2xl p-6 text-center shadow-[0_10px_30px_rgba(0,0,0,0.4)] flex flex-col items-center justify-center transition-all hover:border-[#39FF14]/40 group">
-              <span className="text-4xl md:text-5xl font-serif italic text-[#39FF14] mb-3 group-hover:text-[#FFB000] transition-colors drop-shadow-[0_0_15px_rgba(57,255,20,0.3)]">50+</span>
-              <span className="text-[8px] md:text-[9px] uppercase font-mono tracking-[0.2em] text-[#AEFFA1]/70 font-bold leading-relaxed">People Behind Orbit</span>
+            
+            <div className="bg-[#050A07]/60 backdrop-blur-xl border border-[#39FF14]/10 rounded-2xl p-5 text-center flex flex-col items-center justify-center transition-all hover:border-[#39FF14]/40 md:col-span-3 lg:col-span-1 border-dashed mt-2 h-full">
+              <span className="text-3xl md:text-4xl font-serif italic text-[#AEFFA1]/80 mb-2">1</span>
+              <span className="text-[7px] md:text-[8px] uppercase font-mono tracking-[0.2em] text-[#AEFFA1]/50 font-bold leading-relaxed">Original Song Created</span>
             </div>
-            <div className="bg-[#050A07]/80 backdrop-blur-xl border border-[#39FF14]/20 rounded-2xl p-6 text-center shadow-[0_10px_30px_rgba(0,0,0,0.4)] flex flex-col items-center justify-center transition-all hover:border-[#39FF14]/40 group md:col-span-3 lg:col-span-1">
-              <span className="text-4xl md:text-5xl font-serif italic text-[#39FF14] mb-3 group-hover:text-[#FFB000] transition-colors drop-shadow-[0_0_15px_rgba(57,255,20,0.3)]">1</span>
-              <span className="text-[8px] md:text-[9px] uppercase font-mono tracking-[0.2em] text-[#AEFFA1]/70 font-bold leading-relaxed">Original Song Created</span>
-            </div>
-          </div>
-          <p className="text-center text-[9px] md:text-[10px] font-mono tracking-[0.3em] uppercase font-bold text-[#39FF14] bg-[#39FF14]/5 py-4 rounded-full border border-[#39FF14]/10 max-w-2xl mx-auto shadow-[0_10px_20px_rgba(57,255,20,0.05)]">
+
+          </motion.div>
+          <p className="text-center text-[9px] md:text-[10px] font-mono tracking-[0.3em] uppercase font-bold text-[#39FF14] max-w-2xl mx-auto drop-shadow-[0_0_10px_rgba(57,255,20,0.3)] opacity-80 mt-4">
             This is not an idea. This is already happening.
           </p>
-        </motion.div>
+        </div>
 
         {/* SECTION 3 & 4: LATEST EPISODE + TENSION */}
         <div id="latest-episode" className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full mb-20">
            
            {/* SECTION 3 - LATEST EPISODE (7 cols) */}
-           <motion.div {...fadeUp} transition={{ delay: 0.2 }} className="col-span-1 lg:col-span-7 bg-[#050A07]/80 backdrop-blur-xl border border-[#39FF14]/20 rounded-2xl p-6 lg:p-8 flex flex-col justify-between group h-full shadow-[0_15px_40px_rgba(0,0,0,0.5)]">
-               <div className="flex justify-between items-center mb-6">
-                   <span className="text-[9px] md:text-[10px] font-mono tracking-[0.2em] uppercase text-[#39FF14] font-bold">
+           <motion.div {...fadeUp} transition={{ delay: 0.2 }} className="col-span-1 lg:col-span-7 bg-[#050A07]/90 backdrop-blur-xl border border-[#39FF14]/40 rounded-2xl p-6 lg:p-10 flex flex-col justify-between group h-full shadow-[0_20px_50px_rgba(0,0,0,0.6)] relative overflow-hidden hover:border-[#39FF14]/60 transition-colors">
+               <div className="absolute top-0 right-0 w-64 h-64 bg-[#39FF14]/5 rounded-full blur-[80px] pointer-events-none" />
+               <div className="flex justify-between items-center mb-6 relative z-10">
+                   <span className="text-[9px] md:text-[10px] font-mono tracking-[0.2em] uppercase text-[#39FF14] font-bold drop-shadow-[0_0_8px_rgba(57,255,20,0.4)]">
                      LATEST TRANSMISSION — EP. 10
                    </span>
-                   <span className="w-1.5 h-1.5 bg-[#39FF14] rounded-full animate-pulse shadow-[0_0_10px_rgba(57,255,20,0.8)]" />
+                   <span className="w-2 h-2 bg-[#39FF14] rounded-full animate-pulse shadow-[0_0_15px_rgba(57,255,20,1)]" />
                </div>
                
-               <div className="w-full aspect-[16/9] md:aspect-auto md:h-72 bg-[#000] rounded-xl overflow-hidden relative border border-[#39FF14]/20 shadow-[0_20px_40px_rgba(0,0,0,0.4)] mb-8">
+               <div className="w-full aspect-[16/9] md:aspect-auto md:h-80 bg-[#000] rounded-xl overflow-hidden relative border border-[#39FF14]/30 shadow-[0_0_30px_rgba(57,255,20,0.1)] mb-8 z-10">
                     <iframe 
                        src="https://www.youtube.com/embed/hvCCHVRK9iU?rel=0&modestbranding=1&autohide=1&showinfo=0&controls=1" 
                        title="Orbit77 Video" 
@@ -236,35 +258,40 @@ export default function OrbitEntertainmentDashboard() {
                     />
                </div>
                
-               <div>
-                   <h3 className="text-2xl lg:text-3xl font-serif text-[#F4EFEA] font-light italic mb-4">The Part You Don&apos;t See</h3>
-                   <p className="text-xs md:text-sm font-light font-sans text-[#AEFFA1]/80 leading-relaxed mb-6">
+               <div className="relative z-10">
+                   <h3 className="text-3xl lg:text-4xl font-serif text-[#F4EFEA] font-light italic mb-4">The Part You Don&apos;t See</h3>
+                   <p className="text-xs md:text-sm font-light font-sans text-[#AEFFA1]/80 leading-relaxed mb-6 max-w-lg">
                      Our most honest episode yet. The one where we stopped pretending and talked about what it actually takes to build something from nothing.
                    </p>
-                   <p className="text-[10px] md:text-[11px] font-mono tracking-[0.2em] font-bold uppercase text-[#FFB000] inline-block border-b border-[#FFB000]/40 pb-1">
+                   <p className="inline-flex items-center gap-3 text-[10px] md:text-[11px] font-mono tracking-[0.2em] font-bold uppercase text-[#060B08] bg-[#FFB000] px-6 py-3 rounded-sm shadow-[0_0_15px_rgba(255,176,0,0.4)]">
+                     <span className="w-1.5 h-1.5 bg-[#060B08] rounded-full animate-pulse" />
                      Watch it. Then decide if you want in.
                    </p>
                </div>
            </motion.div>
 
            {/* SECTION 4 - TENSION (5 cols) */}
-           <motion.div {...fadeUp} transition={{ delay: 0.3 }} className="col-span-1 lg:col-span-5 bg-gradient-to-br from-[#0A0500] to-[#0A0A0A] backdrop-blur-xl border border-[#FFB000]/20 hover:border-[#FFB000]/40 transition-colors rounded-2xl p-8 lg:p-10 flex flex-col justify-center h-full shadow-[0_0_30px_rgba(255,176,0,0.1)] text-center lg:text-left">
-               <span className="text-[9px] md:text-[10px] font-mono tracking-[0.2em] uppercase text-[#FFB000] mb-6 block font-bold drop-shadow-sm">The Reality</span>
-               <h3 className="text-3xl lg:text-4xl font-serif italic text-[#FFB000] mb-8 leading-tight drop-shadow-[0_0_15px_rgba(255,176,0,0.2)]">
+           <motion.div {...fadeUp} transition={{ delay: 0.3 }} className="col-span-1 lg:col-span-5 bg-gradient-to-br from-[#0A0500] to-[#0A0A0A] backdrop-blur-xl border border-[#FFB000]/30 hover:border-[#FFB000]/50 transition-colors rounded-2xl p-8 lg:p-10 flex flex-col justify-center h-full shadow-[0_10px_40px_rgba(255,176,0,0.1)] text-center lg:text-left">
+               <span className="text-[9px] md:text-[10px] font-mono tracking-[0.2em] uppercase text-[#FFB000] mb-6 block font-bold drop-shadow-[0_0_8px_rgba(255,176,0,0.5)]">The Reality</span>
+               <h3 className="text-3xl lg:text-4xl font-serif italic text-[#FFB000] mb-8 leading-tight drop-shadow-[0_0_20px_rgba(255,176,0,0.3)]">
                  The signal is strong.<br/>The reach is not.
                </h3>
                <p className="text-xs md:text-sm font-light font-sans text-[#E3DAC9]/90 leading-relaxed mb-6">
                  Orbit 77 has the content. It has the voice. It has the story. What it doesn&apos;t have yet is the team to take it to the world.
                </p>
-               <p className="text-xs md:text-sm font-light font-sans text-[#FFB000] leading-relaxed bg-[#FFB000]/5 p-6 rounded-xl border border-[#FFB000]/10 border-l-2 border-l-[#FFB000] shadow-[0_5px_20px_rgba(255,176,0,0.05)]">
-                 We&apos;re not looking for investors with spreadsheets. We&apos;re looking for people who feel it — and want to be part of building it.
-               </p>
+               <div className="bg-[#FFB000]/10 p-6 rounded-xl border border-[#FFB000]/20 border-l-2 border-l-[#FFB000] shadow-[0_0_20px_rgba(255,176,0,0.1)] relative overflow-hidden">
+                 <div className="absolute top-0 left-0 w-full h-full bg-[#FFB000]/5 animate-pulse" />
+                 <p className="text-xs md:text-sm font-medium font-sans text-[#FFB000] leading-relaxed relative z-10">
+                   We&apos;re not looking for investors with spreadsheets. We&apos;re looking for people who feel it — and want to be part of building it.
+                 </p>
+               </div>
            </motion.div>
 
         </div>
 
         {/* SECTION 4B: ALL TRANSMISSIONS (EPISODE GRID) */}
-        <motion.div {...fadeUp} transition={{ delay: 0.35 }} className="w-full mb-20 bg-[#050A07]/40 backdrop-blur-md rounded-2xl p-6 lg:p-10 border border-[#39FF14]/10">
+        {/* SECTION 4B: ALL TRANSMISSIONS (EPISODE GRID) */}
+        <motion.div {...fadeUp} transition={{ delay: 0.35 }} className="w-full mb-16 bg-[#050A07]/40 backdrop-blur-md rounded-2xl p-6 lg:p-10 border border-[#39FF14]/10">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-[#39FF14]/10 pb-6">
             <div>
               <span className="text-[9px] md:text-[10px] font-mono tracking-[0.2em] uppercase text-[#AEFFA1]/60 mb-2 block font-bold">ALL TRANSMISSIONS — SEASON 1</span>
@@ -283,7 +310,7 @@ export default function OrbitEntertainmentDashboard() {
                >
                  <div className="w-full aspect-video rounded-lg overflow-hidden relative border border-white/5 group-hover:border-[#39FF14]/50 transition-colors shadow-[0_5px_15px_rgba(0,0,0,0.5)] bg-[#0A120D]">
                    {ep.latest && (
-                      <div className="absolute top-2 right-2 bg-[#39FF14] text-[#060B08] text-[7px] font-mono tracking-widest px-2 py-1 rounded uppercase font-bold z-10">
+                      <div className="absolute top-2 right-2 bg-[#39FF14] text-[#060B08] text-[7px] font-mono tracking-widest px-2 py-1 rounded uppercase font-bold z-10 shadow-[0_0_10px_rgba(57,255,20,0.5)]">
                         LATEST
                       </div>
                    )}
@@ -291,24 +318,30 @@ export default function OrbitEntertainmentDashboard() {
                    <img 
                      src={ep.thumb} 
                      alt={ep.title} 
-                     className="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
+                     className="w-full h-full object-cover opacity-50 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 scale-105 group-hover:scale-100"
                    />
                  </div>
                  <div>
                    <span className="text-[9px] font-mono tracking-widest text-[#39FF14] block mb-1">EP.{ep.id.toString().padStart(2, '0')}</span>
-                   <p className="text-xs text-[#F4EFEA] font-light leading-snug group-hover:text-[#39FF14] transition-colors">{ep.title}</p>
+                   <p className="text-xs text-[#F4EFEA]/80 font-light leading-snug group-hover:text-[#39FF14] transition-colors">{ep.title}</p>
                  </div>
                </a>
             ))}
           </div>
         </motion.div>
 
+        {/* FLOW INDICATOR */}
+        <div className="w-full flex justify-center mb-10 opacity-70">
+          <div className="w-px h-16 bg-gradient-to-b from-[#39FF14]/30 to-transparent" />
+        </div>
+
         {/* SECTION 5: MISSION STATUS */}
-        <motion.div {...fadeUp} transition={{ delay: 0.4 }} className="w-full bg-[#050A07]/80 backdrop-blur-xl border border-[#39FF14]/20 rounded-2xl p-8 lg:p-10 mb-20 shadow-[0_15px_40px_rgba(0,0,0,0.5)] relative overflow-hidden">
-           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-lg h-24 bg-[#39FF14]/10 rounded-b-full blur-[80px] pointer-events-none" />
+        <motion.div {...fadeUp} transition={{ delay: 0.4 }} className="w-full bg-[#050A07]/80 backdrop-blur-xl border border-[#39FF14]/30 rounded-2xl p-8 lg:p-12 mb-16 shadow-[0_15px_40px_rgba(0,0,0,0.5)] relative overflow-hidden">
+           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-xl h-32 bg-[#39FF14]/10 rounded-b-full blur-[90px] pointer-events-none" />
+           <div className="absolute bottom-0 right-0 w-64 h-64 bg-[#FF4444]/5 rounded-tl-full blur-[80px] pointer-events-none" />
            
-           <span className="text-[9px] md:text-[10px] font-mono tracking-[0.3em] uppercase text-[#39FF14] mb-12 block text-center font-bold drop-shadow-[0_0_8px_rgba(57,255,20,0.3)]">
-             Mission Status
+           <span className="text-[9px] md:text-[10px] font-mono tracking-[0.3em] uppercase text-[#39FF14] mb-12 block text-center font-bold drop-shadow-[0_0_15px_rgba(57,255,20,0.5)]">
+             — Mission Status —
            </span>
            
            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-10 relative z-10">
@@ -316,164 +349,192 @@ export default function OrbitEntertainmentDashboard() {
                <div className="space-y-8">
                    <ProgressBar label="Content Production" status="COMPLETE" percentage={100} color="orbit" />
                    <ProgressBar label="Spotify & YouTube" status="ACTIVE" percentage={40} color="orbit" />
-                   <ProgressBar label="Social Media Growth" status="NEEDS CREW" percentage={20} color="pyadra" />
-                   <ProgressBar label="TikTok & Reels" status="CRITICAL" percentage={10} color="alert" />
+                   <div className="border border-[#FFB000]/20 p-4 rounded-xl bg-[#FFB000]/5 -mx-4">
+                     <ProgressBar label="Social Media Growth" status="NEEDS CREW" percentage={20} color="pyadra" />
+                   </div>
+                   <div className="border border-[#FF4444]/40 p-4 rounded-xl bg-[#FF4444]/10 shadow-[0_0_20px_rgba(255,68,68,0.15)] -mx-4 relative overflow-hidden">
+                     <div className="absolute top-0 left-0 w-full h-full bg-[#FF4444]/5 animate-pulse pointer-events-none" />
+                     <ProgressBar label="TikTok & Reels" status="CRITICAL" percentage={10} color="alert" />
+                   </div>
                </div>
                
                {/* Column 2 */}
                <div className="space-y-8 mt-10 md:mt-0">
                    <ProgressBar label="Clothing Brand" status="ACTIVE" percentage={40} color="orbit" />
-                   <ProgressBar label="Marketing & Distribution" status="CRITICAL" percentage={10} color="alert" />
-                    <ProgressBar label="Support Goal" status="OPEN" percentage={supportPercentage} fraction={`$${supportRaisedAud} / $${supportGoalAud} AUD`} color="pyadra" />
+                   <div className="border border-[#FF4444]/40 p-4 rounded-xl bg-[#FF4444]/10 shadow-[0_0_20px_rgba(255,68,68,0.15)] -mx-4 relative overflow-hidden">
+                     <div className="absolute top-0 left-0 w-full h-full bg-[#FF4444]/5 animate-pulse pointer-events-none" />
+                     <ProgressBar label="Marketing & Distribution" status="CRITICAL" percentage={10} color="alert" />
+                   </div>
+                   <div className="border border-[#39FF14]/20 p-4 rounded-xl bg-[#39FF14]/5 -mx-4">
+                     <ProgressBar label="Support Goal" status="OPEN" percentage={supportPercentage} fraction={`$${supportRaisedAud} / $${supportGoalAud} AUD`} color="pyadra" />
+                   </div>
                </div>
            </div>
            
-           <div className="mt-16 pt-8 border-t border-[#39FF14]/10 text-center flex flex-col items-center">
-             <div className="mb-4 text-[#39FF14] animate-bounce text-sm font-bold">↓</div>
-             <p className="text-sm md:text-base font-light font-sans text-[#AEFFA1] leading-relaxed max-w-3xl mx-auto italic">
+           <div className="mt-16 pt-10 border-t border-[#39FF14]/20 text-center flex flex-col items-center relative z-10">
+             <div className="mb-6 outline outline-1 outline-[#39FF14]/30 w-8 h-8 rounded-full flex items-center justify-center bg-[#39FF14]/10">
+               <div className="text-[#39FF14] animate-bounce text-xs font-bold">↓</div>
+             </div>
+             <p className="text-sm md:text-base font-light font-sans text-[#AEFFA1] leading-relaxed max-w-3xl mx-auto italic drop-shadow-[0_0_10px_rgba(57,255,20,0.2)]">
                &quot;The content exists. The distribution doesn&apos;t — yet. That&apos;s the only thing standing between Orbit 77 and scale.&quot;
              </p>
            </div>
         </motion.div>
+
+        {/* FLOW INDICATOR */}
+        <div className="w-full flex justify-center mb-6 opacity-70">
+          <div className="w-px h-16 bg-gradient-to-b from-[#39FF14]/30 to-transparent" />
+        </div>
 
         {/* SECTION 6: WHO WE NEED */}
         <motion.div {...fadeUp} transition={{ delay: 0.5 }} className="w-full mb-16">
           <div className="mb-8 flex flex-col md:flex-row justify-between items-end gap-4 border-b border-[#39FF14]/10 pb-6">
             <div>
               <span className="text-[9px] md:text-[10px] font-mono tracking-widest uppercase text-[#AEFFA1]/50 mb-3 block font-bold">Build It With Us</span>
-              <h4 className="font-serif italic text-[#F4EFEA] text-2xl lg:text-3xl">Three roles. All urgent.</h4>
+              <h4 className="font-serif italic text-[#F4EFEA] text-2xl lg:text-3xl drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">Three roles. All urgent.</h4>
             </div>
-            <Link href="/projects/orbit/join" className="flex-shrink-0 text-[9px] font-mono uppercase tracking-[0.2em] text-[#AEFFA1]/50 hover:text-[#39FF14] transition-colors border-b border-transparent hover:border-[#39FF14] pb-0.5 font-bold">
+            <Link href="/projects/orbit/join" className="flex-shrink-0 text-[10px] font-mono uppercase tracking-[0.2em] text-[#060B08] bg-[#AEFFA1]/80 px-4 py-2 hover:bg-[#39FF14] transition-colors font-bold rounded-sm">
               Open application →
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Role 1 */}
-            <div className="bg-[#050A07]/80 backdrop-blur-xl border border-[#FF4444]/20 hover:border-[#FF4444]/50 rounded-2xl p-6 flex flex-col gap-4 transition-colors group shadow-[0_10px_30px_rgba(0,0,0,0.4)]">
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#FF4444] shadow-[0_0_8px_rgba(255,68,68,0.8)]" />
-                <span className="text-[8px] font-mono uppercase tracking-widest text-[#FF4444] font-bold">Urgent</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Role 1 - SUPER DOMINANT */}
+            <div className="bg-[#1A0A0A]/90 backdrop-blur-xl border border-[#FF4444]/60 hover:border-[#FF4444] rounded-2xl p-8 flex flex-col gap-6 transition-all group shadow-[0_15px_40px_rgba(255,68,68,0.15)] relative overflow-hidden scale-100 md:scale-105 z-10 hover:shadow-[0_20px_50px_rgba(255,68,68,0.3)]">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#FF4444]/10 rounded-full blur-[40px] pointer-events-none group-hover:bg-[#FF4444]/20 transition-colors" />
+              <div className="flex items-center gap-2 relative z-10">
+                <span className="w-2 h-2 rounded-full bg-[#FF4444] shadow-[0_0_15px_rgba(255,68,68,1)] animate-pulse" />
+                <span className="text-[9px] font-mono uppercase tracking-widest text-[#FF4444] font-bold drop-shadow-[0_0_5px_rgba(255,68,68,0.5)]">CRITICAL</span>
               </div>
-              <div>
-                <h5 className="font-serif italic text-[#F4EFEA] text-lg mb-2">Social Media Operator</h5>
-                <p className="text-xs font-light font-sans text-[#AEFFA1]/60 leading-relaxed">Cut clips. Post reels. Make people stop scrolling.</p>
+              <div className="relative z-10">
+                <h5 className="font-serif italic text-[#F4EFEA] text-2xl mb-2 drop-shadow-sm">Social Media Operator</h5>
+                <p className="text-xs font-light font-sans text-[#AEFFA1]/80 leading-relaxed">Cut clips. Post reels. Make people stop scrolling.</p>
               </div>
-              <Link href="/projects/orbit/join?role=social-media-operator" className="mt-auto text-[8px] font-mono uppercase tracking-widest text-[#39FF14] hover:text-[#F4EFEA] transition-colors font-bold border-b border-[#39FF14]/20 hover:border-[#F4EFEA]/40 pb-0.5 w-fit">
-                Apply →
+              <Link href="/projects/orbit/join?role=social-media-operator" className="mt-auto text-[9px] font-mono uppercase tracking-[0.2em] text-[#060B08] bg-[#FF4444] hover:bg-[#FF4444]/90 transition-colors font-bold px-4 py-3 rounded-sm w-fit shadow-[0_0_15px_rgba(255,68,68,0.4)] relative z-10 group-hover:shadow-[0_0_25px_rgba(255,68,68,0.6)]">
+                Apply Now →
               </Link>
             </div>
 
             {/* Role 2 */}
-            <div className="bg-[#050A07]/80 backdrop-blur-xl border border-[#FF4444]/20 hover:border-[#FF4444]/50 rounded-2xl p-6 flex flex-col gap-4 transition-colors group shadow-[0_10px_30px_rgba(0,0,0,0.4)]">
+            <div className="bg-[#050A07]/80 backdrop-blur-xl border border-[#FF4444]/20 hover:border-[#FF4444]/40 rounded-2xl p-6 flex flex-col gap-4 transition-colors group shadow-[0_10px_30px_rgba(0,0,0,0.4)] mt-2">
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#FF4444] shadow-[0_0_8px_rgba(255,68,68,0.8)]" />
-                <span className="text-[8px] font-mono uppercase tracking-widest text-[#FF4444] font-bold">Urgent</span>
+                <span className="text-[8px] font-mono uppercase tracking-widest text-[#FF4444] font-bold">High Priority</span>
               </div>
               <div>
-                <h5 className="font-serif italic text-[#F4EFEA] text-lg mb-2">Marketing Strategist</h5>
-                <p className="text-xs font-light font-sans text-[#AEFFA1]/60 leading-relaxed">Build the growth plan. Find the audience. Make noise.</p>
+                <h5 className="font-serif italic text-[#F4EFEA]/90 text-lg mb-2">Marketing Strategist</h5>
+                <p className="text-xs font-light font-sans text-[#AEFFA1]/50 leading-relaxed">Build the growth plan. Find the audience. Make noise.</p>
               </div>
-              <Link href="/projects/orbit/join?role=marketing-strategist" className="mt-auto text-[8px] font-mono uppercase tracking-widest text-[#39FF14] hover:text-[#F4EFEA] transition-colors font-bold border-b border-[#39FF14]/20 hover:border-[#F4EFEA]/40 pb-0.5 w-fit">
+              <Link href="/projects/orbit/join?role=marketing-strategist" className="mt-auto text-[8px] font-mono uppercase tracking-widest text-[#39FF14]/70 hover:text-[#39FF14] transition-colors font-bold border-b border-[#39FF14]/20 hover:border-[#39FF14]/60 pb-0.5 w-fit">
                 Apply →
               </Link>
             </div>
 
             {/* Role 3 */}
-            <div className="bg-[#050A07]/80 backdrop-blur-xl border border-[#FFB000]/20 hover:border-[#FFB000]/50 rounded-2xl p-6 flex flex-col gap-4 transition-colors group shadow-[0_10px_30px_rgba(0,0,0,0.4)]">
+            <div className="bg-[#050A07]/80 backdrop-blur-xl border border-[#FFB000]/10 hover:border-[#FFB000]/30 rounded-2xl p-6 flex flex-col gap-4 transition-colors group shadow-[0_10px_30px_rgba(0,0,0,0.4)] mt-4">
               <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#FFB000] shadow-[0_0_8px_rgba(255,176,0,0.8)]" />
-                <span className="text-[8px] font-mono uppercase tracking-widest text-[#FFB000] font-bold">Needed</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FFB000] shadow-[0_0_8px_rgba(255,176,0,0.5)]" />
+                <span className="text-[8px] font-mono uppercase tracking-widest text-[#FFB000]/80 font-bold">Needed</span>
               </div>
               <div>
-                <h5 className="font-serif italic text-[#F4EFEA] text-lg mb-2">Video Editor</h5>
-                <p className="text-xs font-light font-sans text-[#AEFFA1]/60 leading-relaxed">Raw footage to reels. Fast turnaround. Clean aesthetic.</p>
+                <h5 className="font-serif italic text-[#F4EFEA]/80 text-lg mb-2">Video Editor</h5>
+                <p className="text-xs font-light font-sans text-[#AEFFA1]/40 leading-relaxed">Raw footage to reels. Fast turnaround. Clean aesthetic.</p>
               </div>
-              <Link href="/projects/orbit/join?role=video-editor" className="mt-auto text-[8px] font-mono uppercase tracking-widest text-[#39FF14] hover:text-[#F4EFEA] transition-colors font-bold border-b border-[#39FF14]/20 hover:border-[#F4EFEA]/40 pb-0.5 w-fit">
+              <Link href="/projects/orbit/join?role=video-editor" className="mt-auto text-[8px] font-mono uppercase tracking-widest text-[#39FF14]/50 hover:text-[#39FF14] transition-colors font-bold border-b border-[#39FF14]/10 hover:border-[#39FF14]/40 pb-0.5 w-fit">
                 Apply →
               </Link>
             </div>
           </div>
         </motion.div>
 
+        {/* FLOW INDICATOR */}
+        <div className="w-full flex justify-center mb-10 opacity-70">
+          <div className="w-px h-20 bg-gradient-to-b from-[#39FF14]/40 to-transparent" />
+        </div>
+
         {/* SECTION 7, 8, 9: SUPPORT ORBIT 77, STORE, FOLLOW GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full mb-10">
 
            {/* SECTION 7: SUPPORT ORBIT 77 — Spans 2 cols */}
-           <motion.div {...fadeUp} transition={{ delay: 0.6 }} id="support" className="md:col-span-2 bg-[#09150C] backdrop-blur-xl border border-[#39FF14]/50 hover:border-[#39FF14] rounded-2xl p-8 lg:p-10 flex flex-col justify-between shadow-[0_0_40px_rgba(57,255,20,0.15)] relative overflow-hidden group transition-all duration-700 hover:shadow-[0_0_60px_rgba(57,255,20,0.25)]">
-               <div className="absolute top-0 right-0 w-64 h-64 bg-[#39FF14]/20 rounded-full blur-[100px] pointer-events-none group-hover:bg-[#39FF14]/30 transition-colors duration-700" />
+           <motion.div {...fadeUp} transition={{ delay: 0.6 }} id="support" className="md:col-span-2 bg-[#09150C] backdrop-blur-xl border border-[#39FF14]/60 hover:border-[#39FF14] rounded-2xl p-6 lg:p-8 flex flex-col justify-between shadow-[0_0_50px_rgba(57,255,20,0.2)] relative overflow-hidden group transition-all duration-700 hover:shadow-[0_0_70px_rgba(57,255,20,0.3)]">
+               <div className="absolute top-0 right-0 w-64 h-64 bg-[#39FF14]/20 rounded-full blur-[100px] pointer-events-none group-hover:bg-[#39FF14]/40 transition-colors duration-700" />
 
-              <div>
-                <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-[#39FF14] mb-6 block font-bold drop-shadow-[0_0_8px_rgba(57,255,20,0.4)]">Support Orbit 77</span>
+              <div className="relative z-10 flex flex-col h-full justify-between">
+                <div>
+                  <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-[#39FF14] mb-4 block font-bold drop-shadow-[0_0_10px_rgba(57,255,20,0.5)]">Support Orbit 77</span>
 
-                <h4 className="font-serif italic text-[#39FF14] text-3xl mb-4 drop-shadow-[0_0_10px_rgba(57,255,20,0.3)]">The signal is strong.<br/>The reach is not.</h4>
+                  <h4 className="font-serif italic text-[#39FF14] text-3xl mb-3 drop-shadow-[0_0_10px_rgba(57,255,20,0.3)]">The signal is strong.<br/>The reach is not.</h4>
 
-                <p className="text-xs md:text-sm font-sans text-[#F4EFEA]/90 leading-relaxed mb-6 font-light bg-[#39FF14]/5 p-5 rounded-xl border border-[#39FF14]/20">
-                  Season 1 is complete. Ten episodes. Real conversations. No script.<br/>
-                  The problem is distribution, not creation.
-                  <span className="block mt-3 text-[#AEFFA1]/60">
-                    If this work means something to you — support it. That&apos;s how it reaches further.
-                  </span>
-                </p>
+                  <p className="text-xs md:text-sm font-sans text-[#F4EFEA]/90 leading-relaxed mb-6 font-light bg-[#39FF14]/5 p-4 rounded-xl border border-[#39FF14]/30 shadow-[0_0_20px_rgba(57,255,20,0.1)]">
+                    Season 1 is complete. Ten episodes. Real conversations. No script.<br/>
+                    The problem is distribution, not creation.
+                    <span className="block mt-2 text-[#39FF14]/80 font-medium">
+                      If this work means something to you — support it. That&apos;s how it reaches further.
+                    </span>
+                  </p>
+                </div>
 
                 {/* Support Progress Bar */}
-                <div className="my-8 border-t border-[#39FF14]/20 pt-6">
-                  <div className="flex justify-between items-center mb-4">
+                <div className="my-6 border-t border-[#39FF14]/20 pt-6">
+                  <div className="flex justify-between items-center mb-3">
                     <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#39FF14] font-bold">Distribution Fund</p>
-                    <span className="text-[9px] font-mono text-[#AEFFA1]/50">
-                      ${supportRaisedAud} of ${supportGoalAud} AUD
+                    <span className="text-[9px] font-mono text-[#AEFFA1]/80 font-bold bg-[#39FF14]/10 px-2 py-1 rounded">
+                      ${supportRaisedAud} <span className="text-[#AEFFA1]/50">/ ${supportGoalAud} AUD</span>
                     </span>
                   </div>
 
                   {/* Animated Progress Bar */}
-                  <div className="w-full h-2 bg-[#020503] border border-[#39FF14]/20 rounded-full overflow-hidden mb-2 relative">
+                  <div className="w-full h-3 bg-[#020503] border border-[#39FF14]/30 rounded-full overflow-hidden mb-2 relative">
                     <motion.div
                       initial={{ width: 0 }}
                       whileInView={{ width: supportPercentage === 0 ? "2px" : `${supportPercentage}%` }}
                       viewport={{ once: true }}
                       transition={{ duration: 1.5, ease: "easeOut" }}
-                      className="absolute top-0 left-0 h-full bg-[#39FF14] shadow-[0_0_15px_rgba(57,255,20,0.8)] rounded-full animate-pulse"
-                    />
+                      className="absolute top-0 left-0 h-full bg-[#39FF14] rounded-full flex items-center justify-end overflow-hidden"
+                    >
+                      <div className="w-full h-full bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(255,255,255,0.2)_10px,rgba(255,255,255,0.2)_20px)] animate-[progress-scroll_2s_linear_infinite]" />
+                    </motion.div>
                   </div>
-                  <p className="text-[9px] font-mono text-[#AEFFA1]/40 text-right">
-                    Goal: 1,000 AUD — Covers server distribution and archive expansion. Every support extends the reach.
+                  <p className="text-[9px] font-mono text-[#AEFFA1]/50 text-right mt-2">
+                    Goal: 1,000 AUD — Every support extends the reach.
+                  </p>
+                </div>
+
+                <div className="mt-4 relative w-full text-center">
+                  <motion.button
+                    onClick={() => { setAmountAud(20); setStripeOpen(true); }}
+                    animate={{ boxShadow: ["0 0 20px rgba(57,255,20,0.4)", "0 0 50px rgba(57,255,20,0.8)", "0 0 20px rgba(57,255,20,0.4)"] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    className="w-full bg-[#39FF14] border border-[#39FF14] text-[#060B08] py-5 rounded-xl text-[11px] md:text-xs font-mono uppercase tracking-widest font-bold transition-all cursor-pointer group-hover:bg-white"
+                  >
+                    Support Orbit 77
+                  </motion.button>
+                  <p className="text-[8px] md:text-[9px] font-mono text-[#AEFFA1]/40 text-center mt-5 leading-relaxed">
+                    Any amount. No recurring charges. Receive a digital support card.
                   </p>
                 </div>
               </div>
-
-              <div className="mt-6 pt-4 border-t border-white/5 relative z-10 w-full">
-                <button
-                  onClick={() => { setAmountAud(20); setStripeOpen(true); }}
-                  className="w-full bg-[#39FF14] hover:bg-[#39FF14]/90 border border-[#39FF14] text-[#060B08] py-5 rounded-xl text-[10px] md:text-xs font-mono uppercase tracking-widest font-bold transition-all shadow-[0_0_20px_rgba(57,255,20,0.4)] cursor-pointer group-hover:shadow-[0_0_40px_rgba(57,255,20,0.6)]"
-                >
-                  Support Orbit 77
-                </button>
-                <p className="text-[8px] md:text-[9px] font-mono text-[#AEFFA1]/40 text-center mt-5 leading-relaxed">
-                  Any amount. No recurring charges. Receive a digital support card.
-                </p>
-              </div>
            </motion.div>
-
            {/* SECTION 8: STORE */}
-           <motion.div {...fadeUp} transition={{ delay: 0.7 }} className="bg-[#050A07]/80 backdrop-blur-xl border border-white/5 hover:border-white/20 rounded-2xl p-5 lg:p-6 flex flex-col justify-between transition-colors group shadow-sm">
+           <motion.div {...fadeUp} transition={{ delay: 0.7 }} className="bg-[#050A07]/80 backdrop-blur-xl border border-white/5 hover:border-[#39FF14]/30 rounded-2xl p-6 flex flex-col justify-start transition-colors group shadow-sm h-full">
               <div>
-                <span className="text-[9px] md:text-[10px] font-mono tracking-widest uppercase text-[#AEFFA1]/40 mb-3 block font-bold">Official Gear</span>
-                <h4 className="font-serif italic text-[#F4EFEA]/80 text-lg lg:text-xl mb-3">Orbit77.shop</h4>
-                <p className="text-xs text-[#AEFFA1]/60 leading-relaxed font-light font-sans mb-3">Support the journey by wearing the brand. Premium streetwear from Australia to the world.</p>
+                <span className="text-[9px] md:text-[10px] font-mono tracking-widest uppercase text-[#AEFFA1]/40 mb-2 block font-bold">Official Gear</span>
+                <h4 className="font-serif italic text-[#F4EFEA]/80 text-lg lg:text-xl mb-2">Orbit77.shop</h4>
+                <p className="text-[11px] text-[#AEFFA1]/50 leading-relaxed font-light font-sans mb-4">Support the journey by wearing the brand. Premium streetwear from Australia.</p>
               </div>
-              <a href="https://orbit77.shop/" target="_blank" rel="noreferrer" className="mt-3 text-[9px] md:text-[10px] uppercase font-mono tracking-widest text-[#39FF14]/80 font-bold inline-block group-hover:text-white transition-colors group-hover:translate-x-1 group-hover:-translate-y-1">
+              <a href="https://orbit77.shop/" target="_blank" rel="noreferrer" className="mt-auto text-[9px] md:text-[10px] uppercase font-mono tracking-widest text-[#39FF14]/70 font-bold inline-block group-hover:text-[#39FF14] transition-colors bg-[#39FF14]/5 hover:bg-[#39FF14]/10 border border-[#39FF14]/20 px-3 py-2 w-fit rounded">
                 Shop Now ↗
               </a>
            </motion.div>
 
            {/* SECTION 9: FOLLOW  */}
-           <motion.div {...fadeUp} transition={{ delay: 0.8 }} className="bg-[#050A07]/80 backdrop-blur-xl border border-white/5 hover:border-white/20 rounded-2xl p-5 lg:p-6 flex flex-col justify-between transition-colors group shadow-sm">
+           <motion.div {...fadeUp} transition={{ delay: 0.8 }} className="bg-[#050A07]/80 backdrop-blur-xl border border-white/5 hover:border-[#39FF14]/30 rounded-2xl p-6 flex flex-col justify-start transition-colors group shadow-sm h-full">
               <div>
-                <span className="text-[9px] md:text-[10px] font-mono tracking-widest uppercase text-[#AEFFA1]/40 mb-3 block font-bold">Signal Check</span>
-                <h4 className="font-serif italic text-[#F4EFEA]/80 text-lg lg:text-xl mb-3">Follow Us</h4>
-                <p className="text-xs text-[#AEFFA1]/60 leading-relaxed font-light font-sans mb-3">Watch on YouTube, listen on Spotify, and engage on Instagram.</p>
+                <span className="text-[9px] md:text-[10px] font-mono tracking-widest uppercase text-[#AEFFA1]/40 mb-2 block font-bold">Signal Check</span>
+                <h4 className="font-serif italic text-[#F4EFEA]/80 text-lg lg:text-xl mb-2">Follow Us</h4>
+                <p className="text-[11px] text-[#AEFFA1]/50 leading-relaxed font-light font-sans mb-4">Watch on YouTube, listen on Spotify, and engage on Instagram.</p>
               </div>
-              <a href="https://www.youtube.com/@Orbit77Podcast" target="_blank" rel="noreferrer" className="mt-3 text-[9px] md:text-[10px] uppercase font-mono tracking-widest text-[#39FF14]/80 font-bold inline-block group-hover:text-white transition-colors group-hover:translate-x-1 group-hover:-translate-y-1">
+              <a href="https://www.youtube.com/@Orbit77Podcast" target="_blank" rel="noreferrer" className="mt-auto text-[9px] md:text-[10px] uppercase font-mono tracking-widest text-[#39FF14]/70 font-bold inline-block group-hover:text-[#39FF14] transition-colors bg-[#39FF14]/5 hover:bg-[#39FF14]/10 border border-[#39FF14]/20 px-3 py-2 w-fit rounded">
                 Subscribe ↗
               </a>
            </motion.div>
