@@ -42,7 +42,4 @@ CREATE INDEX idx_orbit_credentials_code ON public.orbit_support_credentials (cre
 ALTER TABLE public.orbit_support_credentials ENABLE ROW LEVEL SECURITY;
 
 -- If Supabase Data API is exposed, we might want to allow reading the credential using the code
-CREATE POLICY "Public can view credentials by code" 
-    ON public.orbit_support_credentials 
-    FOR SELECT 
-    USING (payment_status = 'paid');
+-- Removed insecure public policy. Data access is handled exclusively via server-side service role key.

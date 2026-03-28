@@ -18,8 +18,14 @@ export function middleware(request: NextRequest) {
 
   // 2. Set CORS Headers for API routes
   if (request.nextUrl.pathname.startsWith('/api/')) {
-    const origin = request.headers.get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL ?? '*';
-    response.headers.set('Access-Control-Allow-Origin', origin);
+    // Determine the trusted origin from environment variables
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const requestOrigin = request.headers.get('origin');
+    
+    // Only allow CORS if the request comes from our trusted site URL, otherwise default to siteUrl
+    const allowedOrigin = (requestOrigin === siteUrl) ? requestOrigin : siteUrl;
+    
+    response.headers.set('Access-Control-Allow-Origin', allowedOrigin);
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 

@@ -50,7 +50,7 @@ export class AudioEngine {
 
   setHumVolume(normalizedProximity: number) {
     if (this.humGain && this.ctx) {
-      // Sube el volumen sutilmente cuando la proximidad es mayor
+      // Subtly increase the volume based on proximity
       this.humGain.gain.setTargetAtTime(normalizedProximity * 0.15, this.ctx.currentTime, 0.2);
     }
   }
@@ -61,7 +61,7 @@ export class AudioEngine {
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
     
-    // Frecuencia cristalina alta
+    // High crystalline frequency
     osc.type = 'sine';
     osc.frequency.setValueAtTime(1200, this.ctx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(300, this.ctx.currentTime + 0.1);
@@ -110,8 +110,8 @@ export class AudioEngine {
   // 6. Vacuum Suction / Shatter (Click Enter)
   playShatter() {
     if (!this.ctx) return;
-    // Creamos un buffer de ruido blanco para simular la desintegración
-    const bufferSize = this.ctx.sampleRate * 1.5; // 1.5 segundos
+    // Create a white noise buffer to simulate disintegration
+    const bufferSize = this.ctx.sampleRate * 1.5; // 1.5 seconds
     const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) {
@@ -120,7 +120,7 @@ export class AudioEngine {
     const noise = this.ctx.createBufferSource();
     noise.buffer = buffer;
 
-    // Filtramos para que suene a succión (viento de vacío)
+    // Filter to sound like a suction (vacuum wind)
     const filter = this.ctx.createBiquadFilter();
     filter.type = 'highpass';
     filter.frequency.setValueAtTime(100, this.ctx.currentTime);
@@ -128,8 +128,8 @@ export class AudioEngine {
 
     const gain = this.ctx.createGain();
     gain.gain.setValueAtTime(0.001, this.ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.3, this.ctx.currentTime + 1.5); // Incrementa el volumen como succión
-    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 1.5); // Y desaparece repentinamente
+    gain.gain.linearRampToValueAtTime(0.3, this.ctx.currentTime + 1.5); // Increase volume like suction
+    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 1.5); // Then suddenly disappear
 
     noise.connect(filter);
     filter.connect(gain);

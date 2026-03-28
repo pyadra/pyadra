@@ -22,7 +22,4 @@ CREATE INDEX idx_orbit_credentials_supporter_id ON public.orbit_support_credenti
 -- Restrict Row Level Security
 ALTER TABLE public.orbit_supporters ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Public can view supporters by id" 
-    ON public.orbit_supporters 
-    FOR SELECT 
-    USING (true);
+-- Removed insecure public policy. Data access is handled exclusively via server-side service role key.
