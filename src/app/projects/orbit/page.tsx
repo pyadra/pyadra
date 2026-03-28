@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // ProgressBar Component matching the Premium Orbit x Pyadra design language
 function ProgressBar({ label, status, percentage, fraction, color = "orbit" }: { label: string, status: string, percentage: number, fraction?: string, color?: "orbit" | "pyadra" | "alert" }) {
@@ -57,8 +57,29 @@ export default function OrbitEntertainmentDashboard() {
 
   // Support goal progress — in AUD
   const supportGoalAud = 1000;
-  const supportRaisedAud = 0; // Driven by Stripe webhook in production
+  const [supportRaisedAud, setSupportRaisedAud] = useState(0);
+
+  useEffect(() => {
+    fetch('/api/stats/orbit-fund')
+      .then(res => res.json())
+      .then(data => {
+        if (data && typeof data.total === 'number') {
+          setSupportRaisedAud(data.total);
+        }
+      })
+      .catch(console.error);
+  }, []);
+
   const supportPercentage = Math.min((supportRaisedAud / supportGoalAud) * 100, 100);
+
+  useEffect(() => {
+    if (stripeOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [stripeOpen]);
   
   // Bioluminescence tied to scroll depth - blending Green and Amber
   const { scrollY } = useScroll();
@@ -388,8 +409,8 @@ export default function OrbitEntertainmentDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
 
            {/* SECTION 7: SUPPORT ORBIT 77 — Spans 2 cols */}
-           <motion.div {...fadeUp} transition={{ delay: 0.6 }} id="support" className="md:col-span-2 bg-gradient-to-br from-[#101A14] to-[#0A120D] backdrop-blur-xl border border-[#39FF14]/40 hover:border-[#39FF14] rounded-2xl p-8 lg:p-10 flex flex-col justify-between shadow-[0_0_30px_rgba(57,255,20,0.1)] relative overflow-hidden group transition-colors">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-[#39FF14]/15 rounded-full blur-[80px] pointer-events-none" />
+           <motion.div {...fadeUp} transition={{ delay: 0.6 }} id="support" className="md:col-span-2 bg-[#09150C] backdrop-blur-xl border border-[#39FF14]/50 hover:border-[#39FF14] rounded-2xl p-8 lg:p-10 flex flex-col justify-between shadow-[0_0_40px_rgba(57,255,20,0.15)] relative overflow-hidden group transition-all duration-700 hover:shadow-[0_0_60px_rgba(57,255,20,0.25)]">
+               <div className="absolute top-0 right-0 w-64 h-64 bg-[#39FF14]/20 rounded-full blur-[100px] pointer-events-none group-hover:bg-[#39FF14]/30 transition-colors duration-700" />
 
               <div>
                 <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-[#39FF14] mb-6 block font-bold drop-shadow-[0_0_8px_rgba(57,255,20,0.4)]">Support Orbit 77</span>
@@ -414,13 +435,13 @@ export default function OrbitEntertainmentDashboard() {
                   </div>
 
                   {/* Animated Progress Bar */}
-                  <div className="w-full h-2 bg-[#000] border border-[#39FF14]/10 rounded-full overflow-hidden mb-2 relative">
+                  <div className="w-full h-2 bg-[#020503] border border-[#39FF14]/20 rounded-full overflow-hidden mb-2 relative">
                     <motion.div
                       initial={{ width: 0 }}
                       whileInView={{ width: supportPercentage === 0 ? "2px" : `${supportPercentage}%` }}
                       viewport={{ once: true }}
                       transition={{ duration: 1.5, ease: "easeOut" }}
-                      className="absolute top-0 left-0 h-full bg-[#39FF14] shadow-[0_0_12px_rgba(57,255,20,0.5)] rounded-full"
+                      className="absolute top-0 left-0 h-full bg-[#39FF14] shadow-[0_0_15px_rgba(57,255,20,0.8)] rounded-full animate-pulse"
                     />
                   </div>
                   <p className="text-[9px] font-mono text-[#AEFFA1]/40 text-right">
@@ -429,10 +450,10 @@ export default function OrbitEntertainmentDashboard() {
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-white/5">
+              <div className="mt-6 pt-4 border-t border-white/5 relative z-10 w-full">
                 <button
                   onClick={() => { setAmountAud(20); setStripeOpen(true); }}
-                  className="w-full bg-[#39FF14] hover:bg-[#39FF14]/80 border border-[#39FF14] hover:border-white text-[#060B08] py-5 rounded-xl text-[10px] md:text-xs font-mono uppercase tracking-widest font-bold transition-all shadow-[0_0_20px_rgba(57,255,20,0.3)] cursor-pointer"
+                  className="w-full bg-[#39FF14] hover:bg-[#39FF14]/90 border border-[#39FF14] text-[#060B08] py-5 rounded-xl text-[10px] md:text-xs font-mono uppercase tracking-widest font-bold transition-all shadow-[0_0_20px_rgba(57,255,20,0.4)] cursor-pointer group-hover:shadow-[0_0_40px_rgba(57,255,20,0.6)]"
                 >
                   Support Orbit 77
                 </button>
@@ -443,25 +464,25 @@ export default function OrbitEntertainmentDashboard() {
            </motion.div>
 
            {/* SECTION 8: STORE */}
-           <motion.div {...fadeUp} transition={{ delay: 0.7 }} className="bg-[#050A07]/80 backdrop-blur-xl border border-[#39FF14]/20 hover:border-[#39FF14]/40 rounded-2xl p-6 lg:p-8 flex flex-col justify-between transition-colors group shadow-[0_10px_30px_rgba(0,0,0,0.4)]">
+           <motion.div {...fadeUp} transition={{ delay: 0.7 }} className="bg-[#050A07]/80 backdrop-blur-xl border border-white/5 hover:border-white/20 rounded-2xl p-5 lg:p-6 flex flex-col justify-between transition-colors group shadow-sm">
               <div>
-                <span className="text-[9px] md:text-[10px] font-mono tracking-widest uppercase text-[#AEFFA1]/70 mb-6 block font-bold">Official Gear</span>
-                <h4 className="font-serif italic text-[#F4EFEA] text-xl lg:text-2xl mb-4">Orbit77.shop</h4>
-                <p className="text-xs md:text-sm text-[#AEFFA1]/80 leading-relaxed font-light font-sans mb-6">Support the journey by wearing the brand. Premium streetwear from Australia to the world.</p>
+                <span className="text-[9px] md:text-[10px] font-mono tracking-widest uppercase text-[#AEFFA1]/40 mb-3 block font-bold">Official Gear</span>
+                <h4 className="font-serif italic text-[#F4EFEA]/80 text-lg lg:text-xl mb-3">Orbit77.shop</h4>
+                <p className="text-xs text-[#AEFFA1]/60 leading-relaxed font-light font-sans mb-3">Support the journey by wearing the brand. Premium streetwear from Australia to the world.</p>
               </div>
-              <a href="https://orbit77.shop/" target="_blank" rel="noreferrer" className="mt-6 text-[9px] md:text-[10px] uppercase font-mono tracking-widest text-[#39FF14] font-bold inline-block group-hover:text-[#FFB000] transition-colors group-hover:translate-x-1 group-hover:-translate-y-1">
+              <a href="https://orbit77.shop/" target="_blank" rel="noreferrer" className="mt-3 text-[9px] md:text-[10px] uppercase font-mono tracking-widest text-[#39FF14]/80 font-bold inline-block group-hover:text-white transition-colors group-hover:translate-x-1 group-hover:-translate-y-1">
                 Shop Now ↗
               </a>
            </motion.div>
 
            {/* SECTION 9: FOLLOW  */}
-           <motion.div {...fadeUp} transition={{ delay: 0.8 }} className="bg-[#050A07]/80 backdrop-blur-xl border border-[#39FF14]/20 hover:border-[#39FF14]/40 rounded-2xl p-6 lg:p-8 flex flex-col justify-between transition-colors group shadow-[0_10px_30px_rgba(0,0,0,0.4)]">
+           <motion.div {...fadeUp} transition={{ delay: 0.8 }} className="bg-[#050A07]/80 backdrop-blur-xl border border-white/5 hover:border-white/20 rounded-2xl p-5 lg:p-6 flex flex-col justify-between transition-colors group shadow-sm">
               <div>
-                <span className="text-[9px] md:text-[10px] font-mono tracking-widest uppercase text-[#AEFFA1]/70 mb-6 block font-bold">Signal Check</span>
-                <h4 className="font-serif italic text-[#F4EFEA] text-xl lg:text-2xl mb-4">Follow Us</h4>
-                <p className="text-xs md:text-sm text-[#AEFFA1]/80 leading-relaxed font-light font-sans mb-6">Watch on YouTube, listen on Spotify, and engage on Instagram.</p>
+                <span className="text-[9px] md:text-[10px] font-mono tracking-widest uppercase text-[#AEFFA1]/40 mb-3 block font-bold">Signal Check</span>
+                <h4 className="font-serif italic text-[#F4EFEA]/80 text-lg lg:text-xl mb-3">Follow Us</h4>
+                <p className="text-xs text-[#AEFFA1]/60 leading-relaxed font-light font-sans mb-3">Watch on YouTube, listen on Spotify, and engage on Instagram.</p>
               </div>
-              <a href="https://www.youtube.com/@Orbit77Podcast" target="_blank" rel="noreferrer" className="mt-6 text-[9px] md:text-[10px] uppercase font-mono tracking-widest text-[#39FF14] font-bold inline-block group-hover:text-[#FFB000] transition-colors group-hover:translate-x-1 group-hover:-translate-y-1">
+              <a href="https://www.youtube.com/@Orbit77Podcast" target="_blank" rel="noreferrer" className="mt-3 text-[9px] md:text-[10px] uppercase font-mono tracking-widest text-[#39FF14]/80 font-bold inline-block group-hover:text-white transition-colors group-hover:translate-x-1 group-hover:-translate-y-1">
                 Subscribe ↗
               </a>
            </motion.div>
@@ -472,11 +493,11 @@ export default function OrbitEntertainmentDashboard() {
 
       {/* Stripe Modal — Support Orbit 77 */}
       {stripeOpen && (
-         <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-[#020503]/90 backdrop-blur-2xl">
+         <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 md:p-6 bg-[#020503]/90 backdrop-blur-2xl">
            <motion.div
-             initial={{ opacity: 0, scale: 0.95 }}
-             animate={{ opacity: 1, scale: 1 }}
-             className="w-full max-w-xl bg-[#09120D] border border-[#39FF14]/40 rounded-2xl p-10 md:p-14 relative flex flex-col shadow-[0_30px_80px_rgba(57,255,20,0.15)] overflow-hidden"
+             initial={{ opacity: 0, scale: 0.95, y: 10 }}
+             animate={{ opacity: 1, scale: 1, y: 0 }}
+             className="w-full max-w-xl max-h-[90vh] overflow-y-auto no-scrollbar bg-[#09120D] border border-[#39FF14]/40 rounded-2xl p-6 md:p-10 relative flex flex-col shadow-[0_30px_80px_rgba(57,255,20,0.15)] overflow-x-hidden"
            >
              <div className="absolute top-0 right-0 w-64 h-64 bg-[#39FF14]/5 rounded-full blur-[80px] pointer-events-none" />
              <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#39FF14]/10 rounded-full blur-[80px] pointer-events-none" />

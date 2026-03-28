@@ -122,7 +122,7 @@ export async function sendCredentialEmail(payload: EmailPayload) {
 
   try {
     const { error } = await resend.emails.send({
-      from: 'Orbit 77 <transmit@pyadra.io>', // ensure you have verified your domain on resend
+      from: 'Orbit 77 <orbit77@pyadra.io>', // ensure you have verified your domain on resend
       to: [to],
       subject: `Transmission Recorded · ${credentialCode} · Season 1`,
       html: html,
