@@ -54,6 +54,7 @@ export default function OrbitEntertainmentDashboard() {
   const [supporterEmail, setSupporterEmail] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [supportMessage, setSupportMessage] = useState("");
+  const [checkoutError, setCheckoutError] = useState("");
 
   // Support goal progress — in AUD
   const supportGoalAud = 1000;
@@ -77,9 +78,10 @@ export default function OrbitEntertainmentDashboard() {
   const backgroundY = useTransform(scrollY, [0, 4000], ["-50%", "30%"]);
 
   const handleSupport = async () => {
+    setCheckoutError("");
     if (!amountAud || amountAud < 2 || loading) return;
     if (!supporterEmail || !supporterEmail.includes('@')) {
-      alert("Please provide a valid email for your season credential.");
+      setCheckoutError("Please provide a valid email format.");
       return;
     }
     
@@ -108,7 +110,7 @@ export default function OrbitEntertainmentDashboard() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       console.error(errorMessage);
-      alert(`Stripe Error: ${errorMessage}\n\nPlease ensure you have added a valid STRIPE_SECRET_KEY to your .env.local file to enable payments.`);
+      setCheckoutError(errorMessage || "Unable to start checkout. Please ensure STRIPE_SECRET_KEY is configured.");
       setLoading(false);
     }
   };
@@ -681,6 +683,12 @@ export default function OrbitEntertainmentDashboard() {
                  </button>
                ))}
              </div>
+
+             {checkoutError && (
+               <div className="mb-4 text-center px-4 py-3 bg-[#FF4444]/10 border border-[#FF4444]/30 rounded-lg">
+                 <p className="text-[#FF4444] text-[10px] md:text-sm font-sans">{checkoutError}</p>
+               </div>
+             )}
 
              <button
                onClick={handleSupport}

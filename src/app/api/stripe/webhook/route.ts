@@ -66,57 +66,50 @@ export async function POST(req: Request) {
            
            // If we have a DB connection, persist identity and credential
            if (supabase) {
-             // 1. Resolve or Create persistent supporter identity
+             // 1. Resolve or Create persistent supporter identity using UPSERT
              if (supporterEmail) {
-               const { data: existingSupporter } = await supabase
+               const { data: upsertedSupporter, error: supporterError } = await supabase
                  .from('orbit_supporters')
+                 .upsert(
+                   { email: supporterEmail, display_name: displayName },
+                   { onConflict: 'email' }
+                 )
                  .select('id')
-                 .eq('email', supporterEmail)
                  .single();
-                 
-               if (existingSupporter) {
-                 supporterId = existingSupporter.id;
-               } else {
-                 const { data: newSupporter, error: supporterError } = await supabase
-                   .from('orbit_supporters')
-                   .insert({
-                     email: supporterEmail,
-                     display_name: displayName
-                   })
-                   .select('id')
-                   .single();
-                   
-                 if (newSupporter) {
-                   supporterId = newSupporter.id;
-                 } else {
-                   console.error("Supabase Error (Supporter Creation):", supporterError);
-                 }
+
+               if (upsertedSupporter) {
+                 supporterId = upsertedSupporter.id;
+               } else if (supporterError) {
+                 throw new Error(`DB Error (Supporter Upsert): ${supporterError.message}`);
                }
              }
 
-             // 2. Insert the credential attached to the supporter
+             // 2. Insert the credential attached to the supporter (Idempotent via ON CONFLICT)
              const { error: dbError } = await supabase
                .from('orbit_support_credentials')
-               .insert({
-                 stripe_checkout_session_id: session.id,
-                 stripe_payment_intent_id: session.payment_intent as string,
-                 payment_status: 'paid',
-                 supporter_id: supporterId,
-                 supporter_name: supporterName,
-                 supporter_email: supporterEmail,
-                 display_name: displayName,
-                 is_anonymous: isAnonymous,
-                 amount_aud: amountAud,
-                 currency: 'aud',
-                 support_message: metadata.support_message || null,
-                 credential_code: credentialCode,
-                 season_label: metadata.season_label || 'Season 1',
-                 project_slug: metadata.project_id,
-                 paid_at: new Date().toISOString()
-               });
+               .upsert(
+                 {
+                   stripe_checkout_session_id: session.id,
+                   stripe_payment_intent_id: session.payment_intent as string,
+                   payment_status: 'paid',
+                   supporter_id: supporterId,
+                   supporter_name: supporterName,
+                   supporter_email: supporterEmail,
+                   display_name: displayName,
+                   is_anonymous: isAnonymous,
+                   amount_aud: Math.floor(amountAud), // Ensure absolute integer
+                   currency: 'aud',
+                   support_message: metadata.support_message || null,
+                   credential_code: credentialCode,
+                   season_label: metadata.season_label || 'Season 1',
+                   project_slug: metadata.project_id,
+                   paid_at: new Date().toISOString()
+                 },
+                 { onConflict: 'stripe_checkout_session_id' }
+               );
                
                if (dbError) {
-                 console.error("Supabase Insertion Error (Webhook):", dbError);
+                 throw new Error(`DB Error (Credential Upsert): ${dbError.message}`);
                }
            }
            
@@ -149,8 +142,9 @@ export async function POST(req: Request) {
            
          } catch(e) {
            console.error("Failed to process Orbit 77 credential issuance:", e);
-           // We do NOT throw here because we don't want Stripe to retry and fail if the 
-           // payment was already successfully captured.
+           // MUST throw to Stripe so it retries the webhook payload later!
+           const errorMessage = e instanceof Error ? e.message : String(e);
+           return NextResponse.json({ error: "Internal processing failed", details: errorMessage }, { status: 500 });
          }
       }
     }

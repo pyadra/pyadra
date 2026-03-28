@@ -1,8 +1,9 @@
+import 'server-only';
 import { createClient } from '@supabase/supabase-js';
 
-// Environment variables fallback pattern for safety
+// Strict backend-only initialization. Service Role Key is explicitly required to bypass RLS for trusted writes.
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || '';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 // Singleton-like pattern for Supabase client
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

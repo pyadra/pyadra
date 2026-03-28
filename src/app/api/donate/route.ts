@@ -28,8 +28,9 @@ export async function POST(req: Request) {
 
     const stripe = getStripe();
     if (!stripe) {
+      console.error("Donate API Failed: Missing STRIPE_SECRET_KEY in environment variables.");
       return NextResponse.json(
-        { error: "Server configuration error" },
+        { error: "Server configuration error: Missing payment gateway keys" },
         { status: 500 }
       );
     }
@@ -77,8 +78,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ url: session.url });
   } catch (err: unknown) {
     // Log full error on server, but return generic message to client
-    console.error("Stripe error:", err instanceof Error ? err.message : err);
-    return NextResponse.json({ error: "Payment processing failed" }, { status: 500 });
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error("Stripe Checkout Initialization Error:", errorMessage);
+    return NextResponse.json({ error: "Payment processing failed. Please try again later." }, { status: 500 });
   }
 }
 

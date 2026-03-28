@@ -22,6 +22,7 @@ export async function GET(req: Request) {
 
   const stripe = getStripe();
   if (!stripe) {
+    console.error("Session API Failed: Missing STRIPE_SECRET_KEY in environment variables.");
     return NextResponse.json(
       { error: "Missing STRIPE_SECRET_KEY (server env)" },
       { status: 500 }
@@ -46,9 +47,11 @@ export async function GET(req: Request) {
         if (data && data.supporter_id) {
           supporter_id = data.supporter_id;
         }
+      } else {
+        console.warn("Session API Warn: Supabase could not be initialized for ID lookup.");
       }
-    } catch {
-      // Ignore DB errors in session lookup
+    } catch (dbErr) {
+      console.error("Session API Warn: Failed to lookup supporter ID in DB:", dbErr);
     }
 
     return NextResponse.json({ session, supporter_id });
