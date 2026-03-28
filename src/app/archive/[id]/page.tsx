@@ -11,12 +11,14 @@ export const metadata: Metadata = {
 };
 
 interface ArchiveProps {
-  params: {
+  params: Promise<{
     id: string; // The supporter_id UUID
-  };
+  }>;
 }
 
 export default async function ArchivePage({ params }: ArchiveProps) {
+  const { id } = await params;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = getSupabase() as any;
   if (!supabase) {
@@ -27,11 +29,23 @@ export default async function ArchivePage({ params }: ArchiveProps) {
   const { data: supporter, error: supporterError } = await supabase
     .from('orbit_supporters')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (supporterError || !supporter) {
-    notFound();
+    return (
+      <div className="min-h-screen bg-[#020503] flex flex-col items-center justify-center p-8 font-mono text-xs">
+        <div className="w-full max-w-2xl border border-red-500/30 bg-black/50 p-6 rounded text-left overflow-auto">
+          <p className="text-red-500 mb-4 font-bold">--- TEMPORARY DEBUG SCREEN ---</p>
+          <p className="text-white/60 mb-2"><strong>Param ID:</strong> <span className="text-[#39FF14]">{id}</span></p>
+          <p className="text-white/60 mb-2"><strong>Database Error:</strong></p>
+          <pre className="text-red-400 mb-4 whitespace-pre-wrap">{JSON.stringify(supporterError, null, 2)}</pre>
+          <p className="text-white/60 mb-2"><strong>Data Returned:</strong></p>
+          <pre className="text-yellow-400 mb-4 whitespace-pre-wrap">{JSON.stringify(supporter, null, 2)}</pre>
+          <p className="text-white/60 mt-4">This screen replaces the 404 page temporarily to diagnose why the DB read is failing in production.</p>
+        </div>
+      </div>
+    );
   }
 
   // 2. Fetch all credentials attached to this supporter
