@@ -27,12 +27,13 @@ export async function sendCredentialEmail(payload: EmailPayload) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <meta name="supported-color-schemes" content="light dark">
     <title>Orbit 77 — Season Credential</title>
     <style>
         body { margin: 0; padding: 0; background-color: #020503; color: #F4EFEA; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
         .wrapper { width: 100%; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #020503; }
-        ::-moz-selection { background: rgba(57, 255, 20, 0.2); }
-        ::selection { background: rgba(57, 255, 20, 0.2); }
+        
         .header { text-align: center; margin-bottom: 40px; }
         .indicator { width: 6px; height: 6px; background-color: #39FF14; border-radius: 50%; display: inline-block; margin-right: 8px; vertical-align: middle; }
         .eyebrow { font-family: monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3em; color: #39FF14; text-align: center; font-weight: bold; margin-bottom: 20px; }
@@ -44,19 +45,35 @@ export async function sendCredentialEmail(payload: EmailPayload) {
         .row { display: table; width: 100%; margin-bottom: 16px; border-bottom: 1px solid rgba(57, 255, 20, 0.1); padding-bottom: 12px; }
         .row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .label { display: table-cell; font-family: monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(174, 255, 161, 0.5); width: 40%; vertical-align: middle; }
-        .value { display: table-cell; font-family: monospace; font-size: 12px; color: #F4EFEA; width: 60%; vertical-align: middle; text-align: right; }
-        .value.highlight { color: #39FF14; font-weight: bold; }
+        .value { display: table-cell; font-family: monospace; font-size: 13px; color: #F4EFEA; width: 60%; vertical-align: middle; text-align: right; }
+        .value.highlight { color: #39FF14; font-weight: bold; font-size: 18px; letter-spacing: 0.1em; background-color: rgba(57,255,20,0.1); padding: 4px 8px; border-radius: 4px; display: inline-block; border: 1px solid rgba(57,255,20,0.3); }
         
         .btn-wrapper { text-align: center; margin-bottom: 50px; }
         .btn { display: inline-block; padding: 16px 32px; background-color: #39FF14; color: #060B08; text-decoration: none; font-family: monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; font-weight: bold; border-radius: 6px; }
         
         .footer { text-align: center; font-family: monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(174, 255, 161, 0.3); padding-top: 30px; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+
+        /* Light Mode Fallback explicitly handling forced light modes */
+        @media (prefers-color-scheme: light) {
+            body, .wrapper { background-color: #F4EFEA !important; color: #020503 !important; }
+            .title { color: #020503 !important; }
+            .paragraph { color: #333333 !important; }
+            .card { background-color: #FFFFFF !important; border: 1px solid #E0E0E0 !important; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+            .row { border-bottom: 1px solid #E0E0E0 !important; }
+            .label { color: #888888 !important; }
+            .value { color: #020503 !important; }
+            .value.highlight { color: #00AA00 !important; background-color: #E8F5E9 !important; border: 1px solid #00AA00 !important; }
+            .btn { background-color: #00AA00 !important; color: #FFFFFF !important; }
+            .footer { color: #888888 !important; border-top: 1px solid #E0E0E0 !important; }
+            .eyebrow { color: #00AA00 !important; }
+            .indicator { background-color: #00AA00 !important; }
+        }
     </style>
 </head>
 <body>
     <div class="wrapper">
         <div class="eyebrow"><span class="indicator"></span> O R B I T &nbsp; 7 7</div>
-        <h1 class="title">Transmission Record</h1>
+        <h1 class="title">Transmission Recorded</h1>
         
         <p class="paragraph">
             The signal has been received. This credential verifies your support for Orbit 77. It is permanently recorded in the archive. 
@@ -64,12 +81,12 @@ export async function sendCredentialEmail(payload: EmailPayload) {
         
         <div class="card">
             <div class="row">
-                <div class="label">Display Name</div>
-                <div class="value">${displayName}</div>
+                <div class="label">Archive ID</div>
+                <div style="display: table-cell; text-align: right;"><span class="value highlight">${credentialCode}</span></div>
             </div>
             <div class="row">
-                <div class="label">Credential Code</div>
-                <div class="value highlight">${credentialCode}</div>
+                <div class="label">Display Name</div>
+                <div class="value">${displayName}</div>
             </div>
             <div class="row">
                 <div class="label">Season Reference</div>
@@ -86,7 +103,7 @@ export async function sendCredentialEmail(payload: EmailPayload) {
         </div>
         
         <div class="btn-wrapper">
-            <a href="https://pyadra.io/transmission-confirmed?session_id=verified&code=${credentialCode}" class="btn">View Digital Credential</a>
+            <a href="https://pyadra.io/transmission-confirmed?session_id=verified&code=${credentialCode}" class="btn">View your Credential online &rarr;</a>
         </div>
         
         <div class="footer">
@@ -102,7 +119,7 @@ export async function sendCredentialEmail(payload: EmailPayload) {
     const { error } = await resend.emails.send({
       from: 'Orbit 77 <transmit@pyadra.io>', // ensure you have verified your domain on resend
       to: [to],
-      subject: `Orbit 77 — Credential ${credentialCode}`,
+      subject: `Transmission Recorded · ${credentialCode} · Season 1`,
       html: html,
     });
 

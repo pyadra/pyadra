@@ -11,12 +11,12 @@ const nodes = [
     name: "Orbit 77",
     x: "50%",
     y: "35%",
-    size: 260,
+    size: 280,
     color: "#39FF14", // Alien Green
     opacity: 1,
-    glowColor: "rgba(57, 255, 20, 0.4)",
+    glowColor: "rgba(57, 255, 20, 0.5)",
     pulseColor: "#39FF14",
-    statusText: "", 
+    statusText: "LIVE NOW", 
     hoverCard: {
        label: "PODCAST & MEDIA",
        badgeText: "LIVE",
@@ -41,16 +41,16 @@ const nodes = [
     x: "28%",
     y: "70%",
     size: 160,
-    color: "#FFB000", // Amber Catalyst
-    opacity: 0.7,
-    glowColor: "rgba(255, 176, 0, 0.2)",
-    pulseColor: "#FFB000",
+    color: "#888888", // Grayed out
+    opacity: 0.35,
+    glowColor: "rgba(136, 136, 136, 0.1)",
+    pulseColor: "#888888",
     statusText: "FORMING",
     hoverCard: {
        label: "DIGITAL MEMORY",
        badgeText: "FORMING",
-       badgeColor: "text-[#FFB000]",
-       badgeDot: "border border-[#FFB000] text-[#FFB000] shadow-[0_0_10px_rgba(255,176,0,0.5)]",
+       badgeColor: "text-[#888888]",
+       badgeDot: "border border-[#888888] text-[#888888] shadow-[0_0_10px_rgba(136,136,136,0.3)]",
        metrics: null,
        description: "A vault for messages that outlive their sender.\nStore words, memories, and moments —\nto be opened in the future.",
        nodeStatus: [
@@ -58,7 +58,7 @@ const nodes = [
          { label: "Development", value: "Pending Crew" },
          { label: "Launch", value: "TBD" }
        ],
-       buttonLabel: "WATCH THIS NODE →",
+       buttonLabel: "WATCH THIS NODE",
        buttonHref: "#",
        buttonSubLabel: "This node is not yet open. Be notified when it launches."
     },
@@ -70,16 +70,16 @@ const nodes = [
     x: "72%",
     y: "70%",
     size: 120,
-    color: "#FFB000", // Amber Catalyst
-    opacity: 0.7,
-    glowColor: "rgba(255, 176, 0, 0.2)",
-    pulseColor: "#FFB000",
+    color: "#888888", // Grayed out
+    opacity: 0.35,
+    glowColor: "rgba(136, 136, 136, 0.1)",
+    pulseColor: "#888888",
     statusText: "FORMING",
     hoverCard: {
        label: "PHYSICAL + DIGITAL",
        badgeText: "FORMING",
-       badgeColor: "text-[#FFB000]",
-       badgeDot: "border border-[#FFB000] shadow-[0_0_10px_rgba(255,176,0,0.5)]",
+       badgeColor: "text-[#888888]",
+       badgeDot: "border border-[#888888] shadow-[0_0_10px_rgba(136,136,136,0.3)]",
        metrics: null,
        description: "Hyper-personalized 3D figures that bridge\nthe physical and digital world.\nYour identity, made tangible.",
        nodeStatus: [
@@ -87,7 +87,7 @@ const nodes = [
          { label: "Prototype", value: "In Progress" },
          { label: "Launch", value: "TBD" }
        ],
-       buttonLabel: "WATCH THIS NODE →",
+       buttonLabel: "WATCH THIS NODE",
        buttonHref: "#",
        buttonSubLabel: "This node is not yet open. Be notified when it launches."
     },
@@ -99,10 +99,10 @@ const nodes = [
     x: "88%",
     y: "85%",
     size: 50,
-    color: "#FFFFFF",
-    opacity: 0.3,
-    glowColor: "rgba(255, 255, 255, 0.05)",
-    pulseColor: "rgba(255, 255, 255, 0.2)",
+    color: "#888888",
+    opacity: 0.2,
+    glowColor: "rgba(136, 136, 136, 0.05)",
+    pulseColor: "rgba(136, 136, 136, 0.1)",
     statusText: "",
     isMystery: true,
     hoverCard: {
@@ -197,8 +197,8 @@ export default function ProjectsConstellation() {
                      style={{ 
                         width: node.size, 
                         height: node.size,
-                        border: `1px solid ${hoveredNode === node.id ? (node.isMystery ? 'rgba(255,255,255,0.2)' : node.color) : 'rgba(255, 255, 255, 0.05)'}`,
-                        boxShadow: hoveredNode === node.id ? `0 0 50px ${node.glowColor} inset, 0 20px 50px rgba(0,0,0,0.9)` : `0 0 20px rgba(255,176,0,0.03) inset, 0 20px 50px rgba(0,0,0,0.9)`
+                        border: `1px solid ${hoveredNode === node.id ? (node.isMystery ? 'rgba(255,255,255,0.2)' : node.color) : (node.id === 'orbit-77' ? 'rgba(57, 255, 20, 0.4)' : 'rgba(255, 255, 255, 0.05)')}`,
+                        boxShadow: hoveredNode === node.id ? `0 0 50px ${node.glowColor} inset, 0 20px 50px rgba(0,0,0,0.9)` : (node.id === 'orbit-77' ? `0 0 30px rgba(57,255,20,0.1) inset, 0 20px 50px rgba(0,0,0,0.9)` : `0 0 20px rgba(255,176,0,0.03) inset, 0 20px 50px rgba(0,0,0,0.9)`)
                      }}
                   >
                      {/* Node Text - Ultra Luminous Effect */}
@@ -208,10 +208,10 @@ export default function ProjectsConstellation() {
                          style={{ 
                            fontSize: `${node.size * 0.16}px`,
                            lineHeight: 1.1,
-                           color: hoveredNode === node.id ? node.color : '#FFFFFF',
+                           color: hoveredNode === node.id ? node.color : (node.id === 'orbit-77' ? '#FFFFFF' : '#888888'),
                            textShadow: hoveredNode === node.id 
                              ? `0 0 40px ${node.glowColor}, 0 0 80px ${node.color}40` 
-                             : '0 0 20px rgba(255,255,255,0.4), 0 0 40px rgba(255,176,0,0.2)'
+                             : (node.id === 'orbit-77' ? '0 0 20px rgba(255,255,255,0.4), 0 0 40px rgba(57,255,20,0.2)' : 'none')
                          }}
                        >
                          {node.name}
@@ -223,22 +223,22 @@ export default function ProjectsConstellation() {
                        <span 
                           className="w-2.5 h-2.5 rounded-full absolute bottom-[22%] transition-all duration-500"
                           style={{ 
-                            backgroundColor: hoveredNode === node.id ? node.pulseColor : (node.isMystery ? 'transparent' : '#FFB000'), 
-                            boxShadow: `0 0 15px ${hoveredNode === node.id ? node.pulseColor : (node.isMystery ? 'transparent' : '#FFB000')}`,
-                            opacity: hoveredNode === node.id ? 1 : 0.6,
-                            animation: hoveredNode === node.id && node.id === 'orbit-77' ? 'pulse 1.5s infinite' : 'none'
+                            backgroundColor: hoveredNode === node.id ? node.pulseColor : (node.isMystery ? 'transparent' : (node.id === 'orbit-77' ? node.pulseColor : '#555555')), 
+                            boxShadow: `0 0 15px ${hoveredNode === node.id ? node.pulseColor : (node.isMystery ? 'transparent' : (node.id === 'orbit-77' ? node.pulseColor : 'transparent'))}`,
+                            opacity: hoveredNode === node.id ? 1 : (node.id === 'orbit-77' ? 0.8 : 0.4),
+                            animation: (hoveredNode === node.id || node.id === 'orbit-77') ? 'pulse 1.5s infinite' : 'none'
                           }}
                        />
                      )}
                   </motion.div>
                   
-                  {/* Outer Status Text (e.g. "FORMING") below the planet */}
+                  {/* Outer Status Text (e.g. "FORMING" or "LIVE NOW") below the planet */}
                   {node.statusText && (
                     <span 
                        className="absolute -bottom-8 text-[9px] font-mono tracking-[0.2em] uppercase transition-opacity duration-500 font-bold"
                        style={{ 
-                         color: hoveredNode === node.id ? node.color : '#FFB000',
-                         opacity: hoveredNode === node.id ? 0.9 : 0.4 
+                         color: hoveredNode === node.id ? node.color : (node.id === 'orbit-77' ? node.color : '#888888'),
+                         opacity: hoveredNode === node.id ? 0.9 : (node.id === 'orbit-77' ? 0.8 : 0.4) 
                        }}
                     >
                       {node.statusText}

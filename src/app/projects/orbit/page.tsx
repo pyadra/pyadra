@@ -424,7 +424,7 @@ export default function OrbitEntertainmentDashboard() {
                     />
                   </div>
                   <p className="text-[9px] font-mono text-[#AEFFA1]/40 text-right">
-                    Goal: 1,000 AUD — Season 2 distribution
+                    Goal: 1,000 AUD — Covers server distribution and archive expansion. Every support extends the reach.
                   </p>
                 </div>
               </div>
@@ -488,12 +488,49 @@ export default function OrbitEntertainmentDashboard() {
                Close
              </button>
 
-             <h3 className="text-3xl md:text-4xl font-serif italic text-[#39FF14] mb-3 text-center drop-shadow-[0_0_15px_rgba(57,255,20,0.2)] relative z-10">
+             <h3 className="text-3xl md:text-4xl font-serif italic text-[#39FF14] mb-2 text-center drop-shadow-[0_0_15px_rgba(57,255,20,0.2)] relative z-10">
                Support Orbit 77
              </h3>
              <p className="text-xs font-light font-sans text-[#AEFFA1]/70 leading-relaxed mb-8 text-center max-w-sm mx-auto relative z-10">
-               Season 1 is done. The signal is strong. Help it reach further.
+               Season 1 is recorded. Now we distribute.
              </p>
+
+             {/* PREVIEW CARD - "This is what you'll receive" */}
+             <div className="relative z-10 mb-8 border border-[#39FF14]/30 rounded-2xl bg-gradient-to-br from-[#0A1A0D] to-[#050A07] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-[#39FF14]/10 rounded-full blur-[40px] pointer-events-none" />
+               <p className="text-[8px] font-mono tracking-[0.2em] uppercase text-[#39FF14] mb-4 font-bold text-center">
+                 — Preview: Your Season Credential —
+               </p>
+               <div className="flex justify-between items-start mb-6">
+                 <div>
+                   <p className="text-[7px] font-mono tracking-[0.3em] uppercase text-[#39FF14]/60 mb-1">Orbit 77</p>
+                   <p className="text-[8px] font-mono tracking-[0.2em] uppercase text-[#AEFFA1]/40">Season 1 — 2026</p>
+                 </div>
+                 <div className="w-6 h-6 rounded-full border border-[#39FF14]/30 flex items-center justify-center">
+                   <span className="w-1.5 h-1.5 rounded-full bg-[#39FF14]" />
+                 </div>
+               </div>
+               <div className="mb-4">
+                 <p className="text-[7px] font-mono tracking-[0.3em] uppercase text-[#AEFFA1]/50 mb-1">Display Name</p>
+                 <h4 className="text-xl font-serif italic text-[#F4EFEA]">{supporterName || "Your Name"}</h4>
+               </div>
+               <div className="flex justify-between items-end border-t border-[#39FF14]/10 pt-4">
+                 <div>
+                   <p className="text-[7px] font-mono tracking-[0.3em] uppercase text-[#AEFFA1]/50 mb-1">Role</p>
+                   <p className="text-[8px] font-mono text-[#39FF14] tracking-widest font-bold">Orbit 77 Supporter</p>
+                 </div>
+                 <div className="text-right">
+                   <p className="text-[7px] font-mono tracking-[0.3em] uppercase text-[#AEFFA1]/50 mb-1">Archive ID</p>
+                   <p className="text-[8px] font-mono text-[#AEFFA1]/70 tracking-widest">O77-S1-XXXXXX</p>
+                 </div>
+               </div>
+             </div>
+
+             <div className="relative z-10 mb-5 text-center">
+               <p className="text-[9px] font-mono tracking-widest uppercase text-[#39FF14] font-bold">
+                 Your support is permanently recorded in the Orbit 77 Archive · Season 1 · 2026
+               </p>
+             </div>
 
              {/* Supporter Info Collection */}
              <div className="relative z-10 flex flex-col gap-5 mb-8">
@@ -505,7 +542,7 @@ export default function OrbitEntertainmentDashboard() {
                      value={supporterName}
                      onChange={e => setSupporterName(e.target.value)}
                      placeholder="Name for the archive"
-                     className="w-full bg-[#0A120D] border border-[#39FF14]/20 focus:border-[#39FF14] focus:shadow-[0_0_15px_rgba(57,255,20,0.1)] rounded-xl px-5 py-3 text-sm font-sans text-[#F4EFEA] outline-none transition-all placeholder:text-[#AEFFA1]/30"
+                     className="w-full bg-[#0A120D] border border-[#39FF14]/20 focus:border-[#39FF14] focus:shadow-[0_0_15px_rgba(57,255,20,0.1)] rounded-xl px-4 py-3 text-sm font-sans text-[#F4EFEA] outline-none transition-all placeholder:text-[#AEFFA1]/30"
                    />
                  </div>
                  <div>
@@ -516,7 +553,7 @@ export default function OrbitEntertainmentDashboard() {
                      value={supporterEmail}
                      onChange={e => setSupporterEmail(e.target.value)}
                      placeholder="To send your season credential"
-                     className="w-full bg-[#0A120D] border border-[#39FF14]/20 focus:border-[#39FF14] focus:shadow-[0_0_15px_rgba(57,255,20,0.1)] rounded-xl px-5 py-3 text-sm font-sans text-[#F4EFEA] outline-none transition-all placeholder:text-[#AEFFA1]/30"
+                     className="w-full bg-[#0A120D] border border-[#39FF14]/20 focus:border-[#39FF14] focus:shadow-[0_0_15px_rgba(57,255,20,0.1)] rounded-xl px-4 py-3 text-sm font-sans text-[#F4EFEA] outline-none transition-all placeholder:text-[#AEFFA1]/30"
                    />
                  </div>
                </div>
@@ -546,20 +583,28 @@ export default function OrbitEntertainmentDashboard() {
                     maxLength={120}
                     value={supportMessage}
                     onChange={e => setSupportMessage(e.target.value)}
-                    placeholder="Leave a mark in the registry..."
-                    className="w-full bg-[#0A120D] border border-[#39FF14]/20 focus:border-[#39FF14] focus:shadow-[0_0_15px_rgba(57,255,20,0.1)] rounded-xl px-5 py-3 text-sm font-sans text-[#F4EFEA] outline-none transition-all placeholder:text-[#AEFFA1]/30"
+                    placeholder="Leave a message for the archive — a word, a phrase. Optional."
+                    className="w-full bg-[#0A120D] border border-[#39FF14]/20 focus:border-[#39FF14] focus:shadow-[0_0_15px_rgba(57,255,20,0.1)] rounded-xl px-4 py-3 text-sm font-sans text-[#F4EFEA] outline-none transition-all placeholder:text-[#AEFFA1]/30"
                   />
                </div>
              </div>
 
              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 relative z-10">
-               {[10, 20, 50].map(val => (
+               {[
+                 { val: 10, label: "Entry Transmission" },
+                 { val: 20, label: "Season Record", recommended: true },
+                 { val: 50, label: "Archive Patron" }
+               ].map(tier => (
                  <button
-                   key={val}
-                   onClick={() => setAmountAud(val)}
-                   className={`py-4 rounded-xl text-sm font-mono tracking-widest transition-all duration-300 cursor-pointer border-2 ${amountAud === val ? 'bg-[#39FF14] text-[#060B08] border-[#39FF14] shadow-[0_0_20px_rgba(57,255,20,0.4)] font-bold' : 'bg-black/40 text-[#39FF14] border-[#39FF14]/20 hover:bg-[#39FF14]/10 hover:border-[#39FF14]/40'}`}
+                   key={tier.val}
+                   onClick={() => setAmountAud(tier.val)}
+                   className={`relative py-4 rounded-xl flex flex-col items-center justify-center gap-1 transition-all duration-300 cursor-pointer border-2 ${amountAud === tier.val ? 'bg-[#39FF14] text-[#060B08] border-[#39FF14] shadow-[0_0_20px_rgba(57,255,20,0.4)]' : 'bg-black/40 text-[#39FF14] border-[#39FF14]/20 hover:bg-[#39FF14]/10 hover:border-[#39FF14]/40'}`}
                  >
-                   ${val} AUD
+                   <span className="text-sm font-mono tracking-widest font-bold">${tier.val} AUD</span>
+                   <span className={`text-[8px] font-mono tracking-widest uppercase ${amountAud === tier.val ? 'text-[#060B08]/70' : 'text-[#AEFFA1]/50'}`}>{tier.label}</span>
+                   {tier.recommended && (
+                     <span className={`absolute -top-2 bg-[#020503] border px-2 py-0.5 text-[7px] font-mono tracking-widest uppercase rounded-full ${amountAud === tier.val ? 'border-[#39FF14] text-[#39FF14]' : 'border-[#39FF14]/30 text-[#39FF14]/60'}`}>Recommended</span>
+                   )}
                  </button>
                ))}
              </div>
@@ -567,14 +612,14 @@ export default function OrbitEntertainmentDashboard() {
              <button
                onClick={handleSupport}
                disabled={loading || !amountAud || !supporterEmail}
-               className={`w-full py-5 rounded-full text-[10px] md:text-xs font-mono tracking-[0.3em] uppercase transition-all duration-500 flex justify-center items-center gap-4 cursor-pointer border-2 relative z-10 ${(!amountAud || !supporterEmail || loading) ? 'bg-black/40 text-[#39FF14]/30 cursor-not-allowed border-[#39FF14]/10' : 'bg-[#39FF14] border-[#39FF14] text-[#060B08] font-bold hover:shadow-[0_0_30px_rgba(57,255,20,0.5)] hover:bg-[#39FF14]/90'}`}
+               className={`w-full py-5 rounded-full text-[10px] md:text-sm font-mono tracking-[0.2em] uppercase transition-all duration-500 flex justify-center items-center gap-4 cursor-pointer border-2 relative z-10 ${(!amountAud || !supporterEmail || loading) ? 'bg-black/40 text-[#39FF14]/30 cursor-not-allowed border-[#39FF14]/10' : 'bg-[#39FF14] border-[#39FF14] text-[#060B08] font-bold hover:shadow-[0_0_30px_rgba(57,255,20,0.5)] hover:bg-[#39FF14]/90'}`}
              >
-               {loading ? 'Initializing Protocol...' : 'Record Support'}
+               {loading ? 'Initializing Protocol...' : 'Record My Transmission'}
                {amountAud && supporterEmail && !loading && <span className="text-[#060B08] text-lg font-bold">→</span>}
              </button>
 
              <p className="text-[7px] md:text-[8px] font-mono text-[#AEFFA1]/30 text-center mt-5 leading-relaxed uppercase tracking-[0.15em] relative z-10">
-               This support will be archived in Orbit 77. Secure checkout via Stripe.
+               Secure checkout via Stripe. One-time only.
              </p>
            </motion.div>
          </div>
