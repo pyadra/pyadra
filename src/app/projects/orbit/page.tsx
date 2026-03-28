@@ -72,15 +72,6 @@ export default function OrbitEntertainmentDashboard() {
 
   const supportPercentage = Math.min((supportRaisedAud / supportGoalAud) * 100, 100);
 
-  useEffect(() => {
-    if (stripeOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
-  }, [stripeOpen]);
-  
   // Bioluminescence tied to scroll depth - blending Green and Amber
   const { scrollY } = useScroll();
   const backgroundY = useTransform(scrollY, [0, 4000], ["-50%", "30%"]);
@@ -495,9 +486,9 @@ export default function OrbitEntertainmentDashboard() {
       {stripeOpen && (
          <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 md:p-6 bg-[#020503]/90 backdrop-blur-2xl">
            <motion.div
-             initial={{ opacity: 0, scale: 0.95, y: 10 }}
-             animate={{ opacity: 1, scale: 1, y: 0 }}
-             className="w-full max-w-xl max-h-[90vh] overflow-y-auto no-scrollbar bg-[#09120D] border border-[#39FF14]/40 rounded-2xl p-6 md:p-10 relative flex flex-col shadow-[0_30px_80px_rgba(57,255,20,0.15)] overflow-x-hidden"
+             initial={{ opacity: 0, scale: 0.95 }}
+             animate={{ opacity: 1, scale: 1 }}
+             className="w-full max-w-xl bg-[#09120D] border border-[#39FF14]/40 rounded-2xl p-6 md:p-10 relative flex flex-col shadow-[0_30px_80px_rgba(57,255,20,0.15)] overflow-hidden max-h-[90vh] overflow-y-auto"
            >
              <div className="absolute top-0 right-0 w-64 h-64 bg-[#39FF14]/5 rounded-full blur-[80px] pointer-events-none" />
              <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#39FF14]/10 rounded-full blur-[80px] pointer-events-none" />
