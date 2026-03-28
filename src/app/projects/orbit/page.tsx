@@ -484,11 +484,11 @@ export default function OrbitEntertainmentDashboard() {
 
       {/* Stripe Modal — Support Orbit 77 */}
       {stripeOpen && (
-         <div className="fixed inset-0 z-[99999] bg-[#020503]/90 backdrop-blur-2xl overflow-y-auto px-4 py-12 md:py-20 flex justify-center items-start">
+         <div className="fixed inset-0 z-[99999] bg-[#020503]/90 backdrop-blur-2xl overflow-y-auto px-4 py-8 md:py-16">
            <motion.div
              initial={{ opacity: 0, scale: 0.95, y: 20 }}
              animate={{ opacity: 1, scale: 1, y: 0 }}
-             className="w-full max-w-xl bg-[#09120D] border border-[#39FF14]/40 rounded-2xl p-6 md:p-10 relative flex flex-col shadow-[0_30px_80px_rgba(57,255,20,0.15)] my-auto overflow-hidden"
+             className="w-full max-w-xl mx-auto bg-[#09120D] border border-[#39FF14]/40 rounded-2xl p-6 md:p-10 relative flex flex-col shadow-[0_30px_80px_rgba(57,255,20,0.15)] overflow-hidden"
            >
              <div className="absolute top-0 right-0 w-64 h-64 bg-[#39FF14]/5 rounded-full blur-[80px] pointer-events-none" />
              <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#39FF14]/10 rounded-full blur-[80px] pointer-events-none" />
