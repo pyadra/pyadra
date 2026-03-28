@@ -62,15 +62,46 @@ export async function POST(req: Request) {
            const supporterEmail = metadata.supporter_email || session.customer_details?.email || '';
            
            let emailSent = false;
+           let supporterId: string | null = null;
            
-           // If we have a DB connection, persist it
+           // If we have a DB connection, persist identity and credential
            if (supabase) {
+             // 1. Resolve or Create persistent supporter identity
+             if (supporterEmail) {
+               const { data: existingSupporter } = await supabase
+                 .from('orbit_supporters')
+                 .select('id')
+                 .eq('email', supporterEmail)
+                 .single();
+                 
+               if (existingSupporter) {
+                 supporterId = existingSupporter.id;
+               } else {
+                 const { data: newSupporter, error: supporterError } = await supabase
+                   .from('orbit_supporters')
+                   .insert({
+                     email: supporterEmail,
+                     display_name: displayName
+                   })
+                   .select('id')
+                   .single();
+                   
+                 if (newSupporter) {
+                   supporterId = newSupporter.id;
+                 } else {
+                   console.error("Supabase Error (Supporter Creation):", supporterError);
+                 }
+               }
+             }
+
+             // 2. Insert the credential attached to the supporter
              const { error: dbError } = await supabase
                .from('orbit_support_credentials')
                .insert({
                  stripe_checkout_session_id: session.id,
                  stripe_payment_intent_id: session.payment_intent as string,
                  payment_status: 'paid',
+                 supporter_id: supporterId,
                  supporter_name: supporterName,
                  supporter_email: supporterEmail,
                  display_name: displayName,
@@ -101,6 +132,7 @@ export async function POST(req: Request) {
              emailSent = await sendCredentialEmail({
                 to: supporterEmail,
                 supporterName: displayName,
+                supporterId,
                 amountAud,
                 credentialCode,
                 seasonLabel: metadata.season_label || 'Season 1',

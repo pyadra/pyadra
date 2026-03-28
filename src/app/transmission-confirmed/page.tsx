@@ -13,11 +13,13 @@ function ConfirmationInner() {
   const isPreview = params.get("preview") === "1";
   const [supporterName, setSupporterName] = useState<string>(isPreview ? "Pablo Ramirez" : "Anonymous");
   const [supporterNumber, setSupporterNumber] = useState<string>(isPreview ? "O77-S1-PREV01" : "—");
+  const [supporterId, setSupporterId] = useState<string | null>(null);
   const [dateStr, setDateStr] = useState<string>("");
 
   useEffect(() => {
     // Generate current date
     const d = new Date();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDateStr(`${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`);
 
     if (isPreview) return;
@@ -34,6 +36,10 @@ function ConfirmationInner() {
         if (id) {
           const suffix = id.replace(/[^A-Z0-9]/gi, "").toUpperCase().slice(-6);
           setSupporterNumber(`O77-S1-${suffix}`);
+        }
+
+        if (data?.supporter_id) {
+          setSupporterId(data.supporter_id);
         }
       } catch {
         /* ignore */
@@ -184,10 +190,20 @@ function ConfirmationInner() {
           </button>
         </Link>
         <div className="w-full sm:w-auto relative group">
-          <button disabled className="w-full px-8 py-4 rounded-full text-[10px] uppercase tracking-[0.3em] font-bold transition-all border border-white/5 text-white/20 bg-transparent cursor-not-allowed">
-            View in Archive
-          </button>
-          <span className="absolute -top-3 right-1/2 translate-x-1/2 bg-[#020503] border border-white/10 px-2 py-0.5 text-[7px] font-mono tracking-widest uppercase text-white/30 rounded-full">Forming</span>
+          {supporterId ? (
+            <Link href={`/archive/${supporterId}`} className="block w-full">
+              <button className="w-full px-8 py-4 rounded-full text-[10px] uppercase tracking-[0.3em] font-bold transition-all border border-[#39FF14]/50 text-[#39FF14] bg-black/50 hover:bg-[#39FF14]/10 shadow-[0_0_15px_rgba(57,255,20,0.1)] hover:shadow-[0_0_20px_rgba(57,255,20,0.2)]">
+                View in Archive
+              </button>
+            </Link>
+          ) : (
+            <>
+              <button disabled className="w-full px-8 py-4 rounded-full text-[10px] uppercase tracking-[0.3em] font-bold transition-all border border-white/5 text-white/20 bg-transparent cursor-not-allowed">
+                View in Archive
+              </button>
+              <span className="absolute -top-3 right-1/2 translate-x-1/2 bg-[#020503] border border-white/10 px-2 py-0.5 text-[7px] font-mono tracking-widest uppercase text-white/30 rounded-full">Syncing...</span>
+            </>
+          )}
         </div>
       </motion.div>
 

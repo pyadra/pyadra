@@ -30,7 +30,28 @@ export async function GET(req: Request) {
 
   try {
     const session = await stripe.checkout.sessions.retrieve(session_id);
-    return NextResponse.json({ session });
+    
+    // Attempt to lookup the supporter ID from the webhook creation
+    let supporter_id = null;
+    try {
+      const { getSupabase } = await import('@/app/lib/db');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const supabase = getSupabase() as any;
+      if (supabase) {
+        const { data } = await supabase
+          .from('orbit_support_credentials')
+          .select('supporter_id')
+          .eq('stripe_checkout_session_id', session_id)
+          .single();
+        if (data && data.supporter_id) {
+          supporter_id = data.supporter_id;
+        }
+      }
+    } catch {
+      // Ignore DB errors in session lookup
+    }
+
+    return NextResponse.json({ session, supporter_id });
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : String(err);
     return NextResponse.json(

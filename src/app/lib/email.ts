@@ -5,6 +5,7 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 interface EmailPayload {
   to: string;
   supporterName: string;
+  supporterId?: string | null;
   amountAud: number;
   credentialCode: string;
   seasonLabel: string;
@@ -19,7 +20,11 @@ export async function sendCredentialEmail(payload: EmailPayload) {
 
   // Fallback name if anonymous
   const displayName = payload.supporterName || "Anonymous";
-  const { to, amountAud, credentialCode, seasonLabel, dateStr } = payload;
+  const { to, amountAud, credentialCode, seasonLabel, dateStr, supporterId } = payload;
+
+  const archiveLink = supporterId 
+    ? `https://pyadra.io/archive/${supporterId}` 
+    : `https://pyadra.io/transmission-confirmed?session_id=verified&code=${credentialCode}`;
 
   const html = `
 <!DOCTYPE html>
@@ -103,7 +108,7 @@ export async function sendCredentialEmail(payload: EmailPayload) {
         </div>
         
         <div class="btn-wrapper">
-            <a href="https://pyadra.io/transmission-confirmed?session_id=verified&code=${credentialCode}" class="btn">View your Credential online &rarr;</a>
+            <a href="${archiveLink}" class="btn">View your Archive &rarr;</a>
         </div>
         
         <div class="footer">
