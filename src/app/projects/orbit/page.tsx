@@ -484,11 +484,11 @@ export default function OrbitEntertainmentDashboard() {
 
       {/* Stripe Modal — Support Orbit 77 */}
       {stripeOpen && (
-         <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 md:p-6 bg-[#020503]/90 backdrop-blur-2xl">
+         <div className="fixed inset-0 z-[99999] bg-[#020503]/90 backdrop-blur-2xl overflow-y-auto px-4 py-12 md:py-20 flex justify-center items-start">
            <motion.div
-             initial={{ opacity: 0, scale: 0.95 }}
-             animate={{ opacity: 1, scale: 1 }}
-             className="w-full max-w-xl bg-[#09120D] border border-[#39FF14]/40 rounded-2xl p-6 md:p-10 relative flex flex-col shadow-[0_30px_80px_rgba(57,255,20,0.15)] overflow-hidden max-h-[90vh] overflow-y-auto"
+             initial={{ opacity: 0, scale: 0.95, y: 20 }}
+             animate={{ opacity: 1, scale: 1, y: 0 }}
+             className="w-full max-w-xl bg-[#09120D] border border-[#39FF14]/40 rounded-2xl p-6 md:p-10 relative flex flex-col shadow-[0_30px_80px_rgba(57,255,20,0.15)] my-auto overflow-hidden"
            >
              <div className="absolute top-0 right-0 w-64 h-64 bg-[#39FF14]/5 rounded-full blur-[80px] pointer-events-none" />
              <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#39FF14]/10 rounded-full blur-[80px] pointer-events-none" />
@@ -526,14 +526,14 @@ export default function OrbitEntertainmentDashboard() {
                  <p className="text-[7px] font-mono tracking-[0.3em] uppercase text-[#AEFFA1]/50 mb-1">Display Name</p>
                  <h4 className="text-xl font-serif italic text-[#F4EFEA]">{supporterName || "Your Name"}</h4>
                </div>
-               <div className="flex justify-between items-end border-t border-[#39FF14]/10 pt-4">
-                 <div>
-                   <p className="text-[7px] font-mono tracking-[0.3em] uppercase text-[#AEFFA1]/50 mb-1">Role</p>
-                   <p className="text-[8px] font-mono text-[#39FF14] tracking-widest font-bold">Orbit 77 Supporter</p>
+               <div className="flex justify-between items-end border-t border-[#39FF14]/10 pt-4 pb-2">
+                 <div className="flex flex-col gap-1">
+                   <p className="text-[7px] font-mono tracking-[0.3em] uppercase text-[#AEFFA1]/50">Role</p>
+                   <p className="text-[8px] font-mono text-[#39FF14] tracking-widest font-bold pt-1">Orbit 77 Supporter</p>
                  </div>
-                 <div className="text-right">
-                   <p className="text-[7px] font-mono tracking-[0.3em] uppercase text-[#AEFFA1]/50 mb-1">Archive ID</p>
-                   <p className="text-[8px] font-mono text-[#AEFFA1]/70 tracking-widest">O77-S1-XXXXXX</p>
+                 <div className="text-right flex flex-col gap-1">
+                   <p className="text-[7px] font-mono tracking-[0.3em] uppercase text-[#AEFFA1]/50">Archive ID</p>
+                   <p className="text-[8px] font-mono text-[#AEFFA1]/70 tracking-widest pt-1">O77-S1-XXXXXX</p>
                  </div>
                </div>
              </div>
@@ -545,10 +545,10 @@ export default function OrbitEntertainmentDashboard() {
              </div>
 
              {/* Supporter Info Collection */}
-             <div className="relative z-10 flex flex-col gap-5 mb-8">
+             <div className="relative z-10 flex flex-col gap-4 mb-8">
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                  <div>
-                   <label className="text-[9px] uppercase font-mono tracking-widest text-[#AEFFA1]/60 font-bold block mb-2">Display Name</label>
+                   <label className="text-[8px] uppercase font-mono tracking-widest text-[#AEFFA1]/60 font-bold block mb-2">Display Name</label>
                    <input
                      type="text"
                      value={supporterName}
@@ -558,7 +558,7 @@ export default function OrbitEntertainmentDashboard() {
                    />
                  </div>
                  <div>
-                   <label className="text-[9px] uppercase font-mono tracking-widest text-[#AEFFA1]/60 font-bold block mb-2">Email Address *</label>
+                   <label className="text-[8px] uppercase font-mono tracking-widest text-[#AEFFA1]/60 font-bold block mb-2">Email Address *</label>
                    <input
                      type="email"
                      required
@@ -571,17 +571,17 @@ export default function OrbitEntertainmentDashboard() {
                </div>
 
                <div>
-                 <label className="text-[9px] uppercase font-mono tracking-widest text-[#AEFFA1]/60 font-bold block mb-2">Public visibility</label>
+                 <label className="text-[8px] uppercase font-mono tracking-widest text-[#AEFFA1]/60 font-bold block mb-2">Public visibility</label>
                  <div className="flex gap-4">
                    <button 
                      onClick={() => setIsAnonymous(false)}
-                     className={`flex-1 py-3 text-[10px] font-mono tracking-widest uppercase rounded-lg border transition-colors ${!isAnonymous ? 'bg-[#39FF14]/10 border-[#39FF14] text-[#39FF14]' : 'bg-black border-white/10 text-white/40'}`}
+                     className={`flex-1 py-3 text-[9px] font-mono tracking-widest uppercase rounded-lg border transition-colors ${!isAnonymous ? 'bg-[#39FF14]/10 border-[#39FF14] text-[#39FF14]' : 'bg-black border-white/10 text-white/40'}`}
                    >
                      Public Name
                    </button>
                    <button 
                      onClick={() => setIsAnonymous(true)}
-                     className={`flex-1 py-3 text-[10px] font-mono tracking-widest uppercase rounded-lg border transition-colors ${isAnonymous ? 'bg-[#39FF14]/10 border-[#39FF14] text-[#39FF14]' : 'bg-black border-white/10 text-white/40'}`}
+                     className={`flex-1 py-3 text-[9px] font-mono tracking-widest uppercase rounded-lg border transition-colors ${isAnonymous ? 'bg-[#39FF14]/10 border-[#39FF14] text-[#39FF14]' : 'bg-black border-white/10 text-white/40'}`}
                    >
                      Off-Record
                    </button>
@@ -589,19 +589,19 @@ export default function OrbitEntertainmentDashboard() {
                </div>
 
                <div>
-                  <label className="text-[9px] uppercase font-mono tracking-widest text-[#AEFFA1]/60 font-bold block mb-2">Message <span className="opacity-50">(Optional)</span></label>
+                  <label className="text-[8px] uppercase font-mono tracking-widest text-[#AEFFA1]/60 font-bold block mb-2">Message <span className="opacity-50">(Optional)</span></label>
                   <input
                     type="text"
                     maxLength={120}
                     value={supportMessage}
                     onChange={e => setSupportMessage(e.target.value)}
-                    placeholder="Leave a message for the archive — a word, a phrase. Optional."
+                    placeholder="Leave a message for the archive."
                     className="w-full bg-[#0A120D] border border-[#39FF14]/20 focus:border-[#39FF14] focus:shadow-[0_0_15px_rgba(57,255,20,0.1)] rounded-xl px-4 py-3 text-sm font-sans text-[#F4EFEA] outline-none transition-all placeholder:text-[#AEFFA1]/30"
                   />
                </div>
              </div>
 
-             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 relative z-10">
+             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 relative z-10">
                {[
                  { val: 10, label: "Entry Transmission" },
                  { val: 20, label: "Season Record", recommended: true },
@@ -610,12 +610,12 @@ export default function OrbitEntertainmentDashboard() {
                  <button
                    key={tier.val}
                    onClick={() => setAmountAud(tier.val)}
-                   className={`relative py-4 rounded-xl flex flex-col items-center justify-center gap-1 transition-all duration-300 cursor-pointer border-2 ${amountAud === tier.val ? 'bg-[#39FF14] text-[#060B08] border-[#39FF14] shadow-[0_0_20px_rgba(57,255,20,0.4)]' : 'bg-black/40 text-[#39FF14] border-[#39FF14]/20 hover:bg-[#39FF14]/10 hover:border-[#39FF14]/40'}`}
+                   className={`relative py-3 rounded-xl flex flex-col items-center justify-center gap-1 transition-all duration-300 cursor-pointer border-2 ${amountAud === tier.val ? 'bg-[#39FF14] text-[#060B08] border-[#39FF14] shadow-[0_0_20px_rgba(57,255,20,0.4)]' : 'bg-black/40 text-[#39FF14] border-[#39FF14]/20 hover:bg-[#39FF14]/10 hover:border-[#39FF14]/40'}`}
                  >
                    <span className="text-sm font-mono tracking-widest font-bold">${tier.val} AUD</span>
-                   <span className={`text-[8px] font-mono tracking-widest uppercase ${amountAud === tier.val ? 'text-[#060B08]/70' : 'text-[#AEFFA1]/50'}`}>{tier.label}</span>
+                   <span className={`text-[7px] font-mono tracking-widest uppercase ${amountAud === tier.val ? 'text-[#060B08]/70' : 'text-[#AEFFA1]/50'}`}>{tier.label}</span>
                    {tier.recommended && (
-                     <span className={`absolute -top-2 bg-[#020503] border px-2 py-0.5 text-[7px] font-mono tracking-widest uppercase rounded-full ${amountAud === tier.val ? 'border-[#39FF14] text-[#39FF14]' : 'border-[#39FF14]/30 text-[#39FF14]/60'}`}>Recommended</span>
+                     <span className={`absolute -top-2 bg-[#020503] border px-2 py-0.5 text-[6px] font-mono tracking-widest uppercase rounded-full ${amountAud === tier.val ? 'border-[#39FF14] text-[#39FF14]' : 'border-[#39FF14]/30 text-[#39FF14]/60'}`}>Recommended</span>
                    )}
                  </button>
                ))}
@@ -624,13 +624,13 @@ export default function OrbitEntertainmentDashboard() {
              <button
                onClick={handleSupport}
                disabled={loading || !amountAud || !supporterEmail}
-               className={`w-full py-5 rounded-full text-[10px] md:text-sm font-mono tracking-[0.2em] uppercase transition-all duration-500 flex justify-center items-center gap-4 cursor-pointer border-2 relative z-10 ${(!amountAud || !supporterEmail || loading) ? 'bg-black/40 text-[#39FF14]/30 cursor-not-allowed border-[#39FF14]/10' : 'bg-[#39FF14] border-[#39FF14] text-[#060B08] font-bold hover:shadow-[0_0_30px_rgba(57,255,20,0.5)] hover:bg-[#39FF14]/90'}`}
+               className={`w-full py-4 rounded-full text-[10px] md:text-sm font-mono tracking-[0.2em] uppercase transition-all duration-500 flex justify-center items-center gap-3 cursor-pointer border-2 relative z-10 ${(!amountAud || !supporterEmail || loading) ? 'bg-black/40 text-[#39FF14]/30 cursor-not-allowed border-white/5' : 'bg-[#39FF14] border-[#39FF14] text-[#060B08] font-bold hover:shadow-[0_0_30px_rgba(57,255,20,0.5)] hover:bg-[#39FF14]/90'}`}
              >
                {loading ? 'Initializing Protocol...' : 'Record My Transmission'}
                {amountAud && supporterEmail && !loading && <span className="text-[#060B08] text-lg font-bold">→</span>}
              </button>
 
-             <p className="text-[7px] md:text-[8px] font-mono text-[#AEFFA1]/30 text-center mt-5 leading-relaxed uppercase tracking-[0.15em] relative z-10">
+             <p className="text-[7px] md:text-[8px] font-mono text-[#AEFFA1]/30 text-center mt-4 leading-relaxed uppercase tracking-[0.15em] relative z-10">
                Secure checkout via Stripe. One-time only.
              </p>
            </motion.div>
