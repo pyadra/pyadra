@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Capsule3D from '../Capsule3D';
 
 export default function EterniCapsuleUnlock() {
@@ -98,6 +99,13 @@ export default function EterniCapsuleUnlock() {
             {loading ? <span className="animate-pulse tracking-[0.4em]">OPENING...</span> : 'OPEN'}
           </button>
         </form>
+
+        <Link 
+          href="/" 
+          className="mt-16 text-[#3A2E22] font-[family-name:var(--font-cormorant)] text-[10px] tracking-[0.3em] uppercase hover:text-[#C4A882] transition-colors duration-500"
+        >
+          [ BACK TO PYADRA ]
+        </Link>
       </div>
 
     </div>

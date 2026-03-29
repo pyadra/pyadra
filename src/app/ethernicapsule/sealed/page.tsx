@@ -37,7 +37,7 @@ export default function EterniCapsuleSealedPage() {
 
         <div className="absolute bottom-12 w-full text-center">
           <Link 
-            href="/projects" 
+            href="/" 
             className="text-[#3A2E22] font-[family-name:var(--font-cormorant)] text-[10px] tracking-[0.3em] uppercase hover:text-[#C4A882] transition-colors duration-500"
           >
             [ RETURN TO PYADRA ]

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function ComposeForm() {
   const [loading, setLoading] = useState(false);
@@ -11,7 +12,8 @@ export default function ComposeForm() {
     sender_name: '',
     recipient_name: '',
     message: '',
-    guardian_email: ''
+    guardian_email: '',
+    deliver_at: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -30,12 +32,14 @@ export default function ComposeForm() {
     setLoading(true);
 
     try {
-      // 1. Memorize locally
+      // 1. Memorize locally (as a fallback/draft only)
       localStorage.setItem('etn_draft', JSON.stringify(formData));
 
-      // 2. Transmute to Payment Stage
+      // 2. Transmute to Payment Stage and initialize Secure Vault
       const res = await fetch('/api/ethernicapsule/checkout', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
       });
       const data = await res.json();
 
@@ -148,13 +152,32 @@ export default function ComposeForm() {
           </p>
         </div>
 
+        <div className="flex flex-col gap-2 mt-8">
+          <label className="text-[11px] text-[#7A6A55] tracking-widest uppercase" style={{ fontFamily: 'var(--font-cormorant)' }}>The Time Vault</label>
+          <div className="relative w-full">
+            <input 
+              type="date"
+              name="deliver_at"
+              value={formData.deliver_at}
+              onChange={handleChange}
+              min={new Date().toISOString().split('T')[0]}
+              className="peer w-full bg-transparent border-b border-[rgba(196,168,130,0.2)] text-[#E8D9BB] focus:border-transparent focus:outline-none pb-2 text-lg placeholder-[#7A6A55] transition-colors [color-scheme:dark]"
+              disabled={loading || transitioning}
+            />
+            <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1px] bg-[#C4A882] transition-all duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] peer-focus:w-full opacity-50 peer-focus:opacity-100"></span>
+          </div>
+          <p className="text-[10px] text-[#7A6A55] tracking-widest italic mt-1" style={{ fontFamily: 'var(--font-cormorant)' }}>
+            Optional. If set, the key will be securely withheld and sent automatically on this precise date.
+          </p>
+        </div>
+
         <div className="flex flex-col items-center mt-20 pt-10">
           
           {error && <p className="text-[#C4A882] italic text-sm mb-6 pb-2 text-center max-w-md">{error}</p>}
 
           <p className="text-[#7A6A55] italic text-sm mb-8 text-center" style={{ fontFamily: 'var(--font-cormorant)' }}>
             Once sealed, this cannot be changed.
-            <br/><span className="text-[11px] opacity-70">A $20 cryptographic toll is required.</span>
+            <br/><span className="text-[11px] opacity-70">A $9 cryptographic toll is required.</span>
           </p>
 
           <button 
@@ -165,8 +188,17 @@ export default function ComposeForm() {
           >
             {loading ? <span className="animate-pulse tracking-[0.4em] text-[#C4A882] font-normal italic lowercase text-[15px]">Sealing...</span> : 'SEAL THE CAPSULE'}
           </button>
+
+          <Link 
+            href="/" 
+            className="mt-12 text-[#3A2E22] text-[10px] tracking-[0.3em] uppercase hover:text-[#C4A882] transition-colors duration-500"
+            style={{ fontFamily: 'var(--font-cormorant)' }}
+          >
+            [ CANCEL / BACK TO PYADRA ]
+          </Link>
         </div>
       </form>
     </>
   );
 }
+

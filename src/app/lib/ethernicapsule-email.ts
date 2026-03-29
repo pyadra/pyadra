@@ -75,7 +75,7 @@ export async function sendCreatorEmail(opts: { to: string, senderKey: string, ca
   }
 }
 
-export async function sendGuardianAwarenessEmail(opts: { to: string[], senderFirstName: string }) {
+export async function sendGuardianMasterEmail(opts: { to: string[], senderFirstName: string, capsuleKey: string, siteUrl: string }) {
   if (!resend) return false;
   
   const html = `
@@ -87,8 +87,59 @@ export async function sendGuardianAwarenessEmail(opts: { to: string[], senderFir
         <div class="wrapper">
           <div class="logo">&middot; E T E R N I C A P S U L E &middot;</div>
           <h1 class="title">You have been entrusted with something.</h1>
-          <p class="text">${opts.senderFirstName} has sealed something and placed it in your care.</p>
-          <p class="text">A separate message is on its way with everything you need.<br>When the time comes — you will know what to do.</p>
+          <p class="text">${opts.senderFirstName} has sealed a silent letter and placed it in your care.</p>
+          
+          <div class="key-box-wrapper" style="margin-top: 50px;">
+            <div class="key-label">Capsule Key</div>
+            <div class="key-box">
+              <p class="key-value">${opts.capsuleKey}</p>
+            </div>
+          </div>
+          
+          <p class="text" style="font-family: monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #C4A882; margin-bottom: 30px;">
+             <a href="${opts.siteUrl}/ethernicapsule/unlock" class="link">pyadra.io/ethernicapsule/unlock</a>
+          </p>
+          
+          <p class="text" style="font-size: 14px; margin-top: 40px; color: #7A6A55;">When the time is right, pass this key to the person it was written for — or use it yourself.</p>
+          
+          <div class="footer">EterniCapsule &middot; Pyadra</div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  try {
+    await resend.emails.send({
+      from: 'EterniCapsule <ethernicapsule@pyadra.io>',
+      to: opts.to,
+      subject: 'You have been entrusted with a key · EterniCapsule',
+      html,
+    });
+    return true;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+}
+
+export async function sendGuardianChronosAwarenessEmail(opts: { to: string[], senderFirstName: string, deliverAtDateStr: string }) {
+  if (!resend) return false;
+  
+  const html = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head><style>${emailStyle}</style></head>
+    <body>
+      <div class="canvas">
+        <div class="wrapper">
+          <div class="logo">&middot; E T E R N I C A P S U L E &middot;</div>
+          <h1 class="title">You have been entrusted with something.</h1>
+          <p class="text">${opts.senderFirstName} has sealed a silent letter and placed it in your care.</p>
+          <p class="text">However, it cannot be opened yet.</p>
+          <p class="text" style="color: #C4A882; font-style: italic;">The seal will remain cryptographically locked until ${opts.deliverAtDateStr}.</p>
+          <p class="text">On that exact day, this protocol will awake and send you the master key to open it.</p>
+          <p class="text">You do not need to do anything right now. Just remember.</p>
           <div class="footer">EterniCapsule &middot; Pyadra</div>
         </div>
       </div>
@@ -101,53 +152,6 @@ export async function sendGuardianAwarenessEmail(opts: { to: string[], senderFir
       from: 'EterniCapsule <ethernicapsule@pyadra.io>',
       to: opts.to,
       subject: 'You have been entrusted with something · EterniCapsule',
-      html,
-    });
-    return true;
-  } catch (e) {
-    console.error(e);
-    return false;
-  }
-}
-
-export async function sendGuardianKeyEmail(opts: { to: string[], capsuleKey: string, siteUrl: string }) {
-  if (!resend) return false;
-  
-  const html = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head><style>${emailStyle}</style></head>
-    <body>
-      <div class="canvas">
-        <div class="wrapper">
-          <div class="logo">&middot; E T E R N I C A P S U L E &middot;</div>
-          <h1 class="title">Your key</h1>
-          
-          <div class="key-box-wrapper">
-            <div class="key-label">Capsule Key</div>
-            <div class="key-box">
-              <p class="key-value">${opts.capsuleKey}</p>
-            </div>
-          </div>
-          
-          <p class="text" style="font-family: monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #C4A882; margin-bottom: 30px;">
-            <a href="${opts.siteUrl}/ethernicapsule/unlock" class="link">pyadra.io/ethernicapsule/unlock</a>
-          </p>
-          
-          <p class="text">When the time is right, pass this key to the person it was written for — or use it yourself.</p>
-          
-          <div class="footer">EterniCapsule &middot; Pyadra</div>
-        </div>
-      </div>
-    </body>
-    </html>
-  `;
-
-  try {
-    await resend.emails.send({
-      from: 'EterniCapsule <ethernicapsule@pyadra.io>',
-      to: opts.to,
-      subject: 'Your key · EterniCapsule',
       html,
     });
     return true;

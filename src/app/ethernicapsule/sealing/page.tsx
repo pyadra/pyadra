@@ -21,46 +21,26 @@ function SealingProcess() {
 
     async function executeSeal() {
       if (!sessionId) {
-        setError("Invalid session architecture. Seal cannot be initiated.");
+        setError("Invalid session architecture. Seal cannot be engaged.");
         return;
       }
 
-      const draftRaw = localStorage.getItem('etn_draft');
-      if (!draftRaw) {
-        setError("Your words appear lost in the void. Draft not found in memory.");
-        return;
-      }
+      // 100% Security Architecture:
+      // The heavy lifting (saving to DB, generating hashes, emailing keys) is now inherently secured 
+      // by the Stripe Webhook (checkout.session.completed) in the absolute background.
+      // This front-end page merely exists to provide a profoundly satisfying cinematic closure.
 
+      setStatus('S e a l e d.');
+      setSealed(true);
+      
+      // Clean up fallback local draft since it's now permanently sealed in Supabase.
       try {
-        const draft = JSON.parse(draftRaw);
-        setStatus('Engaging secure threshold...');
-
-        const res = await fetch('/api/ethernicapsule/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            session_id: sessionId,
-            ...draft
-          })
-        });
-
-        const data = await res.json();
-
-        if (res.ok) {
-          setStatus('S e a l e d.');
-          setSealed(true);
-          localStorage.removeItem('etn_draft');
-          
-          setTimeout(() => {
-            router.push('/ethernicapsule/sealed');
-          }, 3000);
-        } else {
-          setError(data.error || "A disruption occurred while burying the capsule.");
-        }
-      } catch (err) {
-        console.error("Sealing error:", err);
-        setError("A severed connection prevented the sealing.");
-      }
+        localStorage.removeItem('etn_draft');
+      } catch { /* ignore */ }
+      
+      setTimeout(() => {
+        router.push('/ethernicapsule/sealed');
+      }, 3000);
     }
 
     // Small delay to let the animations sink in

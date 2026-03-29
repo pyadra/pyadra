@@ -43,8 +43,14 @@ export default function EterniCapsuleEntry() {
         
         {/* HERO SECTION */}
         <div className="min-h-[90vh] flex flex-col items-center justify-center pt-20">
-          <div className="text-[#7A6A55] uppercase tracking-[0.4em] text-[10px] mb-12" style={{ fontFamily: 'var(--font-cormorant)' }}>
-             [ THE SILENT LETTER ]
+          <div className="flex justify-between w-full items-center mb-12">
+            <Link href="/" className="text-[#3A2E22] text-[10px] tracking-[0.3em] uppercase hover:text-[#C4A882] transition-colors duration-500" style={{ fontFamily: 'var(--font-cormorant)' }}>
+              [ ← BACK TO PYADRA ]
+            </Link>
+            <div className="text-[#7A6A55] uppercase tracking-[0.4em] text-[10px]" style={{ fontFamily: 'var(--font-cormorant)' }}>
+               [ THE SILENT LETTER ]
+            </div>
+            <div className="w-[100px]"></div> {/* Spacer for symmetry */}
           </div>
           
           <div className="relative mb-12 flex justify-center w-full">
@@ -61,7 +67,7 @@ export default function EterniCapsuleEntry() {
 
           <div className="flex flex-col items-center mt-8 mb-16 text-center">
             <div className="text-[#C4A882] text-sm tracking-[0.2em] mb-1" style={{ fontFamily: 'var(--font-cormorant)' }}>THE SILENT LETTER</div>
-            <div className="text-[#C4A882] text-sm tracking-widest mt-1" style={{ fontFamily: 'var(--font-cormorant)' }}>A$20</div>
+            <div className="text-[#C4A882] text-sm tracking-widest mt-1" style={{ fontFamily: 'var(--font-cormorant)' }}>A$9</div>
             <div className="text-[#3A2E22] text-[11px] tracking-[0.15em] italic mt-3" style={{ fontFamily: 'var(--font-eb-garamond)' }}>One letter. Permanent. Yours.</div>
           </div>
 
@@ -102,7 +108,7 @@ export default function EterniCapsuleEntry() {
                <h3 className="text-[#E8D9BB] uppercase font-mono tracking-widest text-xs mb-6">The Threshold</h3>
                <p className="text-[#7A6A55] text-[14px] italic leading-relaxed mb-10" style={{ fontFamily: 'var(--font-cormorant)' }}>
                  Once sealed, there is no editing. No retracting. <br/><br/>
-                 The creation of the vault requires a $20 AUD toll to guarantee indefinite offline and online storage architecture. You will not be charged until the letter is complete and you are ready.
+                 The creation of the vault requires a $9 AUD toll to guarantee indefinite offline and online storage architecture. You will not be charged until the letter is complete and you are ready.
                </p>
                <Link 
                  href="/ethernicapsule/compose"

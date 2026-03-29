@@ -146,6 +146,79 @@ export async function POST(req: Request) {
            const errorMessage = e instanceof Error ? e.message : String(e);
            return NextResponse.json({ error: "Internal processing failed", details: errorMessage }, { status: 500 });
          }
+      } else if (metadata.project_id === "ethernicapsule") {
+         try {
+           const { getSupabase } = await import('@/app/lib/db');
+           // eslint-disable-next-line @typescript-eslint/no-explicit-any
+           const supabase = getSupabase() as any;
+           if (!supabase) throw new Error("Missing DB connection in webhook");
+
+           const capsuleId = metadata.capsule_id;
+           const senderKey = metadata.sender_key;
+           const capsuleKey = metadata.capsule_key;
+           const senderName = metadata.sender_name;
+           const guardianEmailStr = metadata.guardian_email || "";
+           const deliverAtStr = metadata.deliver_at || null;
+           const isTimeVault = deliverAtStr && new Date(deliverAtStr).getTime() > Date.now();
+           const senderEmail = session.customer_details?.email || "pending@checkout";
+           
+           if (!capsuleId || !senderKey || !capsuleKey) throw new Error("Missing metadata keys for capsule processing");
+
+           // 1. Update DB to sealed
+           const { error: updateError } = await supabase
+             .from("ethernicapsule_capsules")
+             .update({ 
+               status: "sealed", 
+               sender_email: senderEmail 
+             })
+             .eq("id", capsuleId);
+             
+           if (updateError) throw new Error(`DB Error (Capsule Update): ${updateError.message}`);
+
+           // 2. Send Emails
+           const { sendCreatorEmail, sendGuardianMasterEmail } = await import('@/app/lib/ethernicapsule-email');
+           const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://pyadra.io";
+           
+           // Creator Email
+           await sendCreatorEmail({
+             to: senderEmail,
+             senderKey,
+             capsuleKey: guardianEmailStr ? undefined : capsuleKey,
+             siteUrl
+           });
+
+           // Guardian Email
+           if (guardianEmailStr) {
+             const guardianEmailsRaw = guardianEmailStr.split(',').map((e: string) => e.trim()).filter(Boolean);
+             if (guardianEmailsRaw.length > 0) {
+                const splitName = senderName.split(" ")[0] || "Someone";
+                
+                if (isTimeVault) {
+                   const { sendGuardianChronosAwarenessEmail } = await import('@/app/lib/ethernicapsule-email');
+                   const deliverStr = new Date(deliverAtStr as string).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+                   await sendGuardianChronosAwarenessEmail({
+                     to: guardianEmailsRaw,
+                     senderFirstName: splitName,
+                     deliverAtDateStr: deliverStr
+                   });
+                } else {
+                   const { sendGuardianMasterEmail } = await import('@/app/lib/ethernicapsule-email');
+                   await sendGuardianMasterEmail({
+                     to: guardianEmailsRaw,
+                     senderFirstName: splitName,
+                     capsuleKey: capsuleKey,
+                     siteUrl
+                   });
+                   // DB tracking
+                   await supabase.from("ethernicapsule_capsules").update({ guardian_key_delivered: true }).eq("id", capsuleId);
+                }
+             }
+           }
+         } catch(e) {
+           console.error("Failed to process EterniCapsule sealing:", e);
+           const errorMessage = e instanceof Error ? e.message : String(e);
+           return NextResponse.json({ error: "EterniCapsule processing failed", details: errorMessage }, { status: 500 });
+         }
       }
     }
 

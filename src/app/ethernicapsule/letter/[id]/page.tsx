@@ -29,9 +29,14 @@ export default async function EterniCapsuleLetter({ params, searchParams }: Prop
   const hash = hashKey(key);
   const column = type === 'capsule' ? 'capsule_key_hash' : 'sender_key_hash';
 
+  let querySelect = 'created_at, opened_at, sender_name, recipient_name, message';
+  if (type === 'sender') {
+     querySelect += ', guardian_email, deliver_at';
+  }
+
   const { data: capsule, error } = await supabase
     .from('ethernicapsule_capsules')
-    .select('created_at, opened_at, sender_name, recipient_name, message')
+    .select(querySelect)
     .eq('id', id)
     .eq(column, hash)
     .single();
@@ -47,5 +52,5 @@ export default async function EterniCapsuleLetter({ params, searchParams }: Prop
     opened_at: type === 'capsule' ? (capsule.opened_at || new Date().toISOString()) : null
   };
 
-  return <LetterRenderClient capsule={renderedCapsule} type={type} />;
+  return <LetterRenderClient capsule={renderedCapsule} type={type} senderKey={type === 'sender' ? key : undefined} />;
 }
