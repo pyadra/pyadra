@@ -58,9 +58,9 @@ const nodes = [
          { label: "Development", value: "Pending Crew" },
          { label: "Launch", value: "TBD" }
        ],
-       buttonLabel: "WATCH THIS NODE",
-       buttonHref: "#",
-       buttonSubLabel: "This node is not yet open. Be notified when it launches."
+       buttonLabel: "ENTER NODE →",
+       buttonHref: "/ethernicapsule",
+       buttonSubLabel: null
     },
     delay: 0.5
   },
@@ -350,9 +350,9 @@ export default function ProjectsConstellation() {
                                   
                                   {/* ACTION BUTTON */}
                                   <div className="mt-2 flex flex-col items-start w-full">
-                                     {node.id === "orbit-77" ? (
-                                       <button className="w-full flex justify-between items-center text-[10px] uppercase font-bold tracking-[0.3em] transition-all p-3 -mx-3 rounded-xl hover:bg-[#39FF14]/10 border border-transparent hover:border-[#39FF14]/30 shadow-[0_0_15px_rgba(57,255,20,0)] hover:shadow-[0_0_15px_rgba(57,255,20,0.2)]">
-                                          <span className="transition-colors duration-500" style={{ color: node.color }}>
+                                     {node.id === "orbit-77" || node.id === "project-02" ? (
+                                       <button className={`w-full flex justify-between items-center text-[10px] uppercase font-bold tracking-[0.3em] transition-all p-3 -mx-3 rounded-xl ${node.id === 'orbit-77' ? 'hover:bg-[#39FF14]/10 hover:border-[#39FF14]/30' : 'hover:bg-[#C4A882]/10 hover:border-[#C4A882]/30'} border border-transparent shadow-[0_0_15px_rgba(0,0,0,0)] hover:shadow-[0_0_15px_rgba(255,176,0,0.1)]`}>
+                                          <span className="transition-colors duration-500" style={{ color: node.id === 'orbit-77' ? node.color : '#C4A882' }}>
                                             {node.hoverCard.buttonLabel}
                                           </span>
                                        </button>
