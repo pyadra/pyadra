@@ -3,11 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { audioAPI } from "@/app/lib/audio";
 
 export default function LetterRenderClient({ capsule, type, senderKey }: { capsule: any, type: string, senderKey?: string }) {
   const [stage, setStage] = useState(0);
   const [lightFade, setLightFade] = useState(type === 'capsule');
   const [isEditing, setIsEditing] = useState(false);
+  const router = useRouter();
   const [editForm, setEditForm] = useState({
     recipient_name: capsule.recipient_name || '',
     message: capsule.message || '',
@@ -33,7 +35,9 @@ export default function LetterRenderClient({ capsule, type, senderKey }: { capsu
          })
       });
       if (res.ok) {
+        audioAPI.playCrystallize();
         setIsEditing(false);
+        router.refresh();
         window.location.reload();
       } else {
         const d = await res.json();

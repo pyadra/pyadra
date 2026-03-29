@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { audioAPI } from '@/app/lib/audio';
 
 export default function ComposeForm() {
   const [loading, setLoading] = useState(false);
@@ -44,6 +45,7 @@ export default function ComposeForm() {
       const data = await res.json();
 
       if (data.url) {
+        audioAPI.playCrystallize();
         setTransitioning(true);
         setTimeout(() => {
           window.location.href = data.url;

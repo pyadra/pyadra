@@ -80,9 +80,10 @@ export default function EterniCapsuleEntry() {
         <div id="lore" className="min-h-screen py-32 flex flex-col items-center gap-32 border-t border-[rgba(196,168,130,0.1)]">
            
            <div className="max-w-xl text-center">
-              <h2 className="text-[#E8D9BB] font-normal italic text-3xl mb-8" style={{ fontFamily: 'var(--font-cormorant)' }}>The Philosophy of Preservation</h2>
-              <p className="text-[#AAAAAA] text-[15px] leading-loose mb-6 font-serif">
-                Memory is fragile. Digital noise buries our most profound thoughts. EterniCapsule is not messaging; it is architecture for emotion. We forge a monolithic vault that withstands the erosion of time, protecting your words until they are summoned.
+              <h2 className="text-[#E8D9BB] font-normal italic text-3xl mb-8" style={{ fontFamily: 'var(--font-cormorant)' }}>The Ritual of Preservation</h2>
+              <p className="text-[#AAAAAA] text-[16px] leading-[2.0] mb-6 font-serif">
+                Memory is a ghost, easily scattered by the winds of the digital present. <br/>
+                EterniCapsule is not an exchange of messages; it is an act of architecture. We forge a monolithic vault that stands silent against the erosion of time, guarding your most profound truths until the moment of their summoning.
               </p>
            </div>
 
@@ -90,26 +91,26 @@ export default function EterniCapsuleEntry() {
               <div className="flex flex-col items-center text-center">
                  <div className="text-[#C4A882] text-xl font-mono mb-4">01</div>
                  <div className="text-[#E8D9BB] uppercase text-[10px] tracking-widest mb-3" style={{ fontFamily: 'var(--font-cormorant)' }}>Write</div>
-                 <div className="text-[#7A6A55] text-sm font-serif leading-relaxed">Empty your mind into the void. Without constraints. Without fear of immediate judgment.</div>
+                  <div className="text-[#7A6A55] text-sm font-serif leading-relaxed px-4">Cast your intent into the void. Write with the weight of forever, free from the constraints of the immediate.</div>
               </div>
               <div className="flex flex-col items-center text-center">
                  <div className="text-[#C4A882] text-xl font-mono mb-4">02</div>
                  <div className="text-[#E8D9BB] uppercase text-[10px] tracking-widest mb-3" style={{ fontFamily: 'var(--font-cormorant)' }}>Seal</div>
-                 <div className="text-[#7A6A55] text-sm font-serif leading-relaxed">The vault locks via an immutable cryptographic threshold. The contents vanish from plain sight.</div>
+                  <div className="text-[#7A6A55] text-sm font-serif leading-relaxed px-4">The vault crystallizes via an immutable cryptographic threshold. Your words vanish from the visible world, awaiting their time.</div>
               </div>
               <div className="flex flex-col items-center text-center">
                  <div className="text-[#C4A882] text-xl font-mono mb-4">03</div>
                  <div className="text-[#E8D9BB] uppercase text-[10px] tracking-widest mb-3" style={{ fontFamily: 'var(--font-cormorant)' }}>Wait</div>
-                 <div className="text-[#7A6A55] text-sm font-serif leading-relaxed">You hold the Sender Key. Your designated guardians hold the Capsule Key. Time dictates the rest.</div>
+                  <div className="text-[#7A6A55] text-sm font-serif leading-relaxed px-4">Ownership is shared with the future. You hold the Sender Key; your Guardians hold the Capsule Key. Destiny dictates the reveal.</div>
               </div>
            </div>
 
            <div className="max-w-md w-full border border-[rgba(196,168,130,0.2)] bg-[#0A0806] p-10 mt-16 flex flex-col items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
                <h3 className="text-[#E8D9BB] uppercase font-mono tracking-widest text-xs mb-6">The Threshold</h3>
-               <p className="text-[#7A6A55] text-[14px] italic leading-relaxed mb-10" style={{ fontFamily: 'var(--font-cormorant)' }}>
-                 Once sealed, there is no editing. No retracting. <br/><br/>
-                 The creation of the vault requires a $9 AUD toll to guarantee indefinite offline and online storage architecture. You will not be charged until the letter is complete and you are ready.
-               </p>
+                <p className="text-[#7A6A55] text-[14px] italic leading-relaxed mb-10" style={{ fontFamily: 'var(--font-cormorant)' }}>
+                  A seal is a promise to the future. <br/><br/>
+                  The architecture of indefinite preservation requires a $9 AUD cryptographic toll. You will only be summoned to pay once your letter is forged and the ritual is ready to commence.
+                </p>
                <Link 
                  href="/ethernicapsule/compose"
                  className="w-full border border-[#C4A882] bg-[#C4A882] px-10 py-[14px] text-[#060504] tracking-[0.3em] text-[11px] uppercase transition-all duration-500 hover:bg-transparent hover:text-[#C4A882] font-semibold"
