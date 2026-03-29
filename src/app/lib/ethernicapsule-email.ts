@@ -10,9 +10,9 @@ const emailStyle = `
   .title { font-size: 24px; font-style: italic; color: #E8D9BB; margin: 0 0 30px; font-weight: normal; }
   .text { font-family: 'Georgia', serif; font-size: 15px; line-height: 1.8; color: #AAAAAA; margin-bottom: 30px; }
   .link { color: #C4A882; text-decoration: none; }
-  .key-box-wrapper { margin: 40px 0; }
+  .key-box-wrapper { margin: 40px auto; max-width: 400px; text-align: center; }
   .key-label { font-family: monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em; color: #7A6A55; margin-bottom: 15px; }
-  .key-box { border: 1px solid rgba(196, 168, 130, 0.25); background-color: #0F0C09; padding: 20px; }
+  .key-box { border: 1px solid rgba(196, 168, 130, 0.25); background-color: #0F0C09; padding: 20px; display: inline-block; min-width: 250px; text-align: center; }
   .key-value { font-family: monospace; font-size: 18px; color: #C4A882; letter-spacing: 0.1em; font-weight: normal; margin: 0; }
   .btn { display: inline-block; padding: 14px 28px; color: #0A0806; background-color: #C4A882; text-decoration: none; font-family: monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; transition: background-color 0.3s; margin-top: 10px; }
   .footer { margin-top: 60px; font-family: monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(122, 106, 85, 0.5); }

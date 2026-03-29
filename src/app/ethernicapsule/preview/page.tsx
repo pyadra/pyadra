@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Capsule3D from '../Capsule3D';
 
 export default function EterniCapsulePreview() {
   const [key, setKey] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const router = useRouter();
 
   const handlePreview = async (e: React.FormEvent) => {
@@ -25,8 +27,11 @@ export default function EterniCapsulePreview() {
       const data = await res.json();
 
       if (res.ok && data.capsuleId) {
-        // Send to letter render with sender key context
-        router.push(`/ethernicapsule/letter/${data.capsuleId}?key=${key.trim()}&type=sender`);
+        setSuccess(true);
+        // Send to letter render with sender key context after brief fade
+        setTimeout(() => {
+          router.push(`/ethernicapsule/letter/${data.capsuleId}?key=${key.trim()}&type=sender`);
+        }, 1500);
       } else {
         setError(data.error || "This key does not match any capsule.");
         setLoading(false);
@@ -38,9 +43,13 @@ export default function EterniCapsulePreview() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 select-none">
-      <div className="text-center text-[#C4A882] tracking-[0.3em] text-[10px] mb-24 select-none uppercase font-[family-name:var(--font-cormorant)]">
+    <div className={`flex flex-col items-center justify-center min-h-screen px-4 select-none transition-opacity duration-[1500ms] ${success ? 'opacity-0' : 'opacity-100'}`}>
+      <div className="text-center text-[#7A6A55] tracking-[0.3em] text-[10px] mb-8 select-none uppercase font-[family-name:var(--font-cormorant)]">
         [ PREVIEW MODE ]
+      </div>
+
+      <div className="mb-8 scale-[0.6] opacity-60 pointer-events-none">
+        <Capsule3D isSealed={true} />
       </div>
 
       <div className="flex flex-col items-center w-full max-w-sm">

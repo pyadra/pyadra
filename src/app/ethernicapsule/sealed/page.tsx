@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import AncientChest from '../AncientChest';
+import Capsule3D from '../Capsule3D';
 
 export default function EterniCapsuleSealedPage() {
   const [showHeartbeat, setShowHeartbeat] = useState(false);
@@ -17,7 +17,7 @@ export default function EterniCapsuleSealedPage() {
       <div className="flex flex-col items-center text-center">
         
         <div className="mb-12 mt-10 relative">
-          <AncientChest isSealed={true} />
+          <Capsule3D isSealed={true} />
           
           {/* The amber heartbeat pulse */}
           <div className={`absolute -bottom-6 left-1/2 -translate-x-1/2 w-[6px] h-[6px] bg-[#C4A882] rounded-full blur-[1px] transition-opacity duration-[2000ms] ${showHeartbeat ? 'opacity-80 animate-pulse' : 'opacity-0'}`}></div>

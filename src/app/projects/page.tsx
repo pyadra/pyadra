@@ -41,16 +41,16 @@ const nodes = [
     x: "28%",
     y: "70%",
     size: 160,
-    color: "#888888", // Grayed out
-    opacity: 0.35,
-    glowColor: "rgba(136, 136, 136, 0.1)",
-    pulseColor: "#888888",
-    statusText: "FORMING",
+    color: "#C4A882", // Amber Base
+    opacity: 1,
+    glowColor: "rgba(196, 168, 130, 0.4)",
+    pulseColor: "#e8d9bb",
+    statusText: "LIVE NOW",
     hoverCard: {
        label: "DIGITAL MEMORY",
-       badgeText: "FORMING",
-       badgeColor: "text-[#888888]",
-       badgeDot: "border border-[#888888] text-[#888888] shadow-[0_0_10px_rgba(136,136,136,0.3)]",
+       badgeText: "LIVE",
+       badgeColor: "text-[#C4A882]",
+       badgeDot: "bg-[#C4A882] animate-pulse shadow-[0_0_10px_rgba(196,168,130,0.8)]",
        metrics: null,
        description: "A vault for messages that outlive their sender.\nStore words, memories, and moments —\nto be opened in the future.",
        nodeStatus: [
@@ -137,11 +137,15 @@ export default function ProjectsConstellation() {
       
       {/* Background Deep Amber Pulse (Shadow Earth Lithic Vibe) */}
       <motion.div 
-        animate={{ opacity: [0.1, 0.4, 0.1] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute inset-0 pointer-events-none z-0 mix-blend-screen opacity-50"
+        animate={{ opacity: hoveredNode === "orbit-77" ? 0.3 : (hoveredNode === "project-02" ? 0.4 : 0.1) }}
+        transition={{ duration: 1.5, ease: "easeInOut" }}
+        className="absolute inset-0 pointer-events-none z-0 mix-blend-screen opacity-50 transition-all duration-1000"
         style={{ 
-          background: "radial-gradient(circle at 50% 30%, rgba(255,176,0,0.08) 0%, rgba(45,41,38,0.5) 30%, rgba(0,0,0,1) 80%)" 
+          background: hoveredNode === "project-02" 
+            ? "radial-gradient(circle at 35% 65%, rgba(196,168,130,0.15) 0%, rgba(26,20,16,0.5) 30%, rgba(0,0,0,1) 80%)"
+            : (hoveredNode === "orbit-77" 
+                ? "radial-gradient(circle at 50% 30%, rgba(57,255,20,0.08) 0%, rgba(20,30,20,0.5) 30%, rgba(0,0,0,1) 80%)"
+                : "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03) 0%, rgba(0,0,0,1) 80%)")
         }}
       />
       
@@ -274,8 +278,12 @@ export default function ProjectsConstellation() {
                               initial={{ opacity: 0, scale: 0.95 }}
                               animate={{ opacity: hoveredNode === node.id ? 1 : 0, scale: hoveredNode === node.id ? 1 : 0.95 }}
                               transition={{ duration: 0.3, ease: "easeOut" }}
-                              className="bg-[#050505]/95 backdrop-blur-3xl border border-white/10 rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.95)] text-left whitespace-nowrap md:whitespace-normal"
-                              style={{ width: cardWidth, minWidth: node.isMystery ? '200px' : 'auto' }}
+                              className="bg-black/80 backdrop-blur-md border rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.95)] text-left whitespace-nowrap md:whitespace-normal transition-colors duration-700"
+                              style={{ 
+                                width: cardWidth, minWidth: node.isMystery ? '200px' : 'auto',
+                                borderColor: hoveredNode === node.id && !node.isMystery ? node.glowColor : 'rgba(255,255,255,0.05)',
+                                boxShadow: hoveredNode === node.id && !node.isMystery ? `0 30px 60px rgba(0,0,0,0.95), 0 0 40px ${node.glowColor}` : '0 30px 60px rgba(0,0,0,0.95)'
+                              }}
                            >
                               {/* MYSTERY NODE CARD */}
                               {node.isMystery ? (

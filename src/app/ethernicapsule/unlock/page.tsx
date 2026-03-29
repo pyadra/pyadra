@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import AncientChest from '../AncientChest';
+import Capsule3D from '../Capsule3D';
 
 export default function EterniCapsuleUnlock() {
   const [key, setKey] = useState('');
@@ -28,10 +28,11 @@ export default function EterniCapsuleUnlock() {
 
       if (res.ok && data.capsuleId) {
         setSuccess(true);
-        // Let the cinematic sequence play out for 4 seconds before routing
+        // Let the cinematic sequence play out for 5.5 seconds before routing
+        // This ensures the screen is fully consumed by the amber light before transitioning.
         setTimeout(() => {
           router.push(`/ethernicapsule/letter/${data.capsuleId}?key=${key.trim()}`);
-        }, 4000);
+        }, 5500);
       } else {
         // "No red. No harsh color. Dim amber text."
         setError("This key does not match any capsule.");
@@ -53,44 +54,9 @@ export default function EterniCapsuleUnlock() {
 
       <div className="mb-4 relative flex items-center justify-center h-[300px]">
         
-        {/* The rotating chest fades out on success */}
-        <div className={`transition-opacity duration-[2000ms] ${success ? 'opacity-0' : 'opacity-100'}`}>
-           <AncientChest isSealed={true} />
-        </div>
-
-        {/* The identical static front-facing chest fades in to simulate "stopping" to face the user */}
-        <div className={`absolute transition-opacity duration-[2000ms] ${success ? 'opacity-100' : 'opacity-0'}`}>
-           <div className="relative w-[380px] h-[280px]" style={{ perspective: '1600px' }}>
-             <div className="relative w-full h-full" style={{ transformStyle: 'preserve-3d', transform: 'rotateX(-5deg)' }}>
-               {/* Just the front face of the Ancient Chest */}
-               <div className="absolute inset-0 border border-[#150802] shadow-[inset_0_0_100px_rgba(0,0,0,0.9)] rounded-[2px] z-10 overflow-hidden" style={{ background: 'linear-gradient(135deg, #3D2010 0%, #150802 100%)' }}>
-                  {/* Edges */}
-                  <div className="absolute top-0 left-0 bottom-0 w-3 bg-gradient-to-r from-[#110601] to-transparent opacity-80 z-20"></div>
-                  <div className="absolute top-0 right-0 bottom-0 w-3 bg-gradient-to-l from-[#110601] to-transparent opacity-80 z-20"></div>
-                  
-                  {/* Metallic corner clasps */}
-                  <div className="absolute top-0 left-0 w-8 h-8 border-b-2 border-r-2 border-[#1a1410] opacity-60"></div>
-                  <div className="absolute top-0 right-0 w-8 h-8 border-b-2 border-l-2 border-[#1a1410] opacity-60"></div>
-                  <div className="absolute bottom-0 left-0 w-8 h-8 border-t-2 border-r-2 border-[#1a1410] opacity-60"></div>
-                  <div className="absolute bottom-0 right-0 w-8 h-8 border-t-2 border-l-2 border-[#1a1410] opacity-60"></div>
-
-                  {/* Wood grain proxy */}
-                  <div className="absolute inset-0 opacity-10 mix-blend-multiply" style={{ backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(0,0,0,0.8) 10px, rgba(0,0,0,0.8) 20px)' }}></div>
-
-                  {/* Horizontal bands */}
-                  <div className="absolute top-[30%] left-0 right-0 h-4 bg-[#0a0502] border-y border-[#2a1b12] shadow-sm transform -translate-y-1/2 opacity-70"></div>
-                  <div className="absolute bottom-[30%] left-0 right-0 h-4 bg-[#0a0502] border-y border-[#2a1b12] shadow-sm transform translate-y-1/2 opacity-70"></div>
-                  
-                  {/* The Keyhole */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-14 bg-[#0a0502] border border-[#2a1b12] rounded-t-full flex items-center justify-center flex-col z-30 shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
-                     <div className="w-2 h-2 rounded-full bg-black mb-[1px]"></div>
-                     <div className="w-2 h-4 bg-black clip-path-keyhole"></div>
-                     <style>{`.clip-path-keyhole { clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%); }`}</style>
-                  </div>
-               </div>
-               <div className="absolute -bottom-10 left-10 right-10 h-10 bg-black blur-xl opacity-60 rounded-[100%] shadow-[0_40px_100px_rgba(0,0,0,1)]"></div>
-             </div>
-           </div>
+        {/* The Capsule materializes and unlocks natively based on success state */}
+        <div className={`transition-all duration-[3000ms] ease-out z-10 ${success ? 'scale-110 translate-y-4' : 'scale-100'}`}>
+           <Capsule3D isSealed={!success} isSealing={success} />
         </div>
 
         {/* The intense expanding amber bloom from the keyhole (success state) */}

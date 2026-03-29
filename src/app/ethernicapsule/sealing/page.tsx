@@ -9,7 +9,7 @@ function SealingProcess() {
   const router = useRouter();
   const sessionId = searchParams.get('session_id');
   
-  const [status, setStatus] = useState('Initiating cryptographic seal...');
+  const [status, setStatus] = useState('Your capsule is being sealed.');
   const [error, setError] = useState('');
   const [sealed, setSealed] = useState(false);
   const attempted = useRef(false);
@@ -81,8 +81,8 @@ function SealingProcess() {
 
       <div className={`relative z-10 flex flex-col items-center transition-opacity duration-[2000ms] ${sealed ? 'opacity-0 blur-md' : 'opacity-100 blur-0'}`}>
          
-         <div className="mb-16 scale-90 animate-pulse">
-           <Capsule3D isSealed={false} />
+         <div className="mb-16 z-10 transition-opacity duration-1000 scale-90 md:scale-100">
+           <Capsule3D isSealed={false} isSealing={true} />
          </div>
 
          {!error ? (

@@ -47,17 +47,23 @@ export default function EterniCapsuleEntry() {
              [ THE SILENT LETTER ]
           </div>
           
-          <div className="relative mb-8 scale-90 md:scale-110">
-             <Capsule3D isSealed={true} />
+          <div className="relative mb-12 flex justify-center w-full">
+             <Capsule3D isSealed={false} />
           </div>
 
-          <h1 className="text-4xl md:text-5xl italic text-[#E8D9BB] mt-10 font-normal text-center" style={{ fontFamily: 'var(--font-cormorant)' }}>
+          <h1 className="text-4xl md:text-5xl italic text-[#E8D9BB] mt-16 font-normal text-center" style={{ fontFamily: 'var(--font-cormorant)' }}>
             EterniCapsule
           </h1>
           
-          <p className="text-[#C4A882] max-w-md text-center text-[13px] tracking-[0.15em] mt-4 mb-16 leading-loose" style={{ fontFamily: 'var(--font-cormorant)' }}>
+          <p className="text-[#C4A882] max-w-md text-center text-[13px] tracking-[0.15em] mt-6 leading-loose" style={{ fontFamily: 'var(--font-cormorant)' }}>
             Some artifacts must outlast the moment they were forged.
           </p>
+
+          <div className="flex flex-col items-center mt-8 mb-16 text-center">
+            <div className="text-[#C4A882] text-sm tracking-[0.2em] mb-1" style={{ fontFamily: 'var(--font-cormorant)' }}>THE SILENT LETTER</div>
+            <div className="text-[#C4A882] text-sm tracking-widest mt-1" style={{ fontFamily: 'var(--font-cormorant)' }}>A$20</div>
+            <div className="text-[#3A2E22] text-[11px] tracking-[0.15em] italic mt-3" style={{ fontFamily: 'var(--font-eb-garamond)' }}>One letter. Permanent. Yours.</div>
+          </div>
 
           <Link href="#lore">
             <div className="w-[1px] h-16 bg-gradient-to-b from-[#C4A882] to-transparent animate-pulse opacity-50 cursor-pointer"></div>

@@ -2,11 +2,15 @@
 
 import { useState, useEffect } from "react";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function LetterRenderClient({ capsule, type }: { capsule: any, type: string }) {
   const [stage, setStage] = useState(0);
+  const [lightFade, setLightFade] = useState(type === 'capsule');
 
   useEffect(() => {
+    if (type === 'capsule') {
+      setTimeout(() => setLightFade(false), 200);
+    }
+
     // 13s exact sequence as requested
     const s1 = setTimeout(() => setStage(1), 500);   // ID + Date
     const s2 = setTimeout(() => setStage(2), 2500);  // Recipient
@@ -43,6 +47,9 @@ export default function LetterRenderClient({ capsule, type }: { capsule: any, ty
   return (
     <div className="min-h-screen bg-[#060504] relative flex flex-col items-center justify-start pt-24 pb-16 px-6 select-none leading-relaxed overflow-x-hidden">
       
+      {/* Light Materialization Cross-Fade */}
+      <div className={`fixed inset-0 z-[100] bg-[#C4A882] pointer-events-none transition-opacity duration-[4000ms] ease-[cubic-bezier(0.25,1,0.5,1)] ${lightFade ? 'opacity-100' : 'opacity-0'}`}></div>
+
       {/* Ambient background glow — 'as if the words themselves emit light' */}
       <div 
         className="fixed inset-0 pointer-events-none z-0 mix-blend-screen opacity-100"
