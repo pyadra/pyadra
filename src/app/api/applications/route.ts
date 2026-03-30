@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSupabase } from '@/app/lib/db';
+import { sanitizeString } from '@/app/lib/validation';
 
 export async function POST(req: Request) {
   try {
@@ -18,11 +19,11 @@ export async function POST(req: Request) {
     const { error } = await supabase
       .from('orbit_applications')
       .insert({
-        name,
-        email,
-        role,
-        work_link,
-        message: message || null,
+        name: sanitizeString(name, 100),
+        email: sanitizeString(email, 150),
+        role: sanitizeString(role, 50),
+        work_link: sanitizeString(work_link, 500),
+        message: message ? sanitizeString(message, 2000) : null,
         status: 'pending'
       });
 

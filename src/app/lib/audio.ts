@@ -142,12 +142,12 @@ export class AudioEngine {
     if (!this.ctx) return;
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
-    
+
     osc.type = 'sine';
     // Frequency rises to simulate a locking/solidifying process
     osc.frequency.setValueAtTime(200, this.ctx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(800, this.ctx.currentTime + 1.5);
-    
+
     // Subtle vibrato/shimmer
     const vibrato = this.ctx.createOscillator();
     const vibratoGain = this.ctx.createGain();
@@ -160,13 +160,14 @@ export class AudioEngine {
     gain.gain.setValueAtTime(0, this.ctx.currentTime);
     gain.gain.linearRampToValueAtTime(0.1, this.ctx.currentTime + 0.1);
     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 1.5);
-    
+
     osc.connect(gain);
     gain.connect(this.ctx.destination);
     osc.start();
     osc.stop(this.ctx.currentTime + 1.5);
     vibrato.stop(this.ctx.currentTime + 1.5);
   }
+
 }
 
 // Singleton global
