@@ -50,7 +50,7 @@ export async function sendCreatorEmail(opts: { to: string, senderKey: string, ca
             </div>
           </div>
           
-          <a href="${opts.siteUrl}/ethernicapsule/preview" class="btn">View your letter</a>
+          <a href="${opts.siteUrl}/projects/ethernicapsule/preview" class="btn">View your letter</a>
           
           ${capsuleKeyHtml}
           
@@ -97,7 +97,7 @@ export async function sendGuardianMasterEmail(opts: { to: string[], senderFirstN
           </div>
           
           <p class="text" style="font-family: monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #C4A882; margin-bottom: 30px;">
-             <a href="${opts.siteUrl}/ethernicapsule/unlock" class="link">pyadra.io/ethernicapsule/unlock</a>
+             <a href="${opts.siteUrl}/projects/ethernicapsule/unlock" class="link">pyadra.io/projects/ethernicapsule/unlock</a>
           </p>
           
           <p class="text" style="font-size: 14px; margin-top: 40px; color: #7A6A55;">When the time is right, pass this key to the person it was written for — or use it yourself.</p>

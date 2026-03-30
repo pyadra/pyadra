@@ -112,14 +112,14 @@ export default function EterniCapsuleEntry() {
                   The architecture of indefinite preservation requires a $9 AUD cryptographic toll. You will only be summoned to pay once your letter is forged and the ritual is ready to commence.
                 </p>
                <Link 
-                 href="/ethernicapsule/compose"
+                 href="/projects/ethernicapsule/compose"
                  className="w-full border border-[#C4A882] bg-[#C4A882] px-10 py-[14px] text-[#060504] tracking-[0.3em] text-[11px] uppercase transition-all duration-500 hover:bg-transparent hover:text-[#C4A882] font-semibold"
                  style={{ fontFamily: 'var(--font-cormorant)' }}
                >
                  BEGIN THE RITUAL
                </Link>
 
-               <Link href="/ethernicapsule/unlock" className="mt-8 text-[10px] text-[#7A6A55] hover:text-[#C4A882] uppercase tracking-[0.2em] transition-colors" style={{ fontFamily: 'var(--font-cormorant)' }}>
+               <Link href="/projects/ethernicapsule/unlock" className="mt-8 text-[10px] text-[#7A6A55] hover:text-[#C4A882] uppercase tracking-[0.2em] transition-colors" style={{ fontFamily: 'var(--font-cormorant)' }}>
                  I ALREADY HAVE A KEY
                </Link>
            </div>

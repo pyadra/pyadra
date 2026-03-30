@@ -5,6 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
 import { useGlobalContext } from "./providers";
+import { Scene3DErrorBoundary } from "./components/ErrorBoundary";
 
 const Scene = dynamic(() => import("./components/Scene"), { ssr: false });
 
@@ -19,12 +20,11 @@ export default function ShadowEarthHome() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     // Stage 1: Pre-Loader timeout (1.5s of pure anticipation)
     const timer = setTimeout(() => {
       setIsInitializing(false);
-    }, 1500); 
+    }, 1500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -43,7 +43,6 @@ export default function ShadowEarthHome() {
     // Setup Local Observer ID
     const localId = window.localStorage.getItem("pyadra_observer_id");
     if (localId) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setObserverId(localId);
     } else {
       fetch("/api/observer")
@@ -90,7 +89,9 @@ export default function ShadowEarthHome() {
 
       <div className="absolute inset-0 z-0 pointer-events-none">
         {/* Pass inverted isMuted (audioActive) down to Scene to speed up particles by 10% */}
-        <Scene hovered={hovered} audioActive={!isMuted} />
+        <Scene3DErrorBoundary>
+          <Scene hovered={hovered} audioActive={!isMuted} />
+        </Scene3DErrorBoundary>
       </div>
 
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,#000000_100%)] pointer-events-none z-0 mix-blend-multiply" />

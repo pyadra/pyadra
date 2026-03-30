@@ -21,7 +21,7 @@ export default async function EterniCapsuleLetter({ params, searchParams }: Prop
   const type = sp.type || 'capsule';
 
   if (!id || !key || (type !== 'capsule' && type !== 'sender')) {
-    redirect('/ethernicapsule');
+    redirect('/projects/ethernicapsule');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -42,7 +42,7 @@ export default async function EterniCapsuleLetter({ params, searchParams }: Prop
     .single();
 
   if (error || !capsule) {
-    redirect('/ethernicapsule');
+    redirect('/projects/ethernicapsule');
   }
 
   // In preview mode we just spoof the opened_at if it's not set

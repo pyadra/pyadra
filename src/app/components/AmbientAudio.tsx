@@ -18,7 +18,6 @@ export default function AmbientAudio() {
   const color = isOrbit ? "text-[#39FF14]" : "text-[#DCA88F]";
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -26,8 +25,12 @@ export default function AmbientAudio() {
     if (!active) {
       if (!audioCtxRef.current) {
         // Initialize synthetic drone (Warm, cinematic 40Hz sub-drone to mimic deep space/incubator hum)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const AudioContextClass = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtxRef.current = new AudioContextClass();
+        } else {
+          return; // Browser doesn't support Web Audio API
+        }
         
         oscRef.current = audioCtxRef.current.createOscillator();
         filterRef.current = audioCtxRef.current.createBiquadFilter();

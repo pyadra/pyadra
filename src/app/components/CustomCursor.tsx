@@ -17,7 +17,6 @@ export default function CustomCursor() {
   useEffect(() => {
     // Media query to ensure mobile touch devices do not render the custom cursor overlay
     if (window.matchMedia("(pointer: fine)").matches) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsDesktop(true);
     }
 

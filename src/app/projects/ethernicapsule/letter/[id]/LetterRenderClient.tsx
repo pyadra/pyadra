@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { audioAPI } from "@/app/lib/audio";
+import { audioAPI } from "../../lib/audio";
 
 export default function LetterRenderClient({ capsule, type, senderKey }: { capsule: any, type: string, senderKey?: string }) {
   const [stage, setStage] = useState(0);

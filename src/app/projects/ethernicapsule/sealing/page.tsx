@@ -39,7 +39,7 @@ function SealingProcess() {
       } catch { /* ignore */ }
       
       setTimeout(() => {
-        router.push('/ethernicapsule/sealed');
+        router.push('/projects/ethernicapsule/sealed');
       }, 3000);
     }
 
@@ -73,7 +73,7 @@ function SealingProcess() {
            <div className="text-center">
              <p className="text-[#C4A882] italic text-[14px] mb-6">{error}</p>
              <button 
-                onClick={() => router.push('/ethernicapsule')}
+                onClick={() => router.push('/projects/ethernicapsule')}
                 className="text-[#7A6A55] tracking-[0.3em] text-[10px] uppercase hover:text-[#C4A882] transition-colors"
                 style={{ fontFamily: 'var(--font-cormorant)' }}
              >

@@ -2,6 +2,13 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
+  // Redirect old EterniCapsule URLs to new location
+  if (request.nextUrl.pathname.startsWith('/ethernicapsule')) {
+    const newUrl = request.nextUrl.clone();
+    newUrl.pathname = newUrl.pathname.replace('/ethernicapsule', '/projects/ethernicapsule');
+    return NextResponse.redirect(newUrl);
+  }
+
   // Create a response object
   const response = NextResponse.next();
 

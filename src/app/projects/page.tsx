@@ -59,7 +59,7 @@ const nodes = [
          { label: "Launch", value: "TBD" }
        ],
        buttonLabel: "ENTER NODE →",
-       buttonHref: "/ethernicapsule",
+       buttonHref: "/projects/ethernicapsule",
        buttonSubLabel: null
     },
     delay: 0.5

@@ -30,7 +30,7 @@ export default function EterniCapsulePreview() {
         setSuccess(true);
         // Send to letter render with sender key context after brief fade
         setTimeout(() => {
-          router.push(`/ethernicapsule/letter/${data.capsuleId}?key=${key.trim()}&type=sender`);
+          router.push(`/projects/ethernicapsule/letter/${data.capsuleId}?key=${key.trim()}&type=sender`);
         }, 1500);
       } else {
         setError(data.error || "This key does not match any capsule.");

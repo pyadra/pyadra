@@ -1,0 +1,42 @@
+# Automatically label PRs based on changed files
+
+'ethernicapsule':
+  - 'src/app/ethernicapsule/**/*'
+  - 'src/app/api/ethernicapsule/**/*'
+
+'orbit-77':
+  - 'src/app/projects/orbit/**/*'
+  - 'src/app/api/donate/**/*'
+
+'3d-scenes':
+  - 'src/app/components/Scene.tsx'
+  - 'src/app/projects/components/**/*'
+  - 'src/app/ethernicapsule/Capsule3D.tsx'
+
+'api':
+  - 'src/app/api/**/*'
+
+'database':
+  - 'supabase/migrations/**/*'
+  - 'src/app/lib/db.ts'
+  - 'src/app/lib/database.types.ts'
+
+'documentation':
+  - '*.md'
+  - 'docs/**/*'
+
+'tests':
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+  - 'vitest.config.ts'
+  - 'vitest.setup.ts'
+
+'dependencies':
+  - 'package.json'
+  - 'package-lock.json'
+
+'config':
+  - '*.config.js'
+  - '*.config.ts'
+  - 'tsconfig.json'
+  - '.github/**/*'

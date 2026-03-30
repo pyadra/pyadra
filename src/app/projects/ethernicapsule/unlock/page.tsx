@@ -32,7 +32,7 @@ export default function EterniCapsuleUnlock() {
         // Let the cinematic sequence play out for 5.5 seconds before routing
         // This ensures the screen is fully consumed by the amber light before transitioning.
         setTimeout(() => {
-          router.push(`/ethernicapsule/letter/${data.capsuleId}?key=${key.trim()}`);
+          router.push(`/projects/ethernicapsule/letter/${data.capsuleId}?key=${key.trim()}`);
         }, 5500);
       } else {
         // "No red. No harsh color. Dim amber text."

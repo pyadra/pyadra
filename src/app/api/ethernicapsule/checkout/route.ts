@@ -35,21 +35,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const supabase = getSupabase() as any;
+    const supabase = getSupabase();
     if (!supabase) throw new Error("Missing DB connection");
 
     // Pre-generate keys
     const rawSenderKey = generateKey("ETN-CREATOR");
     const rawCapsuleKey = generateKey("ETN-CAPSULE");
     const capsuleId = crypto.randomUUID();
-    
+
     // 1. Insert as 'pending' prior to Stripe. Data is secured immediately.
     const { data: capsule, error: insertError } = await supabase
       .from("ethernicapsule_capsules")
       .insert({
         id: capsuleId,
-        status: "pending",
+        status: "pending" as const,
         stripe_session_id: `pending_${capsuleId}`,
         sender_name: sanitizeString(sender_name, 100),
         sender_email: "pending@checkout", // Placeholder until webhook
@@ -72,7 +71,7 @@ export async function POST(req: Request) {
     if (!stripe) {
       console.warn("No Stripe Key - returning Local Bypass URL");
       await supabase.from("ethernicapsule_capsules").update({ stripe_session_id: "local_dev_bypass" }).eq("id", capsule.id);
-      return NextResponse.json({ url: `${req.headers.get("origin") || "http://localhost:3000"}/ethernicapsule/sealing?session_id=local_dev_bypass` });
+      return NextResponse.json({ url: `${req.headers.get("origin") || "http://localhost:3000"}/projects/ethernicapsule/sealing?session_id=local_dev_bypass` });
     }
 
     const origin = req.headers.get("origin") || process.env.NEXT_PUBLIC_APP_URL || "https://pyadra.io";
@@ -107,8 +106,8 @@ export async function POST(req: Request) {
           quantity: 1,
         },
       ],
-      success_url: `${origin}/ethernicapsule/sealing?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/ethernicapsule?cancelled=true`,
+      success_url: `${origin}/projects/ethernicapsule/sealing?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/projects/ethernicapsule?cancelled=true`,
       metadata: sessionMetadata,
     });
 

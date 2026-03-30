@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { audioAPI } from '@/app/lib/audio';
+import { audioAPI } from '../lib/audio';
 
 export default function ComposeForm() {
   const [loading, setLoading] = useState(false);
