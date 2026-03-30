@@ -11,9 +11,10 @@
 - ✅ Removed 1,175 lines of unused code
 - ✅ Restructured project to `/projects/ethernicapsule/`
 - ✅ Added comprehensive test suite (29/29 tests passing)
+- ✅ Implemented on-demand key delivery (no cron needed!)
 - ✅ Zero TypeScript errors
 - ✅ Zero build errors
-- ✅ Production build successful (23 pages)
+- ✅ Production build successful (24 pages)
 
 ### Documentation
 - ✅ 8 comprehensive documentation files created
@@ -31,16 +32,19 @@
 
 ---
 
-## 📦 Commit Ready
+## 📦 Commits Ready
 
-**Commit Hash**: `111aab8`
+### Latest Commits:
+1. **`cfa2c1e`** - On-demand delivery system (10 files, +867/-68)
+2. **`111aab8`** - Project restructure (47 files, +6,954/-1,368)
+
 **Branch**: `main`
-**Files Changed**: 47 files
-**Insertions**: +6,954
-**Deletions**: -1,368
+**Total Changes**: 57 files modified
+**Status**: Ready to push
 
 ```bash
-git log -1 --oneline
+git log -2 --oneline
+# cfa2c1e feat: implement on-demand guardian key delivery system
 # 111aab8 refactor: complete project restructure and production preparation
 ```
 
@@ -58,36 +62,31 @@ Vercel will automatically deploy when you push to `main`.
 
 **Monitor deployment at**: https://vercel.com/dashboard
 
-### 3️⃣ Configure CRON_SECRET in Vercel
-**CRITICAL**: Must be done before first cron execution
+### 3️⃣ Run Database Migration in Supabase
+**CRITICAL**: Must be done before deploy
 
-1. Go to: https://vercel.com/[your-project]/settings/environment-variables
-2. Click "Add New"
-3. Name: `CRON_SECRET`
-4. Value: Generate with:
-   ```bash
-   openssl rand -base64 32
+1. Go to: https://app.supabase.com/project/[your-project]/sql
+2. Run this SQL:
+   ```sql
+   ALTER TABLE ethernicapsule_capsules
+   ADD COLUMN IF NOT EXISTS guardian_token_hash TEXT;
+
+   CREATE INDEX IF NOT EXISTS idx_guardian_token_hash
+   ON ethernicapsule_capsules(guardian_token_hash);
    ```
-5. Environment: Production (and Preview if desired)
-6. Click "Save"
+3. Verify migration succeeded
 
-### 4️⃣ Setup External Cron Job (5 minutes)
-**After production deploy is live**, configure cron-job.org:
+**See**: `docs/migrations/add_guardian_token.sql` for full migration
 
-1. Go to: https://cron-job.org
-2. Register (free account)
-3. Create New Cronjob:
-   - **Title**: `EterniCapsule Daily Delivery`
-   - **URL**: `https://pyadra.io/api/cron/ethernicapsule`
-   - **Schedule**: `0 0 * * *` (daily at midnight UTC)
-   - **Request Method**: `GET`
-   - **Headers**:
-     - Key: `Authorization`
-     - Value: `Bearer [your_CRON_SECRET_from_step_3]`
-   - **Timeout**: 60 seconds
-4. Save and enable
+### 4️⃣ No Cron Setup Needed! 🎉
+**The system now works on-demand** - No external services required!
 
-**See**: [CRON_SETUP.md](CRON_SETUP.md) for detailed instructions
+✅ Guardian keys delivered instantly when accessed
+✅ No CRON_SECRET needed
+✅ No cron-job.org configuration
+✅ 100% serverless
+
+**See**: [ON_DEMAND_DELIVERY.md](ON_DEMAND_DELIVERY.md) for details
 
 ---
 
@@ -104,11 +103,14 @@ curl -I https://pyadra.io/projects/ethernicapsule
 curl -I https://pyadra.io/ethernicapsule
 ```
 
-#### Test Cron Endpoint:
+#### Test Guardian Access:
 ```bash
-# Should return {"message":"No keys due for delivery"} or similar
-curl -X GET https://pyadra.io/api/cron/ethernicapsule \
-  -H "Authorization: Bearer [YOUR_CRON_SECRET]"
+# Create test capsule with future deliver_at
+# Get guardian token from Stripe metadata
+# Test access (should show "locked until date")
+curl -X POST https://pyadra.io/api/ethernicapsule/guardian-access \
+  -H "Content-Type: application/json" \
+  -d '{"guardianToken": "test_token_here"}'
 ```
 
 #### Verify Core Functionality:
@@ -122,11 +124,12 @@ curl -X GET https://pyadra.io/api/cron/ethernicapsule \
 - [ ] Monitor Vercel logs for errors
 - [ ] Check Analytics tracking (if configured)
 - [ ] Verify old URLs redirect correctly
+- [ ] Test guardian access flow
 - [ ] Test on mobile devices
 
 ### First 24 Hours
 - [ ] Monitor error rates
-- [ ] Verify cron job executed successfully
+- [ ] Verify guardian on-demand delivery works
 - [ ] Check email delivery rates
 - [ ] Review user feedback (if any)
 
@@ -144,7 +147,7 @@ Verify these are set in Vercel Production:
 ✅ NEXT_PUBLIC_SUPABASE_URL
 ✅ SUPABASE_SERVICE_ROLE_KEY
 ✅ RESEND_API_KEY
-⚠️ CRON_SECRET  ← Add this in Step 3 above
+✅ CRON_SECRET not needed anymore! (on-demand system)
 ```
 
 ---
@@ -172,7 +175,7 @@ Verify these are set in Vercel Production:
 - **Vercel Docs**: https://vercel.com/docs
 - **Stripe Webhooks**: https://dashboard.stripe.com/webhooks
 - **Supabase Console**: https://app.supabase.com
-- **Cron-job.org Docs**: https://cron-job.org/en/documentation/
+- **On-Demand System**: [ON_DEMAND_DELIVERY.md](ON_DEMAND_DELIVERY.md)
 
 ---
 
@@ -200,13 +203,14 @@ Mark these off before pushing:
 
 - [x] Tests passing (29/29) ✅
 - [x] Build successful ✅
-- [x] Code committed ✅
+- [x] On-demand delivery implemented ✅
+- [x] Code committed (2 commits) ✅
 - [x] Documentation complete ✅
 - [x] Security audited ✅
-- [ ] **CRON_SECRET generated** (do in Vercel, Step 3)
+- [ ] **Database migration prepared** (Step 3)
 - [ ] **Pushed to GitHub** (Step 1)
 - [ ] **Vercel deployment verified** (Step 2)
-- [ ] **Cron job configured** (Step 4)
+- [ ] **Database migration run** (Step 3)
 
 ---
 
@@ -218,9 +222,12 @@ You're ready to deploy! The codebase is:
 - ✅ Security audited
 - ✅ Documented
 - ✅ Backwards compatible
+- ✅ **No cron jobs needed** (on-demand delivery!)
 - ✅ Production ready
 
-**Next action**: Run `git push origin main` to deploy! 🚀
+**Next actions**:
+1. Run database migration in Supabase
+2. Run `git push origin main` to deploy! 🚀
 
 ---
 
