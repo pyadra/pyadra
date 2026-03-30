@@ -41,6 +41,7 @@ export async function POST(req: Request) {
     // Pre-generate keys
     const rawSenderKey = generateKey("ETN-CREATOR");
     const rawCapsuleKey = generateKey("ETN-CAPSULE");
+    const rawGuardianToken = crypto.randomBytes(16).toString('hex'); // Unique token for guardian access
     const capsuleId = crypto.randomUUID();
 
     // 1. Insert as 'pending' prior to Stripe. Data is secured immediately.
@@ -58,6 +59,7 @@ export async function POST(req: Request) {
         message: sanitizeString(message, 15000),
         sender_key_hash: hashKey(rawSenderKey),
         capsule_key_hash: hashKey(rawCapsuleKey),
+        guardian_token_hash: guardian_email ? hashKey(rawGuardianToken) : null,
       })
       .select("id")
       .single();
@@ -82,6 +84,7 @@ export async function POST(req: Request) {
       capsule_id: capsule.id.toString(),
       sender_key: rawSenderKey,
       capsule_key: rawCapsuleKey,
+      guardian_token: guardian_email ? rawGuardianToken : "",
       sender_name: sanitizeString(sender_name, 100),
       guardian_email: guardian_email ? sanitizeString(guardian_email, 150) : "",
       deliver_at: deliver_at ? new Date(deliver_at).toISOString() : ""

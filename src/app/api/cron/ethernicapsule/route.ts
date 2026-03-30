@@ -5,6 +5,15 @@ import { sendGuardianMasterEmail } from '@/app/lib/ethernicapsule-email';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+/**
+ * @deprecated This endpoint is no longer needed as of 2026-03-31
+ * The system now uses on-demand delivery via /api/ethernicapsule/guardian-access
+ * Guardian keys are delivered when the guardian accesses their unique link,
+ * eliminating the need for scheduled cron jobs.
+ *
+ * This endpoint is kept for backwards compatibility but can be safely removed.
+ * See: ON_DEMAND_DELIVERY.md for details
+ */
 export async function GET(req: Request) {
   try {
     const authHeader = req.headers.get('authorization');

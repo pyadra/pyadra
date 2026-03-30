@@ -156,6 +156,7 @@ export async function POST(req: Request) {
            const capsuleId = metadata.capsule_id;
            const senderKey = metadata.sender_key;
            const capsuleKey = metadata.capsule_key;
+           const guardianToken = metadata.guardian_token || "";
            const senderName = metadata.sender_name;
            const guardianEmailStr = metadata.guardian_email || "";
            const deliverAtStr = metadata.deliver_at || null;
@@ -194,12 +195,14 @@ export async function POST(req: Request) {
                 const splitName = senderName.split(" ")[0] || "Someone";
                 
                 if (isTimeVault) {
-                   const { sendGuardianChronosAwarenessEmail } = await import('@/app/lib/ethernicapsule-email');
+                   const { sendGuardianTimeVaultEmail } = await import('@/app/lib/ethernicapsule-email');
                    const deliverStr = new Date(deliverAtStr as string).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
-                   await sendGuardianChronosAwarenessEmail({
+                   await sendGuardianTimeVaultEmail({
                      to: guardianEmailsRaw,
                      senderFirstName: splitName,
-                     deliverAtDateStr: deliverStr
+                     deliverAtDateStr: deliverStr,
+                     guardianToken,
+                     siteUrl
                    });
                 } else {
                    const { sendGuardianMasterEmail } = await import('@/app/lib/ethernicapsule-email');

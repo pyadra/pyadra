@@ -4,35 +4,30 @@
 
 ---
 
-## ⚠️ CRÍTICO - Configuración de Variables de Entorno
+## ✅ ACTUALIZACIÓN - Sistema On-Demand (Sin Cron)
 
-### 1. **CRON_SECRET Faltante en .env.example**
+### 1. **CRON_SECRET Ya NO es Necesario**
 
-#### Problema:
+#### ✅ Cambio Implementado:
 ```bash
-# .env.example NO incluye CRON_SECRET
-# Pero el código lo requiere:
-# src/app/api/cron/ethernicapsule/route.ts
-if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-  return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-}
+# ❌ ANTES: Requería cron job externo con CRON_SECRET
+# ✅ AHORA: Sistema on-demand - Sin cron necesario
+
+# El sistema entrega keys cuando el guardian accede al link
+# No hay necesidad de cron jobs o CRON_SECRET
 ```
 
-#### Solución ANTES de deploy:
-```bash
-# 1. Agregar a .env.example
-echo "CRON_SECRET=your_secure_random_string_here" >> .env.example
+#### ✅ Nueva Base de Datos:
+```sql
+# ANTES de deploy, ejecutar en Supabase:
+ALTER TABLE ethernicapsule_capsules
+ADD COLUMN IF NOT EXISTS guardian_token_hash TEXT;
 
-# 2. En Vercel Dashboard, agregar:
-# Settings > Environment Variables > CRON_SECRET
-# Valor: [generar string aleatorio seguro]
-
-# 3. Configurar Vercel Cron Job:
-# vercel.json o Vercel Dashboard
-# Endpoint: /api/cron/ethernicapsule
-# Schedule: 0 0 * * * (diario a medianoche)
-# Headers: Authorization: Bearer ${CRON_SECRET}
+CREATE INDEX IF NOT EXISTS idx_guardian_token_hash
+ON ethernicapsule_capsules(guardian_token_hash);
 ```
+
+Ver: [ON_DEMAND_DELIVERY.md](ON_DEMAND_DELIVERY.md) para detalles completos
 
 ---
 
@@ -146,31 +141,32 @@ import { Analytics } from "@vercel/analytics/react";
 
 ---
 
-## 🤖 Cron Jobs - Servicio Externo
+## ✅ NO Cron Jobs Needed
 
-**NO configurar en Vercel** - Usar servicio externo gratuito
+**Sistema On-Demand** - Keys entregadas cuando guardian accede
 
-Ver: [CRON_SETUP.md](CRON_SETUP.md) para instrucciones detalladas
+### ✅ Beneficios:
+- Sin configuración externa
+- Sin dependencias de terceros
+- Sin CRON_SECRET necesario
+- Entrega instantánea (no esperar a medianoche)
+- 100% serverless
 
-### Configuración (Post-Deploy):
-
-#### Opción Recomendada: cron-job.org (Gratis)
-```
-URL: https://pyadra.io/api/cron/ethernicapsule
-Schedule: 0 0 * * * (diario a medianoche UTC)
-Header: Authorization: Bearer [CRON_SECRET]
-```
-
-#### Tiempo de configuración: 5 minutos
-#### Sin código adicional en Vercel ✅
+### Flujo:
+1. Guardian recibe email con link seguro
+2. Guardian hace click cuando quiere acceder
+3. Sistema verifica fecha `deliver_at`
+4. Si está listo → muestra key
+5. Si no → muestra countdown
 
 ### Verificación Post-Deploy:
 ```bash
-# Test manual del cron
-curl -X GET https://pyadra.io/api/cron/ethernicapsule \
-  -H "Authorization: Bearer $CRON_SECRET"
+# Test guardian access (reemplazar TOKEN con uno real)
+curl -X POST https://pyadra.io/api/ethernicapsule/guardian-access \
+  -H "Content-Type: application/json" \
+  -d '{"guardianToken": "TOKEN_FROM_EMAIL"}'
 
-# Debería retornar: {"message": "No keys due for delivery"} o {"delivered": N}
+# Debería retornar: {"ready": true/false, ...}
 ```
 
 ---
@@ -187,18 +183,7 @@ curl -X GET https://pyadra.io/api/cron/ethernicapsule \
 ✅ NEXT_PUBLIC_SUPABASE_URL
 ✅ SUPABASE_SERVICE_ROLE_KEY
 ✅ RESEND_API_KEY
-❌ CRON_SECRET  <- FALTA, AGREGAR ANTES DE DEPLOY
-```
-
-### Generar CRON_SECRET:
-```bash
-# Opción 1: OpenSSL
-openssl rand -base64 32
-
-# Opción 2: Node
-node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
-
-# Copiar output y agregar a Vercel Environment Variables
+✅ (CRON_SECRET ya NO es necesario - Sistema on-demand)
 ```
 
 ---
@@ -269,10 +254,11 @@ curl -I https://pyadra.io/ethernicapsule
 - [ ] Probar unlock con key
 - [ ] Verificar payment flow completo
 
-#### 4. Cron Job:
+#### 4. Guardian Access:
 ```bash
-# Verificar logs en Vercel Dashboard
-# Debería ejecutarse a medianoche UTC sin errores
+# Crear capsule de prueba con deliver_at futuro
+# Acceder a /guardian?token=xxx
+# Verificar muestra "locked until [date]"
 ```
 
 ---
@@ -280,9 +266,7 @@ curl -I https://pyadra.io/ethernicapsule
 ## 📋 Checklist Final
 
 ### Antes de Deploy:
-- [ ] **AGREGAR CRON_SECRET a .env.example**
-- [ ] **CONFIGURAR CRON_SECRET en Vercel**
-- [ ] **CONFIGURAR Cron Job en Vercel**
+- [ ] **EJECUTAR migración SQL en Supabase** (add guardian_token_hash)
 - [ ] Verificar Stripe webhook activo
 - [ ] Verificar todas las variables de entorno
 - [ ] Build local exitoso
@@ -304,7 +288,7 @@ curl -I https://pyadra.io/ethernicapsule
 
 ### Primeras 24 horas:
 - [ ] Monitorear rate de errores
-- [ ] Verificar cron job ejecutó correctamente
+- [ ] Verificar guardian access funciona
 - [ ] Revisar logs de redirects
 - [ ] Responder issues de usuarios (si hay)
 
@@ -346,7 +330,7 @@ git push origin main
 **Antes de proceder a producción, TODOS los items marcados con ❌ deben ser ✅**
 
 Items CRÍTICOS:
-- ❌ **CRON_SECRET** - DEBE configurarse antes de deploy
+- ✅ **DB Migration** - Agregar guardian_token_hash
 - ✅ Redirects - Funcionando
 - ✅ Tests - Passing
 - ✅ Build - Exitoso

@@ -123,9 +123,11 @@ export async function sendGuardianMasterEmail(opts: { to: string[], senderFirstN
   }
 }
 
-export async function sendGuardianChronosAwarenessEmail(opts: { to: string[], senderFirstName: string, deliverAtDateStr: string }) {
+export async function sendGuardianTimeVaultEmail(opts: { to: string[], senderFirstName: string, deliverAtDateStr: string, guardianToken: string, siteUrl: string }) {
   if (!resend) return false;
-  
+
+  const accessUrl = `${opts.siteUrl}/projects/ethernicapsule/guardian?token=${opts.guardianToken}`;
+
   const html = `
     <!DOCTYPE html>
     <html lang="en">
@@ -138,8 +140,12 @@ export async function sendGuardianChronosAwarenessEmail(opts: { to: string[], se
           <p class="text">${opts.senderFirstName} has sealed a silent letter and placed it in your care.</p>
           <p class="text">However, it cannot be opened yet.</p>
           <p class="text" style="color: #C4A882; font-style: italic;">The seal will remain cryptographically locked until ${opts.deliverAtDateStr}.</p>
-          <p class="text">On that exact day, this protocol will awake and send you the master key to open it.</p>
-          <p class="text">You do not need to do anything right now. Just remember.</p>
+          <p class="text">When that day arrives, return to this link to receive the key:</p>
+
+          <a href="${accessUrl}" class="btn" style="margin: 30px 0;">ACCESS CAPSULE</a>
+
+          <p class="text" style="font-size: 13px; color: #7A6A55; margin-top: 30px;">This link is personal and secure. Save this email.</p>
+
           <div class="footer">EterniCapsule &middot; Pyadra</div>
         </div>
       </div>
