@@ -167,7 +167,7 @@ Proprietary — All rights reserved.
 
 ## 📞 Contact
 
-- **Email**: [invest@pyadra.com](mailto:invest@pyadra.com)
+- **Email**: [pyadra@pyadra.io](mailto:pyadra@pyadra.io)
 - **Website**: [pyadra.io](https://pyadra.io)
 
 ---
