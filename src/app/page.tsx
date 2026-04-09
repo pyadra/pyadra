@@ -485,7 +485,7 @@ export default function PyAdraHome() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 2.1 }}
-                      className="space-y-2 mt-8"
+                      className="space-y-3 mt-8 text-center max-w-md mx-auto"
                     >
                       <motion.div
                         animate={{
@@ -498,7 +498,17 @@ export default function PyAdraHome() {
                         }}
                         className="text-[13px] md:text-[15px] font-light tracking-wide text-[#E3DAC9]/90"
                       >
-                        What's waiting inside?
+                        You are now an Observer.
+                      </motion.div>
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 2.5 }}
+                        className="text-[11px] text-[#E3DAC9]/70 font-light leading-relaxed"
+                      >
+                        Pyadra is a museum of digital rituals.<br/>
+                        Explore exhibitions. Participate in projects.<br/>
+                        Everything you create here becomes permanent.
                       </motion.div>
                     </motion.div>
                   </motion.div>
@@ -572,7 +582,7 @@ export default function PyAdraHome() {
                     }}
                     className="text-center mt-6 text-[9px] md:text-[10px] font-sans text-[#E3DAC9]/50 tracking-wide italic"
                   >
-                    Your discoveries await
+                    Enter the first exhibition
                   </motion.p>
                 </motion.div>
               )}

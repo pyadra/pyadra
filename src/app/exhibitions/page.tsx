@@ -38,16 +38,15 @@ export default function ExhibitionsPage() {
       id: "galaxy",
       name: "GALAXY",
       status: "active",
-      tagline: "A cosmic void holding permanent creations",
+      tagline: "Four rituals exploring memory, time, and permanence",
       whatYouDo: [
-        "Listen to 10 raw podcast episodes",
-        "Write encrypted time-locked letters",
-        "Commission hand-painted figurines",
-        "Explore a book in formation"
+        "Support creative projects through contribution",
+        "Seal messages that unlock in the future",
+        "Commission physical artifacts from digital you"
       ],
-      nodes: 6,
+      nodes: 4,
       projects: ["Orbit 77", "EtherniCapsule", "Figurines", "EBOK"],
-      period: "Active Now",
+      period: "Active Now — 4 Projects Live",
       href: "/exhibitions/galaxy",
       color: "#FFB000",
     },
@@ -150,16 +149,18 @@ export default function ExhibitionsPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.5 }}
-          className="text-center mb-20"
+          className="text-center mb-20 max-w-lg"
         >
           <motion.h1
-            className="text-3xl md:text-4xl font-serif font-light mb-3 tracking-wide"
+            className="text-3xl md:text-4xl font-serif font-light mb-4 tracking-wide"
             style={{ color: currentColor }}
           >
             Pyadra
           </motion.h1>
-          <p className="text-xs text-[#E3DAC9]/50 font-mono uppercase tracking-[0.3em]">
-            Choose Exhibition
+          <p className="text-xs text-[#E3DAC9]/70 font-light leading-relaxed">
+            A museum of digital rituals.<br/>
+            Exhibitions hold projects.<br/>
+            Projects let you create, support, or participate.
           </p>
         </motion.div>
 
@@ -197,6 +198,9 @@ export default function ExhibitionsPage() {
           transition={{ delay: 1.8, duration: 1 }}
           className="mt-24 text-center pb-16"
         >
+          <div className="text-[10px] text-[#E3DAC9]/50 mb-6 uppercase tracking-[0.3em] font-mono">
+            What makes everything here different
+          </div>
           <div className="flex items-center justify-center gap-12 text-[9px] font-mono uppercase tracking-[0.3em] text-[#E3DAC9]/40">
             <div className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 bg-[#FFB000] rounded-full"></div>

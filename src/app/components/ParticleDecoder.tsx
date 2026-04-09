@@ -7,12 +7,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // 6 símbolos ocultos que formarán PYADRA
 const SYMBOLS = [
-  { id: 'P', letter: 'P', concept: 'PHYSICAL', color: '#FF8C00', frequency: 220, x: -8, y: 3 },
-  { id: 'Y', letter: 'Y', concept: '', color: '#FFB000', frequency: 293, x: 4, y: -4 },
-  { id: 'A1', letter: 'A', concept: '', color: '#FFB000', frequency: 329, x: -6, y: -2 },
-  { id: 'D', letter: 'D', concept: '', color: '#FFB000', frequency: 392, x: 7, y: 1 },
-  { id: 'R', letter: 'R', concept: '', color: '#FFB000', frequency: 440, x: 0, y: 4 },
-  { id: 'A2', letter: 'A', concept: 'MEDIA + MEMORY', color: '#39FF14', frequency: 523, x: 2, y: -5 },
+  { id: 'P', letter: 'P', concept: 'PERMANENT', color: '#FF8C00', frequency: 220, x: -8, y: 3 },
+  { id: 'Y', letter: 'Y', concept: 'YOUR', color: '#FFB000', frequency: 293, x: 4, y: -4 },
+  { id: 'A1', letter: 'A', concept: 'ARTIFACTS', color: '#FFB000', frequency: 329, x: -6, y: -2 },
+  { id: 'D', letter: 'D', concept: 'DIGITAL', color: '#FFB000', frequency: 392, x: 7, y: 1 },
+  { id: 'R', letter: 'R', concept: 'RITUALS', color: '#FFB000', frequency: 440, x: 0, y: 4 },
+  { id: 'A2', letter: 'A', concept: 'ARCHIVE', color: '#39FF14', frequency: 523, x: 2, y: -5 },
 ];
 
 // Posiciones finales para formar PYADRA (horizontal centrado en pantalla)

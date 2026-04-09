@@ -333,31 +333,40 @@ export default function ProjectsConstellation() {
               [ Return to Main ]
             </Link>
             <span className="text-[10px] uppercase font-mono tracking-widest text-[#E8D9BB]/60">
-              Galaxy Exhibition
+              Exhibition 01 — Cosmos
             </span>
           </motion.nav>
 
           <div className="absolute top-28 md:top-32 left-8 md:left-12 pointer-events-none">
-            <motion.h1 
+            <motion.h1
                initial={{ opacity: 0, filter: "blur(10px)", x: -20 }}
                animate={{ opacity: 1, filter: "blur(0px)", x: 0 }}
                transition={{ duration: 1.5, delay: 0.2, ease: "easeOut" }}
-               className="text-4xl md:text-5xl font-serif italic font-light leading-tight mb-4"
+               className="text-4xl md:text-5xl font-serif italic font-light leading-tight mb-2"
             >
               <span className="bg-gradient-to-br from-[#FFFFFF] via-[#E8D9BB] to-[#C4A882]/80 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(196,168,130,0.1)]">
-                  Galaxy Exhibition
+                  Galaxy
               </span>
             </motion.h1>
+            <motion.p
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               transition={{ duration: 1.5, delay: 0.6, ease: "easeOut" }}
+               className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#E8D9BB]/50 mb-4"
+            >
+              4 Live Rituals • 2 Forming
+            </motion.p>
             
-            <motion.p 
+            <motion.p
                initial={{ opacity: 0, clipPath: "polygon(0 0, 0 0, 0 100%, 0% 100%)" }}
                animate={{ opacity: 1, clipPath: "polygon(0 0, 100% 0, 100% 100%, 0% 100%)" }}
                transition={{ duration: 1.5, delay: 0.8, ease: "easeInOut" }}
                className="text-[11px] md:text-[12px] font-mono text-[#E8D9BB]/70 uppercase tracking-[0.1em] leading-loose max-w-lg font-light whitespace-pre-line"
             >
-              Creative projects that live through participation.
-              Every contribution is permanent.
-              Every supporter becomes part of the record.
+              Cosmic navigation. Orbital rituals.
+              Nodes floating in the void.
+
+              Hover to explore. Click to enter.
             </motion.p>
           </div>
 
