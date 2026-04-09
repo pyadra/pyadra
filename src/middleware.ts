@@ -2,11 +2,20 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // Redirect old EterniCapsule URLs to new location
+  // Redirect old /ethernicapsule URLs to new location
   if (request.nextUrl.pathname.startsWith('/ethernicapsule')) {
     const newUrl = request.nextUrl.clone();
-    newUrl.pathname = newUrl.pathname.replace('/ethernicapsule', '/projects/ethernicapsule');
+    newUrl.pathname = newUrl.pathname.replace('/ethernicapsule', '/exhibitions/galaxy/ethernicapsule');
     return NextResponse.redirect(newUrl);
+  }
+
+  // Redirect old /projects/* URLs to new /exhibitions/galaxy/* structure
+  if (request.nextUrl.pathname.startsWith('/projects/ethernicapsule') ||
+      request.nextUrl.pathname.startsWith('/projects/orbit') ||
+      request.nextUrl.pathname.startsWith('/projects/figurines')) {
+    const newUrl = request.nextUrl.clone();
+    newUrl.pathname = newUrl.pathname.replace('/projects/', '/exhibitions/galaxy/');
+    return NextResponse.redirect(newUrl, 301); // 301 = permanent redirect
   }
 
   // Create a response object

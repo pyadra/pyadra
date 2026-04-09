@@ -184,7 +184,7 @@ function ConfirmationInner() {
         <button onClick={handleShare} className="w-full sm:w-auto px-8 py-4 rounded-full text-[10px] uppercase tracking-[0.3em] font-bold transition-all border border-[#39FF14] text-[#060B08] bg-[#39FF14] hover:shadow-[0_0_30px_rgba(57,255,20,0.5)]">
           Share My Credential
         </button>
-        <Link href="/projects/orbit" className="w-full sm:w-auto">
+        <Link href="/exhibitions/galaxy/orbit" className="w-full sm:w-auto">
           <button className="w-full px-8 py-4 rounded-full text-[10px] uppercase tracking-[0.3em] font-bold transition-all border border-white/10 hover:border-white/30 text-[#AEFFA1]/70 hover:text-white bg-black/30">
             Return to Orbit 77
           </button>

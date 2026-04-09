@@ -3,19 +3,18 @@ import { Resend } from 'resend';
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 const emailStyle = `
-  body { margin: 0; padding: 0; background-color: #060504; font-family: 'Cormorant Garamond', 'Georgia', serif; -webkit-font-smoothing: antialiased; }
-  .canvas { padding: 40px 10px; background-color: #060504; text-align: center; }
-  .wrapper { width: 100%; max-width: 560px; margin: 0 auto; padding: 48px 40px; background-color: #0A0806; border: 1px solid rgba(196, 168, 130, 0.15); text-align: center; }
-  .logo { font-family: monospace; font-size: 11px; letter-spacing: 0.4em; color: #C4A882; margin-bottom: 40px; }
-  .title { font-size: 24px; font-style: italic; color: #E8D9BB; margin: 0 0 30px; font-weight: normal; }
-  .text { font-family: 'Georgia', serif; font-size: 15px; line-height: 1.8; color: #AAAAAA; margin-bottom: 30px; }
-  .link { color: #C4A882; text-decoration: none; }
-  .key-box-wrapper { margin: 40px auto; max-width: 400px; text-align: center; }
-  .key-label { font-family: monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em; color: #7A6A55; margin-bottom: 15px; }
-  .key-box { border: 1px solid rgba(196, 168, 130, 0.25); background-color: #0F0C09; padding: 20px; display: inline-block; min-width: 250px; text-align: center; }
-  .key-value { font-family: monospace; font-size: 18px; color: #C4A882; letter-spacing: 0.1em; font-weight: normal; margin: 0; }
-  .btn { display: inline-block; padding: 14px 28px; color: #0A0806; background-color: #C4A882; text-decoration: none; font-family: monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; transition: background-color 0.3s; margin-top: 10px; }
-  .footer { margin-top: 60px; font-family: monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(122, 106, 85, 0.5); }
+  body { margin: 0; padding: 0; background-color: #02040A; font-family: 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  .canvas { padding: 40px 10px; background-color: #02040A; text-align: center; }
+  .wrapper { width: 100%; max-width: 560px; margin: 0 auto; padding: 60px 40px; background-color: #05060A; border: 1px solid rgba(196, 168, 130, 0.2); text-align: center; border-radius: 4px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); }
+  .logo { font-family: monospace; font-size: 10px; letter-spacing: 0.5em; color: #7A6A55; margin-bottom: 50px; text-transform: uppercase; border-bottom: 1px solid rgba(196, 168, 130, 0.1); padding-bottom: 20px; }
+  .title { font-size: 30px; font-style: italic; color: #E8D9BB; margin: 0 0 20px; font-weight: 300; font-family: 'Georgia', serif; }
+  .text { font-family: 'Helvetica Neue', sans-serif; font-weight: 300; font-size: 14px; line-height: 2; color: rgba(232, 217, 187, 0.6); margin-bottom: 40px; }
+  .link { color: #C4A882; text-decoration: none; border-bottom: 1px solid rgba(196, 168, 130, 0.3); }
+  .key-box-wrapper { margin: 40px auto; max-width: 400px; text-align: center; background: #02040A; padding: 30px 20px; border: 1px solid rgba(196, 168, 130, 0.15); border-radius: 2px; }
+  .key-label { font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.4em; color: #7A6A55; margin-bottom: 20px; }
+  .key-value { font-family: monospace; font-size: 16px; color: #C4A882; letter-spacing: 0.15em; font-weight: 400; margin: 0; padding: 15px; background: rgba(196, 168, 130, 0.05); border: 1px dashed rgba(196, 168, 130, 0.3); word-break: break-all; }
+  .btn { display: inline-block; padding: 16px 32px; color: #02040A; background-color: #C4A882; text-decoration: none; font-family: monospace; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.3em; transition: all 0.5s; margin-top: 20px; border-radius: 2px; }
+  .footer { margin-top: 70px; font-family: monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.3em; color: rgba(122, 106, 85, 0.4); border-top: 1px solid rgba(196, 168, 130, 0.1); padding-top: 30px; }
 `;
 
 export async function sendCreatorEmail(opts: { to: string, senderKey: string, capsuleKey?: string, siteUrl: string }) {
@@ -40,8 +39,8 @@ export async function sendCreatorEmail(opts: { to: string, senderKey: string, ca
       <div class="canvas">
         <div class="wrapper">
           <div class="logo">&middot; E T E R N I C A P S U L E &middot;</div>
-          <h1 class="title">Your capsule has been sealed.</h1>
-          <p class="text">Something has been preserved.<br>Your letter exists beyond this moment.</p>
+          <h1 class="title">The Seal is Cast.</h1>
+          <p class="text">Your words have been stripped from the present and locked into the dark. They are safe. This exact cryptographic ledger serves as your receipt.</p>
           
           <div class="key-box-wrapper">
             <div class="key-label">Sender Key</div>
@@ -50,7 +49,7 @@ export async function sendCreatorEmail(opts: { to: string, senderKey: string, ca
             </div>
           </div>
           
-          <a href="${opts.siteUrl}/projects/ethernicapsule/preview" class="btn">View your letter</a>
+          <a href="${opts.siteUrl}/exhibitions/galaxy/ethernicapsule/preview" class="btn">ACCESS THE VAULT</a>
           
           ${capsuleKeyHtml}
           
@@ -96,9 +95,7 @@ export async function sendGuardianMasterEmail(opts: { to: string[], senderFirstN
             </div>
           </div>
           
-          <p class="text" style="font-family: monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #C4A882; margin-bottom: 30px;">
-             <a href="${opts.siteUrl}/projects/ethernicapsule/unlock" class="link">pyadra.io/projects/ethernicapsule/unlock</a>
-          </p>
+          <a href="${opts.siteUrl}/exhibitions/galaxy/ethernicapsule/unlock" class="btn" style="margin: 30px 0;">ACCESS CAPSULE</a>
           
           <p class="text" style="font-size: 14px; margin-top: 40px; color: #7A6A55;">When the time is right, pass this key to the person it was written for — or use it yourself.</p>
           
@@ -126,7 +123,7 @@ export async function sendGuardianMasterEmail(opts: { to: string[], senderFirstN
 export async function sendGuardianTimeVaultEmail(opts: { to: string[], senderFirstName: string, deliverAtDateStr: string, guardianToken: string, siteUrl: string }) {
   if (!resend) return false;
 
-  const accessUrl = `${opts.siteUrl}/projects/ethernicapsule/guardian?token=${opts.guardianToken}`;
+  const accessUrl = `${opts.siteUrl}/exhibitions/galaxy/ethernicapsule/guardian?token=${opts.guardianToken}`;
 
   const html = `
     <!DOCTYPE html>

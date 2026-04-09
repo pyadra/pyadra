@@ -4,12 +4,14 @@
 
 Pyadra is not a product. It is a ceremonial space where digital artifacts are forged with intention, preserved with care, and experienced with reverence. Each project within the ecosystem serves as a node in a larger constellation of meaningful human connection.
 
+**📖 New here?** Read **[VISION.md](VISION.md)** first to understand what Pyadra is and where it's going.
+
 ## 🌟 Live Projects
 
-### [Orbit 77](https://pyadra.io/projects/orbit)
+### [Orbit 77](https://pyadra.io/exhibitions/galaxy/orbit)
 A podcast and media platform exploring liminal spaces and hidden knowledge. 10 episodes released. Supporter-funded model with transparent funding goals ($1000 AUD). Includes a credentials system for early supporters.
 
-### [EterniCapsule](https://pyadra.io/projects/ethernicapsule)
+### [EterniCapsule](https://pyadra.io/exhibitions/galaxy/ethernicapsule)
 Time-locked digital message vaults. Write a letter, seal it cryptographically, and have it delivered to recipients at a future date. Each capsule costs $9 AUD and is permanently preserved. Features include:
 - Cryptographic sealing ceremony
 - Multiple guardians support
@@ -91,18 +93,29 @@ Open [http://localhost:3000](http://localhost:3000) to see the result.
 ```
 pyadra/
 ├── src/
-│   ├── app/                    # Next.js App Router
-│   │   ├── api/               # API routes (Stripe, email, cron)
-│   │   ├── components/        # Global components (Scene, Cursor, Audio)
-│   │   ├── projects/          # All projects (EterniCapsule, Orbit 77)
-│   │   │   ├── ethernicapsule/  # EterniCapsule flow
-│   │   │   └── orbit/           # Orbit 77
-│   │   ├── lib/               # Utilities (db, email, validation)
-│   │   └── page.tsx           # Homepage
-│   └── middleware.ts          # Request middleware
-├── public/                     # Static assets
+│   ├── app/                          # Next.js App Router
+│   │   ├── api/                     # API routes (Stripe, email, cron)
+│   │   ├── exhibitions/             # Exhibition system
+│   │   │   ├── page.tsx            # Exhibition selector
+│   │   │   └── galaxy/             # Galaxy exhibition (MVP1)
+│   │   │       ├── page.tsx        # 3D navigation scene
+│   │   │       ├── ethernicapsule/ # Time-locked messages
+│   │   │       ├── orbit/          # Orbit 77 podcast
+│   │   │       └── figurines/      # Digital artifacts
+│   │   ├── lib/                     # Utilities (db, email, validation)
+│   │   └── page.tsx                 # Homepage (Observer initiation)
+│   └── middleware.ts                # Request middleware + redirects
+├── public/                           # Static assets
 ├── supabase/
-│   └── migrations/            # Database migrations
+│   └── migrations/                  # Database migrations
+├── docs/                             # Documentation
+│   ├── HOME_EXPERIENCE.md           # Home page system
+│   ├── ETERNICAPSULE_NODE.md        # EterniCapsule context
+│   ├── ORBIT_NODE.md                # Orbit 77 context
+│   ├── FIGURINES_NODE.md            # Figurines context
+│   └── URL_MIGRATION.md             # Recent URL structure changes
+├── VISION.md                         # ⭐ Start here - Core philosophy
+├── ARCHITECTURE.md                   # System design
 └── package.json
 ```
 
@@ -137,8 +150,18 @@ npm run test:watch
 
 ## 📚 Documentation
 
+### Core Documents
+- **[VISION.md](./VISION.md)** — ⭐ **START HERE** - What Pyadra is, why it exists, where it's going
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — System design and data flows
-- [CONTRIBUTING.md](./CONTRIBUTING.md) — Development guidelines
+- [docs/HOME_EXPERIENCE.md](./docs/HOME_EXPERIENCE.md) — Observer initiation system
+
+### Project Nodes
+- [docs/ETERNICAPSULE_NODE.md](./docs/ETERNICAPSULE_NODE.md) — EterniCapsule context for AI agents
+- [docs/ORBIT_NODE.md](./docs/ORBIT_NODE.md) — Orbit 77 context for AI agents
+- [docs/FIGURINES_NODE.md](./docs/FIGURINES_NODE.md) — Figurines context for AI agents
+
+### Recent Changes
+- [docs/URL_MIGRATION.md](./docs/URL_MIGRATION.md) — April 2026 URL structure migration
 
 ## 🌍 Deployment
 

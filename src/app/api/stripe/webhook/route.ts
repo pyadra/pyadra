@@ -222,6 +222,37 @@ export async function POST(req: Request) {
            const errorMessage = e instanceof Error ? e.message : String(e);
            return NextResponse.json({ error: "EterniCapsule processing failed", details: errorMessage }, { status: 500 });
          }
+      } else if (metadata.project_id === "figurines") {
+         try {
+           const { getSupabase } = await import('@/app/lib/db');
+           // eslint-disable-next-line @typescript-eslint/no-explicit-any
+           const supabase = getSupabase() as any;
+           if (!supabase) throw new Error("Missing DB connection in webhook");
+
+           const orderId = metadata.order_id;
+           const customerEmail = session.customer_details?.email || "pending@checkout";
+           
+           if (!orderId) throw new Error("Missing metadata order_id for figurines processing");
+
+           // 1. Update DB to paid
+           const { error: updateError } = await supabase
+             .from("figurine_orders")
+             .update({ 
+               status: "paid", 
+               customer_email: customerEmail 
+             })
+             .eq("id", orderId);
+             
+           if (updateError) throw new Error(`DB Error (Figurines Update): ${updateError.message}`);
+
+           // Note: We do NOT send emails here. The customer still needs to upload photos.
+           // Emails will be fired from the /forge step once photos and address are provided.
+
+         } catch(e) {
+           console.error("Failed to process Figurines order webhook:", e);
+           const errorMessage = e instanceof Error ? e.message : String(e);
+           return NextResponse.json({ error: "Figurines processing failed", details: errorMessage }, { status: 500 });
+         }
       }
     }
 

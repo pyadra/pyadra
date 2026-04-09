@@ -34,7 +34,7 @@ function InvalidAccessScreen({ reason }: { reason: string }) {
         <p className="text-sm text-[#AEFFA1]/50 leading-relaxed font-light mb-10">{reason}</p>
         <div className="flex flex-col gap-3">
           <Link
-            href="/projects/orbit"
+            href="/exhibitions/galaxy/orbit"
             className="inline-block border border-[#39FF14]/30 text-[#39FF14] font-mono text-[10px] uppercase tracking-widest px-6 py-3 rounded-lg hover:bg-[#39FF14]/10 transition-colors"
           >
             Return to Orbit 77

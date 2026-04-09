@@ -73,7 +73,7 @@ export async function POST(req: Request) {
     if (!stripe) {
       console.warn("No Stripe Key - returning Local Bypass URL");
       await supabase.from("ethernicapsule_capsules").update({ stripe_session_id: "local_dev_bypass" }).eq("id", capsule.id);
-      return NextResponse.json({ url: `${req.headers.get("origin") || "http://localhost:3000"}/projects/ethernicapsule/sealing?session_id=local_dev_bypass` });
+      return NextResponse.json({ url: `${req.headers.get("origin") || "http://localhost:3000"}/exhibitions/galaxy/ethernicapsule/sealing?session_id=local_dev_bypass` });
     }
 
     const origin = req.headers.get("origin") || process.env.NEXT_PUBLIC_APP_URL || "https://pyadra.io";
@@ -109,8 +109,8 @@ export async function POST(req: Request) {
           quantity: 1,
         },
       ],
-      success_url: `${origin}/projects/ethernicapsule/sealing?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/projects/ethernicapsule?cancelled=true`,
+      success_url: `${origin}/exhibitions/galaxy/ethernicapsule/sealing?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/exhibitions/galaxy/ethernicapsule?cancelled=true`,
       metadata: sessionMetadata,
     });
 

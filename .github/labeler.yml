@@ -5,7 +5,7 @@
   - 'src/app/api/ethernicapsule/**/*'
 
 'orbit-77':
-  - 'src/app/projects/orbit/**/*'
+  - 'src/app/exhibitions/galaxy/orbit/**/*'
   - 'src/app/api/donate/**/*'
 
 '3d-scenes':

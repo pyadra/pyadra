@@ -9,6 +9,7 @@
 - [Projects](#projects)
   - [EterniCapsule](#ethernicapsule)
   - [Orbit 77](#orbit-77)
+  - [Figurines](#figurines)
 - [Database Schema](#database-schema)
 - [API Routes](#api-routes)
 - [Authentication & Security](#authentication--security)
@@ -72,9 +73,9 @@ Pyadra is a monolithic Next.js application using the App Router architecture. Al
 
 **User Flow:**
 ```
-1. User visits /projects/ethernicapsule
-2. User composes message → /projects/ethernicapsule/compose
-3. User previews → /projects/ethernicapsule/preview
+1. User visits /exhibitions/galaxy/ethernicapsule
+2. User composes message → /exhibitions/galaxy/ethernicapsule/compose
+3. User previews → /exhibitions/galaxy/ethernicapsule/preview
 4. User clicks "Seal" → Creates Stripe checkout session
 5. Payment completes → Webhook updates DB to "sealed"
 6. User receives keys via email
@@ -83,7 +84,7 @@ Pyadra is a monolithic Next.js application using the App Router architecture. Al
 ```
 
 **Key Files:**
-- [`src/app/projects/ethernicapsule/compose/ComposeForm.tsx`](src/app/projects/ethernicapsule/compose/ComposeForm.tsx) - Message composition
+- [`src/app/exhibitions/galaxy/ethernicapsule/compose/ComposeForm.tsx`](src/app/exhibitions/galaxy/ethernicapsule/compose/ComposeForm.tsx) - Message composition
 - [`src/app/api/ethernicapsule/checkout/route.ts`](src/app/api/ethernicapsule/checkout/route.ts) - Stripe session creation
 - [`src/app/api/stripe/webhook/route.ts`](src/app/api/stripe/webhook/route.ts) - Payment confirmation
 - [`src/app/api/cron/ethernicapsule/route.ts`](src/app/api/cron/ethernicapsule/route.ts) - Daily delivery check
@@ -107,7 +108,7 @@ Compose → Pending (DB) → Stripe Checkout → Webhook → Sealed (DB) → Cro
 
 **User Flow:**
 ```
-1. User visits /projects/orbit
+1. User visits /exhibitions/galaxy/orbit
 2. User clicks "Join the Transmission"
 3. User enters name + email + donation amount
 4. Stripe checkout
@@ -117,8 +118,8 @@ Compose → Pending (DB) → Stripe Checkout → Webhook → Sealed (DB) → Cro
 ```
 
 **Key Files:**
-- [`src/app/projects/orbit/page.tsx`](src/app/projects/orbit/page.tsx) - Landing page
-- [`src/app/projects/orbit/join/page.tsx`](src/app/projects/orbit/join/page.tsx) - Donation form
+- [`src/app/exhibitions/galaxy/orbit/page.tsx`](src/app/exhibitions/galaxy/orbit/page.tsx) - Landing page
+- [`src/app/exhibitions/galaxy/orbit/join/page.tsx`](src/app/exhibitions/galaxy/orbit/join/page.tsx) - Donation form
 - [`src/app/api/donate/route.ts`](src/app/api/donate/route.ts) - Stripe session creation
 - [`src/app/lib/email.ts`](src/app/lib/email.ts) - Credential email
 - [`src/app/archive/[id]/page.tsx`](src/app/archive/[id]/page.tsx) - Supporter archive
@@ -126,6 +127,38 @@ Compose → Pending (DB) → Stripe Checkout → Webhook → Sealed (DB) → Cro
 **Data Flow:**
 ```
 Join → Stripe Checkout → Webhook → Supporter Record (DB) → Email → Archive Access
+```
+
+---
+
+### Figurines
+
+**Purpose**: The first physical bridge to the Pyadra ecosystem. Users commission a custom 3D printed, hand-painted replica of themselves derived from three photographs. The "Signal" tier links this physical artifact back to their Pyadra Archive via a magnetic QR code.
+
+**User Flow:**
+```
+1. User visits /exhibitions/galaxy/figurines (Cinematic 3D WebGL Neural Scene)
+2. User selects Tier ($150 or $200) → /api/figurines/checkout
+3. Checkout Session Created (DB check triggers "TABLE MISSING" boundary if uninitialized)
+4. Payment completes → Webhook updates DB to "paid"
+5. User redirected to /exhibitions/galaxy/figurines/forge
+6. User uploads 3 photos (Front, Left, Right) + Shipping Address
+7. Data buffered directly to Supabase Storage ('figurines_sculpts' bucket)
+8. Email Sent: Customer receives "Forging" receipt, Founder receives Image Links
+9. Order moves to "forging" state
+```
+
+**Key Files:**
+- `src/app/exhibitions/galaxy/figurines/page.tsx` - 3D Landing Page
+- `src/app/exhibitions/galaxy/figurines/components/FigurineCanvas.tsx` - WebGL R3F Doll simulation
+- `src/app/exhibitions/galaxy/figurines/forge/page.tsx` - 3-Photo Upload Form
+- `src/app/api/figurines/checkout/route.ts` - Stripe Session Initialization
+- `src/app/api/figurines/upload/route.ts` - Supabase Storage buffered upload + Email trigger
+- `src/app/lib/figurines-email.ts` - Resend notification logic
+
+**Data Flow:**
+```
+Landing → Checkout → Webhook (Paid) → Forge (Upload) → Storage + DB (Forging) → Emails
 ```
 
 ---
@@ -209,6 +242,13 @@ CREATE TABLE ethernicapsule_capsules (
 |-------|--------|---------|------|
 | `/api/donate` | POST | Create donation checkout | Public |
 | `/api/stats/orbit-fund` | GET | Funding progress | Public |
+
+### Figurines Routes
+
+| Route | Method | Purpose | Auth |
+|-------|--------|---------|------|
+| `/api/figurines/checkout` | POST | Create Stripe checkout | Public |
+| `/api/figurines/upload` | POST | Buffer photos to Supabase Storage | Public (requires valid session_id) |
 
 ### Webhook Routes
 
@@ -299,6 +339,11 @@ Client → Create Checkout Session → Stripe Hosted Checkout → Payment → We
    - Sent on delivery date
    - Contains message + unlock link
    - Template: [`src/app/lib/ethernicapsule-email.ts`](src/app/lib/ethernicapsule-email.ts)
+
+4. **Figurines Transactional Emails**
+   - Customer: Ritual receipt of forge initiation
+   - Founder: Action required internally (contains geometry URLs and Shipping Address)
+   - Template: [`src/app/lib/figurines-email.ts`](src/app/lib/figurines-email.ts)
 
 **Features:**
 - Dark mode + light mode HTML templates
@@ -409,4 +454,4 @@ npm run build  # Next.js production build
 
 ---
 
-**Last Updated**: March 30, 2026
+**Last Updated**: April 2026

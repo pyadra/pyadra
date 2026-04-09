@@ -1,303 +1,623 @@
 "use client";
-// CACHE BUST: 2026-03-26T14:02:27+08:00
+
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
 import { useGlobalContext } from "./providers";
-import { Scene3DErrorBoundary } from "./components/ErrorBoundary";
+import { generateSignature } from "./lib/signature";
+import AnimatedNumber from "./components/AnimatedNumber";
 
-const Scene = dynamic(() => import("./components/Scene"), { ssr: false });
+const ParticleDecoder = dynamic(() => import("./components/ParticleDecoder"), { ssr: false });
 
-export default function ShadowEarthHome() {
-  const [hovered, setHovered] = useState(false); 
-  const [isInitializing, setIsInitializing] = useState(true);
-  const [stats, setStats] = useState({ members: 0, nodes: 0 }); // Dynamically pulled from Stripe
-  
-  const { isMuted, toggleAudio } = useGlobalContext();
+interface GameStats {
+  timeElapsed: number;
+  pulsesSent: number;
+  signalsFound: number;
+  timestamp: string;
+}
+
+interface GlobalStats {
+  totalObservers: number;
+  pulsesToday: number;
+  scansToday: number;
+}
+
+export default function PyAdraHome() {
   const [observerId, setObserverId] = useState<string | null>(null);
-  const [showObserverOverlay, setShowObserverOverlay] = useState(false);
+  const [observerNum, setObserverNum] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+  const [showCTA, setShowCTA] = useState(false);
+  const [gameStats, setGameStats] = useState<GameStats | null>(null);
+  const [globalStats, setGlobalStats] = useState<GlobalStats | null>(null);
+  const [signature, setSignature] = useState<string | null>(null);
+  const [showSignature, setShowSignature] = useState(false);
+  const [showGlobalStats, setShowGlobalStats] = useState(false);
+  const { isMuted, toggleAudio } = useGlobalContext();
 
   useEffect(() => {
     setMounted(true);
-    // Stage 1: Pre-Loader timeout (1.5s of pure anticipation)
-    const timer = setTimeout(() => {
-      setIsInitializing(false);
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, []);
 
-  useEffect(() => {
-    // Fetch Live Project Data (Nodes and Stripe Founding Members/Supporters)
-    fetch('/api/stats')
-      .then(res => res.json())
-      .then(data => setStats(data))
-      .catch((err) => {
-        console.error("Missing DB Connection - Fallback to active mock data", err);
-        setStats({ members: 2, nodes: 1 });
-      });
-  }, []);
-
-  useEffect(() => {
-    // Setup Local Observer ID
+    // Setup Observer ID
     const localId = window.localStorage.getItem("pyadra_observer_id");
-    if (localId) {
+    const localNum = window.localStorage.getItem("pyadra_observer_num");
+
+    if (localId && localNum) {
       setObserverId(localId);
+      setObserverNum(parseInt(localNum));
     } else {
       fetch("/api/observer")
         .then(r => r.json())
         .then(data => {
            const formatted = `#${String(data.id).padStart(4, '0')}`;
            window.localStorage.setItem("pyadra_observer_id", formatted);
+           window.localStorage.setItem("pyadra_observer_num", String(data.id));
            setObserverId(formatted);
+           setObserverNum(data.id);
         })
         .catch(() => {});
     }
   }, []);
 
-  const handleAudioToggle = () => {
-    toggleAudio();
-    if (isMuted) {
-      // Oval gold ring emits ONE soft pulse
-      setHovered(true);
-      setTimeout(() => setHovered(false), 2000);
+  const handleComplete = async (stats: GameStats) => {
+    setGameStats(stats);
+    setIsComplete(true);
+
+    // OPTIMISTIC UI: Generate signature immediately (no wait)
+    if (observerNum) {
+      const sig = generateSignature(
+        observerNum,
+        stats.timeElapsed,
+        stats.pulsesSent,
+        stats.timestamp
+      );
+      setSignature(sig);
+
+      // Save to database in background (fire and forget)
+      fetch('/api/home/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          observerId: observerNum,
+          timeElapsed: stats.timeElapsed,
+          pulsesSent: stats.pulsesSent,
+          signalsFound: stats.signalsFound,
+          timestamp: stats.timestamp,
+        }),
+      }).catch(err => console.error('Failed to save completion:', err));
+
+      // Fetch global stats in parallel (don't block)
+      fetch('/api/home/stats')
+        .then(r => r.json())
+        .then(data => setGlobalStats(data))
+        .catch(err => console.error('Failed to fetch stats:', err));
     }
+
+    // Stagger animations (starts immediately, no DB wait)
+    setTimeout(() => setShowSignature(true), 1500);
+    setTimeout(() => setShowGlobalStats(true), 4500);
+    setTimeout(() => setShowCTA(true), 6000);
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] text-[#E3DAC9] flex flex-col justify-center items-center relative overflow-hidden font-sans">
-      
-      {/* EASTER EGG PARTICLE */}
-      {mounted && (
-        <motion.div 
-          className="absolute w-[3px] h-[3px] rounded-full bg-[#FFB000] shadow-[0_0_8px_#FFB000] cursor-crosshair group z-50 pointer-events-auto"
-          initial={{ x: "-40vw", y: "-30vh" }}
-          animate={{ 
-            x: ["-40vw", "35vw", "15vw", "-40vw"],
-            y: ["-30vh", "20vh", "40vh", "-30vh"],
-          }}
-          transition={{ duration: 75, repeat: Infinity, ease: "linear" }}
+    <div className="min-h-screen bg-[#030304] text-[#E3DAC9] overflow-hidden font-sans select-none relative">
+
+      {/* Top Bar */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, delay: 1 }}
+        className="absolute top-0 left-0 right-0 z-50 flex justify-between items-center p-6 md:p-12"
+      >
+        <button
+          className="text-[9px] md:text-[10px] font-mono tracking-[0.4em] uppercase text-[#FFB000]/70 hover:text-[#FFB000] transition-colors flex items-center gap-3 outline-none"
+          aria-label={`Observer ID ${observerId || 'loading'}`}
         >
-           {/* Tooltip */}
-           <div className="absolute top-4 left-4 ml-2 min-w-[200px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[#0A0A0A]/90 backdrop-blur-md border border-[#FFB000]/20 p-4 rounded-xl pointer-events-none shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
-              <p className="text-[10px] font-mono text-[#FFB000] tracking-widest uppercase mb-2">You found the first node.</p>
-              <p className="text-[9px] font-mono text-white/50 tracking-widest uppercase inline-block border-b border-white/10 pb-1">Keep looking.</p>
-           </div>
-        </motion.div>
-      )}
-
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        {/* Pass inverted isMuted (audioActive) down to Scene to speed up particles by 10% */}
-        <Scene3DErrorBoundary>
-          <Scene hovered={hovered} audioActive={!isMuted} />
-        </Scene3DErrorBoundary>
-      </div>
-
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,#000000_100%)] pointer-events-none z-0 mix-blend-multiply" />
-
-      {/* OBSERVER IDENTITY (Top Left) */}
-      <div className="absolute top-8 left-8 md:top-12 md:left-12 z-50">
-        <button 
-          onClick={() => setShowObserverOverlay(true)}
-          className="text-[8px] font-mono tracking-[0.4em] uppercase transition-colors duration-500 text-[#FFB000]/70 hover:text-[#FFB000] outline-none opacity-0 animate-[fadeIn_1s_ease-out_1s_forwards]"
-        >
+          <div className="w-1 h-1 bg-[#FFB000] rounded-full animate-pulse"></div>
           OBSERVER {observerId || "..."}
         </button>
-      </div>
 
-      {/* OBSERVER OVERLAY MODAL */}
-      <AnimatePresence>
-         {showObserverOverlay && (
-           <motion.div 
-             initial={{ opacity: 0 }}
-             animate={{ opacity: 1 }}
-             exit={{ opacity: 0 }}
-             transition={{ duration: 0.3 }}
-             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm px-6"
-           >
-              <motion.div 
-                initial={{ scale: 0.95 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.95 }}
-                className="max-w-md w-full bg-[#0A0A0A]/90 border border-white/10 rounded-2xl p-8 md:p-12 text-center shadow-[0_0_50px_rgba(0,0,0,0.8)]"
-              >
-                 <span className="text-[10px] md:text-xs font-mono text-[#FFB000] uppercase tracking-[0.4em] mb-8 block">
-                   OBSERVER {observerId}
-                 </span>
-                 <p className="text-sm font-sans font-light text-[#E3DAC9]/80 leading-relaxed mb-6">
-                   This number is yours.<br/>You arrived early.
-                 </p>
-                 <p className="text-xs font-sans font-light text-[#E3DAC9]/50 leading-relaxed mb-10">
-                   If you choose to enter the ecosystem —<br/>as a Supporter or part of the Crew —<br/>this becomes your permanent identity.
-                 </p>
-                 <p className="text-[10px] font-mono uppercase tracking-widest text-[#E3DAC9]/40 mb-12 pb-4 border-b border-white/5">
-                   The ecosystem remembers who arrived first.
-                 </p>
-
-                 <div className="flex flex-col sm:flex-row items-center justify-between gap-6 px-4">
-                    <button 
-                      onClick={() => setShowObserverOverlay(false)} 
-                      className="text-[9px] font-mono tracking-[0.3em] uppercase text-white/40 hover:text-white transition-colors"
-                    >
-                      [ CLOSE ]
-                    </button>
-                    <Link 
-                      href="/projects" 
-                      className="text-[9px] font-mono tracking-[0.3em] uppercase text-[#FFB000] hover:text-[#FFB000] hover:drop-shadow-[0_0_10px_rgba(255,176,0,0.8)] transition-all"
-                    >
-                      [ ENTER THE ECOSYSTEM → ]
-                    </Link>
-                 </div>
-              </motion.div>
-           </motion.div>
-         )}
-      </AnimatePresence>
-
-      {/* STEALTH UI HUD */}
-      <div className="absolute top-8 right-8 md:top-12 md:right-12 z-10 pointer-events-none text-right opacity-[0.15]">
-        <p className="text-[8px] font-mono tracking-[0.4em] text-[#E3DAC9] uppercase mb-1">
-          SYSTEM: ACTIVE
-        </p>
-        <p className="text-[8px] font-mono tracking-[0.3em] text-[#E3DAC9] uppercase">
-          NODE: EARTH SHADOW
-        </p>
-      </div>
-      <div className="absolute bottom-8 left-8 md:bottom-12 md:left-12 z-10 pointer-events-none opacity-[0.15]">
-        <p className="text-[8px] font-mono tracking-[0.4em] text-[#E3DAC9] uppercase">
-          [ ENCRYPTED NETWORK ]
-        </p>
-      </div>
-      
-      {/* FREQUENCY AUDIO TOGGLE */}
-      <div className="absolute bottom-8 right-8 md:bottom-12 md:right-12 z-50">
-        <button 
-          onClick={handleAudioToggle}
-          className="text-[8px] font-mono tracking-[0.4em] uppercase transition-colors duration-500 hover:text-[#FFB000] outline-none flex items-center gap-2 group"
+        <button
+          onClick={toggleAudio}
+          className="text-[9px] md:text-[10px] font-mono tracking-[0.4em] uppercase transition-colors hover:text-[#FFB000] flex items-center gap-2 outline-none"
+          aria-label={isMuted ? "Unmute audio" : "Mute audio"}
         >
-          FREQUENCY: <span className={isMuted ? "text-[#E3DAC9]/40 group-hover:text-[#FFB000]/60 transition-colors" : "text-[#39FF14] drop-shadow-[0_0_5px_rgba(57,255,20,0.5)] transition-colors animate-pulse"}>
-            {isMuted ? "MUTED" : "ACTIVE"}
+          <span className={isMuted ? "text-[#E3DAC9]/40" : "text-[#39FF14] animate-pulse"}>
+            {isMuted ? "SENSORS MUTED" : "SENSORS ACTIVE"}
           </span>
         </button>
-      </div>
+      </motion.div>
 
-      <div className="relative z-20 w-full h-full flex justify-center items-center pointer-events-none">
-        <div className="relative flex flex-col items-center justify-center p-8 md:p-16 w-full max-w-[800px] h-[800px] pointer-events-auto mt-6">
-          
-          {/* THE LITHIC PULSE */}
-          <motion.div 
-            animate={{ 
-               opacity: isMuted ? [0.05, 0.2, 0.05] : [0.08, 0.35, 0.08], 
-               scale: isMuted ? [0.95, 1.1, 0.95] : [0.98, 1.15, 0.98] 
-            }}
-            transition={{ duration: isMuted ? 12 : 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-[#2D2926] rounded-full blur-[100px] pointer-events-none z-0"
-          />
+      {/* Particle Decoder */}
+      {mounted && <ParticleDecoder onComplete={handleComplete} />}
 
-          <AnimatePresence mode="wait">
-             {isInitializing ? (
-               <motion.div 
-                  key="loader"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none"
-               >
-                 <p className="text-[9px] md:text-[10px] font-mono tracking-[0.5em] text-[#39FF14]/50 transition-colors uppercase animate-pulse">
-                   SIGNAL DETECTED — INITIALIZING...
-                 </p>
-               </motion.div>
-             ) : (
-               <motion.div 
-                 key="content"
-                 initial={{ opacity: 0, scale: 0.98 }}
-                 animate={{ opacity: 1, scale: 1 }}
-                 transition={{ duration: 2, ease: "easeOut" }}
-                 className="relative z-10 flex flex-col items-center w-full"
-               >
-                  {/* RITUAL PRE-TITLE */}
-                  <h2 className="text-[10px] md:text-[11px] tracking-[0.6em] uppercase mb-10 font-sans font-light text-[#FFB000] mix-blend-screen drop-shadow-[0_0_15px_rgba(255,176,0,0.5)]">
-                    [ The Core ]
-                  </h2>
+      {/* Initial Hint */}
+      <AnimatePresence>
+        {mounted && !isComplete && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 1.5, delay: 2, ease: [0.25, 0.1, 0.25, 1] }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none z-40"
+          >
+            <motion.div
+              animate={{
+                opacity: [0.4, 1, 0.4],
+                scale: [1, 1.05, 1],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="text-[11px] md:text-[13px] font-mono uppercase tracking-[0.3em] text-[#FFB000]/60 mb-4"
+            >
+              <motion.span
+                animate={{
+                  textShadow: [
+                    '0 0 10px rgba(255,176,0,0.2)',
+                    '0 0 20px rgba(255,176,0,0.4)',
+                    '0 0 10px rgba(255,176,0,0.2)',
+                  ]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                6 SIGNALS HIDDEN
+              </motion.span>
+            </motion.div>
+            <motion.div
+              animate={{ opacity: [0.3, 0.5, 0.3] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="text-[9px] md:text-[10px] font-sans text-[#E3DAC9]/40 tracking-wider mb-2"
+            >
+              Send pulses to scan the field
+            </motion.div>
+            <motion.div
+              animate={{ opacity: [0.2, 0.4, 0.2] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="text-[8px] md:text-[9px] font-mono text-[#E3DAC9]/30 tracking-wide"
+            >
+              TAP / CLICK → REVEAL → CAPTURE
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-                  {/* PYADRA SCULPT */}
-                  <h1 
-                    className="text-6xl md:text-7xl lg:text-8xl font-serif italic font-light tracking-widest mb-6 select-none leading-none"
-                    style={{ textShadow: "1px 1px 0px rgba(255,255,255,0.15), -1px -1px 3px rgba(0,0,0,0.8)" }}
+      {/* Completion Sequence */}
+      <AnimatePresence>
+        {isComplete && (
+          <>
+            {/* PYADRA Title Formation */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.5, ease: [0.25, 0.1, 0.25, 1] }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none z-40 w-full px-6 max-w-4xl"
+            >
+              {/* PYADRA Title - with subtle floating */}
+              <motion.h1
+                animate={{
+                  y: [0, -8, 0],
+                }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="text-5xl md:text-8xl font-serif tracking-[0.3em] ml-[0.3em] mb-16"
+              >
+                <motion.span
+                  animate={{
+                    textShadow: [
+                      '0 0 40px rgba(255,176,0,0.4)',
+                      '0 0 60px rgba(255,176,0,0.7)',
+                      '0 0 40px rgba(255,176,0,0.4)',
+                    ]
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="bg-gradient-to-b from-[#FFB000] via-[#FF8C00] to-[#FF6B00] bg-clip-text text-transparent"
+                >
+                  PYADRA
+                </motion.span>
+              </motion.h1>
+
+              {/* Signature Engraving */}
+              <AnimatePresence>
+                {showSignature && gameStats && signature && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="space-y-8 mb-12"
                   >
-                    <span className="bg-gradient-to-br from-[#FFFFFF] via-[#FFB000] to-[#503500] bg-clip-text text-transparent">
-                      Pyadra
-                    </span>
-                  </h1>
+                    {/* Top Line */}
+                    <motion.div
+                      initial={{ scaleX: 0 }}
+                      animate={{
+                        scaleX: 1,
+                        opacity: [1, 0.6, 1],
+                      }}
+                      transition={{
+                        scaleX: { duration: 0.8, ease: "easeOut", delay: 0 },
+                        opacity: { duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }
+                      }}
+                      className="h-[1px] w-full max-w-md mx-auto bg-gradient-to-r from-transparent via-[#FFB000]/60 to-transparent"
+                    />
 
-                  {/* RITUAL COPYWRITING - Refined & Minimal */}
-                  <p className="text-[10px] md:text-[12px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-light leading-[3] text-center max-w-2xl mt-4 mb-20 text-[#E3DAC9]/70 px-4 drop-shadow-md">
-                    An ecosystem etched in stone.<br/>
-                    <span className="mt-6 block font-serif italic text-[11px] md:text-[13px] text-[#FFB000]/90 tracking-[0.1em] md:tracking-[0.2em] drop-shadow-[0_0_15px_rgba(255,176,0,0.6)]">
-                      Where people build things that last.
-                    </span>
-                  </p>
+                    {/* Signature Code */}
+                    <div className="space-y-3">
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{
+                          opacity: 1,
+                          scale: [1, 1.02, 1],
+                        }}
+                        transition={{
+                          opacity: { duration: 1.5, delay: 0.5 },
+                          scale: { duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 3 }
+                        }}
+                        className="text-[18px] md:text-[24px] font-mono tracking-[0.2em] text-[#FFB000]"
+                      >
+                        <motion.div
+                          animate={{
+                            textShadow: [
+                              '0 0 15px rgba(255,176,0,0.3)',
+                              '0 0 25px rgba(255,176,0,0.6)',
+                              '0 0 15px rgba(255,176,0,0.3)',
+                            ]
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                          }}
+                        >
+                          {signature.split('').map((char, i) => (
+                            <motion.span
+                              key={i}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.2, delay: 0.8 + (i * 0.05) }}
+                            >
+                              {char}
+                            </motion.span>
+                          ))}
+                        </motion.div>
+                      </motion.div>
 
-                  <div className="flex flex-col items-center mb-16">
-                    {/* THE CATALYST TRIGGER HITBOX */}
-                    <Link 
-                      href="/projects" 
-                      onMouseEnter={() => setHovered(true)} 
-                      onMouseLeave={() => setHovered(false)}
-                      className="group flex flex-col items-center gap-6 transition-all duration-1000"
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 2.2 }}
+                        className="text-[10px] md:text-[11px] font-mono uppercase tracking-[0.3em] text-[#E3DAC9]/60"
+                      >
+                        Your Observation Signature
+                      </motion.div>
+                    </div>
+
+                    {/* Bottom Line */}
+                    <motion.div
+                      initial={{ scaleX: 0 }}
+                      animate={{
+                        scaleX: 1,
+                        opacity: [1, 0.6, 1],
+                      }}
+                      transition={{
+                        scaleX: { duration: 0.8, ease: "easeOut", delay: 2.5 },
+                        opacity: { duration: 3, repeat: Infinity, ease: "easeInOut", delay: 3.5 }
+                      }}
+                      className="h-[1px] w-full max-w-md mx-auto bg-gradient-to-r from-transparent via-[#FFB000]/60 to-transparent"
+                    />
+
+                    {/* Engraved Message */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8, delay: 3.2 }}
+                      className="space-y-2"
                     >
-                       <div className="flex flex-col items-center gap-2">
-                         <span className="text-[10px] uppercase tracking-[0.5em] font-sans font-bold text-[#E3DAC9]/70 group-hover:text-[#FFB000] group-hover:drop-shadow-[0_0_20px_rgba(255,176,0,0.8)] transition-all duration-700">
-                           ENTER THE ECOSYSTEM
-                         </span>
-                       </div>
-                       
-                       {/* Transmitted Gold Laser Connector */}
-                       <div className="w-[1px] h-[50px] bg-gradient-to-b from-[#E3DAC9]/20 to-transparent group-hover:h-[70px] group-hover:from-[#FFB000] group-hover:shadow-[0_0_30px_#FFB000] transition-all duration-[1000ms] ease-out mt-2" />
+                      <motion.div
+                        animate={{
+                          opacity: [0.9, 1, 0.9],
+                        }}
+                        transition={{
+                          duration: 4,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                        className="text-[12px] md:text-[14px] font-mono uppercase tracking-[0.2em] text-[#E3DAC9]/90"
+                      >
+                        Engraved in the Archive
+                      </motion.div>
+                      <div className="text-[10px] md:text-[11px] font-sans text-[#E3DAC9]/50">
+                        {new Date(gameStats.timestamp).toLocaleDateString('en-US', {
+                          month: 'long',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })}
+                      </div>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Global Stats */}
+              <AnimatePresence>
+                {showGlobalStats && globalStats && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1 }}
+                    className="space-y-6"
+                  >
+                    {/* Divider Line */}
+                    <motion.div
+                      initial={{ scaleX: 0 }}
+                      animate={{
+                        scaleX: 1,
+                        opacity: [1, 0.5, 1],
+                      }}
+                      transition={{
+                        scaleX: { duration: 0.6, ease: "easeOut" },
+                        opacity: { duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 1 }
+                      }}
+                      className="h-[1px] w-24 mx-auto bg-[#FFB000]/30"
+                    />
+
+                    {/* Entry confirmation */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                      }}
+                      transition={{ delay: 0.3 }}
+                      className="text-[11px] md:text-[12px] font-sans tracking-wide text-[#E3DAC9]/80"
+                    >
+                      <motion.span
+                        animate={{
+                          opacity: [1, 0.8, 1],
+                        }}
+                        transition={{
+                          duration: 3,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                          delay: 1
+                        }}
+                      >
+                        Entry #{String(observerNum).padStart(4, '0')} recorded
+                      </motion.span>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{
+                        opacity: [0, 1, 0.7, 1, 0.7],
+                      }}
+                      transition={{
+                        opacity: { delay: 0.5 },
+                        default: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1.5 }
+                      }}
+                      className="text-[9px] md:text-[10px] font-sans italic text-[#E3DAC9]/50"
+                    >
+                      The archive remembers you now
+                    </motion.div>
+
+                    {/* Observer Dots */}
+                    <motion.div
+                      className="flex items-center justify-center gap-1.5 flex-wrap max-w-xs mx-auto"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.6 }}
+                    >
+                      {Array.from({ length: Math.min(globalStats.totalObservers, 50) }).map((_, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 1, opacity: i + 1 === observerNum ? 1 : 0.4 }}
+                          transition={{ delay: 0.8 + (i * 0.02) }}
+                          className={`w-1.5 h-1.5 rounded-full ${i + 1 === observerNum ? 'bg-[#FFB000]' : 'bg-[#E3DAC9]/30'}`}
+                        />
+                      ))}
+                      {globalStats.totalObservers > 50 && (
+                        <span className="text-[8px] text-[#E3DAC9]/40 ml-2">+{globalStats.totalObservers - 50}</span>
+                      )}
+                    </motion.div>
+
+                    {/* Global Stats */}
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 1.5 }}
+                      className="text-[9px] md:text-[10px] font-sans text-[#E3DAC9]/50 space-y-1"
+                    >
+                      <div>
+                        <AnimatedNumber value={globalStats.totalObservers} duration={1200} /> observers registered
+                      </div>
+                      <div>
+                        <AnimatedNumber
+                          value={globalStats.pulsesToday}
+                          duration={1500}
+                          format={(n) => n.toLocaleString()}
+                        /> pulses sent today
+                      </div>
+                      <motion.div
+                        animate={{
+                          opacity: [0.4, 0.6, 0.4],
+                        }}
+                        transition={{
+                          duration: 5,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                        className="text-[#E3DAC9]/40 italic mt-2"
+                      >
+                        The archive grows with every scan
+                      </motion.div>
+                    </motion.div>
+
+                    {/* Divider Line */}
+                    <motion.div
+                      initial={{ scaleX: 0 }}
+                      animate={{
+                        scaleX: 1,
+                        opacity: [1, 0.5, 1],
+                      }}
+                      transition={{
+                        scaleX: { duration: 0.6, ease: "easeOut", delay: 1.8 },
+                        opacity: { duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 2.8 }
+                      }}
+                      className="h-[1px] w-24 mx-auto bg-[#FFB000]/30"
+                    />
+
+                    {/* Mystery Hook */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 2.1 }}
+                      className="space-y-2 mt-8"
+                    >
+                      <motion.div
+                        animate={{
+                          opacity: [0.7, 1, 0.7],
+                        }}
+                        transition={{
+                          duration: 3,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                        className="text-[13px] md:text-[15px] font-light tracking-wide text-[#E3DAC9]/90"
+                      >
+                        What's waiting inside?
+                      </motion.div>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+
+            {/* CTA */}
+            <AnimatePresence>
+              {showCTA && (
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1 }}
+                  className="absolute bottom-24 md:bottom-32 left-1/2 -translate-x-1/2 z-50"
+                >
+                  <motion.div
+                    animate={{
+                      scale: [1, 1.03, 1],
+                    }}
+                    transition={{
+                      duration: 2.5,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <Link
+                      href="/exhibitions"
+                      className="group relative overflow-hidden bg-gradient-to-r from-[#FFB000]/20 to-[#FF8C00]/20 backdrop-blur-xl border border-[#FFB000]/60 px-16 md:px-24 py-5 md:py-6 text-center transition-all duration-700 hover:bg-[#FFB000]/30 hover:shadow-[0_0_60px_rgba(255,176,0,0.4)] rounded-full flex items-center gap-4"
+                      aria-label="Discover exhibitions"
+                    >
+                      <motion.div
+                        animate={{
+                          opacity: [0.2, 0.4, 0.2],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,176,0,0.3)_0%,_transparent_70%)]"
+                      />
+                      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,176,0,0.2)_0%,_transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                      <motion.span
+                        animate={{
+                          textShadow: [
+                            '0 0 8px rgba(255,176,0,0.4)',
+                            '0 0 12px rgba(255,176,0,0.6)',
+                            '0 0 8px rgba(255,176,0,0.4)',
+                          ]
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                        className="relative z-10 text-[#FFB000] group-hover:text-[#FFE5B4] text-[11px] md:text-[12px] font-mono font-bold transition-all duration-500"
+                      >
+                        ▸ DISCOVER ◂
+                      </motion.span>
                     </Link>
-                  </div>
+                  </motion.div>
 
-                  {/* ECOSYSTEM STATUS BAR - Pushed completely down */}
-                  <div className="mt-8 flex flex-col items-center opacity-80">
-                     <div className="flex flex-col md:flex-row flex-wrap justify-center items-center gap-6 md:gap-12 text-[9px] font-mono tracking-[0.2em] text-[#E3DAC9]/50 uppercase transition-opacity">
-                        <div className="flex items-center gap-3">
-                           Nodes Active <span className="text-white/20">—</span> <span className="text-[#39FF14] drop-shadow-[0_0_5px_rgba(57,255,20,0.5)] font-bold">{stats.nodes || 1}</span>
-                        </div>
-                        
-                        <span className="text-[#E3DAC9]/10 hidden md:inline">|</span>
-                        
-                        <div className="flex flex-col items-center gap-1">
-                           <div className="flex items-center gap-3">
-                             Supporters <span className="text-white/20">—</span> <span className="text-[#FFB000] font-bold">{stats.members || '--'}</span>
-                           </div>
-                        </div>
-                        
-                        <span className="text-[#E3DAC9]/10 hidden md:inline">|</span>
-                        
-                        <div className="flex items-center gap-3">
-                           Units Created <span className="text-white/20">—</span> <span className="text-[#E3DAC9]/90 font-bold">{(stats.members || 0) * 100}</span>
-                        </div>
-                     </div>
-                  </div>
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: [0, 1, 0.7, 1, 0.7] }}
+                    transition={{
+                      opacity: { duration: 1, delay: 0.5 },
+                      default: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1.5 }
+                    }}
+                    className="text-center mt-6 text-[9px] md:text-[10px] font-sans text-[#E3DAC9]/50 tracking-wide italic"
+                  >
+                    Your discoveries await
+                  </motion.p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </>
+        )}
+      </AnimatePresence>
 
-               </motion.div>
-             )}
-          </AnimatePresence>
+      {/* Bottom Hint Text (before completion) */}
+      <AnimatePresence>
+        {!isComplete && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 2, delay: 3 }}
+            className="absolute bottom-12 md:bottom-16 left-1/2 -translate-x-1/2 text-center pointer-events-none z-40"
+          >
+            <div className="text-[9px] md:text-[10px] font-mono uppercase tracking-[0.3em] text-[#E3DAC9]/30">
+              Capture all signals to continue
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-          {/* ULTRA-MINIMALIST FOOTER */}
-          <div className="absolute bottom-6 md:bottom-10 left-0 w-full flex justify-center items-center gap-4 md:gap-8 text-[8px] font-mono tracking-widest uppercase opacity-20 hover:opacity-100 transition-opacity duration-1000 z-50 px-6 text-center text-[#E3DAC9]">
-             <Link href="/manifesto" className="hover:text-[#FFB000] transition-colors focus:opacity-100">Manifesto</Link>
-             <span className="text-[#FFB000]/30 hidden md:inline">|</span>
-             <Link href="/legal/terms" className="hover:text-[#FFB000] transition-colors focus:opacity-100">Terms of Protocol</Link>
-             <span className="text-[#FFB000]/30 hidden md:inline">|</span>
-             <Link href="/legal/privacy" className="hover:text-[#FFB000] transition-colors focus:opacity-100">Privacy Data</Link>
-             <span className="text-[#FFB000]/30 hidden md:inline">|</span>
-             <a href="mailto:invest@pyadra.com" className="hover:text-[#FFB000] transition-colors focus:opacity-100">Contact Core</a>
-          </div>
+      {/* Footer (only after completion) */}
+      <AnimatePresence>
+        {showCTA && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 1 }}
+            className="absolute bottom-6 md:bottom-8 left-0 right-0 flex flex-wrap items-center justify-center gap-4 md:gap-8 text-[8px] md:text-[9px] font-mono tracking-[0.2em] text-[#E3DAC9]/20 uppercase z-50"
+          >
+            <Link href="/manifesto" className="hover:text-[#FFB000] transition-colors">Manifesto</Link>
+            <span className="text-[#E3DAC9]/10">|</span>
+            <Link href="/legal/terms" className="hover:text-[#FFB000] transition-colors">Terms</Link>
+            <span className="text-[#E3DAC9]/10">|</span>
+            <Link href="/legal/privacy" className="hover:text-[#FFB000] transition-colors">Privacy</Link>
+            <span className="text-[#E3DAC9]/10">|</span>
+            <a href="mailto:invest@pyadra.com" className="hover:text-[#FFB000] transition-colors">Contact</a>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        </div>
-      </div>
     </div>
   );
 }

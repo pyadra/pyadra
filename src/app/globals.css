@@ -12,6 +12,65 @@
 :root {
   --background: #030303; /* Casi negro tinta */
   --foreground: #F3F3F3; /* Blanco roto */
+
+  /* EterniCapsule Design Tokens */
+  /* Backgrounds */
+  --etn-black: #000000;
+  --etn-void: #02040A;
+  --etn-charcoal: #0A0C16;
+
+  /* Amber Palette (Improved Contrast) */
+  --etn-amber-dark: #8A6B44;        /* Legacy - use sparingly */
+  --etn-amber: #B89968;              /* NEW: Primary amber (4.6:1 contrast) */
+  --etn-amber-light: #C4A882;        /* Highlights */
+
+  /* Text Colors */
+  --etn-cream: #F5E6CC;              /* Headlines, CTAs */
+  --etn-parchment: #F5F0E6;          /* Letter body text */
+  --etn-ash: #E8D9BB;                /* Metadata, secondary */
+
+  /* State Colors (Improved) */
+  --etn-rust: #8B4444;               /* Error state (warm burgundy) */
+  --etn-sage: #8FAA80;               /* Success state (muted green) */
+  --etn-silver: #A8A39D;             /* Tertiary accent */
+
+  /* Responsive Spacing Scale */
+  --etn-space-xs: 0.5rem;    /* 8px */
+  --etn-space-sm: 0.75rem;   /* 12px */
+  --etn-space-md: 1rem;      /* 16px */
+  --etn-space-lg: 1.5rem;    /* 24px */
+  --etn-space-xl: 2rem;      /* 32px */
+  --etn-space-2xl: 3rem;     /* 48px */
+  --etn-space-3xl: 4rem;     /* 64px */
+  --etn-space-4xl: 5rem;     /* 80px */
+
+  /* Figurines Design Tokens (Midnight Obsidian) */
+  /* Backgrounds */
+  --fig-black: #02040A;              /* Deep space background */
+  --fig-void: #0A0C14;               /* Card backgrounds */
+  --fig-charcoal: #0A0602;           /* Premium tier highlight */
+
+  /* Gold Palette */
+  --fig-gold: #C4A882;               /* Primary accent (4.5:1 contrast) */
+  --fig-gold-bright: #dca88f;        /* Warm highlights */
+  --fig-gold-muted: #7A6A55;         /* Tertiary labels */
+
+  /* Text Colors */
+  --fig-cream: #E8D9BB;              /* Primary text */
+  --fig-parchment: #F5F0E6;          /* Body text */
+
+  /* State Colors */
+  --fig-rust: #8B4444;               /* Error state (warm burgundy) */
+  --fig-sage: #8FAA80;               /* Success state */
+}
+
+/* Mobile Spacing Overrides */
+@media (max-width: 768px) {
+  :root {
+    --etn-space-2xl: 2rem;     /* 32px */
+    --etn-space-3xl: 2.5rem;   /* 40px */
+    --etn-space-4xl: 3rem;     /* 48px */
+  }
 }
 
 html, body {

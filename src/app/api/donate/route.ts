@@ -70,7 +70,7 @@ export async function POST(req: Request) {
         },
       ],
       success_url: `${origin}/transmission-confirmed?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/projects/orbit`,
+      cancel_url: `${origin}/exhibitions/galaxy/orbit`,
       metadata: sessionMetadata,
     });
 
