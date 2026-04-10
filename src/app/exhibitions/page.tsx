@@ -38,14 +38,13 @@ export default function ExhibitionsPage() {
       id: "galaxy",
       name: "GALAXY",
       status: "active",
-      tagline: "A cosmic void holding permanent creations",
+      tagline: "Rituals exploring memory, time, and permanence",
       whatYouDo: [
-        "Listen to 10 raw podcast episodes",
-        "Write encrypted time-locked letters",
-        "Commission hand-painted figurines",
-        "Explore a book in formation"
+        "Support creative projects",
+        "Seal messages in time",
+        "Commission physical artifacts"
       ],
-      nodes: 6,
+      nodes: 4,
       projects: ["Orbit 77", "EtherniCapsule", "Figurines", "EBOK"],
       period: "Active Now",
       href: "/exhibitions/galaxy",
@@ -159,7 +158,7 @@ export default function ExhibitionsPage() {
             Pyadra
           </motion.h1>
           <p className="text-xs text-[#E3DAC9]/50 font-mono uppercase tracking-[0.3em]">
-            Choose Exhibition
+            Spaces where you leave your mark
           </p>
         </motion.div>
 

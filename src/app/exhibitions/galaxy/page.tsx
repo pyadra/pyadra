@@ -349,15 +349,15 @@ export default function ProjectsConstellation() {
               </span>
             </motion.h1>
             
-            <motion.p 
+            <motion.p
                initial={{ opacity: 0, clipPath: "polygon(0 0, 0 0, 0 100%, 0% 100%)" }}
                animate={{ opacity: 1, clipPath: "polygon(0 0, 100% 0, 100% 100%, 0% 100%)" }}
                transition={{ duration: 1.5, delay: 0.8, ease: "easeInOut" }}
                className="text-[11px] md:text-[12px] font-mono text-[#E8D9BB]/70 uppercase tracking-[0.1em] leading-loose max-w-lg font-light whitespace-pre-line"
             >
-              Creative projects that live through participation.
-              Every contribution is permanent.
-              Every supporter becomes part of the record.
+              Four live projects. Two forming.
+              Participate. Support. Leave your mark.
+              What you contribute becomes permanent.
             </motion.p>
           </div>
 

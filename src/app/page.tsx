@@ -498,7 +498,7 @@ export default function PyAdraHome() {
                         }}
                         className="text-[13px] md:text-[15px] font-light tracking-wide text-[#E3DAC9]/90"
                       >
-                        What's waiting inside?
+                        Lo que dejas importa.
                       </motion.div>
                     </motion.div>
                   </motion.div>
