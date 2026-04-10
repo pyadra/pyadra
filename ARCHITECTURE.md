@@ -442,8 +442,18 @@ npm run build  # Next.js production build
 
 ---
 
-## Future Improvements
+## Future Evolution
 
+### Phase 1: Experiencia (Current - 2026)
+**Architecture:** Monolithic Next.js app with direct project sales
+
+**Current state:**
+- 4 projects in Galaxy exhibition
+- Stripe for payments
+- Supabase for data storage
+- Direct user → project interaction
+
+**Immediate improvements:**
 - [ ] Add Sentry for error tracking
 - [ ] Implement Redis for caching
 - [ ] Add Lighthouse CI to test performance
@@ -451,6 +461,60 @@ npm run build  # Next.js production build
 - [ ] Add E2E tests with Playwright
 - [ ] Implement rate limiting middleware
 - [ ] Add webhooks for real-time updates
+
+---
+
+### Phase 2: Ecosistema (2027)
+**Architecture:** Multi-tenant platform with creator onboarding
+
+**Required additions:**
+- **Creator API** - External projects can integrate
+- **Project Marketplace** - Acquire full projects or fractional stakes
+- **Royalty Engine** - Automatic distribution to original creators
+- **Multi-signature Contracts** - Shared ownership agreements
+
+**New tables:**
+```sql
+CREATE TABLE creators (
+  id UUID PRIMARY KEY,
+  name TEXT NOT NULL,
+  verified BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE ecosystem_projects (
+  id UUID PRIMARY KEY,
+  creator_id UUID REFERENCES creators(id),
+  exhibition_id TEXT, -- 'jungle' | 'city'
+  status TEXT, -- 'pending' | 'approved' | 'live'
+  acquisition_model TEXT -- 'full' | 'fractional'
+);
+
+CREATE TABLE project_stakes (
+  id UUID PRIMARY KEY,
+  project_id UUID REFERENCES ecosystem_projects(id),
+  owner_id UUID, -- Observer or Creator
+  percentage DECIMAL,
+  acquired_at TIMESTAMP
+);
+```
+
+---
+
+### Phase 3: Economía (2028+)
+**Architecture:** Tokenized ecosystem with on-chain governance
+
+**Required additions:**
+- **Blockchain Integration** - Smart contracts for token
+- **Credits System** - Internal currency (bridge to token)
+- **Wallet Connect** - MetaMask, Rainbow, etc.
+- **Governance Module** - Token-based voting
+- **Staking System** - Rewards for long-term participants
+
+**New infrastructure:**
+- Solana/Ethereum smart contracts
+- Token bridge service
+- On-chain event listeners
+- Voting snapshot system
 
 ---
 

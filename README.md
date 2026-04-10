@@ -1,8 +1,11 @@
 # Pyadra
 
-> **The Path of Light** — An interconnected ecosystem of creative and ritual digital experiences.
+> **Lo que dejas importa.**  
+> *(What you leave behind matters.)*
 
 Pyadra is not a product. It is a ceremonial space where digital artifacts are forged with intention, preserved with care, and experienced with reverence. Each project within the ecosystem serves as a node in a larger constellation of meaningful human connection.
+
+**For participants, not consumers.** People who want to help people. People who believe what they create should last.
 
 **📖 New here?** Read **[VISION.md](VISION.md)** first to understand what Pyadra is and where it's going.
 
@@ -195,4 +198,5 @@ Proprietary — All rights reserved.
 
 ---
 
+***Lo que dejas importa.***  
 *Built with intention. Preserved with care. Experienced with reverence.*

@@ -4,15 +4,30 @@
 
 ---
 
+## Tagline
+
+**"Lo que dejas importa."**  
+*(What you leave behind matters.)*
+
+This is not marketing copy. This is the foundational truth that guides every design decision, every line of code, every user interaction. If something doesn't honor this truth, it doesn't belong in Pyadra.
+
+---
+
 ## What Pyadra Is
 
 Pyadra is **not a web app**. It's not a SaaS platform. It's not a startup building "solutions."
 
 **Pyadra is a digital museum of experimental human rituals.**
 
-Like a physical museum with themed exhibitions, Pyadra is organized into **expeditions** - each one exploring different aspects of digital human experience through interactive, ceremonial interfaces.
+Like a physical museum with themed exhibitions, Pyadra is organized into **exhibitions** - each one exploring different aspects of digital human experience through interactive, ceremonial interfaces.
 
 You don't "use" Pyadra. You **explore** it. You **participate** in it. You become an **Observer** navigating curated experiences that feel more like artifacts than applications.
+
+### The Core Emotion
+
+Pyadra exists to create **pertenencia** (belonging).
+
+The people who arrive at Pyadra already believe that what they leave behind matters. Pyadra gives them the place to make it real. They are not consumers. They are **participants** - people who want to help people, support creators, and contribute to something permanent.
 
 ---
 
@@ -362,23 +377,82 @@ pyadra.io/
 
 ## Where We're Going
 
-### Short-term (2026)
-1. **Finish MVP1 (Galaxy)** - All three projects production-ready
-2. **Stabilize home page** - Observer initiation feels alive, fast, elegant
-3. **Polish EterniCapsule** - Email receipts, guardian improvements, mobile UX
-4. **Launch publicly** - Announce, share, build initial Observer base
+Pyadra evolves through **three distinct phases**:
 
-### Mid-term (2026-2027)
-1. **Design MVP2 (Jungle)** - What does the jungle expedition look/feel like?
-2. **Add sound design** - Ambient drones, sonic feedback (like EterniCapsule audio engine)
-3. **Observer profiles** - See your history, signatures, artifacts across all projects
-4. **Revenue sustainability** - EterniCapsule sales + future paid experiences
+### Phase 1: Experiencia (Experience) — 2026 [CURRENT]
 
-### Long-term (2027+)
-1. **Launch MVP2 (Jungle)** - New themed expedition with 2-3 projects
-2. **Begin MVP3 (City)** - Urban, multiplayer, real-time experiences
-3. **Physical artifacts** - Print signatures, ship physical capsule replicas
-4. **API for creators** - Let others build expeditions using Pyadra infrastructure
+**What it is:** Users participate in rituals and purchase products within Galaxy exhibition.
+
+**Active projects:**
+- Orbit 77 (podcast + supporter funding)
+- EterniCapsule (time-locked messages)
+- Figurines (physical artifacts)
+- EBOK (book in formation)
+
+**Revenue model:** Direct sales ($9 AUD capsules, $175 AUD figurines, donations to Orbit)
+
+**Focus:** Polish the core experience. Make the first exhibition exceptional. Build the initial Observer community.
+
+**Immediate priorities:**
+- Finish MVP1 (Galaxy) - All projects production-ready
+- Stabilize home page - Observer initiation feels alive, fast, elegant  
+- Polish EterniCapsule - Email receipts, guardian improvements
+- Launch publicly - Build initial Observer base
+
+---
+
+### Phase 2: Ecosistema (Ecosystem) — 2027
+
+**What it is:** External creators bring their own projects to Pyadra. Anyone can acquire a complete project or a percentage stake. The original creator retains perpetual participation and royalties.
+
+**How it works:**
+- Creators submit projects to be included in Jungle or City exhibitions
+- Pyadra curates which projects fit the ceremonial philosophy
+- Projects can be fully acquired or fractionally owned
+- Creators receive ongoing royalties from future revenue
+- Observers become stakeholders in the ecosystem
+
+**New exhibitions:**
+- **Jungle** (organic growth, collaborative chaos) opens with 3-5 creator projects
+- **City** (urban rituals, synchronized experiences) begins forming
+
+**Revenue model:** Platform fees on project acquisitions + transaction royalties
+
+**Technical requirements:**
+- Creator onboarding system
+- Project acquisition marketplace
+- Royalty distribution infrastructure
+- Multi-creator governance tools
+
+---
+
+### Phase 3: Economía (Economy) — 2028+
+
+**What it is:** Pyadra launches its own blockchain token, enabling participants to acquire stakes in ecosystem projects. Pyadra Credits serve as an internal bridge currency before full tokenization.
+
+**How it works:**
+- **Pyadra Credits** (internal) — Earned through participation, spent on projects
+- **Pyadra Token** (blockchain) — Tradeable stake in the entire ecosystem
+- Token holders can vote on exhibition curation
+- Staking rewards for long-term participants
+- Creators can launch projects with token-based funding
+
+**Revenue model:** Token appreciation + transaction fees + creator launchpad fees
+
+**Technical requirements:**
+- Smart contract infrastructure
+- Token economics design
+- Wallet integration
+- Governance voting system
+- Credits → Token bridge
+
+---
+
+### Timeline Summary
+
+**2026:** Polish Galaxy. Launch publicly. Build Observer community.  
+**2027:** Open to external creators. Launch Jungle. Begin City.  
+**2028+:** Full tokenization. Pyadra becomes a self-sustaining creative economy.
 
 ---
 
