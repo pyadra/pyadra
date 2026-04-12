@@ -3,9 +3,9 @@
 > **Lo que dejas importa.**  
 > *(What you leave behind matters.)*
 
-Pyadra is not a product. It is a ceremonial space where digital artifacts are forged with intention, preserved with care, and experienced with reverence. Each project within the ecosystem serves as a node in a larger constellation of meaningful human connection.
+Pyadra is not a product. It is a ceremonial digital space where participants forge lasting artifacts, contribute to experimental rituals, and leave permanent marks. Each project serves as a node where human intention crystallizes into something that endures.
 
-**For participants, not consumers.** People who want to help people. People who believe what they create should last.
+**For participants, not consumers.** People who want to help people. People who believe what they leave behind should last.
 
 **📖 New here?** Read **[VISION.md](VISION.md)** first to understand what Pyadra is and where it's going.
 
@@ -24,8 +24,8 @@ Time-locked digital message vaults. Write a letter, seal it cryptographically, a
 
 ## 🌱 Forming Projects
 
-- **Figurines** — Hyper-personalized 3D figures (physical + digital)
-- **Unknown Node** — Early stage, unnamed initiative
+- **Figurines** — Hand-painted 3D physical figurines from selfies ($175 AUD)
+- **Ebook** — Book publication within the Pyadra ecosystem
 
 ## 🛠 Tech Stack
 

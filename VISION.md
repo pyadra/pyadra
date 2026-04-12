@@ -17,11 +17,11 @@ This is not marketing copy. This is the foundational truth that guides every des
 
 Pyadra is **not a web app**. It's not a SaaS platform. It's not a startup building "solutions."
 
-**Pyadra is a digital museum of experimental human rituals.**
+**Pyadra is a ceremonial digital space where people participate in experimental human rituals and leave permanent marks.**
 
-Like a physical museum with themed exhibitions, Pyadra is organized into **exhibitions** - each one exploring different aspects of digital human experience through interactive, ceremonial interfaces.
+Pyadra is organized into **exhibitions** - curated spaces where participants can create, contribute, and forge artifacts that last. Each exhibition explores different aspects of human connection through interactive, ceremonial experiences.
 
-You don't "use" Pyadra. You **explore** it. You **participate** in it. You become an **Observer** navigating curated experiences that feel more like artifacts than applications.
+You don't "use" Pyadra. You **participate** in it. You **leave your mark** in it. You become part of a permanent archive of human intention.
 
 ### The Core Emotion
 
@@ -51,38 +51,39 @@ Think of it as the opposite of "move fast and break things." Pyadra moves delibe
 
 ---
 
-## The Museum Metaphor
+## The Exhibition Structure
 
-Imagine entering a museum at night. You're alone. Each exhibition room has a different theme, a different atmosphere, a different purpose.
+Imagine a ceremonial space with three distinct chambers. Each chamber holds different rituals where you can leave your mark, create artifacts, and contribute to something permanent.
 
 **That's Pyadra's structure:**
 
 ```
 ┌─────────────────────────────────────────────────┐
-│               PYADRA MUSEUM                      │
+│               PYADRA ECOSYSTEM                   │
 ├─────────────────────────────────────────────────┤
-│  Entrance Hall → Home Page (Initiation Ritual)  │
+│  Initiation → Home Page (Become a Participant)  │
 │                                                  │
 │  ┌───────────────────────────────────────────┐  │
 │  │  EXHIBITION 1: Galaxy (MVP1)              │  │
 │  │  └─ EterniCapsule: Time-locked messages   │  │
 │  │  └─ Orbit 77: Collective funding ritual   │  │
-│  │  └─ Figurines: Digital artifact forging   │  │
+│  │  └─ Figurines: Physical artifact forging  │  │
+│  │  └─ Ebook: Book publication               │  │
 │  └───────────────────────────────────────────┘  │
 │                                                  │
 │  ┌───────────────────────────────────────────┐  │
 │  │  EXHIBITION 2: Jungle (MVP2) [Future]     │  │
-│  │  └─ [To be designed]                       │  │
+│  │  └─ [Creator projects - organic growth]   │  │
 │  └───────────────────────────────────────────┘  │
 │                                                  │
 │  ┌───────────────────────────────────────────┐  │
 │  │  EXHIBITION 3: City (MVP3) [Future]       │  │
-│  │  └─ [To be designed]                       │  │
+│  │  └─ [Creator projects - urban systems]    │  │
 │  └───────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────┘
 ```
 
-**You are NOT building 3 separate projects.** You're building one cohesive museum with three themed expeditions.
+**You are NOT building 3 separate projects.** You're building one cohesive ceremonial space with three themed exhibitions where participants can leave lasting marks.
 
 ---
 
@@ -92,9 +93,10 @@ Imagine entering a museum at night. You're alone. Each exhibition room has a dif
 **Theme**: Cosmic navigation, orbital mechanics, nodes in the void
 
 **Projects:**
-- **EterniCapsule** - Time-locked digital message vault ($9 AUD, delivered at future date)
-- **Orbit 77** - Collective funding ritual (community contributes to shared goal)
-- **Figurines** - Digital artifact forging (create + mint personal figurines)
+- **Orbit 77** - Membership credentials for podcast supporters (community funding model)
+- **EterniCapsule** - Time-locked digital message vault ($9 AUD, cryptographic delivery)
+- **Figurines** - Hand-painted 3D physical figurine from your selfies (unique permanent object)
+- **Ebook** - Book publication within the Pyadra ecosystem
 
 **Aesthetic**: Midnight void (`#02040A`), amber gold (`#FFB000`), floating objects, galactic dust, orbital mechanics
 
@@ -408,9 +410,11 @@ Pyadra evolves through **three distinct phases**:
 **How it works:**
 - Creators submit projects to be included in Jungle or City exhibitions
 - Pyadra curates which projects fit the ceremonial philosophy
-- Projects can be fully acquired or fractionally owned
-- Creators receive ongoing royalties from future revenue
-- Observers become stakeholders in the ecosystem
+- **Project acquisition model**: Anyone can purchase a project completely (100%) or acquire a percentage stake (e.g., 90%, 70%, 40%)
+- **Creator royalties**: The original creator always retains a minimum participation percentage and receives perpetual royalties from all future project revenue, regardless of ownership changes
+- Participants become stakeholders in the ecosystem
+
+**Example:** Creator A submits a project. Participant B acquires 90% of it. Creator A retains 10% ownership + receives ongoing royalties from revenue B generates. If B later sells their 90% to Participant C, Creator A still receives royalties.
 
 **New exhibitions:**
 - **Jungle** (organic growth, collaborative chaos) opens with 3-5 creator projects
@@ -488,9 +492,10 @@ Pyadra doesn't measure success in typical ways. Here's what matters:
 
 **Ask yourself:**
 - Does this feel ceremonial or generic?
-- Would this work in a museum at 2am?
+- Does this invite participation or passive consumption?
 - Is this beautiful enough to ship?
-- Does it respect the user's time and attention?
+- Does it respect the participant's time and attention?
+- Would someone remember this experience?
 
 **If unsure:**
 - Look at EterniCapsule (it's the gold standard)
@@ -517,7 +522,7 @@ A: People who want digital experiences that feel permanent, intentional, beautif
 A: EterniCapsule charges $9 AUD per sealed message. Future paid expeditions. Maybe premium Observer tiers. No ads, ever.
 
 **Q: Why "Observer" instead of "User"?**  
-A: Because you're not consuming a product. You're observing experiments, exploring a museum, participating in rituals. Language shapes experience.
+A: Because you're not consuming a product. You're a participant witnessing and contributing to experimental rituals. You leave marks, create artifacts, and become part of a permanent archive. Language shapes experience.
 
 **Q: Can I skip the home page signal game?**  
 A: No. It's an initiation. Everyone becomes an Observer the same way.
@@ -546,7 +551,7 @@ It rejects the idea that everything online must be viral, fast, and optimized fo
 - Make it beautiful
 - Make it last
 
-**Welcome to the museum.**
+**Welcome. What you leave here matters.**
 
 ---
 

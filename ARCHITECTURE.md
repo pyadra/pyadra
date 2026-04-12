@@ -67,6 +67,8 @@ Pyadra is a monolithic Next.js application using the App Router architecture. Al
 
 ## Projects
 
+> **Note**: Pyadra currently has 4 active projects in the Galaxy exhibition: EterniCapsule, Orbit 77, Figurines, and Ebook.
+
 ### EterniCapsule
 
 **Purpose**: Time-locked digital message vault. Users write a message, pay $9 AUD, and have it delivered to recipients at a future date.
@@ -160,6 +162,24 @@ Join → Stripe Checkout → Webhook → Supporter Record (DB) → Email → Arc
 ```
 Landing → Checkout → Webhook (Paid) → Forge (Upload) → Storage + DB (Forging) → Emails
 ```
+
+---
+
+### Ebook
+
+**Purpose**: Book publication platform within the Pyadra ecosystem. Authors can publish their work as part of the Galaxy exhibition, creating permanent literary artifacts.
+
+**Status**: Early formation stage. Architecture and workflows to be defined.
+
+**Planned Features:**
+- Author submission system
+- Editorial curation process
+- Digital + physical book formats
+- Permanent archival of published works
+- Author royalty distribution
+
+**Future Implementation:**
+- TBD - Awaiting detailed product specification
 
 ---
 
@@ -465,13 +485,25 @@ npm run build  # Next.js production build
 ---
 
 ### Phase 2: Ecosistema (2027)
-**Architecture:** Multi-tenant platform with creator onboarding
+**Architecture:** Multi-tenant platform with creator onboarding and project acquisition marketplace
+
+**Core Concept:**
+External creators submit projects to Jungle and City exhibitions. Participants can acquire complete ownership (100%) or fractional stakes (e.g., 90%, 70%, 40%) in these projects. Original creators retain perpetual participation and receive ongoing royalties from all future revenue, regardless of ownership transfers.
+
+**Acquisition Model Example:**
+1. Creator A submits a project to Jungle exhibition
+2. Pyadra curates and approves the project
+3. Participant B acquires 90% ownership for $X
+4. Creator A retains 10% ownership + perpetual revenue royalties
+5. Project generates revenue → Both B (90%) and A (10% + royalties) benefit
+6. If B sells to Participant C later → Creator A still receives royalties
 
 **Required additions:**
 - **Creator API** - External projects can integrate
 - **Project Marketplace** - Acquire full projects or fractional stakes
-- **Royalty Engine** - Automatic distribution to original creators
+- **Royalty Engine** - Automatic distribution to original creators (perpetual)
 - **Multi-signature Contracts** - Shared ownership agreements
+- **Stake Transfer System** - Secondary market for project ownership
 
 **New tables:**
 ```sql
