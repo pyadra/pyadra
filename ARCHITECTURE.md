@@ -135,7 +135,7 @@ Join → Stripe Checkout → Webhook → Supporter Record (DB) → Email → Arc
 
 ### Figurines
 
-**Purpose**: The first physical bridge to the Pyadra ecosystem. Users commission a custom 3D printed, hand-painted replica of themselves derived from three photographs. The "Signal" tier links this physical artifact back to their Pyadra Archive via a magnetic QR code.
+**Purpose**: The first physical bridge to Pyadra. Users commission a custom 3D printed, hand-painted replica of themselves derived from three photographs. The "Signal" tier links this physical figurine back to their Pyadra Archive via a magnetic QR code.
 
 **User Flow:**
 ```
@@ -167,7 +167,7 @@ Landing → Checkout → Webhook (Paid) → Forge (Upload) → Storage + DB (For
 
 ### Ebook
 
-**Purpose**: Book publication platform within the Pyadra ecosystem. Authors can publish their work as part of the Galaxy exhibition, creating permanent literary artifacts.
+**Purpose**: Book publication platform within Pyadra. Authors can publish their work as part of the Galaxy exhibition, creating permanent books that last.
 
 **Status**: Early formation stage. Architecture and workflows to be defined.
 
@@ -361,7 +361,7 @@ Client → Create Checkout Session → Stripe Hosted Checkout → Payment → We
    - Template: [`src/app/lib/ethernicapsule-email.ts`](src/app/lib/ethernicapsule-email.ts)
 
 4. **Figurines Transactional Emails**
-   - Customer: Ritual receipt of forge initiation
+   - Customer: Order confirmation receipt
    - Founder: Action required internally (contains geometry URLs and Shipping Address)
    - Template: [`src/app/lib/figurines-email.ts`](src/app/lib/figurines-email.ts)
 
@@ -385,7 +385,7 @@ Client → Create Checkout Session → Stripe Hosted Checkout → Payment → We
 
 2. **Projects Archaeological Scene** ([`src/app/projects/page.tsx`](src/app/projects/page.tsx))
    - Lantern cursor (spotlight following mouse)
-   - Excavation nodes (artifacts buried at depths)
+   - Excavation nodes (project nodes at different depths)
    - Ground plane with crack lines
    - Dust particles with GLSL shaders
 

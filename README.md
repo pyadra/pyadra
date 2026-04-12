@@ -3,9 +3,9 @@
 > **Lo que dejas importa.**  
 > *(What you leave behind matters.)*
 
-Pyadra is not a product. It is a ceremonial digital space where participants forge lasting artifacts, contribute to experimental rituals, and leave permanent marks. Each project serves as a node where human intention crystallizes into something that endures.
+Pyadra is not a product. It's a home for what lasts - where you build projects that matter, help people who create, and leave work that endures.
 
-**For participants, not consumers.** People who want to help people. People who believe what they leave behind should last.
+**For builders, not consumers.** People who want to help people. People who believe what they create should last.
 
 **📖 New here?** Read **[VISION.md](VISION.md)** first to understand what Pyadra is and where it's going.
 
@@ -104,7 +104,7 @@ pyadra/
 │   │   │       ├── page.tsx        # 3D navigation scene
 │   │   │       ├── ethernicapsule/ # Time-locked messages
 │   │   │       ├── orbit/          # Orbit 77 podcast
-│   │   │       └── figurines/      # Digital artifacts
+│   │   │       └── figurines/      # Physical figurines
 │   │   ├── lib/                     # Utilities (db, email, validation)
 │   │   └── page.tsx                 # Homepage (Observer initiation)
 │   └── middleware.ts                # Request middleware + redirects
@@ -124,13 +124,13 @@ pyadra/
 
 ## 🎨 Design Philosophy
 
-Pyadra projects follow a **ceremonial UX** approach:
-- Actions feel like "sealing", "transmission", "opening"
+Pyadra projects follow an **intentional UX** approach:
+- Actions feel meaningful: "seal", "send", "open"
 - Audio tuned to 432Hz (natural harmonic frequency)
-- High intentionality in every interaction
+- Every interaction matters
 - Dark, minimal aesthetic with gold accents (#FFB000)
 - Typography: Cormorant Garamond (serif), system sans-serif
-- Color palette: Deep blacks, warm beiges, ritual gold
+- Color palette: Deep blacks, warm beiges, warm gold
 
 ## 🔐 Security
 
@@ -185,7 +185,7 @@ Pyadra is designed to be deployed on [Vercel](https://vercel.com):
 
 ## 🤝 Contributing
 
-We welcome contributions that align with Pyadra's ceremonial philosophy. Please read [CONTRIBUTING.md](./CONTRIBUTING.md) before submitting pull requests.
+We welcome contributions that align with Pyadra's philosophy. Please read [CONTRIBUTING.md](./CONTRIBUTING.md) before submitting pull requests.
 
 ## 📄 License
 

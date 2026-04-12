@@ -17,17 +17,17 @@ This is not marketing copy. This is the foundational truth that guides every des
 
 Pyadra is **not a web app**. It's not a SaaS platform. It's not a startup building "solutions."
 
-**Pyadra is a ceremonial digital space where people participate in experimental human rituals and leave permanent marks.**
+**Pyadra is a home for what lasts.**
 
-Pyadra is organized into **exhibitions** - curated spaces where participants can create, contribute, and forge artifacts that last. Each exhibition explores different aspects of human connection through interactive, ceremonial experiences.
+It's where you build projects that matter, support people who create, and leave work that endures. Pyadra is organized into **exhibitions** - spaces where you can create meaningful things, help others, and be part of something that doesn't disappear.
 
-You don't "use" Pyadra. You **participate** in it. You **leave your mark** in it. You become part of a permanent archive of human intention.
+You don't "use" Pyadra and forget it. You **build in Pyadra**. What you create here stays.
 
 ### The Core Emotion
 
 Pyadra exists to create **pertenencia** (belonging).
 
-The people who arrive at Pyadra already believe that what they leave behind matters. Pyadra gives them the place to make it real. They are not consumers. They are **participants** - people who want to help people, support creators, and contribute to something permanent.
+The people who arrive at Pyadra already believe that what they leave behind matters. Pyadra gives them the place to make it real. They are not consumers. They are **builders** - people who want to help people, support creators, and contribute to something that lasts.
 
 ---
 
@@ -43,31 +43,31 @@ Pyadra rejects this entirely.
 
 **Pyadra exists to create experiences that feel:**
 - **Permanent** - Like stone inscriptions, not disposable tweets
-- **Ceremonial** - Intentional actions with weight, not mindless scrolling
+- **Intentional** - Actions with weight, not mindless scrolling
 - **Mysterious** - Discovery over explanation, invitation over instruction
 - **Beautiful** - Crafted interfaces that respect your attention
 
-Think of it as the opposite of "move fast and break things." Pyadra moves deliberately and builds artifacts.
+Think of it as the opposite of "move fast and break things." Pyadra moves deliberately and builds things that last.
 
 ---
 
 ## The Exhibition Structure
 
-Imagine a ceremonial space with three distinct chambers. Each chamber holds different rituals where you can leave your mark, create artifacts, and contribute to something permanent.
+Imagine a space with three distinct rooms. Each room has different projects where you can build something meaningful, help others, and create work that lasts.
 
 **That's Pyadra's structure:**
 
 ```
 ┌─────────────────────────────────────────────────┐
-│               PYADRA ECOSYSTEM                   │
+│                    PYADRA                        │
 ├─────────────────────────────────────────────────┤
-│  Initiation → Home Page (Become a Participant)  │
+│  Home → Where you start (Become an Observer)    │
 │                                                  │
 │  ┌───────────────────────────────────────────┐  │
 │  │  EXHIBITION 1: Galaxy (MVP1)              │  │
 │  │  └─ EterniCapsule: Time-locked messages   │  │
-│  │  └─ Orbit 77: Collective funding ritual   │  │
-│  │  └─ Figurines: Physical artifact forging  │  │
+│  │  └─ Orbit 77: Collective funding experience   │  │
+│  │  └─ Figurines: Physical project forging  │  │
 │  │  └─ Ebook: Book publication               │  │
 │  └───────────────────────────────────────────┘  │
 │                                                  │
@@ -83,7 +83,7 @@ Imagine a ceremonial space with three distinct chambers. Each chamber holds diff
 └─────────────────────────────────────────────────┘
 ```
 
-**You are NOT building 3 separate projects.** You're building one cohesive ceremonial space with three themed exhibitions where participants can leave lasting marks.
+**You are NOT building 3 separate projects.** You're building one place with three exhibitions where people can create things that last.
 
 ---
 
@@ -211,7 +211,7 @@ When you enter Galaxy, you see a 3D cosmic void. Your cursor becomes a spotlight
 
 - **EterniCapsule** - An amber capsule (time-locked messages)
 - **Orbit 77** - A fractured core (collective funding)
-- **Figurines** - Crystalline structures (artifact forging)
+- **Figurines** - Crystalline structures (project forging)
 
 Clicking any node triggers a cinematic zoom animation and takes you to that project.
 
@@ -226,7 +226,7 @@ Each project is a complete experience:
 - Email delivered at future date with audio crystallization
 
 **Orbit 77 (`/exhibitions/galaxy/orbit`):**
-- Podcast + collective funding ritual
+- Podcast + collective funding experience
 - 10 episodes available
 - Transparent funding progress ($1000 AUD goal)
 - Supporters get credentials
@@ -234,7 +234,7 @@ Each project is a complete experience:
 **Figurines (`/exhibitions/galaxy/figurines`):**
 - Upload 3 photos
 - AI generates personalized 3D figurine
-- Mint as digital artifact
+- Mint as digital project
 - Optional physical print
 
 ### Navigation Structure
@@ -258,7 +258,7 @@ pyadra.io/
 │           │  └─ Podcast + funding
 │           │
 │           └─ /exhibitions/galaxy/figurines
-│              └─ 3D artifact forging
+│              └─ 3D project forging
 │
 ├─ /manifesto
 ├─ /legal/privacy
@@ -275,7 +275,7 @@ pyadra.io/
 **Bottom Nav** (transparent, minimal):
 - Manifesto | Privacy | Terms | Contact
 
-**Observer ID** persists across the entire site via localStorage. You're not logging in - you're already part of the archive from the moment you complete the home page ritual.
+**Observer ID** persists across the entire site via localStorage. You're not logging in - you're already part of the archive from the moment you complete the home page experience.
 
 ### What You Can Actually Do Today
 
@@ -372,7 +372,7 @@ pyadra.io/
 ❌ **A social network** - No feeds, likes, followers, viral loops  
 ❌ **A no-code tool** - Everything is custom-built, intentional  
 ❌ **A startup seeking PMF** - We're not pivoting based on metrics  
-❌ **A SaaS product** - We're experiments, experiences, artifacts  
+❌ **A SaaS product** - We're experiments, experiences, projects  
 ❌ **For everyone** - And that's okay. Pyadra is for people who want something different.
 
 ---
@@ -383,12 +383,12 @@ Pyadra evolves through **three distinct phases**:
 
 ### Phase 1: Experiencia (Experience) — 2026 [CURRENT]
 
-**What it is:** Users participate in rituals and purchase products within Galaxy exhibition.
+**What it is:** Users participate in experiences and purchase products within Galaxy exhibition.
 
 **Active projects:**
 - Orbit 77 (podcast + supporter funding)
 - EterniCapsule (time-locked messages)
-- Figurines (physical artifacts)
+- Figurines (physical projects)
 - EBOK (book in formation)
 
 **Revenue model:** Direct sales ($9 AUD capsules, $175 AUD figurines, donations to Orbit)
@@ -418,7 +418,7 @@ Pyadra evolves through **three distinct phases**:
 
 **New exhibitions:**
 - **Jungle** (organic growth, collaborative chaos) opens with 3-5 creator projects
-- **City** (urban rituals, synchronized experiences) begins forming
+- **City** (urban experiences, synchronized experiences) begins forming
 
 **Revenue model:** Platform fees on project acquisitions + transaction royalties
 
@@ -491,11 +491,11 @@ Pyadra doesn't measure success in typical ways. Here's what matters:
 ### When Building
 
 **Ask yourself:**
-- Does this feel ceremonial or generic?
-- Does this invite participation or passive consumption?
+- Does this feel intentional or generic?
+- Does this invite creation or passive consumption?
 - Is this beautiful enough to ship?
-- Does it respect the participant's time and attention?
-- Would someone remember this experience?
+- Does it respect people's time and attention?
+- Would someone remember this?
 
 **If unsure:**
 - Look at EterniCapsule (it's the gold standard)
@@ -522,7 +522,7 @@ A: People who want digital experiences that feel permanent, intentional, beautif
 A: EterniCapsule charges $9 AUD per sealed message. Future paid expeditions. Maybe premium Observer tiers. No ads, ever.
 
 **Q: Why "Observer" instead of "User"?**  
-A: Because you're not consuming a product. You're a participant witnessing and contributing to experimental rituals. You leave marks, create artifacts, and become part of a permanent archive. Language shapes experience.
+A: Because you're not consuming a product. You're a builder - someone who creates, contributes, and helps others. What you build here becomes part of something that lasts. Language shapes experience.
 
 **Q: Can I skip the home page signal game?**  
 A: No. It's an initiation. Everyone becomes an Observer the same way.
@@ -542,11 +542,11 @@ A: Eventually. Once the vision is proven, an API for creators makes sense.
 
 Pyadra is an **experiment in intentional digital experience design**.
 
-It rejects the idea that everything online must be viral, fast, and optimized for engagement. It embraces mystery, permanence, beauty, and ceremony.
+It rejects the idea that everything online must be viral, fast, and optimized for engagement. It embraces mystery, permanence, beauty, and intention.
 
 **If you're building on Pyadra:**
 - Move deliberately
-- Build artifacts, not features
+- Build projects, not features
 - Respect attention
 - Make it beautiful
 - Make it last
