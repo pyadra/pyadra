@@ -21,7 +21,7 @@ export const metadata = {
 
 export default function EterniCapsuleLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className={`${cormorant.variable} ${ebGaramond.variable} min-h-screen bg-[#060504] text-[#E8D9BB] font-[family-name:var(--font-eb-garamond)] selection:bg-[#7A5230]/40 overflow-x-hidden`}>
+    <div className={`${cormorant.variable} ${ebGaramond.variable} min-h-screen bg-[var(--etn-void)] text-[var(--etn-ash)] font-serif selection:bg-[#7A5230]/40 overflow-x-hidden`}>
       {children}
     </div>
   );

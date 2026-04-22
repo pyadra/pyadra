@@ -12,7 +12,7 @@ Pyadra is not a product. It's a home for what lasts - where you build projects t
 ## 🌟 Live Projects
 
 ### [Orbit 77](https://pyadra.io/exhibitions/galaxy/orbit)
-A podcast and media platform exploring liminal spaces and hidden knowledge. 10 episodes released. Supporter-funded model with transparent funding goals ($1000 AUD). Includes a credentials system for early supporters.
+A podcast and media platform exploring liminal spaces and hidden knowledge. **Season 1 complete** (10 episodes). **Season 2 funding active** with transparent progress tracking ($1000 AUD goal). Supporters receive permanent digital credentials (O77-S1-XXXXXX format) and founding member status. Features orbital diagram visualization showing real-time funding progress.
 
 ### [EterniCapsule](https://pyadra.io/exhibitions/galaxy/ethernicapsule)
 Time-locked digital message vaults. Write a letter, seal it cryptographically, and have it delivered to recipients at a future date. Each capsule costs $9 AUD and is permanently preserved. Features include:

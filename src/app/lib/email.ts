@@ -79,9 +79,9 @@ export async function sendCredentialEmail(payload: EmailPayload) {
     <div class="wrapper">
         <div class="eyebrow"><span class="indicator"></span> O R B I T &nbsp; 7 7</div>
         <h1 class="title">Transmission Recorded</h1>
-        
+
         <p class="paragraph">
-            The signal has been received. This credential verifies your support for Orbit 77. It is permanently recorded in the archive. 
+            The signal has been received. This credential verifies your support for Orbit 77. It is permanently recorded in the Archive.
         </p>
         
         <div class="card">
@@ -108,11 +108,11 @@ export async function sendCredentialEmail(payload: EmailPayload) {
         </div>
         
         <div class="btn-wrapper">
-            <a href="${archiveLink}" class="btn">View your Archive &rarr;</a>
+            <a href="${archiveLink}" class="btn">View Your Archive &rarr;</a>
         </div>
-        
+
         <div class="footer">
-            Orbit 77 — A Pyadra Ecosystem Project<br><br>
+            Orbit 77 — A Pyadra Ecosystem Node<br><br>
             © 2026 Pyadra
         </div>
     </div>

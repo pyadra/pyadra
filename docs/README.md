@@ -34,7 +34,7 @@
 Detailed docs for each Pyadra experience:
 
 - **[Home Experience](HOME_EXPERIENCE.md)** - Observer initiation system
-- **[EterniCapsule Node](ETERNICAPSULE_NODE.md)** - Time-locked message vault
+- **[EterniCapsule](ETERNICAPSULE.md)** - Time-locked message vault
 - **[Orbit 77 Node](ORBIT_NODE.md)** - Collective funding expedition
 - **[Figurines Node](FIGURINES_NODE.md)** - Digital artifact forging
 
@@ -88,7 +88,7 @@ docs/
 ├── README.md                      # This file
 ├── DEPLOYMENT.md                  # Deployment guide
 ├── HOME_EXPERIENCE.md            # Home page docs
-├── ETERNICAPSULE_NODE.md         # EterniCapsule docs
+├── ETERNICAPSULE.md              # EterniCapsule docs
 ├── ORBIT_NODE.md                 # Orbit docs
 ├── FIGURINES_NODE.md             # Figurines docs
 ├── changelog/                     # Technical changelog
@@ -129,7 +129,7 @@ docs/
 **Required reading**:
 1. [VISION.md](../VISION.md) - Core philosophy (mandatory)
 2. [CHANGELOG.md](changelog/CHANGELOG.md) - Recent changes
-3. Relevant node docs ([HOME_EXPERIENCE.md](HOME_EXPERIENCE.md), [ETERNICAPSULE_NODE.md](ETERNICAPSULE_NODE.md), etc.)
+3. Relevant node docs ([HOME_EXPERIENCE.md](HOME_EXPERIENCE.md), [ETERNICAPSULE.md](ETERNICAPSULE.md), etc.)
 
 **Context**:
 - Pyadra is a digital museum with exhibitions (not a typical SaaS)
@@ -141,7 +141,7 @@ docs/
 
 ## 📊 Documentation Stats
 
-**Total Files**: 13 markdown files  
+**Total Files**: 19 markdown files  
 **Structure**: 3 folders (root, changelog, archive)  
 **Coverage**: Core philosophy, technical changes, deployment, individual projects
 
@@ -162,5 +162,5 @@ docs/
 
 ---
 
-**Last updated**: April 7, 2026  
-**Total documentation files**: 13
+**Last updated**: April 22, 2026  
+**Total documentation files**: 19

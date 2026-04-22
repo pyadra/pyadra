@@ -67,8 +67,8 @@ function GuardianAccessContent() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#02040A] px-4 font-mono">
-        <div className="animate-pulse text-[#C4A882] tracking-[0.3em] text-[10px] uppercase">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--etn-earth)] px-4 font-mono">
+        <div className="animate-pulse text-[var(--etn-bronze-bright)] tracking-[0.3em] text-xs uppercase">
           Accessing vault...
         </div>
       </div>
@@ -77,14 +77,14 @@ function GuardianAccessContent() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#02040A] px-4">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--etn-earth)] px-4">
         <Capsule3D isSealed={true} />
-        <p className="mt-8 text-[#8B4444] text-center max-w-md font-sans text-sm font-light">
+        <p className="mt-8 text-[var(--etn-rust)] text-center max-w-md font-sans text-sm font-light">
           {error}
         </p>
         <Link
           href="/exhibitions/galaxy/ethernicapsule"
-          className="mt-12 text-[#E8D9BB]/80 text-[10px] uppercase tracking-[0.3em] hover:text-[#C4A882] transition-colors font-mono"
+          className="mt-12 text-[var(--etn-ash)]/80 text-xs uppercase tracking-[0.3em] hover:text-[var(--etn-bronze-bright)] transition-colors font-mono"
         >
           [ RETURN ]
         </Link>
@@ -102,33 +102,33 @@ function GuardianAccessContent() {
     });
 
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#02040A] px-4">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--etn-earth)] px-4">
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.5 }} className="flex flex-col items-center text-center">
           <div className="mb-10">
             <Capsule3D isSealed={true} />
           </div>
 
-          <h1 className="text-4xl md:text-5xl text-[#E8D9BB] italic mb-6 text-center font-light" style={{ fontFamily: 'var(--font-cormorant)' }}>
+          <h1 className="text-4xl md:text-5xl text-[var(--etn-ash)] italic mb-6 text-center font-light" style={{ fontFamily: 'var(--font-cormorant)' }}>
             The vault is still locked.
           </h1>
 
-          <p className="text-[#E8D9BB]/70 text-center max-w-md mb-4 text-[15px] font-sans font-light">
+          <p className="text-[var(--etn-ash)]/70 text-center max-w-md mb-4 text-[15px] font-sans font-light">
             This capsule cannot be opened yet.
           </p>
 
           <div className="border border-white/5 bg-black/20 backdrop-blur-md px-10 py-6 rounded-[4px] mt-4 mb-10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-            <p className="text-[#C4A882] text-sm uppercase tracking-widest font-mono">
-              Available on: <br/><span className="text-xl text-[#E8D9BB] mt-3 block">{formattedDate}</span>
+            <p className="text-[var(--etn-bronze-bright)] text-sm uppercase tracking-widest font-mono">
+              Available on: <br/><span className="text-xl text-[var(--etn-ash)] mt-3 block">{formattedDate}</span>
             </p>
           </div>
 
-          <p className="text-[#E8D9BB]/80 text-sm text-center max-w-sm font-sans font-light leading-relaxed">
+          <p className="text-[var(--etn-ash)]/80 text-sm text-center max-w-sm font-sans font-light leading-relaxed">
             Return to this link after that date to receive the capsule key.
           </p>
 
           <Link
             href="/"
-            className="mt-16 py-3 px-4 text-[#E8D9BB]/70 text-[10px] tracking-[0.3em] uppercase hover:text-[#C4A882] transition-colors font-mono"
+            className="mt-16 py-3 px-4 text-[var(--etn-ash)]/70 text-xs tracking-[0.3em] uppercase hover:text-[var(--etn-bronze-bright)] transition-colors font-mono"
           >
             [ BACK TO PYADRA ]
           </Link>
@@ -139,7 +139,7 @@ function GuardianAccessContent() {
 
   // Capsule is ready - show key
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#02040A] px-4 relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--etn-earth)] px-4 relative overflow-hidden">
 
       {/* Expanding amber light effect when revealed */}
       <div
@@ -159,18 +159,18 @@ function GuardianAccessContent() {
           {/* Glow effect when revealed */}
           {revealed && (
             <div
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#C4A882] rounded-full pointer-events-none transition-all duration-[2000ms] opacity-60 scale-[4] blur-[80px] z-[-1]"
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[var(--etn-bronze-bright)] rounded-full pointer-events-none transition-all duration-[2000ms] opacity-60 scale-[4] blur-[80px] z-[-1]"
               style={{ width: '100px', height: '100px' }}
             ></div>
           )}
         </div>
 
-        <h1 className="text-4xl md:text-5xl text-[#E8D9BB] italic mb-6 text-center font-light" style={{ fontFamily: 'var(--font-cormorant)' }}>
+        <h1 className="text-4xl md:text-5xl text-[var(--etn-ash)] italic mb-6 text-center font-light" style={{ fontFamily: 'var(--font-cormorant)' }}>
           The time has come.
         </h1>
 
-        <p className="text-[#E8D9BB]/80 text-center mb-10 max-w-md text-lg leading-relaxed font-sans font-light">
-          <span className="text-[#C4A882]">{senderName}</span> entrusted you with this capsule. The vault is now open.
+        <p className="text-[var(--etn-ash)]/80 text-center mb-10 max-w-md text-lg leading-relaxed font-sans font-light">
+          <span className="text-[var(--etn-bronze-bright)]">{senderName}</span> entrusted you with this capsule. The vault is now open.
         </p>
 
         <AnimatePresence mode="wait">
@@ -181,10 +181,10 @@ function GuardianAccessContent() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={handleReveal}
-              className="group relative overflow-hidden border border-[#C4A882]/40 bg-[#0A0C14] px-16 py-5 text-center transition-all duration-700 hover:border-[#C4A882] hover:shadow-[0_0_30px_rgba(196,168,130,0.15)] rounded-[2px] mb-12"
+              className="group relative overflow-hidden border border-[var(--etn-bronze-bright)]/40 bg-[var(--etn-charcoal)] px-16 py-5 text-center transition-all duration-700 hover:border-[var(--etn-bronze-bright)] hover:shadow-[0_0_30px_rgba(196,168,130,0.15)] rounded-[2px] mb-12"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#C4A882]/10 to-transparent -translate-x-[150%] skew-x-[-30deg] group-hover:animate-[shimmer_1.5s_infinite]"></div>
-              <span className="relative z-10 text-[#C4A882] tracking-[0.3em] text-[11px] uppercase font-mono font-medium">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--etn-bronze-bright)]/10 to-transparent -translate-x-[150%] skew-x-[-30deg] group-hover:animate-[shimmer_1.5s_infinite]"></div>
+              <span className="relative z-10 text-[var(--etn-bronze-bright)] tracking-[0.3em] text-xs uppercase font-mono font-medium">
                 REVEAL KEY
               </span>
             </motion.button>
@@ -197,25 +197,25 @@ function GuardianAccessContent() {
                className="w-full max-w-md flex flex-col items-center"
             >
               <div className="text-center w-full">
-                <div className="text-[10px] uppercase tracking-[0.4em] text-[#C4A882]/60 mb-4 font-mono">
+                <div className="text-xs uppercase tracking-[0.4em] text-[var(--etn-bronze-bright)]/60 mb-4 font-mono">
                   CAPSULE KEY
                 </div>
 
                 <div className="border border-white/10 bg-black/40 backdrop-blur-xl p-8 mb-8 shadow-[0_0_40px_rgba(196,168,130,0.15)] rounded-[4px] relative overflow-hidden">
-                  <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#C4A882]/50 to-transparent"></div>
-                  <p className="text-[#C4A882] text-2xl md:text-3xl tracking-[0.15em] font-mono font-medium select-all">
+                  <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[var(--etn-bronze-bright)]/50 to-transparent"></div>
+                  <p className="text-[var(--etn-bronze-bright)] text-2xl md:text-3xl tracking-[0.15em] font-mono font-medium select-all">
                     {capsuleKey}
                   </p>
-                  <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-[#C4A882]/20 to-transparent"></div>
+                  <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-[var(--etn-bronze-bright)]/20 to-transparent"></div>
                 </div>
 
-                <p className="text-[#E8D9BB]/80 text-[15px] mb-10 leading-relaxed font-sans font-light">
+                <p className="text-[var(--etn-ash)]/80 text-[15px] mb-10 leading-relaxed font-sans font-light">
                   Pass this key to the person it was written for <br/> — or open it yourself.
                 </p>
 
                 <Link
                   href={`/exhibitions/galaxy/ethernicapsule/unlock`}
-                  className="inline-block border border-[#C4A882]/40 bg-[#C4A882]/5 hover:bg-[#C4A882] hover:text-[#02040A] px-12 py-4 text-[#C4A882] tracking-[0.3em] text-[11px] uppercase transition-all duration-700 font-mono font-medium rounded-[2px]"
+                  className="inline-block border border-[var(--etn-bronze-bright)]/40 bg-[var(--etn-bronze-bright)]/5 hover:bg-[var(--etn-bronze-bright)] hover:text-[var(--etn-earth)] px-12 py-4 text-[var(--etn-bronze-bright)] tracking-[0.3em] text-xs uppercase transition-all duration-700 font-mono font-medium rounded-[2px]"
                 >
                   OPEN CAPSULE
                 </Link>
@@ -226,7 +226,7 @@ function GuardianAccessContent() {
 
         <Link
           href="/"
-          className="mt-16 text-[#E8D9BB]/70 text-[10px] tracking-[0.3em] uppercase hover:text-[#C4A882] transition-colors font-mono absolute bottom-8 md:relative md:bottom-auto"
+          className="mt-16 text-[var(--etn-ash)]/70 text-xs tracking-[0.3em] uppercase hover:text-[var(--etn-bronze-bright)] transition-colors font-mono absolute bottom-8 md:relative md:bottom-auto"
         >
           [ BACK TO PYADRA ]
         </Link>
@@ -238,8 +238,8 @@ function GuardianAccessContent() {
 export default function GuardianAccess() {
   return (
     <Suspense fallback={
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#02040A] px-4">
-        <div className="animate-pulse text-[#C4A882] tracking-[0.3em] text-[10px] uppercase font-mono">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--etn-earth)] px-4">
+        <div className="animate-pulse text-[var(--etn-bronze-bright)] tracking-[0.3em] text-xs uppercase font-mono">
           Accessing Vault...
         </div>
       </div>

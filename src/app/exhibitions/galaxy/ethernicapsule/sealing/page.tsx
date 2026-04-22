@@ -73,19 +73,19 @@ function SealingProcess() {
   }, [sessionId, router, steps.length]); // Added steps.length to dep array safely
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen relative px-4 bg-[#000000] select-none overflow-hidden">
-      
+    <div className="flex flex-col items-center justify-center min-h-screen relative px-4 bg-[var(--etn-earth)] select-none overflow-hidden">
+
       {/* Deep Space Radial Gradient Background */}
-      <div className="absolute inset-0 pointer-events-none z-0" style={{ background: 'radial-gradient(circle at 50% 50%, #040710 0%, #000000 60%)' }}></div>
+      <div className="absolute inset-0 pointer-events-none z-0" style={{ background: 'radial-gradient(circle at 50% 50%, var(--etn-soil) 0%, var(--etn-earth) 60%)' }}></div>
 
       {/* Visual pulse */}
-      <div 
+      <div
         className={`fixed inset-0 pointer-events-none z-0 transition-all duration-[3000ms] ${sealed ? 'opacity-0 scale-90' : 'opacity-100 scale-100'}`}
-        style={{ background: `radial-gradient(circle at 50% 50%, rgba(138,107,68,0.1) 0%, transparent 60%)` }}
+        style={{ background: `radial-gradient(circle at 50% 50%, rgba(156,102,68,0.1) 0%, transparent 60%)` }}
       ></div>
 
       {/* Hex/Data floating overlay */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-5 flex flex-col justify-center items-center overflow-hidden font-mono text-[8px] leading-tight text-[#8A6B44]" suppressHydrationWarning>
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-5 flex flex-col justify-center items-center overflow-hidden font-mono text-[8px] leading-tight text-[var(--etn-copper)]" suppressHydrationWarning>
          {/* Fake background hash streams */}
          {mounted && streams.map((stream) => (
            <motion.div 
@@ -102,7 +102,7 @@ function SealingProcess() {
       <div className={`relative z-10 flex flex-col items-center transition-all duration-[2000ms] ${sealed ? 'scale-90 blur-[2px] opacity-0' : 'scale-100 blur-0 opacity-100'} min-h-[400px] justify-center`}>
          
          <div className="mb-12 mt-8 z-10 w-48 h-48 md:w-64 md:h-64 relative flex justify-center items-center">
-           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[#8A6B44] rounded-full blur-[60px] opacity-20 animate-pulse pointer-events-none" />
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[var(--etn-copper)] rounded-full blur-[60px] opacity-20 animate-pulse pointer-events-none" />
            <Capsule3D isSealed={false} isSealing={!sealed} />
          </div>
 
@@ -114,7 +114,7 @@ function SealingProcess() {
                    key="sealed"
                    initial={{ opacity: 0, scale: 0.9, filter: 'blur(5px)' }}
                    animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                   className="text-[#39FF14] uppercase tracking-[0.4em] font-mono text-[12px] font-semibold"
+                   className="text-[var(--etn-patina)] uppercase tracking-widest font-mono text-xs font-semibold"
                  >
                    [ THRESHOLD SEALED ]
                  </motion.div>
@@ -125,7 +125,7 @@ function SealingProcess() {
                    animate={{ opacity: 1, y: 0 }}
                    exit={{ opacity: 0, y: -5 }}
                    transition={{ duration: 0.3 }}
-                   className="text-[#8A6B44] uppercase tracking-widest font-mono text-[10px]"
+                   className="text-[var(--etn-copper)] uppercase tracking-widest font-mono text-xs"
                  >
                    {steps[step]}
                  </motion.div>
@@ -134,12 +134,14 @@ function SealingProcess() {
            </div>
          ) : (
            <div className="text-center mt-8">
-             <p className="text-[#8B4444] italic text-[14px] mb-8">{error}</p>
-             <button 
-                onClick={() => router.push('/exhibitions/galaxy/ethernicapsule')}
-                className="text-[#F5E6CC]/30 tracking-[0.3em] text-[10px] uppercase hover:text-[#8A6B44] transition-colors font-mono"
+             <p className="text-[var(--etn-rust)] italic text-sm mb-8">{error}</p>
+             <button
+                onClick={() => router.push('/')}
+                className="inline-flex items-center gap-3 px-6 py-3 bg-[var(--etn-soil)]/60 border border-white/5 rounded-full hover:bg-[var(--etn-copper)]/10 hover:border-[var(--etn-copper)]/40 transition-all duration-500 backdrop-blur-md"
              >
-                [ RETURN TO THE ARCHIVE ]
+                <span className="text-[var(--etn-bronze)]/80 hover:text-[var(--etn-cream)] text-xs tracking-wide uppercase font-mono transition-colors duration-500">
+                  RETURN TO PYADRA
+                </span>
              </button>
            </div>
          )}
@@ -151,7 +153,7 @@ function SealingProcess() {
 
 export default function EterniCapsuleSealingPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#000000]"></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-[var(--etn-earth)]"></div>}>
       <SealingProcess />
     </Suspense>
   )

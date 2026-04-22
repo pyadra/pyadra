@@ -1,19 +1,31 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-export default function Capsule3D({ isSealed = true, isSealing = false }: { isSealed?: boolean, isSealing?: boolean }) {
+export default function Capsule3D({
+  isSealed = true,
+  isSealing = false,
+  glowIntensity = 0
+}: {
+  isSealed?: boolean;
+  isSealing?: boolean;
+  glowIntensity?: number;
+}) {
   const [mounted, setMounted] = useState(false);
   const [typingPulse, setTypingPulse] = useState(0);
+  const [emberDirection, setEmberDirection] = useState('15px'); // Fixed on client
 
   useEffect(() => {
     // Stage entry materialization
     const t = setTimeout(() => setMounted(true), 100);
-    
+
+    // Generate random direction for ember float (client-only)
+    setEmberDirection(Math.random() > 0.5 ? '15px' : '-15px');
+
     // Heartbeat logic
     const handleTyping = () => {
       setTypingPulse(prev => Math.min(prev + 0.3, 1));
     };
-    
+
     const decay = setInterval(() => {
       setTypingPulse(prev => Math.max(prev - 0.05, 0));
     }, 100);
@@ -30,18 +42,25 @@ export default function Capsule3D({ isSealed = true, isSealing = false }: { isSe
   return (
     <div className={`relative w-[140px] h-[360px] flex items-center justify-center transition-all duration-[2000ms] ease-out ${mounted ? 'opacity-100 scale-100 blur-0' : 'opacity-0 scale-95 blur-md'}`}>
       
-      {/* Outer Halo / Volumetric Energy Bleed */}
-      <div 
-        className={`absolute inset-0 bg-[#C4A882] rounded-full mix-blend-screen transition-all pointer-events-none z-0 ${
-          isSealed 
-          ? 'blur-[60px] opacity-20 scale-90 duration-[3000ms]' 
-          : isSealing 
-            ? 'blur-[80px] opacity-100 scale-[1.3] animate-pulse duration-[3000ms]' 
+      {/* Outer Halo / Volumetric Energy Bleed - Accumulates amber glow */}
+      <div
+        className={`absolute inset-0 rounded-full mix-blend-screen transition-all pointer-events-none z-0 ${
+          isSealed
+          ? 'blur-[60px] opacity-20 scale-90 duration-[3000ms]'
+          : isSealing
+            ? 'blur-[80px] opacity-100 scale-[1.3] animate-pulse duration-[3000ms]'
             : 'blur-[70px] animate-pulse duration-[200ms]'
         }`}
-        style={{ 
-          opacity: (!isSealed && !isSealing) ? 0.4 + (typingPulse * 0.4) : undefined,
-          transform: (!isSealed && !isSealing) ? `scale(${1.1 + (typingPulse * 0.2)})` : undefined
+        style={{
+          background: glowIntensity > 0
+            ? `radial-gradient(circle, #FFB000 0%, ${glowIntensity > 0.5 ? '#FFB000' : 'var(--etn-bronze-bright)'} 50%, transparent 100%)`
+            : 'var(--etn-bronze-bright)',
+          opacity: (!isSealed && !isSealing)
+            ? 0.4 + (typingPulse * 0.4) + (glowIntensity * 0.3)
+            : 0.2 + (glowIntensity * 0.5),
+          transform: (!isSealed && !isSealing)
+            ? `scale(${1.1 + (typingPulse * 0.2) + (glowIntensity * 0.3)})`
+            : `scale(${1 + (glowIntensity * 0.2)})`
         }}
       ></div>
 
@@ -65,7 +84,7 @@ export default function Capsule3D({ isSealed = true, isSealing = false }: { isSe
             {mounted && Array.from({ length: 18 }).map((_, i) => (
               <div 
                 key={`ember-${i}`}
-                className="absolute rounded-full bg-[#E8D9BB]"
+                className="absolute rounded-full bg-[var(--etn-ash)]"
                 style={{
                   left: `${Math.random() * 100}%`,
                   bottom: `-${10 + Math.random() * 20}%`, // Start below
@@ -81,7 +100,7 @@ export default function Capsule3D({ isSealed = true, isSealing = false }: { isSe
 
           {/* Internal Glowing Core (The Soul) */}
           <div 
-            className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#E8D9BB] transition-all ${
+            className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--etn-ash)] transition-all ${
               isSealed 
               ? 'h-[140px] w-[40px] opacity-30 blur-[30px] duration-[3000ms]' 
               : isSealing 
@@ -104,13 +123,13 @@ export default function Capsule3D({ isSealed = true, isSealing = false }: { isSe
           {/* Central Seam / Key Slot (The Cryptographic Lock) */}
           <div className="absolute top-1/2 left-0 right-0 h-[2px] bg-[#000000] z-20 shadow-[0_1px_0_rgba(255,255,255,0.07)]">
             {/* The seam emits light briefly when sealing */}
-            <div className={`absolute top-0 left-1/2 -translate-x-1/2 h-[2px] bg-[#E8D9BB] blur-[2px] transition-all duration-[2000ms] ${isSealing ? 'w-[80%] opacity-100 shadow-[0_0_20px_#FFB000]' : 'w-0 opacity-0'}`}></div>
+            <div className={`absolute top-0 left-1/2 -translate-x-1/2 h-[2px] bg-[var(--etn-ash)] blur-[2px] transition-all duration-[2000ms] ${isSealing ? 'w-[80%] opacity-100 shadow-[0_0_20px_var(--etn-bronze-bright)]' : 'w-0 opacity-0'}`}></div>
           </div>
           
           {/* The Lock Cylinder */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[8px] h-[32px] bg-[#000000] rounded-full z-20 shadow-[0_0_10px_rgba(0,0,0,1),inset_0_2px_8px_rgba(0,0,0,1)] flex items-center justify-center border border-[rgba(196,168,130,0.1)]">
              {/* The spark inside the keyhole */}
-             <div className={`w-[2.5px] bg-[#C4A882] rounded-full transition-all duration-[2000ms] ${isSealing ? 'h-[20px] opacity-100 shadow-[0_0_15px_#FFB000] scale-125' : isSealed ? 'h-[10px] opacity-30 shadow-[0_0_5px_#C4A882]' : 'h-[18px] opacity-100 shadow-[0_0_15px_#C4A882] animate-pulse'}`}></div>
+             <div className={`w-[2.5px] bg-[var(--etn-bronze-bright)] rounded-full transition-all duration-[2000ms] ${isSealing ? 'h-[20px] opacity-100 shadow-[0_0_15px_var(--etn-bronze-bright)] scale-125' : isSealed ? 'h-[10px] opacity-30 shadow-[0_0_5px_var(--etn-bronze-bright)]' : 'h-[18px] opacity-100 shadow-[0_0_15px_var(--etn-bronze-bright)] animate-pulse'}`}></div>
           </div>
 
           {/* Horizon caps for depth (top/bottom gradient shadows) */}
@@ -119,22 +138,24 @@ export default function Capsule3D({ isSealed = true, isSealing = false }: { isSe
         </div>
       </div>
 
-      <style>{`
-        @keyframes levitate {
-          0%, 100% { transform: translateY(0) rotateX(2deg) rotateY(-5deg); }
-          50% { transform: translateY(-15px) rotateX(-2deg) rotateY(5deg); }
-        }
-        @keyframes core_breathe {
-          0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-          50% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
-        }
-        @keyframes ember_float {
-          0% { transform: translateY(0) translateX(0); opacity: 0; }
-          20% { opacity: ${isSealed ? '0.3' : '0.8'}; }
-          80% { opacity: ${isSealed ? '0.3' : '0.8'}; }
-          100% { transform: translateY(-300px) translateX(${Math.random() > 0.5 ? '15px' : '-15px'}); opacity: 0; }
-        }
-      `}</style>
+      {mounted && (
+        <style suppressHydrationWarning>{`
+          @keyframes levitate {
+            0%, 100% { transform: translateY(0) rotateX(2deg) rotateY(-5deg); }
+            50% { transform: translateY(-15px) rotateX(-2deg) rotateY(5deg); }
+          }
+          @keyframes core_breathe {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+            50% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+          }
+          @keyframes ember_float {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            20% { opacity: ${isSealed ? '0.3' : '0.8'}; }
+            80% { opacity: ${isSealed ? '0.3' : '0.8'}; }
+            100% { transform: translateY(-300px) translateX(${emberDirection}); opacity: 0; }
+          }
+        `}</style>
+      )}
     </div>
   );
 }

@@ -13,26 +13,33 @@
   --background: #030303; /* Casi negro tinta */
   --foreground: #F3F3F3; /* Blanco roto */
 
-  /* EterniCapsule Design Tokens */
-  /* Backgrounds */
-  --etn-black: #000000;
-  --etn-void: #02040A;
-  --etn-charcoal: #0A0C16;
+  /* EterniCapsule Design Tokens - Café + Oro Viejo (Abril 2026) */
 
-  /* Amber Palette (Improved Contrast) */
-  --etn-amber-dark: #8A6B44;        /* Legacy - use sparingly */
-  --etn-amber: #B89968;              /* NEW: Primary amber (4.6:1 contrast) */
-  --etn-amber-light: #C4A882;        /* Highlights */
+  /* Backgrounds - Café Muy Oscuro (más peso) */
+  --etn-void: #0D0907;               /* Casi negro café - vacío profundo */
+  --etn-earth: #1A1410;              /* Café negrísimo - fondo principal */
+  --etn-soil: #2C2218;               /* Café oscuro - contenedores */
+  --etn-charcoal: #3C2F2F;           /* Café - cards y modales */
 
-  /* Text Colors */
-  --etn-cream: #F5E6CC;              /* Headlines, CTAs */
-  --etn-parchment: #F5F0E6;          /* Letter body text */
-  --etn-ash: #E8D9BB;                /* Metadata, secondary */
+  /* Text Colors - Crema cálido (mantener contraste) */
+  --etn-parchment: #F5E6D3;          /* Crema brillante - texto primario */
+  --etn-cream: #E8D9D0;              /* Crema medio - headlines */
+  --etn-ash: #C4B5A8;                /* Beige cálido - metadata */
 
-  /* State Colors (Improved) */
-  --etn-rust: #8B4444;               /* Error state (warm burgundy) */
-  --etn-sage: #8FAA80;               /* Success state (muted green) */
-  --etn-silver: #A8A39D;             /* Tertiary accent */
+  /* Oro Viejo - El Sello Permanente (más cálido que bronce) */
+  --etn-bronze: #C9A961;             /* Oro viejo base - navegación, labels */
+  --etn-bronze-bright: #D4AF6E;      /* Oro cálido brillante - monolito, hero */
+  --etn-copper: #9C6644;             /* Cobre cálido - botón SEAL (crítico) */
+  --etn-patina: #7A9B8E;             /* Verde patina - sealed state (oxidación) */
+
+  /* State Colors */
+  --etn-rust: #8B4444;               /* Error state */
+  --etn-sage: #8FAA80;               /* Success state */
+
+  /* Legacy Amber (deprecated - migrar a bronce) */
+  --etn-amber-dark: #8A6B44;
+  --etn-amber: #B89968;
+  --etn-amber-light: #C4A882;
 
   /* Responsive Spacing Scale */
   --etn-space-xs: 0.5rem;    /* 8px */
@@ -62,6 +69,31 @@
   /* State Colors */
   --fig-rust: #8B4444;               /* Error state (warm burgundy) */
   --fig-sage: #8FAA80;               /* Success state */
+
+  /* Orbit 77 Design Tokens (Deep Earth Transmission) */
+  /* Backgrounds */
+  --orbit-black: #020503;            /* Base canvas */
+  --orbit-void: #050A07;             /* Card backgrounds */
+  --orbit-deep: #0A1A0D;             /* Elevated surfaces */
+  --orbit-charcoal: #0A120D;         /* Input backgrounds */
+
+  /* Green Palette (Signal Frequency) */
+  --orbit-green-dark: #1A4D0F;       /* Shadows */
+  --orbit-green: #39FF14;            /* PRIMARY - Signal active */
+  --orbit-green-bright: #5FFF44;     /* Highlights */
+  --orbit-green-muted: #AEFFA1;      /* Secondary text */
+
+  /* Gold Palette (Pyadra Integration) */
+  --orbit-gold-dark: #8A6B44;        /* Shadows */
+  --orbit-gold: #FFB000;             /* PRIMARY - Pyadra accent */
+  --orbit-gold-light: #FFCC66;       /* Highlights */
+
+  /* Text Colors */
+  --orbit-cream: #F4EFEA;            /* Primary text */
+  --orbit-ash: #E8D9BB;              /* Secondary text */
+
+  /* State Colors */
+  --orbit-alert: #FF4444;            /* Critical alerts */
 }
 
 /* Mobile Spacing Overrides */
@@ -88,4 +120,14 @@ html, body {
 ::selection {
   background: rgba(255, 255, 255, 0.15);
   color: #fff;
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-150%) skewX(-30deg);
+  }
+  100% {
+    transform: translateX(150%) skewX(-30deg);
+  }
 }
