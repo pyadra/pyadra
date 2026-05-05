@@ -20,10 +20,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   // Initialize audio element only on client to avoid hydration mismatch
   useEffect(() => {
-    const audio = new Audio("/ambient-drone.mp3");
-    audio.loop = true;
-    audio.volume = 0; // start at 0
-    audioRef.current = audio;
+    // Disabled: audio file not available
+    // TODO: Add ambient-drone.mp3 to /public directory to enable
+    // const audio = new Audio("/ambient-drone.mp3");
+    // audio.loop = true;
+    // audio.volume = 0; // start at 0
+    // audioRef.current = audio;
   }, []);
 
   const toggleAudio = () => {

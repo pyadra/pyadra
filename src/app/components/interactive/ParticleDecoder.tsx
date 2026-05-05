@@ -364,7 +364,7 @@ export default function ParticleDecoder({ onComplete }: { onComplete?: (stats: G
       osc1.stop(ctx.currentTime + 0.8);
       osc2.stop(ctx.currentTime + 0.8);
     } catch (e) {
-      console.log('Audio context blocked');
+      // Audio context blocked by browser
     }
   };
 
@@ -388,7 +388,7 @@ export default function ParticleDecoder({ onComplete }: { onComplete?: (stats: G
       osc.start();
       osc.stop(ctx.currentTime + 0.3);
     } catch (e) {
-      console.log('Audio context blocked');
+      // Audio context blocked by browser
     }
   };
 

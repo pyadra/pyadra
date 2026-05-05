@@ -1,0 +1,590 @@
+/* EXHIBITIONS - THREE DOORS */
+
+.exhibitions-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #020304;
+  background-image: radial-gradient(ellipse at center, rgba(255,176,0,0.05) 0%, transparent 55%);
+  color: #E8D9BB;
+  overflow: hidden;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* TOP BAR */
+.exhibitions-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 28px 32px;
+}
+
+.exhibitions-link {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #E8D9BB;
+  text-decoration: none;
+  opacity: 0.6;
+  transition: opacity 0.3s;
+  display: inline-block;
+}
+
+.exhibitions-link:hover {
+  opacity: 1;
+}
+
+/* HEADER CONTEXT */
+.exhibitions-header {
+  position: fixed;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  text-align: center;
+  max-width: 580px;
+  padding: 0 30px;
+}
+
+.header-title {
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  font-weight: 300;
+  margin: 0 0 10px 0;
+  opacity: 0.8;
+  color: #FFB000;
+}
+
+.header-divider {
+  width: 50px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 176, 0, 0.5), transparent);
+  margin: 0 auto 12px auto;
+}
+
+.header-subtitle {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 18px;
+  font-weight: 300;
+  margin: 0 0 10px 0;
+  opacity: 0.7;
+  line-height: 1.3;
+}
+
+.header-description {
+  font-size: 10px;
+  line-height: 1.6;
+  opacity: 0.4;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+/* DOORS CONTAINER */
+.doors-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1vw;
+  padding-top: 40px;
+  overflow: hidden;
+}
+
+/* DOOR */
+.door {
+  position: relative;
+  height: 75vh;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* LEFT DOOR - Jungle (closed with light filtering) */
+.door-left {
+  width: 25vw;
+  opacity: 0.75;
+  filter: brightness(0.7);
+}
+
+.door-left:hover {
+  opacity: 0.85;
+  filter: brightness(0.85);
+}
+
+/* CENTER DOOR - Galaxy (protagonist) */
+.door-center {
+  width: 45vw;
+  opacity: 1;
+  filter: brightness(1.1);
+  z-index: 10;
+}
+
+.door-center:hover {
+  filter: brightness(1.15);
+}
+
+/* RIGHT DOOR - City (closed with light filtering) */
+.door-right {
+  width: 25vw;
+  opacity: 0.75;
+  filter: brightness(0.7);
+}
+
+.door-right:hover {
+  opacity: 0.85;
+  filter: brightness(0.85);
+}
+
+/* DOOR BADGE */
+.door-badge {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border: 1px solid;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  z-index: 5;
+  opacity: 0.8;
+}
+
+.door-active .door-badge {
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes breathe {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+/* DOOR FRAME */
+.door-frame {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(232, 217, 187, 0.03) 0%, rgba(232, 217, 187, 0.01) 100%);
+  border: 1px solid rgba(232, 217, 187, 0.15);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.6s ease;
+}
+
+.door-active .door-frame {
+  background: radial-gradient(ellipse at center, rgba(255, 176, 0, 0.08) 0%, rgba(255, 176, 0, 0.03) 40%, transparent 70%);
+  border: none;
+  box-shadow: none;
+}
+
+.door-inactive .door-frame {
+  border-color: rgba(232, 217, 187, 0.08);
+}
+
+/* Jungle door - light filtering through */
+.door-left .door-frame {
+  background: rgba(57, 255, 20, 0.03);
+}
+
+/* City door - light filtering through */
+.door-right .door-frame {
+  background: rgba(61, 74, 107, 0.04);
+}
+
+/* DOOR GLOW */
+.door-glow {
+  position: absolute;
+  inset: -150px;
+  pointer-events: none;
+  opacity: 0.7;
+  animation: glow-pulse 4s ease-in-out infinite;
+  border-radius: 50%;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.9; }
+}
+
+/* ARTIFACTS */
+.door-artifact {
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 20px currentColor);
+}
+
+/* Jungle and City artifacts - visible but secondary */
+.door-left .door-artifact,
+.door-right .door-artifact {
+  opacity: 1;
+}
+
+/* Galaxy Artifact - Same scale as Galaxy page */
+.artifact-galaxy {
+  position: relative;
+  width: 210px;
+  height: 210px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.galaxy-core {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #FFB000, #000);
+  box-shadow:
+    0 0 60px rgba(255, 176, 0, 1),
+    0 0 120px rgba(255, 176, 0, 0.6),
+    0 0 180px rgba(255, 176, 0, 0.3),
+    inset 0 0 30px rgba(255, 176, 0, 0.4);
+  animation: float 6s ease-in-out infinite;
+  position: relative;
+  z-index: 2;
+}
+
+.galaxy-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 2px solid rgba(255, 176, 0, 0.6);
+  border-radius: 50%;
+  transform-origin: center;
+}
+
+.galaxy-ring-1 {
+  width: 180px;
+  height: 45px;
+  transform: translate(-50%, -50%) rotateX(75deg);
+  animation: ring-spin 12s linear infinite;
+  box-shadow: 0 0 20px rgba(255, 176, 0, 0.5);
+}
+
+.galaxy-ring-2 {
+  width: 130px;
+  height: 32px;
+  transform: translate(-50%, -50%) rotateX(75deg);
+  animation: ring-spin 8s linear infinite reverse;
+  border-width: 1.5px;
+  opacity: 0.6;
+}
+
+@keyframes ring-spin {
+  from { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(0deg); }
+  to { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(360deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* Jungle Artifact */
+.artifact-jungle {
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(ellipse at 40% 35%, rgba(57, 255, 20, 0.3), rgba(57, 255, 20, 0.05));
+  border: 2px solid rgba(57, 255, 20, 0.4);
+  clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
+  box-shadow: 0 0 40px rgba(57, 255, 20, 0.3);
+  animation: float 5s ease-in-out infinite, rotate 25s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* City Artifact */
+.artifact-city {
+  position: relative;
+  width: 100px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.city-tower {
+  width: 60px;
+  height: 120px;
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(0, 217, 255, 0.05));
+  border: 2px solid rgba(0, 217, 255, 0.4);
+  border-radius: 4px;
+  box-shadow:
+    0 0 40px rgba(0, 217, 255, 0.3),
+    inset 0 0 30px rgba(0, 217, 255, 0.1);
+  position: relative;
+  animation: float 7s ease-in-out infinite;
+}
+
+.city-tower::before {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 25%;
+  right: 25%;
+  height: 2px;
+  background: rgba(0, 217, 255, 0.4);
+  box-shadow:
+    0 15px 0 rgba(0, 217, 255, 0.3),
+    0 30px 0 rgba(0, 217, 255, 0.2),
+    0 45px 0 rgba(0, 217, 255, 0.2);
+}
+
+/* TEXT */
+.door-text {
+  text-align: center;
+  max-width: 90%;
+  padding: 0 20px;
+}
+
+.door-status {
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  opacity: 0.7;
+}
+
+.door-active .door-status {
+  opacity: 1;
+  animation: pulse-text 2s ease-in-out infinite;
+}
+
+@keyframes pulse-text {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.door-name {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 32px;
+  font-weight: 300;
+  margin: 0 0 8px 0;
+  line-height: 1;
+  transition: all 0.4s ease;
+}
+
+.door-hovered .door-name {
+  transform: scale(1.03);
+}
+
+.door-subtitle {
+  font-size: 10px;
+  opacity: 0.5;
+  margin: 0 0 12px 0;
+  letter-spacing: 0.03em;
+}
+
+.door-active .door-subtitle {
+  opacity: 0.7;
+}
+
+.door-cta {
+  font-size: 8px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-top: 12px;
+  animation: pulse-cta 2s ease-in-out infinite;
+}
+
+@keyframes pulse-cta {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* CENTER TITLE */
+.center-title {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  z-index: 5;
+  opacity: 0.3;
+}
+
+.title-line {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(232, 217, 187, 0.3), transparent);
+}
+
+.title-text {
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  font-weight: 300;
+  margin: 0;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .exhibitions-header {
+    top: 70px;
+    max-width: 90%;
+    padding: 0 20px;
+  }
+
+  .header-title {
+    font-size: 10px;
+    margin-bottom: 8px;
+  }
+
+  .header-subtitle {
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+
+  .header-description {
+    font-size: 8px;
+  }
+
+  .header-divider {
+    width: 40px;
+    margin: 0 auto 10px auto;
+  }
+
+  .doors-container {
+    flex-direction: row;
+    gap: 0;
+    padding: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .door {
+    min-width: 100vw !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    transform: none !important;
+  }
+
+  .door-left,
+  .door-right {
+    opacity: 1 !important;
+    filter: none !important;
+  }
+
+  .door-center {
+    opacity: 1 !important;
+    filter: none !important;
+  }
+
+  .door-frame {
+    padding: 40px 24px;
+  }
+
+  .door-badge {
+    top: 90px;
+    font-size: 7px;
+  }
+
+  .door-name {
+    font-size: 36px;
+  }
+
+  .door-status {
+    font-size: 8px;
+    margin-bottom: 10px;
+  }
+
+  .door-subtitle {
+    font-size: 11px;
+    margin-bottom: 16px;
+  }
+
+  .door-cta {
+    font-size: 8px;
+    margin-top: 14px;
+  }
+
+  .door-artifact {
+    margin-bottom: 30px;
+  }
+
+  .artifact-galaxy {
+    width: 200px;
+    height: 200px;
+  }
+
+  .galaxy-core {
+    width: 80px;
+    height: 80px;
+  }
+
+  .galaxy-ring-1 {
+    width: 170px;
+    height: 43px;
+  }
+
+  .galaxy-ring-2 {
+    width: 125px;
+    height: 31px;
+  }
+
+  .artifact-jungle {
+    width: 140px;
+    height: 140px;
+  }
+
+  .artifact-city {
+    width: 110px;
+    height: 150px;
+  }
+
+  .city-tower {
+    width: 65px;
+    height: 130px;
+  }
+
+  .center-title {
+    bottom: 30px;
+  }
+
+  .title-text {
+    font-size: 9px;
+  }
+
+  .title-line {
+    width: 50px;
+  }
+}

@@ -1,5 +1,5 @@
 import './globals.css'
-import CustomCursor from "./components/CustomCursor";
+import CustomCursor from "./components/interactive/CustomCursor";
 // import Preloader from "./components/Preloader"; // removed unused component
 import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/react";

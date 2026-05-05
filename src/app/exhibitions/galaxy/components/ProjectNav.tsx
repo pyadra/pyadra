@@ -55,7 +55,7 @@ export default function ProjectNav({ projectName, projectColor, links = [] }: Pr
         gainNodeRef.current = gain;
         setAudioInitialized(true);
       } catch (err) {
-        console.log("Audio init blocked");
+        // Audio initialization blocked by browser - expected behavior
       }
     };
 
