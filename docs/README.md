@@ -23,6 +23,7 @@
 - **[COMPONENTS.md](COMPONENTS.md)** - UI component library reference
 - **[ENVIRONMENT_VARIABLES.md](ENVIRONMENT_VARIABLES.md)** - All env vars explained
 - **[DEPLOYMENT.md](DEPLOYMENT.md)** - Production deployment guide
+- **[ROADMAP.md](ROADMAP.md)** ⚡ Future improvements & technical debt tracker
 
 ### User Experience Docs
 - **[HOME_EXPERIENCE.md](HOME_EXPERIENCE.md)** - Observer initiation system

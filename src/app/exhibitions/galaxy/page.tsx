@@ -9,6 +9,8 @@ const PROJECTS = [
   {
     id: "orbit",
     name: "Orbit 77",
+    price: "Free",
+    priceDetail: "Support via donations",
     desc: "A podcast created by people in Australia. Watch episodes, engage with the community, and support the second season.",
     status: "ACTIVE",
     color: "#39FF14",
@@ -19,6 +21,8 @@ const PROJECTS = [
   {
     id: "capsule",
     name: "EterniCapsule",
+    price: "$9 AUD",
+    priceDetail: "Per capsule",
     desc: "Leave a message for someone you couldn't tell before. Write what matters, set when it opens, and let them discover it in the future.",
     status: "ACTIVE",
     color: "#C4A882",
@@ -29,6 +33,8 @@ const PROJECTS = [
   {
     id: "figurines",
     name: "Figurines",
+    price: "$150-200 AUD",
+    priceDetail: "Physical figurine",
     desc: "Turn yourself into a physical figurine. Upload your photo, customize your avatar, and receive it as a tangible object.",
     status: "ACTIVE",
     color: "#DCA88F",
@@ -39,6 +45,8 @@ const PROJECTS = [
   {
     id: "ebok",
     name: "EBOK",
+    price: "TBD",
+    priceDetail: "Coming Q3 2026",
     desc: "Stories and reflections printed in physical books. Write something that will exist beyond screens.",
     status: "COMING SOON",
     color: "#8B7355",
@@ -116,6 +124,12 @@ export default function GalaxyExhibition() {
               <h2 className="galaxy-name" style={{ color: project.color }}>
                 {project.name}
               </h2>
+              <div className="galaxy-price">
+                <span className="price-amount">{project.price}</span>
+                {project.priceDetail && (
+                  <span className="price-detail"> • {project.priceDetail}</span>
+                )}
+              </div>
               <p className="galaxy-desc">{project.desc}</p>
               <div className="galaxy-cta">
                 {project.status === 'FORMING' ? '[ COMING SOON ]' : '[ CLICK TO ENTER ]'}
