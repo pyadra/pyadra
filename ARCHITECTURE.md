@@ -67,7 +67,7 @@ Pyadra is a monolithic Next.js application using the App Router architecture. Al
 
 ## Projects
 
-> **Note**: Pyadra currently has 4 active projects in the Galaxy exhibition: EterniCapsule, Orbit 77, Figurines, and Ebook.
+> **Note**: Pyadra has 4 projects in the Galaxy exhibition: EterniCapsule, Orbit 77, Figurines (all active), and EBOK (in development, target Q3 2026).
 
 ### EterniCapsule
 
@@ -165,21 +165,34 @@ Landing → Checkout → Webhook (Paid) → Forge (Upload) → Storage + DB (For
 
 ---
 
-### Ebook
+### EBOK
 
-**Purpose**: Book publication platform within Pyadra. Authors can publish their work as part of the Galaxy exhibition, creating permanent books that last.
+**Purpose**: Physical book publication platform. Users write stories/essays/reflections and have them printed as permanent physical books.
 
-**Status**: Early formation stage. Architecture and workflows to be defined.
+**Status**: Phase 1 project, in development. Target launch Q3 2026.
 
-**Planned Features:**
-- Author submission system
-- Editorial curation process
-- Digital + physical book formats
-- Permanent archival of published works
-- Author royalty distribution
+**Planned User Flow:**
+```
+1. User visits /exhibitions/galaxy/ebook (currently placeholder)
+2. User composes manuscript → /exhibitions/galaxy/ebook/compose
+3. User designs cover and selects format (A5/A6/pocket)
+4. User previews 3D book mockup
+5. User orders (quantity 1-50) → Stripe checkout
+6. Payment completes → Webhook updates DB
+7. Manuscript sent to printing partner
+8. Book shipped to customer (2-3 weeks)
+```
 
-**Future Implementation:**
-- TBD - Awaiting detailed product specification
+**Planned Implementation:**
+- **Frontend**: Rich text editor (TipTap), 3D book preview (Three.js), cover upload
+- **Backend**: `/api/ebook/checkout`, `/api/ebook/preview` (PDF generation)
+- **Database**: `ebook_orders` table (see schema section)
+- **Printing**: Partner integration (Australian printer, TBD)
+
+**Pricing (Draft):**
+- A5 (up to 100 pages): $35 AUD
+- A6 (up to 80 pages): $25 AUD
+- Pocket (up to 60 pages): $20 AUD
 
 ---
 
@@ -498,6 +511,11 @@ External creators submit projects to Jungle and City exhibitions. Participants c
 5. Project generates revenue → Both B (90%) and A (10% + royalties) benefit
 6. If B sells to Participant C later → Creator A still receives royalties
 
+**Pyadra Revenue Model (TBD):**
+- **Acquisition transaction fee:** % of sale price when project ownership transfers
+- **Ecosystem retention fee:** Potential ongoing % (e.g., 5% of monthly revenue) if project remains in Pyadra infrastructure
+- **Details:** To be finalized before Phase 2 launch - fee structure, percentages, and payment frequency are under strategic review
+
 **Required additions:**
 - **Creator API** - External projects can integrate
 - **Project Marketplace** - Acquire full projects or fractional stakes
@@ -528,6 +546,16 @@ CREATE TABLE project_stakes (
   percentage DECIMAL,
   acquired_at TIMESTAMP
 );
+
+CREATE TABLE pyadra_fees (
+  id UUID PRIMARY KEY,
+  project_id UUID REFERENCES ecosystem_projects(id),
+  fee_type TEXT, -- 'acquisition' | 'retention' | 'transaction'
+  percentage DECIMAL,
+  amount_collected INTEGER, -- in cents
+  collected_at TIMESTAMP,
+  metadata JSONB -- Transaction details, payment info
+);
 ```
 
 ---
@@ -550,4 +578,4 @@ CREATE TABLE project_stakes (
 
 ---
 
-**Last Updated**: April 2026
+**Last Updated**: May 2026

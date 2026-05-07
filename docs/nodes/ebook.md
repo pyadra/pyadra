@@ -1,8 +1,26 @@
 # EBOK - Physical Book Publication Node
 
-**Status**: 🚧 In Development (Q3 2026)  
-**Exhibition**: Galaxy  
-**URL**: `/exhibitions/galaxy/ebook`
+**Status**: 🚧 In Development (Target Q3 2026)  
+**Exhibition**: Galaxy (Phase 1)  
+**URL**: `/exhibitions/galaxy/ebook` (placeholder page currently live)
+
+---
+
+## ⚠️ CURRENT IMPLEMENTATION STATUS
+
+**EBOK is part of Phase 1 (Galaxy exhibition) but not yet fully implemented:**
+
+- ✅ Appears in Galaxy exhibition grid (status: "COMING SOON")
+- ✅ Placeholder page exists at `/exhibitions/galaxy/ebook`
+- ❌ No compose/checkout flow yet
+- ❌ No API routes at `/api/ebook/*`
+- ❌ No database tables for ebook orders
+- ❌ No Stripe integration for EBOK
+- ❌ No printing partner integration
+
+**Target completion**: Q3 2026 (October-December)
+
+**For AI Agents**: EBOK is a Phase 1 project actively being developed. Refer to this specification when implementing EBOK features. All technical details below are the planned implementation.
 
 ---
 

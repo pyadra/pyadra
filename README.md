@@ -22,10 +22,13 @@ Time-locked digital message vaults. Write a letter, seal it cryptographically, a
 - 3D monolith visualization
 - Email delivery with audio crystallization (432Hz)
 
-## 🌱 Forming Projects
+### [Figurines](https://pyadra.io/exhibitions/galaxy/figurines)
+Physical 3D-printed figurines from your photos. Upload three angles (front, left, right), commission your figurine ($150-200 AUD), and receive a tangible physical artifact. Hand-painted with optional magnetic QR signal linking back to your Pyadra archive.
 
-- **Figurines** — Hand-painted 3D physical figurines from selfies ($175 AUD)
-- **Ebook** — Book publication within the Pyadra ecosystem
+## 🚧 In Development
+
+### [EBOK](https://pyadra.io/exhibitions/galaxy/ebook)
+Physical book publication platform. Write your stories, essays, or reflections and have them printed as permanent books. Target launch: Q3 2026.
 
 ## 🛠 Tech Stack
 

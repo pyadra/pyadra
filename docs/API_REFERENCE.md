@@ -14,6 +14,7 @@ Complete reference for all Pyadra API endpoints.
 ## 📋 Table of Contents
 
 - [Observer System](#observer-system)
+- [Home System](#home-system)
 - [EterniCapsule](#eternicapsule)
 - [Orbit 77](#orbit-77)
 - [Figurines](#figurines)
@@ -370,8 +371,10 @@ GET /api/stats
 
 ---
 
+## 🏠 Home System
+
 ### POST /api/home/complete
-**Purpose**: Record home game completion stats  
+**Purpose**: Record home page signal game completion statistics  
 **Authentication**: None required
 
 **Request**:
@@ -380,19 +383,54 @@ POST /api/home/complete
 Content-Type: application/json
 
 {
-  "observer_id": "1234",
-  "time_elapsed": 45.2,
-  "pulses_sent": 12,
-  "decode_attempts": 3
+  "observer_id": 1234,        // Observer number
+  "time_elapsed": 45.2,       // Seconds to complete
+  "pulses_sent": 12,          // Number of pulses sent
+  "signals_found": 6          // Signals discovered (should be 6)
 }
 ```
 
 **Response**:
 ```typescript
 {
-  "success": true
+  "success": true,
+  "signature": "#0001-0045-12-060526-143022"  // Unique completion signature
 }
 ```
+
+**Error Responses**:
+```typescript
+// Database error
+{
+  "error": "Failed to record completion",
+  "status": 500
+}
+```
+
+**Usage**: Called when user completes the home page signal detection game. Records completion stats for analytics.
+
+---
+
+### GET /api/home/stats
+**Purpose**: Get global home page completion statistics  
+**Authentication**: None required
+
+**Request**:
+```typescript
+GET /api/home/stats
+```
+
+**Response**:
+```typescript
+{
+  "total_observers": 1234,
+  "completions_today": 42,
+  "pulses_today": 5678,
+  "avg_completion_time": 38.5  // seconds
+}
+```
+
+**Usage**: Displayed on home page after completion ("47 observers registered", "1,234 pulses sent today")
 
 ---
 

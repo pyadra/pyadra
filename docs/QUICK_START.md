@@ -29,7 +29,7 @@ Follow this sequence to understand Pyadra from philosophy → architecture → i
 **Purpose**: Technical implementation details
 
 **Read this to learn**:
-- Tech stack (Next.js 14, React 19, TypeScript, Supabase, Stripe)
+- Tech stack (Next.js 16, React 19, TypeScript, Supabase, Stripe)
 - Directory structure (`/src/app/exhibitions/galaxy/[project]`)
 - Database schema overview
 - API routes organization

@@ -40,10 +40,10 @@ const PROJECTS = [
     id: "ebok",
     name: "EBOK",
     desc: "Stories and reflections printed in physical books. Write something that will exist beyond screens.",
-    status: "FORMING",
+    status: "COMING SOON",
     color: "#8B7355",
-    href: "#",
-    badge: "FORMING",
+    href: "/exhibitions/galaxy/ebook",
+    badge: "COMING SOON",
     priority: 4
   }
 ];
