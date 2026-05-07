@@ -201,21 +201,22 @@ Then a single button appears: **"▸ DISCOVER ◂"**
 **3. Exhibitions Hall: Exhibitions Page (`/exhibitions`)**
 
 When you click "DISCOVER", you see three exhibitions:
-- **Galaxy** - Active Now (3 nodes)
-- **Jungle** - Opening 2026 (locked)
-- **City** - Opening 2027 (locked)
+- **Galaxy** - Active Now (4 projects)
+- **Jungle** - Opening 2026/2027 (locked)
+- **City** - Opening 2027+ (locked)
 
-**4. Inside Galaxy: 3D Navigation (`/exhibitions/galaxy`)**
+**4. Inside Galaxy: Project Grid (`/exhibitions/galaxy`)**
 
-When you enter Galaxy, you see a 3D cosmic void. Your cursor becomes a spotlight that illuminates the darkness. As you move, floating nodes glow in space:
+When you enter Galaxy, you see a 2x2 grid displaying four projects. Each quadrant emanates light from its artifact in a cosmic void:
 
-- **EterniCapsule** - An amber capsule (time-locked messages)
-- **Orbit 77** - A fractured core (collective funding)
-- **Figurines** - Crystalline structures (project forging)
+- **Orbit 77** - Green glowing planet with orbital ring (podcast + funding)
+- **EterniCapsule** - Amber capsule floating in darkness (time-locked messages)
+- **Figurines** - Rotating crystalline hexagon (physical figurines)
+- **EBOK** - Book spine with pages (coming Q3 2026)
 
-Clicking any node triggers a cinematic zoom animation and takes you to that project.
+Clicking any quadrant navigates to that project's page.
 
-**4. Individual Projects**
+**5. Individual Projects**
 
 Each project is a complete experience:
 
@@ -232,10 +233,10 @@ Each project is a complete experience:
 - Supporters get credentials
 
 **Figurines (`/exhibitions/galaxy/figurines`):**
-- Upload 3 photos
-- AI generates personalized 3D figurine
-- Mint as digital project
-- Optional physical print
+- Upload 3 photos (front, left, right angles)
+- Commission 3D-printed physical figurine ($150-200 AUD)
+- Hand-painted, shipped worldwide
+- Optional magnetic QR signal linking to digital archive
 
 ### Navigation Structure
 
@@ -280,9 +281,9 @@ pyadra.io/
 ### What You Can Actually Do Today
 
 **As an Observer:**
-- ✅ Complete signal detection game
-- ✅ Get permanent signature
-- ✅ Explore 3D excavation scene
+- ✅ Complete signal detection game (find 6 hidden signals)
+- ✅ Get permanent observation signature
+- ✅ Navigate Galaxy project grid
 - ✅ Read manifesto/legal pages
 
 **In EterniCapsule:**
@@ -300,18 +301,19 @@ pyadra.io/
 - ✅ Get supporter credentials
 
 **In Figurines:**
-- ✅ Upload photos
-- ✅ Generate 3D figurine preview
-- 🚧 Minting (in progress)
-- 🚧 Physical printing (planned)
+- ✅ Upload 3 photos (front, left, right angles)
+- ✅ Commission figurine via Stripe checkout ($150-200 AUD)
+- ✅ 3D printing and hand-painting process
+- ✅ Worldwide shipping
+- 🚧 Digital QR signal integration (optional enhancement)
 
 ### What's NOT Built Yet
 
 - ❌ Observer profiles (view your history)
 - ❌ Signature verification page
 - ❌ Sound design (ambient drones)
-- ❌ MVP2 (Jungle expedition)
-- ❌ MVP3 (City expedition)
+- ❌ MVP2 (Jungle exhibition)
+- ❌ MVP3 (City exhibition)
 - ❌ Mobile apps
 - ❌ API for creators
 
@@ -531,7 +533,7 @@ Pyadra doesn't measure success in typical ways. Here's what matters:
 - Do people remember the experience?
 - Do they tell others organically?
 - Do they feel something (wonder, curiosity, permanence)?
-- Would they pay for another expedition?
+- Would they engage with another project?
 
 **If someone uses Pyadra and says "that was different" - we succeeded.**
 
@@ -624,7 +626,7 @@ Pyadra uses specific terminology intentionally. Here's what each term means:
 A: People who want digital experiences that feel permanent, intentional, beautiful. People tired of infinite scroll and engagement bait.
 
 **Q: How do you make money?**  
-A: EterniCapsule charges $9 AUD per sealed message. Future paid expeditions. Maybe premium Observer tiers. No ads, ever.
+A: Direct sales - EterniCapsule ($9 AUD per capsule), Figurines ($150-200 AUD), Orbit 77 supporter funding. Future projects in Jungle/City exhibitions. No ads, ever.
 
 **Q: Why "Observer" instead of "User"?**  
 A: Because you're not consuming a product. You're a builder - someone who creates, contributes, and helps others. What you build here becomes part of something that lasts. Language shapes experience.
@@ -636,7 +638,7 @@ A: No. It's an initiation. Everyone becomes an Observer the same way.
 A: Maybe, but the web experience is the primary platform. PWA might make sense.
 
 **Q: Why no crypto/blockchain?**  
-A: Not opposed philosophically, but it's not needed yet. If it makes sense for a future expedition, maybe.
+A: Phase 1 doesn't need it. Phase 3 (2028+) may introduce tokenization for ecosystem governance and project stakes. See Strategic Identity Evolution section.
 
 **Q: Can other people build on Pyadra?**  
 A: Eventually. Once the vision is proven, an API for creators makes sense.
@@ -660,5 +662,5 @@ It rejects the idea that everything online must be viral, fast, and optimized fo
 
 ---
 
-Last updated: April 6, 2026  
-Next review: When MVP1 launches publicly
+Last updated: May 7, 2026  
+Next review: Before Phase 2 planning (Q4 2026)
