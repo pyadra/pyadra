@@ -329,24 +329,6 @@
   line-height: 1.1;
 }
 
-.galaxy-price {
-  font-size: 11px;
-  font-family: 'JetBrains Mono', monospace;
-  margin: 0 0 12px 0;
-  opacity: 0.8;
-}
-
-.price-amount {
-  font-weight: 600;
-  letter-spacing: 0.05em;
-}
-
-.price-detail {
-  opacity: 0.6;
-  font-size: 9px;
-  font-weight: 400;
-}
-
 .galaxy-desc {
   font-size: 9px;
   line-height: 1.3;
