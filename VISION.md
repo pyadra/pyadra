@@ -53,9 +53,7 @@ Think of it as the opposite of "move fast and break things." Pyadra moves delibe
 
 ## The Exhibition Structure
 
-Imagine a space with three distinct rooms. Each room has different projects where you can build something meaningful, help others, and create work that lasts.
-
-**That's Pyadra's structure:**
+Pyadra is organized into **three exhibitions** - thematic spaces where projects live:
 
 ```
 ┌─────────────────────────────────────────────────┐
@@ -64,80 +62,44 @@ Imagine a space with three distinct rooms. Each room has different projects wher
 │  Home → Where you start (Become an Observer)    │
 │                                                  │
 │  ┌───────────────────────────────────────────┐  │
-│  │  EXHIBITION 1: Galaxy (MVP1)              │  │
-│  │  └─ EterniCapsule: Time-locked messages   │  │
-│  │  └─ Orbit 77: Collective funding          │  │
-│  │  └─ Figurines: Physical artifacts         │  │
-│  │  └─ EBOK: Book publication (Q3 2026)      │  │
+│  │  EXHIBITION 1: Galaxy (Active - 2026)     │  │
+│  │  Theme: Cosmic void, orbital mechanics     │  │
 │  └───────────────────────────────────────────┘  │
 │                                                  │
 │  ┌───────────────────────────────────────────┐  │
-│  │  EXHIBITION 2: Jungle (MVP2) [Future]     │  │
-│  │  └─ [Creator projects - organic growth]   │  │
+│  │  EXHIBITION 2: Jungle (Q4 2026/Q1 2027)   │  │
+│  │  Theme: Organic growth, wild emergence     │  │
 │  └───────────────────────────────────────────┘  │
 │                                                  │
 │  ┌───────────────────────────────────────────┐  │
-│  │  EXHIBITION 3: City (MVP3) [Future]       │  │
-│  │  └─ [Creator projects - urban systems]    │  │
+│  │  EXHIBITION 3: City (2027+)               │  │
+│  │  Theme: Urban systems, connections         │  │
 │  └───────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────┘
 ```
 
-**You are NOT building 3 separate projects.** You're building one place with three exhibitions where people can create things that last.
+**You are NOT building 3 separate apps.** You're building one home with three exhibitions where people create things that last.
 
----
-
-## The Three Exhibitions (MVPs)
-
-### MVP1: Galaxy (Current - April 2026)
-**Theme**: Cosmic navigation, orbital mechanics, nodes in the void
-
-**Projects:**
-- **Orbit 77** - Membership credentials for podcast supporters (community funding model)
-- **EterniCapsule** - Time-locked digital message vault ($9 AUD, cryptographic delivery)
-- **Figurines** - 3D physical figurine from your photos ($150-200 AUD, hand-painted, shipped worldwide)
-- **EBOK** - Physical book publication (in development, target Q3 2026)
-
-**Aesthetic**: Midnight void (`#02040A`), amber gold (`#FFB000`), floating objects, galactic dust, orbital mechanics
-
-**Why Galaxy?** Because projects orbit like celestial bodies - independent yet connected. Each node is a system you can explore, floating in the digital cosmos.
-
-### MVP2: Jungle (Future - 2026/2027)
-**Theme**: Growth, chaos, organic systems, untamed nature
-
-**Vision**: Experiences that feel alive, unpredictable, wild. Less control, more emergence.
-
-**Aesthetic**: Deep greens, bioluminescence, dense textures, humid atmosphere
-
-### MVP3: City (Future - 2027+)
-**Theme**: Connection, infrastructure, crowds, urban systems
-
-**Vision**: Multiplayer experiences, real-time collaboration, density of human interaction
-
-**Aesthetic**: Neon, concrete, steel, metropolitan energy
+*For detailed project descriptions, see "How Pyadra Actually Works" section below.*
 
 ---
 
 ## Design Philosophy
 
-### 1. You Are Not a "User" - You're an "Observer"
-
-From the moment you enter Pyadra, you're assigned an **Observer ID** (#0001, #0002, etc.). This isn't gamification - it's identity. You're part of an archive, a permanent record. Not a disposable account.
-
-### 2. Every Action Is a Ritual
+### 1. Every Action Is a Ritual
 
 **Bad**: Click "Submit Form" → Generic success message  
 **Pyadra**: Complete signal detection → Signature engraved → Archive remembers you
 
 Every interaction should feel **intentional**. Buttons aren't just buttons - they're seals, transmissions, engravings. Copy reflects this: "Seal the capsule" not "Submit", "Send pulse" not "Click here".
 
-### 3. Mystery Over Explanation
+### 2. Mystery Over Explanation
 
 Don't explain everything upfront. Let users discover. No giant hero section saying "Pyadra is a platform that helps you..." 
 
 Instead: "6 SIGNALS HIDDEN" and let them figure it out.
 
-### 4. Beauty as Standard
+### 3. Beauty as Standard
 
 If it's not beautiful, it doesn't ship. This isn't subjective - there are clear aesthetic rules:
 - Dark backgrounds (`#030304`, `#02040A`)
@@ -147,11 +109,11 @@ If it's not beautiful, it doesn't ship. This isn't subjective - there are clear 
 - Sans for readability (Inter, Geist Sans)
 - Animations are **organic** (breathing, floating) not mechanical (linear slides)
 
-### 5. Performance Is Part of Beauty
+### 4. Performance Is Part of Beauty
 
 A laggy, janky experience breaks the spell. 60fps minimum. Fast load times. Smooth animations. If it feels cheap, it is cheap.
 
-### 6. Permanence Over Virality
+### 5. Permanence Over Virality
 
 Pyadra doesn't care about going viral. It cares about **lasting**. A message sealed in EterniCapsule might not be opened for 5 years. That's the point.
 
@@ -385,7 +347,11 @@ Pyadra evolves through **three distinct phases**:
 
 ### Phase 1: Experiencia (Experience) — 2026 [IN PROGRESS]
 
-**What it is:** Users participate in experiences and purchase products within Galaxy exhibition. Pyadra operates as a **digital museum** - projects are permanent, ritualistic, and built to last.
+**Identity:** Digital Museum  
+**For whom:** Observers (individuals experiencing Pyadra)  
+**Philosophy:** "What you leave here matters" - permanence, intention, beauty
+
+**What it is:** Pyadra operates as a **digital museum** where projects are permanent, ritualistic, and built to last. Observers participate in experiences and purchase products within Galaxy exhibition.
 
 **Current status (May 2026):**
 - ✅ Live in production at pyadra.io
@@ -399,9 +365,7 @@ Pyadra evolves through **three distinct phases**:
 - Figurines (physical figurines from photos)
 - EBOK (physical book publication) - In development, target Q3 2026
 
-**Revenue model:** Direct sales ($9 AUD capsules, $175 AUD figurines, donations to Orbit)
-
-**Current focus:** Design refinement + UX optimization. Performance, polish, first user feedback loop.
+**Business model:** Direct product sales (capsules, figurines, donations) - *See FAQ for pricing*
 
 **Q2-Q4 2026 priorities:**
 - Optimize home page animations (60fps target)
@@ -409,32 +373,32 @@ Pyadra evolves through **three distinct phases**:
 - Build initial Observer community (target: 500 observers)
 - Validate product-market fit for each project
 
+**Goal:** Prove we can build beautiful, permanent digital experiences people pay for.
+
 ---
 
 ### Phase 2: Ecosistema (Ecosystem) — 2027
 
-**What it is:** External creators bring their own projects to Pyadra. Pyadra shifts from **museum** to **marketplace** - projects become acquirable digital assets. Anyone can acquire a complete project or a percentage stake. The original creator retains perpetual participation and royalties.
+**Identity:** Emotional Marketplace  
+**For whom:** Creators (building projects) + Participants (acquiring projects)  
+**Philosophy:** "Projects as acquirable digital assets" - ownership, investment, stakes
 
-**Identity shift:**
-- Phase 1: Observers experience permanent projects (museum model)
-- Phase 2: Participants can acquire projects (marketplace model)
-- These models coexist: some projects remain permanent exhibitions, others become acquirable
+**What it is:** Pyadra shifts from **museum** to **marketplace**. External creators submit projects. Participants can acquire complete projects (100%) or percentage stakes (90%, 70%, 40%). Original creators retain perpetual royalties regardless of ownership changes.
 
-**How it works:**
-- Creators submit projects to be included in Jungle or City exhibitions
-- Pyadra curates which projects fit the ceremonial philosophy
-- **Project acquisition model**: Anyone can purchase a project completely (100%) or acquire a percentage stake (e.g., 90%, 70%, 40%)
-- **Creator royalties**: The original creator always retains a minimum participation percentage and receives perpetual royalties from all future project revenue, regardless of ownership changes
-- **Pyadra retention**: TBD - Potential ongoing fee structure for projects operating within ecosystem (to be defined before Phase 2 launch)
-- Participants become stakeholders in the ecosystem
+**How acquisition works:**
+1. Creators submit projects to Jungle/City exhibitions
+2. Pyadra curates for ceremonial quality
+3. Participants acquire ownership stakes
+4. Original creator retains minimum % + perpetual royalties
+5. Project can be resold, creator still receives royalties
 
-**Example:** Creator A submits a project. Participant B acquires 90% of it. Creator A retains 10% ownership + receives ongoing royalties from revenue B generates. If B later sells their 90% to Participant C, Creator A still receives royalties.
+**Example:** Creator A submits project → Participant B acquires 90% → Creator A keeps 10% + gets royalties from B's revenue → B sells 90% to C → Creator A still receives royalties.
 
 **New exhibitions:**
 - **Jungle** (organic growth, collaborative chaos) - Target: Q4 2026 or Q1 2027
 - **City** (urban experiences, synchronized experiences) - Target: 2027-2028
 
-**Revenue model:** Platform fees on project acquisitions + transaction royalties + potential ecosystem retention fee (structure TBD)
+**Business model:** Acquisition fees + transaction royalties + potential ecosystem retention fee (TBD)
 
 **Technical requirements:**
 - Creator onboarding system
@@ -442,20 +406,26 @@ Pyadra evolves through **three distinct phases**:
 - Royalty distribution infrastructure
 - Multi-creator governance tools
 
+**Goal:** Can external creators build within our standards? Can projects be valuable enough to acquire?
+
 ---
 
 ### Phase 3: Economía (Economy) — 2028+
 
-**What it is:** Pyadra launches its own blockchain token, enabling participants to acquire stakes in ecosystem projects. Pyadra Credits serve as an internal bridge currency before full tokenization.
+**Identity:** Creative Economy  
+**For whom:** Token holders (governance participants)  
+**Philosophy:** Decentralized creative economy with Pyadra as infrastructure
+
+**What it is:** Pyadra launches blockchain tokenization. Participants acquire ecosystem stakes via tokens. Pyadra Credits serve as internal bridge currency before full tokenization.
 
 **How it works:**
 - **Pyadra Credits** (internal) — Earned through participation, spent on projects
-- **Pyadra Token** (blockchain) — Tradeable stake in the entire ecosystem
-- Token holders can vote on exhibition curation
+- **Pyadra Token** (blockchain) — Tradeable stake in entire ecosystem
+- Token holders vote on exhibition curation
 - Staking rewards for long-term participants
-- Creators can launch projects with token-based funding
+- Creators launch projects with token-based funding
 
-**Revenue model:** Token appreciation + transaction fees + creator launchpad fees
+**Business model:** Token appreciation + transaction fees + creator launchpad fees
 
 **Technical requirements:**
 - Smart contract infrastructure
@@ -463,6 +433,8 @@ Pyadra evolves through **three distinct phases**:
 - Wallet integration
 - Governance voting system
 - Credits → Token bridge
+
+**Goal:** Can the ecosystem sustain itself without Pyadra as central authority?
 
 ---
 
@@ -472,51 +444,18 @@ Pyadra evolves through **three distinct phases**:
 **2027:** Open to external creators. Launch Jungle exhibition. Begin City planning.  
 **2028+:** Full tokenization. Pyadra becomes a self-sustaining creative economy.
 
----
-
-## Strategic Identity Evolution
-
-**Important:** Pyadra's identity evolves across phases. This is intentional, not a pivot.
-
-### Phase 1 Identity: Digital Museum
-- **For whom:** Observers (individuals experiencing Pyadra)
-- **What they do:** Participate in permanent, ritualistic experiences
-- **Business model:** Direct product sales (capsules, figurines, donations)
-- **Philosophy:** "What you leave here matters" - permanence, intention, beauty
-- **Projects:** Built and maintained by Pyadra, curated for quality
-
-### Phase 2 Identity: Emotional Marketplace
-- **For whom:** Creators (building projects) + Participants (acquiring projects)
-- **What they do:** Submit, acquire, license, or co-own projects
-- **Business model:** Acquisition fees, royalties, potential ecosystem retention (TBD)
-- **Philosophy:** "Projects as acquirable digital assets" - ownership, investment, stakes
-- **Projects:** Submitted by external creators, curated by Pyadra, acquirable by participants
-
-### Phase 3 Identity: Creative Economy
-- **For whom:** Token holders (governance participants)
-- **What they do:** Vote on curation, stake tokens, fund projects, trade stakes
-- **Business model:** Token appreciation, transaction fees, staking rewards
-- **Philosophy:** Decentralized creative economy with Pyadra as infrastructure
-- **Projects:** Community-governed, token-backed, self-sustaining
-
-### Why This Evolution Makes Sense
-
-**Phase 1 proves the concept**: Can we build beautiful, permanent digital experiences people pay for?
-
-**Phase 2 scales the model**: Can external creators build within our standards? Can projects be valuable enough to acquire?
-
-**Phase 3 decentralizes control**: Can the ecosystem sustain itself without Pyadra as central authority?
-
 ### Open Strategic Questions (As of May 2026)
 
-These Phase 2/3 concepts are **experimental and subject to change**:
+**Important:** Pyadra's identity evolves across phases - this is intentional, not a pivot. The three models (Museum → Marketplace → Economy) coexist and complement each other.
+
+Phase 2/3 concepts are **experimental and subject to change**:
 - Should ALL projects be acquirable, or only certain ones?
 - Should Pyadra take ongoing fees (e.g., 5% of revenue) or only acquisition transaction fees?
 - Should projects remain in Pyadra ecosystem after acquisition, or be fully extractable?
 - Should ownership be fractional (70%, 40%, etc.) or complete transfer only?
 - Should blockchain/tokens be core to Phase 3 or optional infrastructure?
 
-**Current thinking:** Still exploring. See latest strategic discussions for evolving answers.
+**Current thinking:** Still exploring. See ROADMAP.md and changelog for evolving answers.
 
 ---
 
@@ -638,7 +577,7 @@ A: No. It's an initiation. Everyone becomes an Observer the same way.
 A: Maybe, but the web experience is the primary platform. PWA might make sense.
 
 **Q: Why no crypto/blockchain?**  
-A: Phase 1 doesn't need it. Phase 3 (2028+) may introduce tokenization for ecosystem governance and project stakes. See Strategic Identity Evolution section.
+A: Phase 1 doesn't need it. Phase 3 (2028+) may introduce tokenization for ecosystem governance and project stakes. See "Where We're Going" section.
 
 **Q: Can other people build on Pyadra?**  
 A: Eventually. Once the vision is proven, an API for creators makes sense.
