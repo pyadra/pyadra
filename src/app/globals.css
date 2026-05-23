@@ -10,8 +10,24 @@
 }
 
 :root {
-  --background: #030303; /* Casi negro tinta */
+  --background: #EDEFED; /* Beige claro Pyadra */
   --foreground: #F3F3F3; /* Blanco roto */
+
+  /* Pyadra Global Design Tokens (Emerald + Natural Beige) */
+  /* Backgrounds */
+  --pyadra-bg: #EDEFED;              /* Beige claro principal */
+  --pyadra-bg-2: #E8EBE8;            /* Beige más claro */
+  --pyadra-bg-dark: #0A120E;         /* Oscuro para Galaxy scene */
+
+  /* Emerald Palette */
+  --pyadra-emerald: #059669;         /* Esmeralda principal */
+  --pyadra-emerald-l: #10B981;       /* Esmeralda claro */
+  --pyadra-emerald-d: #047857;       /* Esmeralda oscuro */
+
+  /* Text Colors */
+  --pyadra-text: #1A1C1A;            /* Texto principal */
+  --pyadra-text-2: #3A4A3E;          /* Texto secundario */
+  --pyadra-text-3: #6B8070;          /* Texto terciario */
 
   /* EterniCapsule Design Tokens - Café + Oro Viejo (Abril 2026) */
 

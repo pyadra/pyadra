@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { useState, useRef, useEffect, useCallback } from "react";
 
 type Phase = "IDLE" | "AWAKENING" | "CARVING" | "DECLARATION_1" | "DECLARATION_2" | "DECLARATION_3" | "THRESHOLD";
@@ -19,24 +19,28 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
   
   const HOLD_DURATION = 3000; // 3 seconds
   
-  // Parallax tracking for "fake 3D"
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+  // Parallax tracking with High Mass Springs (Ceremonial Weight)
+  const rawMouseX = useMotionValue(0);
+  const rawMouseY = useMotionValue(0);
+  const springConfig = { damping: 40, stiffness: 60, mass: 2 }; // Heavy, viscous feel
+  const mouseX = useSpring(rawMouseX, springConfig);
+  const mouseY = useSpring(rawMouseY, springConfig);
+
   const rotateX = useTransform(mouseY, [-0.5, 0.5], [15, -15]);
   const rotateY = useTransform(mouseX, [-0.5, 0.5], [-15, 15]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (phase !== "IDLE") return; // Solo parallax cuando está en IDLE
+    if (phase !== "IDLE") return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
-    mouseX.set(x);
-    mouseY.set(y);
+    rawMouseX.set(x);
+    rawMouseY.set(y);
   };
 
   const handleMouseLeave = () => {
-    mouseX.set(0);
-    mouseY.set(0);
+    rawMouseX.set(0);
+    rawMouseY.set(0);
   };
   
   // Haptic feedback helper
@@ -48,7 +52,6 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
     }
   }, []);
 
-  // Sintetizador de audio para el impacto y quiebre (Cero dependencias)
   const playCarvingSound = useCallback(() => {
     if (typeof window === "undefined") return;
     const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
@@ -68,8 +71,8 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
     osc.start();
     osc.stop(ctx.currentTime + 1);
 
-    // Sonido de "Crackle" (Piedra rompiéndose)
-    const bufferSize = ctx.sampleRate * 0.5; // 0.5 segundos
+    // Sonido de "Crackle"
+    const bufferSize = ctx.sampleRate * 0.5;
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) {
@@ -97,8 +100,8 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
     startTimeRef.current = Date.now();
     triggerHaptic(50);
     
-    mouseX.set(0);
-    mouseY.set(0);
+    rawMouseX.set(0);
+    rawMouseY.set(0);
 
     const updateProgress = () => {
       const elapsed = Date.now() - startTimeRef.current;
@@ -132,7 +135,7 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
     if (holdTimerRef.current) clearTimeout(holdTimerRef.current);
     setPhase("CARVING");
     triggerHaptic([100, 50, 100, 50, 200]); 
-    playCarvingSound(); // <--- AUDIO AÑADIDO
+    playCarvingSound();
     
     onComplete({
       timeElapsed: 3,
@@ -157,21 +160,21 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
       }, 30);
     }
 
-    setTimeout(() => setPhase("DECLARATION_1"), 3500); // Dar más tiempo para ver el grabado
+    setTimeout(() => setPhase("DECLARATION_1"), 3500);
     setTimeout(() => setPhase("DECLARATION_2"), 7500);
     setTimeout(() => setPhase("DECLARATION_3"), 11500);
     setTimeout(() => setPhase("THRESHOLD"), 16500);
   };
 
-  // Ambient Particles Generator (Más grandes y brillantes)
+  // Ambient Particles Generator (Emerald)
   const [particles, setParticles] = useState<{ id: number; left: string; duration: number; delay: number; size: number }[]>([]);
   useEffect(() => {
     const generated = Array.from({ length: 35 }).map((_, i) => ({
       id: i,
       left: `${Math.random() * 100}%`,
-      duration: Math.random() * 10 + 10, // 10 to 20 seconds
+      duration: Math.random() * 10 + 10,
       delay: Math.random() * 5,
-      size: Math.random() * 3 + 2 // 2px to 5px
+      size: Math.random() * 3 + 2
     }));
     setParticles(generated);
   }, []);
@@ -187,17 +190,17 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden">
       
-      {/* 1. Atmospheric Dust (Perpetual Motion) */}
+      {/* 1. Atmospheric Dust (Emerald Particles) */}
       <div className="absolute inset-0 pointer-events-none">
         {particles.map((p) => (
           <motion.div
             key={p.id}
-            className="absolute bottom-[-10%] bg-[#FFB000] rounded-full"
+            className="absolute bottom-[-10%] bg-[#059669] rounded-full"
             initial={{ y: 0, opacity: 0, x: 0 }}
             animate={{
               y: "-110vh",
               opacity: [0, 0.4, 0.8, 0.4, 0],
-              x: [0, Math.random() * 100 - 50] // Drift horizontal
+              x: [0, Math.random() * 100 - 50]
             }}
             transition={{
               duration: p.duration,
@@ -209,7 +212,7 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
               left: p.left,
               width: `${p.size}px`,
               height: `${p.size}px`,
-              boxShadow: "0 0 12px rgba(255,176,0,0.8)"
+              boxShadow: "0 0 12px rgba(5,150,105,0.8)" // Emerald glow
             }}
           />
         ))}
@@ -220,18 +223,18 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
         className="absolute inset-0 pointer-events-none"
         animate={{
           background: phase === "THRESHOLD" 
-            ? "radial-gradient(ellipse 80% 100% at center, rgba(255,176,0,0.2) 0%, rgba(3,3,4,1) 100%)" 
+            ? "radial-gradient(ellipse 80% 100% at center, rgba(5,150,105,0.15) 0%, rgba(10,18,14,1) 100%)" // Abyssal Green bg
             : phase.startsWith("DECLARATION")
-            ? "radial-gradient(circle at center, rgba(255,176,0,0.1) 0%, rgba(3,3,4,1) 70%)" // Corregido: ya no es azul/pálido, mantiene la energía de la piedra
-            : `radial-gradient(circle at center, rgba(255,176,0,${glowIntensity * 0.15}) 0%, rgba(3,3,4,1) ${30 + holdProgress * 0.4}%)`,
-          opacity: phase !== "AWAKENING" ? [0.8, 1, 0.8] : 1 // El "Latido" cósmico
+            ? "radial-gradient(circle at center, rgba(5,150,105,0.1) 0%, rgba(10,18,14,1) 70%)"
+            : `radial-gradient(circle at center, rgba(5,150,105,${glowIntensity * 0.2}) 0%, rgba(10,18,14,1) ${30 + holdProgress * 0.4}%)`,
+          opacity: phase !== "AWAKENING" ? [0.8, 1, 0.8] : 1
         }}
         transition={{ 
           background: { duration: 2 },
           opacity: { duration: 6, repeat: Infinity, ease: "easeInOut" }
         }}
       >
-        {/* El Haz de luz vertical del Portal (Shimmering Threshold) */}
+        {/* El Haz de luz vertical del Portal (Emerald Shimmering Threshold) */}
         <AnimatePresence>
           {phase === "THRESHOLD" && (
             <motion.div
@@ -243,12 +246,12 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
               <motion.div 
                 animate={{ opacity: [0.6, 1, 0.6], scaleX: [0.9, 1.1, 0.9] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="w-[1px] md:w-[2px] h-full bg-gradient-to-b from-transparent via-[#FFB000] to-transparent shadow-[0_0_50px_#FFB000]" 
+                className="w-[1px] md:w-[2px] h-full bg-gradient-to-b from-transparent via-[#10B981] to-transparent shadow-[0_0_50px_#059669]" 
               />
               <motion.div 
                 animate={{ opacity: [0.15, 0.25, 0.15] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute top-0 bottom-0 w-32 md:w-64 bg-gradient-to-r from-transparent via-[#FFB000] to-transparent blur-2xl" 
+                className="absolute top-0 bottom-0 w-32 md:w-64 bg-gradient-to-r from-transparent via-[#059669] to-transparent blur-2xl" 
               />
             </motion.div>
           )}
@@ -264,7 +267,7 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
             transition={{ duration: 2, ease: "easeOut" }}
             className="absolute inset-0 z-50 pointer-events-none flex items-center justify-center"
           >
-            <div className="w-64 h-64 bg-[#FFB000] rounded-full blur-[100px]" />
+            <div className="w-64 h-64 bg-[#10B981] rounded-full blur-[100px]" />
           </motion.div>
         )}
       </AnimatePresence>
@@ -277,7 +280,7 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
         style={{ perspective: "1000px" }}
       >
         
-        {/* The Stone Visual */}
+        {/* The Stone Visual (Obsidian Monolith) */}
         <AnimatePresence mode="wait">
           {(!phase.startsWith("DECLARATION") && phase !== "THRESHOLD") && (
             <motion.div
@@ -292,8 +295,8 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
                 opacity: 1, 
                 scale: phase === "AWAKENING" ? 1 + (holdProgress / 100) * 0.1 : phase === "CARVING" ? 1.1 : 1,
                 rotateZ: phase === "AWAKENING" ? [0, -1, 1, -0.5, 0.5, 0] : 0,
-                y: phase === "IDLE" || phase === "CARVING" ? [-4, 4, -4] : 0, // Levitación magnética
-                filter: `drop-shadow(0 0 ${20 + holdProgress}px rgba(255,176,0,${phase === "CARVING" ? 0.8 : glowIntensity}))`
+                y: phase === "IDLE" || phase === "CARVING" ? [-4, 4, -4] : 0, 
+                filter: `drop-shadow(0 0 ${20 + holdProgress}px rgba(5,150,105,${phase === "CARVING" ? 0.8 : glowIntensity}))` // Emerald glow
               }}
               style={{
                 rotateX: phase === "IDLE" ? rotateX : 0,
@@ -302,31 +305,31 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
               }}
               transition={{ 
                 rotateZ: { repeat: phase === "AWAKENING" ? Infinity : 0, duration: 0.2 },
-                y: { repeat: phase !== "AWAKENING" ? Infinity : 0, duration: 4, ease: "easeInOut" },
+                y: { repeat: phase !== "AWAKENING" ? Infinity : 0, duration: 6, ease: "easeInOut" },
                 scale: { type: "spring", stiffness: 100, damping: 10 },
                 opacity: { duration: 1 }
               }}
-              exit={{ opacity: 0, scale: 1.5, filter: "blur(20px)" }} // Explota y desaparece AL ENTRAR a DECLARATION
+              exit={{ opacity: 0, scale: 1.5, filter: "blur(20px)" }} 
             >
-              {/* Stone shape */}
+              {/* Stone shape - Obsidian Black */}
               <div 
                 className="w-40 h-56 md:w-48 md:h-64 relative z-10"
                 style={{
-                  background: "linear-gradient(135deg, #0f1520 0%, #030408 50%, #010204 100%)",
+                  background: "linear-gradient(135deg, #0A120E 0%, #050A07 50%, #020403 100%)", // Abyssal to Obsidian
                   clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-                  boxShadow: "inset 0 0 40px rgba(255,176,0,0.1)",
-                  border: "1px solid rgba(255,255,255,0.05)"
+                  boxShadow: "inset 0 0 40px rgba(5,150,105,0.15)", // Internal Emerald reflection
+                  border: "1px solid rgba(16,185,129,0.1)" // Very subtle emerald border
                 }}
               >
                 <div 
                   className="absolute inset-0 opacity-30"
                   style={{
-                    background: "linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.1) 45%, transparent 50%)"
+                    background: "linear-gradient(45deg, transparent 40%, rgba(16,185,129,0.15) 45%, transparent 50%)" // Emerald light strike
                   }}
                 />
                 
                 <motion.div
-                  className="absolute inset-0 bg-[#FFB000]"
+                  className="absolute inset-0 bg-[#059669]" // Emerald inner glow
                   style={{
                     clipPath: "polygon(48% 20%, 52% 20%, 50% 80%, 45% 70%, 55% 40%)",
                   }}
@@ -337,7 +340,7 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
                 />
               </div>
 
-              {/* Laser Carving Effect FOR OBSERVER ID (AHORA DENTRO DE LA PIEDRA) */}
+              {/* Laser Carving Effect FOR OBSERVER ID */}
               <AnimatePresence>
                 {phase === "CARVING" && (
                   <motion.div
@@ -354,9 +357,9 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
                     <div 
                       className="text-lg md:text-xl font-mono tracking-[0.2em] font-bold text-center"
                       style={{
-                        // Efecto de grabado en piedra: color oscuro con sombras internas y luz sangrando
-                        color: "#030408",
-                        textShadow: "-1px -1px 1px rgba(255,176,0,0.3), 1px 1px 2px rgba(0,0,0,0.8), 0 0 15px rgba(255,176,0,0.6)"
+                        // Efecto de grabado: la luz verde quema la piedra negra
+                        color: "#050A07", // Texto color obsidiana (hueco)
+                        textShadow: "-1px -1px 2px rgba(16,185,129,0.6), 1px 1px 2px rgba(0,0,0,0.9), 0 0 25px rgba(5,150,105,0.9)" // Brillo esmeralda interno
                       }}
                     >
                       OBSERVER<br/>{displayId}
@@ -365,7 +368,7 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
                       initial={{ opacity: 0 }} 
                       animate={{ opacity: 1 }} 
                       transition={{ delay: 1 }}
-                      className="text-[7px] font-sans font-normal tracking-[0.3em] mt-3 text-[#FFB000]/60 uppercase text-center"
+                      className="text-[7px] font-sans font-normal tracking-[0.3em] mt-3 text-[#10B981]/80 uppercase text-center"
                     >
                       ENGRAVED
                     </motion.div>
@@ -379,7 +382,7 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
                     initial={{ opacity: 0 }}
                     animate={{ opacity: [0.3, 0.7, 0.3] }}
                     transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute -bottom-16 left-1/2 -translate-x-1/2 text-[9px] md:text-[10px] font-mono tracking-[0.3em] uppercase text-[#E3DAC9]/40 whitespace-nowrap"
+                    className="absolute -bottom-16 left-1/2 -translate-x-1/2 text-[9px] md:text-[10px] font-mono tracking-[0.3em] uppercase text-[#EDEFED]/50 whitespace-nowrap"
                   >
                     Hold to awaken
                   </motion.div>
@@ -396,7 +399,7 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
                     className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-white/10"
                   >
                     <motion.div 
-                      className="h-full bg-[#FFB000]"
+                      className="h-full bg-[#059669]" // Emerald progress
                       style={{ width: `${holdProgress}%` }}
                     />
                   </motion.div>
@@ -414,7 +417,6 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
               animate={{ opacity: 1 }}
               className="absolute inset-0 flex flex-col items-center justify-center z-30 pointer-events-none"
             >
-              {/* Minimal Explanation / The Declaration */}
               <div className="absolute inset-0 flex items-center justify-center px-6">
                 <AnimatePresence mode="wait">
                   {phase === "DECLARATION_1" && (
@@ -426,8 +428,8 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
                       transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
                       className="text-center"
                     >
-                      <h2 className="text-2xl md:text-4xl lg:text-5xl font-serif text-[#E3DAC9] italic tracking-wide max-w-3xl leading-tight">
-                        Everything you build online <br/><span className="text-[#FFB000]">is rented.</span>
+                      <h2 className="text-2xl md:text-4xl lg:text-5xl font-serif text-[#EDEFED] italic tracking-wide max-w-3xl leading-tight">
+                        Everything you build online <br/><span className="text-[#10B981]">is rented.</span>
                       </h2>
                     </motion.div>
                   )}
@@ -441,11 +443,11 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
                       transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
                       className="text-center space-y-6"
                     >
-                      <h2 className="text-xl md:text-3xl lg:text-4xl font-serif text-[#E3DAC9] tracking-wide max-w-2xl leading-snug">
+                      <h2 className="text-xl md:text-3xl lg:text-4xl font-serif text-[#EDEFED] tracking-wide max-w-2xl leading-snug">
                         Servers die. Accounts fade.<br/>
                         Memories are overwritten.
                       </h2>
-                      <div className="w-12 h-[1px] bg-[#FFB000]/50 mx-auto"></div>
+                      <div className="w-12 h-[1px] bg-[#059669]/50 mx-auto"></div>
                     </motion.div>
                   )}
 
@@ -460,11 +462,11 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
                       <h1 className="text-3xl md:text-5xl font-serif tracking-[0.2em] text-white mb-6">
                         PYADRA
                       </h1>
-                      <p className="text-[11px] md:text-[13px] font-sans tracking-widest text-[#E3DAC9]/70 leading-relaxed uppercase">
+                      <p className="text-[11px] md:text-[13px] font-sans tracking-widest text-[#EDEFED]/70 leading-relaxed uppercase">
                         The sanctuary for permanent digital artifacts.
                         <br className="hidden md:block"/> We immortalize your legacy.
                         <br/><br/>
-                        <span className="text-[#FFB000]">What you forge here, outlives you.</span>
+                        <span className="text-[#10B981]">What you forge here, outlives you.</span>
                       </p>
                     </motion.div>
                   )}
@@ -485,7 +487,7 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
             transition={{ duration: 2 }}
             className="absolute inset-0 flex flex-col items-center justify-center z-20 pointer-events-auto"
           >
-            {/* The Reborn Stone (Cosmic Mandala) */}
+            {/* The Reborn Stone (Emerald Mandala) */}
             <motion.div
               initial={{ scale: 0, opacity: 0, rotateZ: 0 }}
               animate={{ scale: [1.2, 1.3, 1.2], opacity: 0.15, rotateZ: 360 }}
@@ -499,14 +501,14 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
               <div 
                 className="w-64 h-96 md:w-[400px] md:h-[500px] relative"
                 style={{
-                  background: "linear-gradient(135deg, rgba(255,176,0,0.05) 0%, transparent 100%)",
+                  background: "linear-gradient(135deg, rgba(5,150,105,0.05) 0%, transparent 100%)",
                   clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-                  boxShadow: "inset 0 0 100px rgba(255,176,0,0.2)",
-                  border: "1px solid rgba(255,176,0,0.3)"
+                  boxShadow: "inset 0 0 100px rgba(5,150,105,0.15)",
+                  border: "1px solid rgba(16,185,129,0.2)"
                 }}
               >
                 <div 
-                  className="absolute inset-0 bg-[#FFB000]"
+                  className="absolute inset-0 bg-[#059669]"
                   style={{
                     clipPath: "polygon(48% 20%, 52% 20%, 50% 80%, 45% 70%, 55% 40%)",
                     opacity: 0.5,
@@ -516,23 +518,20 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
               </div>
             </motion.div>
 
-            {/* The Portal Light */}
+            {/* The Portal Light (Emerald) */}
             <motion.div
               initial={{ scaleX: 0, opacity: 0 }}
               animate={{ scaleX: 1, opacity: 0.8 }}
               transition={{ duration: 2, ease: "easeOut" }}
-              className="absolute top-0 bottom-0 w-[1px] md:w-[2px] bg-gradient-to-b from-transparent via-[#FFB000] to-transparent shadow-[0_0_50px_rgba(255,176,0,0.8)] z-10"
-              style={{
-                transformOrigin: "center"
-              }}
+              className="absolute top-0 bottom-0 w-[1px] md:w-[2px] bg-gradient-to-b from-transparent via-[#10B981] to-transparent shadow-[0_0_50px_rgba(5,150,105,0.8)] z-10"
+              style={{ transformOrigin: "center" }}
             />
             
-            {/* The Gateway expanding slightly */}
             <motion.div
               initial={{ width: 0, opacity: 0 }}
-              animate={{ width: "200px", opacity: 0.1 }}
+              animate={{ width: "200px", opacity: 0.15 }}
               transition={{ duration: 3, delay: 1, ease: "easeInOut" }}
-              className="absolute top-0 bottom-0 bg-gradient-to-r from-transparent via-[#FFB000] to-transparent blur-2xl"
+              className="absolute top-0 bottom-0 bg-gradient-to-r from-transparent via-[#059669] to-transparent blur-2xl"
             />
 
             {/* CTA Button */}
@@ -544,10 +543,10 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
             >
               <a
                 href="/exhibitions"
-                className="group relative overflow-hidden bg-black/40 backdrop-blur-xl border border-[#FFB000]/40 px-12 md:px-16 py-4 md:py-5 text-center transition-all duration-700 hover:bg-[#FFB000]/20 hover:border-[#FFB000]/80 hover:shadow-[0_0_40px_rgba(255,176,0,0.3)] rounded-sm flex items-center gap-4"
+                className="group relative overflow-hidden bg-black/40 backdrop-blur-xl border border-[#059669]/40 px-12 md:px-16 py-4 md:py-5 text-center transition-all duration-700 hover:bg-[#059669]/20 hover:border-[#10B981]/80 hover:shadow-[0_0_40px_rgba(5,150,105,0.3)] rounded-sm flex items-center gap-4"
               >
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,176,0,0.2)_0%,_transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                <span className="relative z-10 text-[#FFB000] group-hover:text-[#FFE5B4] text-[10px] md:text-[11px] font-mono tracking-[0.2em] uppercase transition-colors duration-500">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(5,150,105,0.2)_0%,_transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                <span className="relative z-10 text-[#10B981] group-hover:text-white text-[10px] md:text-[11px] font-mono tracking-[0.2em] uppercase transition-colors duration-500">
                   CROSS THE THRESHOLD
                 </span>
               </a>
@@ -564,7 +563,7 @@ export default function PyadraStone({ onComplete, observerId }: PyadraStoneProps
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 2 }}
-            className="absolute top-8 left-8 text-[9px] md:text-[10px] font-mono tracking-[0.2em] text-[#E3DAC9]/50 uppercase"
+            className="absolute top-8 left-8 text-[9px] md:text-[10px] font-mono tracking-[0.2em] text-[#EDEFED]/50 uppercase"
           >
             You have found the Archive.
           </motion.div>

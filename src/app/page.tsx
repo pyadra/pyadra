@@ -64,7 +64,7 @@ export default function PyAdraHome() {
   };
 
   return (
-    <div className="h-[100dvh] w-full bg-[#000000] text-[#E3DAC9] overflow-hidden font-sans select-none relative">
+    <div className="h-[100dvh] w-full bg-[var(--pyadra-bg-dark)] text-white overflow-hidden font-sans select-none relative">
 
       {/* Top Bar (Minimalist) */}
       <motion.div
@@ -73,17 +73,17 @@ export default function PyAdraHome() {
         transition={{ duration: 2, delay: 1 }}
         className="absolute top-0 left-0 right-0 z-50 flex justify-between items-center p-6 md:p-12 pointer-events-none"
       >
-        <div className="text-[9px] md:text-[10px] font-mono tracking-[0.4em] uppercase text-[#FFB000]/30 flex items-center gap-3">
-          <div className="w-1 h-1 bg-[#FFB000]/50 rounded-full"></div>
+        <div className="text-[9px] md:text-[10px] font-mono tracking-[0.4em] uppercase text-[var(--pyadra-emerald)]/30 flex items-center gap-3">
+          <div className="w-1 h-1 bg-[var(--pyadra-emerald)]/50 rounded-full"></div>
           {observerId ? `ID ${observerId}` : "..."}
         </div>
 
         <button
           onClick={toggleAudio}
-          className="pointer-events-auto text-[9px] md:text-[10px] font-mono tracking-[0.4em] uppercase transition-colors hover:text-[#FFB000] flex items-center gap-2 outline-none"
+          className="pointer-events-auto text-[9px] md:text-[10px] font-mono tracking-[0.4em] uppercase transition-colors hover:text-[var(--pyadra-emerald)] flex items-center gap-2 outline-none"
           aria-label={isMuted ? "Unmute audio" : "Mute audio"}
         >
-          <span className={isMuted ? "text-[#E3DAC9]/20" : "text-[#FFB000]/40"}>
+          <span className={isMuted ? "text-[var(--pyadra-text)]/20" : "text-[var(--pyadra-emerald)]/40"}>
             {isMuted ? "AUDIO MUTED" : "AUDIO ACTIVE"}
           </span>
         </button>
@@ -102,13 +102,13 @@ export default function PyAdraHome() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 2, delay: 2 }}
-        className="absolute bottom-6 md:bottom-8 left-0 right-0 flex flex-wrap items-center justify-center gap-4 md:gap-8 text-[8px] md:text-[9px] font-mono tracking-[0.3em] text-[#E3DAC9]/10 uppercase z-50 pointer-events-auto"
+        className="absolute bottom-6 md:bottom-8 left-0 right-0 flex flex-wrap items-center justify-center gap-4 md:gap-8 text-[8px] md:text-[9px] font-mono tracking-[0.3em] text-[var(--pyadra-text)]/10 uppercase z-50 pointer-events-auto"
       >
-        <a href="/manifesto" className="hover:text-[#FFB000]/50 transition-colors">Manifesto</a>
-        <span className="text-[#E3DAC9]/5">|</span>
-        <a href="/legal/terms" className="hover:text-[#FFB000]/50 transition-colors">Terms</a>
-        <span className="text-[#E3DAC9]/5">|</span>
-        <a href="/legal/privacy" className="hover:text-[#FFB000]/50 transition-colors">Privacy</a>
+        <a href="/manifesto" className="hover:text-[var(--pyadra-emerald)]/50 transition-colors">Manifesto</a>
+        <span className="text-[var(--pyadra-text)]/5">|</span>
+        <a href="/legal/terms" className="hover:text-[var(--pyadra-emerald)]/50 transition-colors">Terms</a>
+        <span className="text-[var(--pyadra-text)]/5">|</span>
+        <a href="/legal/privacy" className="hover:text-[var(--pyadra-emerald)]/50 transition-colors">Privacy</a>
       </motion.div>
 
     </div>
