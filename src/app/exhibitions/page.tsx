@@ -89,11 +89,11 @@ export default function ExhibitionsPage() {
 
   const doorVariants = {
     hidden: { opacity: 0, y: 100, scale: 0.95 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
+    visible: {
+      opacity: 1,
+      y: 0,
       scale: 1,
-      transition: { type: "spring", damping: 25, stiffness: 100 }
+      transition: { type: "spring" as const, damping: 25, stiffness: 100 }
     }
   };
 
