@@ -27,31 +27,31 @@ const PROJECTS = [
       { label: "Supporters", value: "12" }
     ],
     income_potential: {
-      value: "Active: Credentials ($10–50) + Merchandise",
-      description: "Potential: YouTube AdSense, Spotify, sponsorships, Season 2+ credentials"
+      value: "Revenue Today: Credentials ($10–50) + Merchandise",
+      description: "Future Potential: YouTube AdSense, Spotify, Sponsorships, Season 2+ Credentials"
     },
     effort: {
       title: "Active podcast production.",
       description: "Lives on Pyadra infrastructure."
     },
     assets_included: [
-      { name: "YouTube & Spotify", included: true, detail: "10 episodes published" },
-      { name: "Online Store", included: true, detail: "orbit77.shop active" },
-      { name: "Credential", included: true, detail: "Operational funding system" },
-      { name: "Brand Identity", included: true, detail: "Complete visual system" },
+      { name: "YouTube & Spotify", included: true, detail: "10 Episodes Published" },
+      { name: "Online Store", included: true, detail: "Orbit77.shop Active" },
+      { name: "Credential System", included: true, detail: "Operational Funding" },
+      { name: "Brand Identity", included: true, detail: "Complete Visual System" },
       { name: "Social Media", included: true, detail: "IG, TikTok" },
-      { name: "Original Songs", included: true, detail: "Pablo & Eduardo creation" },
-      { name: "Payment Integration", included: true, detail: "Stripe live mode" },
-      { name: "Technical Infrastructure", included: true, detail: "Domains, hosting, DB, Drive" }
+      { name: "Original Songs", included: true, detail: "Pablo & Eduardo Creation" },
+      { name: "Payment Integration", included: true, detail: "Stripe Live Mode" },
+      { name: "Technical Infrastructure", included: true, detail: "Domains, Hosting, DB, Drive" }
     ],
     next_steps: [
       "Produce Season 2 & 3",
-      "Grow social media (TikTok, IG, Shorts)",
-      "Monetize platforms (YouTube, Spotify, sponsors)",
-      "Grow merch sales (apparel, hats, accessories)",
-      "Open physical store & studio"
+      "Grow Social Media (TikTok, IG, Shorts)",
+      "Monetize Platforms (YouTube, Spotify, Sponsors)",
+      "Grow Merch Sales (Apparel, Hats, Accessories)",
+      "Open Physical Store & Studio"
     ],
-    sphereClass: "bg-[radial-gradient(circle_at_30%_30%,#6B8070,#1A1C1A,#0A120E)] shadow-[-10px_10px_20px_rgba(0,0,0,0.2)]",
+    sphereClass: "bg-[radial-gradient(circle_at_30%_30%,#FFFFFF,#E8E9E8,#C8C9C8)] shadow-[-10px_10px_20px_rgba(0,0,0,0.15)]",
     position: { top: "30%", left: "30%" },
   },
   {
@@ -72,29 +72,29 @@ const PROJECTS = [
       { label: "System status", value: "Operational" }
     ],
     income_potential: {
-      value: "Active: Capsule sealing ($9 AUD each)",
-      description: "Potential: Audio ($25), Video ($49), white-label licensing"
+      value: "Revenue Today: Capsule Sealing ($9 AUD Each)",
+      description: "Future Potential: Audio ($25), Video ($49), White-Label Licensing"
     },
     effort: {
       title: "Autonomous system.",
       description: "Lives on Pyadra infrastructure."
     },
     assets_included: [
-      { name: "Web Platform", included: true, detail: "Frontend + backend + database" },
-      { name: "3D Capsule Interface", included: true, detail: "Breathing animations" },
-      { name: "Brand Identity", included: true, detail: "Complete ceremonial design" },
-      { name: "4 Core Screens", included: true, detail: "Compose, preview, seal, unlock" },
-      { name: "Automated Email System", included: true, detail: "Scheduled delivery" },
-      { name: "Payment Integration", included: true, detail: "Stripe checkout" },
-      { name: "Security Technology", included: true, detail: "Encrypted messages" },
-      { name: "Emergency Access", included: true, detail: "Guardian unlock" }
+      { name: "Web Platform", included: true, detail: "Frontend + Backend + Database" },
+      { name: "3D Capsule Interface", included: true, detail: "Breathing Animations" },
+      { name: "Brand Identity", included: true, detail: "Complete Ceremonial Design" },
+      { name: "4 Core Screens", included: true, detail: "Compose, Preview, Seal, Unlock" },
+      { name: "Automated Email System", included: true, detail: "Scheduled Delivery" },
+      { name: "Payment Integration", included: true, detail: "Stripe Checkout" },
+      { name: "Security Technology", included: true, detail: "Encrypted Messages" },
+      { name: "Emergency Access", included: true, detail: "Guardian Unlock" }
     ],
     next_steps: [
-      "Launch audio capsules (voice + transcription)",
-      "Launch video capsules (AI-generated farewell)",
-      "White-label licensing (memorial, therapy, legal)",
-      "User dashboard (My Capsules)",
-      "Multi-language support (English + Spanish)"
+      "Launch Audio Capsules (Voice + Transcription)",
+      "Launch Video Capsules (AI-Generated Farewell)",
+      "White-Label Licensing (Memorial, Therapy, Legal)",
+      "User Dashboard (My Capsules)",
+      "Multi-Language Support (English + Spanish)"
     ],
     sphereClass: "bg-[radial-gradient(circle_at_30%_30%,#FFFFFF,#D4DDD6,#A0A0A0)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]",
     position: { top: "30%", left: "70%" },
@@ -117,29 +117,29 @@ const PROJECTS = [
       { label: "Store status", value: "In development" }
     ],
     income_potential: {
-      value: "Active: Personalized figurines ($99 each)",
-      description: "Potential: Profession collections, event editions, B2B wholesale"
+      value: "Revenue Today: Personalized Figurines ($99 Each)",
+      description: "Future Potential: Profession Collections, Event Editions, B2B Wholesale"
     },
     effort: {
       title: "Manual production required.",
       description: "External operation (Shopify)."
     },
     assets_included: [
-      { name: "Shopify Store", included: true, detail: "E-commerce platform" },
-      { name: "AI Workflow", included: true, detail: "Photo to 3D pipeline" },
-      { name: "Production Guide", included: true, detail: "AI + Blender + print process" },
-      { name: "Brand Identity", included: true, detail: "Logo, visual system" },
-      { name: "QR Integration", included: true, detail: "Physical to Pyadra gateway" },
-      { name: "Product Line Concepts", included: true, detail: "Profession, events, editions" },
-      { name: "Payment System", included: true, detail: "Shopify checkout" },
-      { name: "Packaging Design", included: true, detail: "Unboxing experience" }
+      { name: "Shopify Store", included: true, detail: "E-Commerce Platform" },
+      { name: "AI Workflow", included: true, detail: "Photo to 3D Pipeline" },
+      { name: "Production Guide", included: true, detail: "AI + Blender + Print Process" },
+      { name: "Brand Identity", included: true, detail: "Logo, Visual System" },
+      { name: "QR Integration", included: true, detail: "Physical to Pyadra Gateway" },
+      { name: "Product Line Concepts", included: true, detail: "Profession, Events, Editions" },
+      { name: "Payment System", included: true, detail: "Shopify Checkout" },
+      { name: "Packaging Design", included: true, detail: "Unboxing Experience" }
     ],
     next_steps: [
-      "Launch Shopify store",
-      "Acquire color 3D printer",
-      "Launch profession collection (pre-designed)",
-      "Event editions (World Cup, sports)",
-      "B2B wholesale partnerships"
+      "Launch Shopify Store",
+      "Acquire Color 3D Printer",
+      "Launch Profession Collection (Pre-Designed)",
+      "Event Editions (World Cup, Sports)",
+      "B2B Wholesale Partnerships"
     ],
     sphereClass: "bg-[radial-gradient(circle_at_30%_30%,#3A4A3E,#1A1C1A,#050A07)] shadow-[-10px_10px_20px_rgba(0,0,0,0.25)]",
     position: { top: "70%", left: "30%" },
@@ -162,29 +162,29 @@ const PROJECTS = [
       { label: "Manuscript", value: "In development" }
     ],
     income_potential: {
-      value: "Active: None yet (manuscript in progress)",
-      description: "Potential: Digital sales, physical books, exclusive editions, audio"
+      value: "Revenue Today: None Yet (Manuscript in Progress)",
+      description: "Future Potential: Digital Sales, Physical Books, Exclusive Editions, Audio"
     },
     effort: {
       title: "Active writing required.",
       description: "External distribution (Amazon, etc)."
     },
     assets_included: [
-      { name: "Book Concepts", included: true, detail: "2 narrative worlds developed" },
-      { name: "Narrative Philosophy", included: true, detail: "Real experiences as mythology" },
-      { name: "Brand Identity", included: true, detail: "Editorial visual system" },
-      { name: "Source Material", included: true, detail: "Author's real experiences" },
-      { name: "Publishing Workflow", included: true, detail: "External + Pyadra exclusive" },
-      { name: "Distribution Channels", included: true, detail: "Amazon + Pyadra platform" },
-      { name: "Exclusive Editions", included: true, detail: "Pyadra-only collectibles" },
-      { name: "IP Rights", included: true, detail: "Full copyright included" }
+      { name: "Book Concepts", included: true, detail: "2 Narrative Worlds Developed" },
+      { name: "Narrative Philosophy", included: true, detail: "Real Experiences as Mythology" },
+      { name: "Brand Identity", included: true, detail: "Editorial Visual System" },
+      { name: "Source Material", included: true, detail: "Author's Real Experiences" },
+      { name: "Publishing Workflow", included: true, detail: "External + Pyadra Exclusive" },
+      { name: "Distribution Channels", included: true, detail: "Amazon + Pyadra Platform" },
+      { name: "Exclusive Editions", included: true, detail: "Pyadra-Only Collectibles" },
+      { name: "IP Rights", included: true, detail: "Full Copyright Included" }
     ],
     next_steps: [
-      "Complete first manuscript",
-      "Publish on external platform (Amazon)",
-      "Launch Pyadra exclusive edition",
-      "Audio narration production",
-      "Illustrated collector's edition"
+      "Complete First Manuscript",
+      "Publish on External Platform (Amazon)",
+      "Launch Pyadra Exclusive Edition",
+      "Audio Narration Production",
+      "Illustrated Collector's Edition"
     ],
     sphereClass: "bg-[radial-gradient(circle_at_30%_30%,#059669,#047857,#0A120E)] shadow-[-10px_10px_20px_rgba(0,0,0,0.2)]",
     position: { top: "70%", left: "70%" },
@@ -283,6 +283,27 @@ export default function GalaxyExhibition() {
   const [mounted, setMounted] = useState(false);
   const [activeProject, setActiveProject] = useState<typeof PROJECTS[0] | null>(null);
 
+  // Parallax mouse tracking
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  // Transform values for parallax (must be at top level)
+  const gridX = useTransform(mouseX, (value) => value * 0.2);
+  const gridY = useTransform(mouseY, (value) => value * 0.2);
+  const ringsX = useTransform(mouseX, (value) => value * 0.5);
+  const ringsY = useTransform(mouseY, (value) => value * 0.5);
+  const gemX = useTransform(mouseX, (value) => -value * 0.3);
+  const gemY = useTransform(mouseY, (value) => -value * 0.3);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { clientX, clientY } = e;
+    const { innerWidth, innerHeight } = window;
+    const x = (clientX - innerWidth / 2) / innerWidth;
+    const y = (clientY - innerHeight / 2) / innerHeight;
+    mouseX.set(x * 20);
+    mouseY.set(y * 20);
+  };
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -290,7 +311,10 @@ export default function GalaxyExhibition() {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-[#EDEFED] text-[#1A1C1A] font-sans flex flex-col relative overflow-hidden">
+    <div
+      className="min-h-screen bg-[#EDEFED] text-[#1A1C1A] font-sans flex flex-col relative overflow-hidden"
+      onMouseMove={handleMouseMove}
+    >
 
       {/* ----------------------------------------------------------------------
           BACKGROUND TEXTURE & GRID (Visual Richness)
@@ -303,15 +327,17 @@ export default function GalaxyExhibition() {
         <div className="absolute top-0 left-0 w-[50vw] h-full bg-gradient-to-r from-white/20 to-transparent"></div>
       </div>
 
-      {/* 2. Architectural Blueprint Grid */}
-      <div 
-        className="absolute inset-0 pointer-events-none z-0 opacity-[0.25]" 
+      {/* 2. Architectural Blueprint Grid with parallax */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none z-0 opacity-[0.25]"
         style={{
           backgroundImage: `
             linear-gradient(to right, #D4DDD6 1px, transparent 1px),
             linear-gradient(to bottom, #D4DDD6 1px, transparent 1px)
           `,
-          backgroundSize: '40px 40px'
+          backgroundSize: '40px 40px',
+          x: gridX,
+          y: gridY,
         }}
       />
       
@@ -326,7 +352,7 @@ export default function GalaxyExhibition() {
       </div>
 
       {/* 4. Ambient Green Dust */}
-      <GreenDust count={100} />
+      <GreenDust count={250} />
 
       {/* ----------------------------------------------------------------------
           HEADER - Fixed at top
@@ -363,20 +389,32 @@ export default function GalaxyExhibition() {
         {/* Orbital Container - with decorative rings */}
         <div className="w-full max-w-[1200px] relative">
 
-           {/* SVG Orbital Rings - Decorative background */}
-           <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10 md:opacity-15">
+           {/* SVG Orbital Rings - Decorative background with parallax */}
+           <motion.div
+             className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10 md:opacity-15"
+             style={{
+               x: ringsX,
+               y: ringsY,
+             }}
+           >
               <svg viewBox="0 0 800 800" className="w-full h-full text-[#059669]">
                 <circle cx="400" cy="400" r="140" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="4 4" />
                 <circle cx="400" cy="400" r="260" fill="none" stroke="currentColor" strokeWidth="1" />
                 <circle cx="400" cy="400" r="380" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="2 6" />
               </svg>
-           </div>
+           </motion.div>
 
-           {/* Central Core Gem */}
-           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 z-10">
+           {/* Central Core Gem with subtle parallax */}
+           <motion.div
+             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 z-10"
+             style={{
+               x: gemX,
+               y: gemY,
+             }}
+           >
               <div className="absolute inset-0 bg-[#059669] blur-xl opacity-20 rounded-full"></div>
               <GemIcon />
-           </div>
+           </motion.div>
 
            {/* Projects Grid - Base structure with orbital transforms */}
            <div className="grid grid-cols-2 gap-4 md:gap-8 lg:gap-12 p-4 md:p-6 lg:p-8">
@@ -405,7 +443,7 @@ export default function GalaxyExhibition() {
                      {/* Sphere - Clickable with Breathing Effect */}
                      <div className="relative mb-4">
                        {/* Breathing outer glow */}
-                       <motion.div 
+                       <motion.div
                          animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.3, 0.1] }}
                          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: index * 0.5 }}
                          className={`absolute inset-0 rounded-full blur-xl ${project.id === 'orbit' ? 'bg-[#6B8070]' : project.id === 'ethernicapsule' ? 'bg-white' : project.id === 'figurines' ? 'bg-[#3A4A3E]' : 'bg-[#059669]'}`}
@@ -413,6 +451,21 @@ export default function GalaxyExhibition() {
                        <div
                          className={`relative w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full ${project.sphereClass} transition-transform duration-500 group-hover:scale-105 group-hover:shadow-2xl overflow-hidden`}
                        >
+                         {/* Logo inside sphere (only for Orbit) */}
+                         {project.id === 'orbit' && project.logo && (
+                           <div className="absolute inset-0 flex items-center justify-center">
+                             {/* Light background behind logo for visibility */}
+                             <div className="absolute w-16 h-16 md:w-18 md:h-18 lg:w-22 lg:h-22 rounded-full bg-white/20 blur-sm"></div>
+                             <img
+                               src={project.logo}
+                               alt={project.name}
+                               className="relative w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 object-contain opacity-70"
+                             />
+                             {/* Subtle depth overlay */}
+                             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20 rounded-full pointer-events-none"></div>
+                           </div>
+                         )}
+
                          {/* Subtle rotating inner highlight */}
                          <motion.div
                            animate={{ rotate: 360 }}
@@ -479,10 +532,11 @@ export default function GalaxyExhibition() {
 // PROJECT DETAIL PANEL COMPONENT
 // -----------------------------------------------------------------------------
 function ProjectDetailPanel({ project, onClose }: { project: typeof PROJECTS[0], onClose: () => void }) {
-  const [doorMode, setDoorMode] = useState<"light" | "dark">("light");
+  const [doorMode, setDoorMode] = useState<"light" | "dark">("dark");
   const [showInterestForm, setShowInterestForm] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [termsExpanded, setTermsExpanded] = useState(false);
   const isLight = doorMode === "light";
 
   return (
@@ -503,13 +557,11 @@ function ProjectDetailPanel({ project, onClose }: { project: typeof PROJECTS[0],
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
         transition={{ type: "spring", damping: 30, stiffness: 300 }}
-        className={`fixed right-0 top-0 bottom-0 w-full lg:w-1/2 z-50 flex flex-col overflow-hidden transition-colors duration-700 ${
-          isLight ? "bg-[#EDEFED] text-[#1A1C1A]" : "bg-[#C8C9C8] text-[#1A1C1A]"
-        }`}
+        className="fixed right-0 top-0 bottom-0 w-full lg:w-1/2 z-50 flex flex-col overflow-hidden bg-[#EDEFED] text-[#1A1C1A]"
       >
 
         {/* Header */}
-        <div className="p-6 md:p-8 flex justify-between items-start shrink-0">
+        <div className="p-4 md:p-5 flex justify-between items-start shrink-0">
           <div>
             <div className={`font-mono text-[9px] mb-2 uppercase tracking-[0.3em] ${isLight ? 'text-[#6B8070]' : 'text-[#6B8070]'}`}>{project.type}</div>
             <h2 className="font-serif text-3xl md:text-4xl italic font-light">{project.name}</h2>
@@ -532,7 +584,7 @@ function ProjectDetailPanel({ project, onClose }: { project: typeof PROJECTS[0],
         </div>
 
         {/* Scrollable Content */}
-        <motion.div 
+        <motion.div
           initial="hidden"
           animate="visible"
           exit="hidden"
@@ -543,7 +595,7 @@ function ProjectDetailPanel({ project, onClose }: { project: typeof PROJECTS[0],
               transition: { staggerChildren: 0.1, delayChildren: 0.2 }
             }
           }}
-          className="flex-1 overflow-y-auto px-6 md:px-8 pb-28"
+          className="flex-1 overflow-y-auto px-4 md:px-5 pb-20"
         >
 
            {showInterestForm ? (
@@ -561,149 +613,97 @@ function ProjectDetailPanel({ project, onClose }: { project: typeof PROJECTS[0],
              />
            ) : (
              <>
-               {/* Project Logo or Icon - Compact */}
-               <motion.div variants={{ hidden: { opacity: 0, scale: 0.9 }, visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: "easeOut" } } }} className="w-full max-w-[120px] mx-auto mb-6 flex items-center justify-center">
-                  {project.logo ? (
-                    <img src={project.logo} alt={`${project.name} logo`} className="w-full h-auto" />
-                  ) : (
-                    <div className="w-16 h-16"><GemIcon /></div>
-                  )}
-               </motion.div>
-
-               <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className={`font-sans text-sm leading-relaxed mb-8 ${isLight ? 'text-[#3A4A3E]' : 'text-[#6B8070]'}`}>
+               {/* Description - No Logo */}
+               <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className={`font-sans text-sm leading-normal mb-4 ${isLight ? 'text-[#3A4A3E]' : 'text-[#6B8070]'}`}>
                  {project.description}
                </motion.p>
 
                {/* Tab Toggle */}
-               <div className={`flex items-center p-1 rounded-full w-fit mx-auto mb-10 border transition-colors duration-500 ${isLight ? 'bg-white border-[#D4DDD6]' : 'bg-[#D8D9D8] border-[#A8A9A8]'}`}>
-                 <button
-                   onClick={() => setDoorMode("light")}
-                   className={`relative px-6 py-2 rounded-full font-mono text-[9px] uppercase tracking-widest transition-colors duration-300 ${isLight ? 'text-[#1A1C1A]' : 'text-[#6B8070] hover:text-[#1A1C1A]'}`}
-                 >
-                   {isLight && (
-                     <motion.div
-                       layoutId="active-tab"
-                       className="absolute inset-0 bg-[#EDEFED] rounded-full shadow-sm"
-                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                     />
-                   )}
-                   <span className="relative z-10">Experience</span>
-                 </button>
+               <div className="flex items-center p-1 rounded-full w-fit mx-auto mb-5 border bg-[#E8E9E8] border-[#D4DDD6] transition-colors duration-500">
                  <button
                    onClick={() => setDoorMode("dark")}
-                   className={`relative px-6 py-2 rounded-full font-mono text-[9px] uppercase tracking-widest transition-colors duration-300 ${!isLight ? 'text-[#1A1C1A]' : 'text-[#6B8070] hover:text-[#1A1C1A]'}`}
+                   className={`relative px-6 py-2 rounded-full font-mono text-[9px] uppercase tracking-widest transition-colors duration-300 ${!isLight ? 'text-white' : 'text-[#6B8070] hover:text-[#1A1C1A]'}`}
                  >
                    {!isLight && (
                      <motion.div
                        layoutId="active-tab"
-                       className="absolute inset-0 bg-[#B8B9B8] rounded-full shadow-sm"
+                       className="absolute inset-0 bg-[#059669] rounded-full shadow-md"
                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                      />
                    )}
-                   <span className="relative z-10">Acquire</span>
+                   <span className="relative z-10">Own the Project</span>
+                 </button>
+                 <button
+                   onClick={() => setDoorMode("light")}
+                   className={`relative px-6 py-2 rounded-full font-mono text-[9px] uppercase tracking-widest transition-colors duration-300 ${isLight ? 'text-white' : 'text-[#6B8070] hover:text-[#1A1C1A]'}`}
+                 >
+                   {isLight && (
+                     <motion.div
+                       layoutId="active-tab"
+                       className="absolute inset-0 bg-[#059669] rounded-full shadow-md"
+                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                     />
+                   )}
+                   <span className="relative z-10">The Product</span>
                  </button>
                </div>
 
            {/* Dynamic Content based on Tab */}
            <AnimatePresence mode="wait">
-             {isLight ? (
-               <motion.div key="light" initial={{opacity:0, y:10}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-10}}>
-                 <div className="font-mono text-[10px] uppercase tracking-widest text-[#059669] mb-4 flex items-center gap-2 font-bold">
-                   <span className="text-xl">•</span> WHAT YOU CAN DO TODAY
-                 </div>
-                 <p className="text-sm text-[#3A4A3E] leading-relaxed mb-10">
-                   {project.experience_today}
-                 </p>
-
-                 {/* Product Card - Compact */}
-                 <div className="relative bg-gradient-to-br from-[#ECFDF5] via-white to-[#F0FDF4] border-2 border-[#D4DDD6] border-l-[6px] border-l-[#059669] rounded-2xl p-5 mb-6 shadow-lg hover:shadow-xl hover:scale-[1.01] transition-all duration-300">
-                   {/* Decorative corner accent */}
-                   <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-[#059669] opacity-40"></div>
-
-                   <div className="flex items-center justify-between">
-                     <div className="flex items-center gap-3">
-                       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#059669] to-[#10B981] flex items-center justify-center text-white text-lg shadow-md shadow-[#059669]/30">✦</div>
-                       <div>
-                         <div className="font-mono text-[8px] uppercase tracking-[0.3em] text-[#059669] mb-1 font-bold">PRODUCT</div>
-                         <div className="font-serif text-base text-[#1A1C1A] font-medium">{project.product_name}</div>
-                       </div>
-                     </div>
-                     <div className="text-right">
-                       <div className="font-mono text-[7px] uppercase tracking-[0.3em] text-[#6B8070] mb-1">PRICE</div>
-                       <div className="font-serif text-base text-[#059669] font-semibold">{project.price}</div>
-                     </div>
-                   </div>
-                 </div>
-
-                 <div className="space-y-3">
-                   <div className="font-mono text-[9px] uppercase tracking-widest text-[#059669] mb-2 flex items-center gap-2 font-bold">
-                     <span className="text-lg">•</span> CURRENT STATUS
-                   </div>
-                   <div className="grid grid-cols-2 gap-3">
-                     {project.traction.map(t => (
-                       <div key={t.label} className="relative bg-white border-2 border-[#D4DDD6] rounded-xl p-4 shadow-md hover:shadow-lg hover:border-[#10B981] hover:scale-[1.02] transition-all duration-300 overflow-hidden group">
-                         {/* Hover gradient overlay */}
-                         <div className="absolute inset-0 bg-gradient-to-br from-[#ECFDF5]/0 to-[#ECFDF5]/0 group-hover:from-[#ECFDF5]/40 group-hover:to-transparent transition-all duration-300"></div>
-                         <div className="relative">
-                           <div className="font-serif text-lg text-[#1A1C1A] mb-1 font-medium">{t.value}</div>
-                           <div className="text-[8px] text-[#6B8070] uppercase tracking-[0.3em] font-bold">{t.label}</div>
-                         </div>
-                       </div>
-                     ))}
-                   </div>
-                 </div>
-               </motion.div>
-             ) : (
+             {!isLight ? (
                <motion.div key="dark" initial={{opacity:0, y:10}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-10}}>
 
-                 {/* Project Valuation - Compact */}
-                 <div className="relative bg-gradient-to-br from-[#D8D9D8] via-[#CCCCCC] to-[#BEBEBE] border-2 border-[#A8A9A8] border-l-[6px] border-l-[#059669] rounded-2xl p-5 mb-6 shadow-lg hover:shadow-xl transition-all duration-300">
-                   {/* Decorative corner accent */}
-                   <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-[#059669] opacity-50"></div>
-
+                 {/* Project Valuation - Clean Display */}
+                 <div className="bg-[#F7FAF8] border-l-4 border-l-[#059669] rounded-lg p-3.5 mb-3 shadow-sm">
                    <div className="flex items-center justify-between">
                      <div>
-                       <div className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#059669] mb-2 flex items-center gap-2 font-bold">
-                         <span className="text-lg">•</span> PROJECT VALUATION
+                       <div className="font-mono text-[8px] uppercase tracking-[0.3em] text-[#059669] mb-1.5 font-bold flex items-center gap-1.5">
+                         <span className="text-sm">💎</span> PROJECT VALUATION
                        </div>
-                       <div className="font-serif text-2xl text-[#1A1C1A] font-bold"><AnimatedNumber value={project.valuation} /></div>
+                       <div className="font-serif text-xl text-[#1A1C1A] font-bold"><AnimatedNumber value={project.valuation} /></div>
                      </div>
                      <div className="text-right">
                        <div className="font-mono text-[7px] uppercase tracking-[0.3em] text-[#6B8070] mb-1">AVAILABLE</div>
-                       <div className="font-serif text-xl text-[#059669] font-bold">{project.available_pct}%</div>
+                       <div className="font-serif text-lg text-[#059669] font-bold">{project.available_pct}%</div>
                      </div>
                    </div>
                  </div>
 
                  {/* What's Included */}
-                 <div className="mb-6">
-                   <div className="text-[9px] font-mono text-[#6B8070] uppercase tracking-widest mb-3">WHAT'S INCLUDED</div>
-                   <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+                 <div className="mb-3">
+                   <div className="text-[8px] font-mono text-[#6B8070] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                     <span className="text-sm">📋</span> WHAT'S INCLUDED
+                   </div>
+                   <div className="grid grid-cols-2 gap-x-4 gap-y-1">
                      {project.assets_included.map((asset, idx) => (
-                       <div key={idx} className="flex items-start gap-2 text-sm">
-                         <span className="text-[#10B981] mt-0.5 text-xs">✓</span>
+                       <div key={idx} className="flex items-start gap-1.5 text-xs">
+                         <span className="text-[#059669] mt-0.5 text-xs">✓</span>
                          <div className="flex-1">
                            <span className="text-[#1A1C1A]">{asset.name}</span>
-                           {asset.detail && <span className="text-[#6B8070] text-xs ml-1">({asset.detail})</span>}
+                           {asset.detail && <span className="text-[#6B8070] text-[10px] ml-1">({asset.detail})</span>}
                          </div>
                        </div>
                      ))}
                    </div>
                  </div>
 
-                 {/* Income Potential */}
-                 <div className="mb-6">
-                   <div className="text-[9px] font-mono text-[#6B8070] uppercase tracking-widest mb-2">Income potential</div>
-                   <div className="font-serif text-lg text-[#10B981] mb-1">{project.income_potential.value}</div>
-                   <div className="text-xs text-[#6B8070]">{project.income_potential.description}</div>
+                 {/* Revenue */}
+                 <div className="mb-3">
+                   <div className="text-[8px] font-mono text-[#6B8070] uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
+                     <span className="text-sm">💰</span> REVENUE
+                   </div>
+                   <div className="font-serif text-base text-[#059669] mb-0.5">{project.income_potential.value}</div>
+                   <div className="text-[10px] text-[#6B8070]">{project.income_potential.description}</div>
                  </div>
 
                  {/* Next Steps */}
-                 <div className="mb-6">
-                   <div className="text-[9px] font-mono text-[#6B8070] uppercase tracking-widest mb-3">NEXT STEPS</div>
-                   <div className="space-y-2">
+                 <div className="mb-3">
+                   <div className="text-[8px] font-mono text-[#6B8070] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                     <span className="text-sm">📈</span> NEXT STEPS
+                   </div>
+                   <div className="space-y-1">
                      {project.next_steps.map((step, idx) => (
-                       <div key={idx} className="flex items-start gap-3 text-sm text-[#6B8070]">
+                       <div key={idx} className="flex items-start gap-2 text-xs text-[#6B8070]">
                          <span className="text-[#059669] mt-0.5">{idx + 1}.</span>
                          <span>{step}</span>
                        </div>
@@ -711,29 +711,84 @@ function ProjectDetailPanel({ project, onClose }: { project: typeof PROJECTS[0],
                    </div>
                  </div>
 
-                 {/* Acquisition Terms - Discrete */}
-                 <div className="pt-4 border-t border-[#A8A9A8]">
-                   <div className="text-[8px] font-mono text-[#6B8070] uppercase tracking-widest mb-3 opacity-60">Acquisition terms</div>
+                 {/* Acquisition Terms - Collapsible */}
+                 <div className="pt-3 border-t border-[#A8A9A8]">
+                   <button
+                     onClick={() => setTermsExpanded(!termsExpanded)}
+                     className="w-full flex items-center justify-between text-[8px] font-mono text-[#6B8070] uppercase tracking-widest mb-2 opacity-60 hover:opacity-100 transition-opacity"
+                   >
+                     <span>Acquisition terms</span>
+                     <span className="text-sm">{termsExpanded ? '−' : '+'}</span>
+                   </button>
 
-                   {/* Participation model */}
-                   <div className="mb-3">
-                     <div className="text-[10px] text-[#6B8070] mb-1">Available: Partial acquisition ({project.available_pct}%)</div>
-                     <div className="text-[9px] text-[#6B8070] opacity-60">Revenue share proportional to stake. Founders retain {100 - project.available_pct}%.</div>
-                   </div>
+                   {termsExpanded && (
+                     <motion.div
+                       initial={{ opacity: 0, height: 0 }}
+                       animate={{ opacity: 1, height: 'auto' }}
+                       exit={{ opacity: 0, height: 0 }}
+                       transition={{ duration: 0.2 }}
+                     >
+                       {/* Participation model */}
+                       <div className="mb-2">
+                         <div className="text-[10px] text-[#6B8070] mb-1">Available: Partial acquisition ({project.available_pct}%)</div>
+                         <div className="text-[9px] text-[#6B8070] opacity-60">Revenue share proportional to stake. Founders retain {100 - project.available_pct}%.</div>
+                       </div>
 
-                   {/* Effort + Fee in small grid */}
-                   <div className="grid grid-cols-2 gap-3 text-[9px] text-[#6B8070] opacity-75">
-                     <div>
-                       <div className="font-mono uppercase tracking-wider mb-1 opacity-60">Effort</div>
-                       <div>{project.effort.title}</div>
+                       {/* Effort + Fee in small grid */}
+                       <div className="grid grid-cols-2 gap-3 text-[9px] text-[#6B8070] opacity-75">
+                         <div>
+                           <div className="font-mono uppercase tracking-wider mb-1 opacity-60">Effort</div>
+                           <div>{project.effort.title}</div>
+                         </div>
+                         <div>
+                           <div className="font-mono uppercase tracking-wider mb-1 opacity-60">Pyadra fee</div>
+                           <div>{project.pyadra_fee}</div>
+                         </div>
+                       </div>
+                     </motion.div>
+                   )}
+                 </div>
+
+               </motion.div>
+             ) : (
+               <motion.div key="light" initial={{opacity:0, y:10}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-10}}>
+                 <div className="font-mono text-[8px] uppercase tracking-widest text-[#059669] mb-2.5 font-bold flex items-center gap-2">
+                   <span className="text-sm">🎯</span> WHAT YOU CAN DO TODAY
+                 </div>
+                 <p className="text-sm text-[#3A4A3E] leading-normal mb-4">
+                   {project.experience_today}
+                 </p>
+
+                 {/* Product Info - Clean Display */}
+                 <div className="bg-[#F7FAF8] border-l-4 border-l-[#059669] rounded-lg p-3.5 mb-3 shadow-sm">
+                   <div className="flex items-center justify-between">
+                     <div className="flex items-center gap-2.5">
+                       <span className="text-xl">📦</span>
+                       <div>
+                         <div className="font-mono text-[7px] uppercase tracking-[0.3em] text-[#6B8070] mb-0.5">PRODUCT</div>
+                         <div className="font-serif text-sm text-[#1A1C1A] font-medium">{project.product_name}</div>
+                       </div>
                      </div>
-                     <div>
-                       <div className="font-mono uppercase tracking-wider mb-1 opacity-60">Pyadra fee</div>
-                       <div>{project.pyadra_fee}</div>
+                     <div className="text-right">
+                       <div className="font-mono text-[7px] uppercase tracking-[0.3em] text-[#6B8070] mb-0.5">PRICE</div>
+                       <div className="font-serif text-sm text-[#059669] font-semibold">{project.price}</div>
                      </div>
                    </div>
                  </div>
 
+                 <div className="space-y-2.5">
+                   <div className="font-mono text-[8px] uppercase tracking-widest text-[#059669] mb-1.5 font-bold flex items-center gap-2">
+                     <span className="text-sm">📊</span> CURRENT STATUS
+                   </div>
+                   <div className="grid grid-cols-2 gap-2.5">
+                     {project.traction.map(t => (
+                       <div key={t.label} className="bg-[#F7FAF8] rounded-lg p-3 shadow-sm">
+                         <div className="font-serif text-base text-[#1A1C1A] mb-0.5 font-medium">{t.value}</div>
+                         <div className="text-[7px] text-[#6B8070] uppercase tracking-[0.3em] font-bold">{t.label}</div>
+                       </div>
+                     ))}
+                   </div>
+                 </div>
                </motion.div>
              )}
            </AnimatePresence>
@@ -742,31 +797,31 @@ function ProjectDetailPanel({ project, onClose }: { project: typeof PROJECTS[0],
 
         </motion.div>
 
-        {/* Fixed Bottom Actions - Dual Doors */}
-        <div className={`absolute bottom-0 left-0 right-0 p-6 border-t backdrop-blur-md ${isLight ? 'bg-[#EDEFED]/90 border-[#D4DDD6]' : 'bg-[#C8C9C8]/90 border-[#A8A9A8]'}`}>
-          <div className="flex gap-3">
-            {/* Light Door - Enter the Project */}
+        {/* Fixed Bottom Actions - Minimal Accent Bars */}
+        <div className="absolute bottom-0 left-0 right-0 px-4 py-3 border-t backdrop-blur-md bg-[#EDEFED]/90 border-[#D4DDD6]">
+          <div className="flex gap-2.5">
+            {/* Explore - Left (Principal Action) */}
             <button
               onClick={() => window.location.href = project.enter_url}
-              className="relative group flex-1 py-4 rounded-xl flex items-center justify-center gap-2 text-xs font-mono tracking-widest uppercase transition-all duration-300 active:scale-[0.98] bg-[#059669] text-white hover:bg-[#047857] shadow-lg shadow-[#059669]/20 hover:shadow-[#059669]/30 overflow-hidden"
+              className="w-full text-left pl-4 pr-3 py-3 border-l-4 border-l-[#059669] flex items-center justify-between group transition-all duration-300 rounded-r-lg hover:scale-[1.02] hover:-translate-y-1 hover:shadow-lg cursor-pointer"
+              style={{ background: 'linear-gradient(to right, rgba(5, 150, 105, 0.25), transparent 70%)' }}
             >
-              <span className="relative z-10">Enter the project</span>
-              <span className="relative z-10 transition-transform duration-300 group-hover:translate-x-1">→</span>
-              {/* Shimmer Effect */}
-              <motion.div 
-                animate={{ x: ["-200%", "200%"] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear", repeatDelay: 4 }}
-                className="absolute inset-0 z-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"
-              />
+              <span className="font-mono text-[9px] uppercase tracking-widest text-[#059669] font-bold">
+                Explore {project.name}
+              </span>
+              <span className="text-[#059669] text-sm transition-transform duration-300 group-hover:translate-x-1">→</span>
             </button>
 
-            {/* Dark Door - Buy the Project */}
+            {/* Express Interest - Right (Secondary Action) */}
             <button
               onClick={() => setShowInterestForm(true)}
-              className="group flex-1 py-4 rounded-xl flex items-center justify-center gap-2 text-xs font-mono tracking-widest uppercase transition-all duration-300 active:scale-[0.98] bg-[#0A120E] text-[#059669] hover:bg-[#1A261D] border border-[#1A261D] hover:shadow-lg hover:shadow-black/10"
+              className="w-full text-left pl-4 pr-3 py-3 border-l-4 border-l-[#047857] flex items-center justify-between group transition-all duration-300 rounded-r-lg hover:scale-[1.02] hover:-translate-y-1 hover:shadow-lg cursor-pointer"
+              style={{ background: 'linear-gradient(to right, rgba(4, 120, 87, 0.20), transparent 70%)' }}
             >
-              <span>Express interest</span>
-              <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+              <span className="font-mono text-[9px] uppercase tracking-widest text-[#047857] font-bold">
+                Express Interest
+              </span>
+              <span className="text-[#047857] text-sm transition-transform duration-300 group-hover:translate-x-1">→</span>
             </button>
           </div>
         </div>
@@ -847,18 +902,18 @@ function ExpressInterestForm({
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col items-center justify-center min-h-[400px] text-center px-4"
       >
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#059669] to-[#10B981] flex items-center justify-center text-white text-3xl mb-6 shadow-lg">
+        <div className="w-16 h-16 rounded-full bg-[#ECFDF5] border-4 border-[#059669] flex items-center justify-center text-[#059669] text-2xl mb-5 shadow-sm">
           ✓
         </div>
-        <h3 className="font-serif text-2xl md:text-3xl italic font-light text-[#1A1C1A] mb-4">
-          Interest Recorded
+        <h3 className="font-serif text-2xl italic font-light text-[#1A1C1A] mb-3">
+          <span className="text-[#059669]">Interest Recorded</span>
         </h3>
-        <p className="text-sm text-[#3A4A3E] leading-relaxed max-w-md mb-8">
-          Eduardo will contact you personally within 48 hours to discuss {project.name}.
+        <p className="text-sm text-[#3A4A3E] leading-normal max-w-md mb-6">
+          Eduardo will contact you personally within 48 hours to discuss <span className="text-[#059669] font-medium">{project.name}</span>.
         </p>
         <button
           onClick={onBack}
-          className="group px-6 py-3 rounded-xl flex items-center justify-center gap-2 bg-[#EDEFED] border-2 border-[#D4DDD6] text-[#1A1C1A] font-mono text-[9px] uppercase tracking-widest hover:bg-white transition-colors"
+          className="group px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 bg-[#F7FAF8] border-2 border-[#059669] text-[#059669] font-mono text-[8px] uppercase tracking-widest hover:bg-[#059669] hover:text-white transition-all shadow-sm"
         >
           <span className="inline-block transition-transform duration-300 group-hover:-translate-x-1">←</span>
           <span>Back to {project.name}</span>
@@ -872,49 +927,52 @@ function ExpressInterestForm({
       {/* Back Button */}
       <button
         onClick={onBack}
-        className="group flex items-center py-2 px-1 -ml-1 text-[#6B8070] hover:text-[#1A1C1A] transition-colors mb-6 font-mono text-[9px] uppercase tracking-widest"
+        className="group flex items-center py-2 px-1 -ml-1 text-[#6B8070] hover:text-[#1A1C1A] transition-colors mb-5 font-mono text-[8px] uppercase tracking-widest"
       >
         <span className="inline-block transition-transform duration-300 group-hover:-translate-x-1 mr-1">←</span> Back
       </button>
 
       {/* Header */}
-      <div className="mb-8">
-        <h3 className="font-serif text-3xl md:text-4xl italic font-light text-[#1A1C1A] mb-2">
+      <div className="mb-6 pb-4 border-b-2 border-[#059669]/20">
+        <h3 className="font-serif text-2xl italic font-light text-[#1A1C1A] mb-2">
           Express Interest
         </h3>
-        <p className="text-sm text-[#3A4A3E]">
-          Tell us about your interest in {project.name}
+        <p className="text-sm text-[#3A4A3E] leading-normal">
+          Tell us about your interest in <span className="text-[#059669] font-medium">{project.name}</span>
         </p>
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-5">
         {/* Model Selection */}
         <div>
-          <label className="block font-mono text-[9px] uppercase tracking-widest text-[#6B8070] mb-3">
-            What are you looking for? *
+          <label className="block font-mono text-[8px] uppercase tracking-widest text-[#059669] mb-2.5 flex items-center gap-1.5">
+            <span className="text-sm">🤝</span> What are you looking for? *
           </label>
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {[
               {
                 value: "Partner — share revenue",
-                label: "I want to be a partner — share revenue",
+                label: "Partner — Share Revenue",
+                icon: "🤝"
               },
               {
                 value: "Own — take it completely",
-                label: "I want to own it — take it completely",
+                label: "Own It — Take It Completely",
+                icon: "💎"
               },
               {
                 value: "Host — own it, Pyadra runs it",
-                label: "I want to host it — own it, Pyadra runs it",
+                label: "Host It — Own It, Pyadra Runs It",
+                icon: "🏛️"
               },
             ].map((option) => (
               <label
                 key={option.value}
-                className={`flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                className={`flex items-center gap-3 p-3.5 border-l-4 rounded-lg cursor-pointer transition-colors ${
                   formData.model === option.value
-                    ? "border-[#059669] bg-gradient-to-br from-[#ECFDF5] to-white shadow-md"
-                    : "border-[#D4DDD6] bg-white hover:border-[#10B981]"
+                    ? "border-l-[#059669] bg-[#ECFDF5] shadow-sm"
+                    : "border-l-[#059669]/30 bg-[#F7FAF8] hover:border-l-[#059669]/60"
                 }`}
               >
                 <input
@@ -927,6 +985,7 @@ function ExpressInterestForm({
                   }
                   className="w-4 h-4 text-[#059669]"
                 />
+                <span className="text-base">{option.icon}</span>
                 <span className="text-sm text-[#1A1C1A]">{option.label}</span>
               </label>
             ))}
@@ -935,50 +994,50 @@ function ExpressInterestForm({
 
         {/* Name */}
         <div>
-          <label className="block font-mono text-[9px] uppercase tracking-widest text-[#6B8070] mb-2">
-            Your name *
+          <label className="block font-mono text-[8px] uppercase tracking-widest text-[#059669] mb-2 flex items-center gap-1.5">
+            <span className="text-sm">👤</span> Your Name *
           </label>
           <input
             type="text"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full px-4 py-3 border-2 border-[#D4DDD6] rounded-xl focus:border-[#059669] focus:outline-none transition-colors bg-white text-[#1A1C1A]"
+            className="w-full px-4 py-2.5 border-l-4 border-l-[#059669]/30 border border-[#D4DDD6] rounded-lg focus:border-[#059669] focus:border-l-[#059669] focus:outline-none transition-colors bg-[#F7FAF8] text-[#1A1C1A] text-sm"
             required
           />
         </div>
 
         {/* Email */}
         <div>
-          <label className="block font-mono text-[9px] uppercase tracking-widest text-[#6B8070] mb-2">
-            Your email *
+          <label className="block font-mono text-[8px] uppercase tracking-widest text-[#059669] mb-2 flex items-center gap-1.5">
+            <span className="text-sm">📧</span> Your Email *
           </label>
           <input
             type="email"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full px-4 py-3 border-2 border-[#D4DDD6] rounded-xl focus:border-[#059669] focus:outline-none transition-colors bg-white text-[#1A1C1A]"
+            className="w-full px-4 py-2.5 border-l-4 border-l-[#059669]/30 border border-[#D4DDD6] rounded-lg focus:border-[#059669] focus:border-l-[#059669] focus:outline-none transition-colors bg-[#F7FAF8] text-[#1A1C1A] text-sm"
             required
           />
         </div>
 
         {/* Message */}
         <div>
-          <label className="block font-mono text-[9px] uppercase tracking-widest text-[#6B8070] mb-2">
-            Message (optional)
+          <label className="block font-mono text-[8px] uppercase tracking-widest text-[#059669] mb-2 flex items-center gap-1.5">
+            <span className="text-sm">💬</span> Message (Optional)
           </label>
           <textarea
             value={formData.message}
             onChange={(e) =>
               setFormData({ ...formData, message: e.target.value })
             }
-            rows={4}
-            className="w-full px-4 py-3 border-2 border-[#D4DDD6] rounded-xl focus:border-[#059669] focus:outline-none transition-colors bg-white text-[#1A1C1A] resize-none"
+            rows={3}
+            className="w-full px-4 py-2.5 border-l-4 border-l-[#059669]/30 border border-[#D4DDD6] rounded-lg focus:border-[#059669] focus:border-l-[#059669] focus:outline-none transition-colors bg-[#F7FAF8] text-[#1A1C1A] text-sm resize-none"
           />
         </div>
 
         {/* Error */}
         {error && (
-          <div className="p-4 bg-red-50 border-2 border-red-200 rounded-xl text-red-600 text-sm">
+          <div className="p-3 bg-red-50 border-l-4 border-l-red-500 rounded-lg text-red-700 text-sm">
             {error}
           </div>
         )}
@@ -987,7 +1046,7 @@ function ExpressInterestForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full py-4 rounded-xl bg-gradient-to-br from-[#059669] to-[#10B981] text-white font-mono text-[10px] uppercase tracking-widest shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-3.5 rounded-lg bg-[#059669] text-white font-mono text-[9px] uppercase tracking-widest shadow-md hover:bg-[#047857] hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? "Sending..." : "Submit Interest →"}
         </button>
