@@ -348,7 +348,7 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 
 - [[ETHERNICAPSULE]] — Time-locked cryptographic messages
 - [[ORBIT77]] — Podcast + supporter funding
-- [[FIGURINES]] — Physical collectible figurines
+- [[Figuitoon]] — Physical collectible figurines
 
 ---
 

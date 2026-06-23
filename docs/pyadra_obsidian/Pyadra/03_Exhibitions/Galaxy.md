@@ -794,7 +794,7 @@ Enter URL:        /exhibitions/galaxy/ebooks
 - [[VISION]]
 - [[EterniCapsule]]
 - [[Orbit77]]
-- [[Figurines]]
+- [[Figuitoon]]
 - [[Ebooks]]
 
 **Live URLs:**

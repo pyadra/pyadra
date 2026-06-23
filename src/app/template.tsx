@@ -6,7 +6,13 @@ export default function Template({ children }: { children: React.ReactNode }) {
   return (
     <motion.div
       initial={{ opacity: 0, filter: "blur(10px)" }}
-      animate={{ opacity: 1, filter: "blur(0px)" }}
+      animate={{
+        opacity: 1,
+        filter: "blur(0px)",
+        // A residual filter (even blur(0px)) turns this wrapper into the
+        // containing block for position:fixed descendants — clear it.
+        transitionEnd: { filter: "none" },
+      }}
       transition={{ duration: 1.5, ease: "easeOut" }}
       className="w-full relative"
     >

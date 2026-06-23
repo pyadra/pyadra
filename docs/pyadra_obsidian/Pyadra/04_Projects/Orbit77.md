@@ -453,7 +453,7 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 **Sibling projects in Galaxy:**
 
 - [[ETHERNICAPSULE]] — Time-locked cryptographic messages
-- [[FIGURINES]] — Physical figurines from photos
+- [[Figuitoon]] — Physical figurines from photos
 
 ---
 

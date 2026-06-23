@@ -519,7 +519,7 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 **Sibling projects in Galaxy:**
 
 - [[ORBIT77]] — Podcast + supporter funding
-- [[FIGURINES]] — Physical figurines from photos
+- [[Figuitoon]] — Physical figurines from photos
 
 ---
 

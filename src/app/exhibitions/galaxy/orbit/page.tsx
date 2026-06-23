@@ -1,816 +1,645 @@
-"use client";
+'use client';
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import ProjectNav from "../components/ProjectNav";
-import LiveBackground from "../components/LiveBackground";
-import ScrollReveal from "./components/ScrollReveal";
-import ScanLines from "./components/ScanLines";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+} from 'framer-motion';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import PyadraLogo from '@/app/components/brand/PyadraLogo';
 
-// ProgressBar Component matching the Premium Orbit x Pyadra design language
-function ProgressBar({ label, status, percentage, fraction, color = "orbit" }: { label: string, status: string, percentage: number, fraction?: string, color?: "orbit" | "pyadra" | "alert" }) {
-  const colorMap = {
-    orbit: { text: "text-[var(--orbit-green)]", bg: "bg-[var(--orbit-green)]", glow: "shadow-[0_0_15px_rgba(57,255,20,0.4)]" },
-    pyadra: { text: "text-[var(--orbit-gold)]", bg: "bg-[var(--orbit-gold)]", glow: "shadow-[0_0_15px_rgba(255,176,0,0.4)]" },
-    alert: { text: "text-[#FF4444]", bg: "bg-[#FF4444]", glow: "shadow-[0_0_15px_rgba(255,68,68,0.4)]" },
-  };
-  const theme = colorMap[color];
+/* ------------------------------------------------------------------ */
+/*  PYADRA — Project № 02 · Orbit 77                                   */
+/*  Design language: family.co — same skeleton as Kangaroo Cleanup.    */
+/*                                                                     */
+/*  The supporter credential flow is kept FUNCTIONAL:                  */
+/*  POST /api/donate (same payload as before) + live funding from      */
+/*  /api/stats/orbit-fund. Copy is a working skeleton from             */
+/*  Orbit77.md — adjust freely.                                        */
+/* ------------------------------------------------------------------ */
+
+const CONTACT_EMAIL = 'eadiaz96@gmail.com';
+const YOUTUBE_URL = 'https://www.youtube.com/@Orbit77Podcast';
+const SHOP_URL = 'https://orbit77.shop/';
+const FUNDING_GOAL = 1000; // AUD — Season 2 production budget
+
+const ENTER = 0.75;
+const SPRING = { type: 'spring' as const, stiffness: 130, damping: 18, mass: 0.9 };
+const pop = {
+  initial: { opacity: 0, y: 28, scale: 0.98 },
+  whileInView: { opacity: 1, y: 0, scale: 1 },
+  viewport: { once: true, margin: '-70px' },
+  transition: SPRING,
+};
+
+const TIERS = [
+  { amount: 10, name: 'Signal Carrier' },
+  { amount: 20, name: 'Archive Node' },
+  { amount: 50, name: 'Transmission Keeper' },
+];
+
+const TAKEOVER = [
+  { num: '01', title: 'A real archive', body: '10 episodes of Season 1, live on YouTube. Raw conversations about life, creation and identity — no script, no filters.' },
+  { num: '02', title: 'A working credential system', body: 'Supporters receive a permanent credential (O77-S1-XXXXXX) engraved in the archive. Stripe live, email delivery, all operational.' },
+  { num: '03', title: 'A brand with a world', body: 'The orbital concept, the transmission aesthetic, the ritual copy voice — plus orbit77.shop, the external merch store.' },
+  { num: '04', title: 'Everything that runs it', body: 'Full source code, database, funding tracker, crew application system, and the independence roadmap (10–12 hours).' },
+];
+
+const STORY = [
+  { year: '2025', text: 'Pablo & Eduardo start recording from Australia — two friends asking the questions most podcasts avoid.' },
+  { year: 'Season 1', text: '10 episodes published. No script, no sponsors, no algorithm games. Built for permanence, not virality.' },
+  { year: 'The archive', text: 'The credential system goes live: supporters become part of the permanent record, not just an audience.' },
+  { year: 'Today', text: 'Season 2 is being funded by the people who believe in it. Every credential moves the needle.' },
+];
+
+const INCLUDED = [
+  '10 published episodes (YouTube channel)',
+  'Credential system — Stripe live + email delivery',
+  'Brand identity and ritual copy guidelines',
+  'orbit77.shop — external merch store',
+  'Crew application system',
+  'Full source code and database schema',
+];
+
+const THE_DEAL = [
+  { item: 'Founders retain', note: '51% — Pablo & Eduardo keep creative direction' },
+  { item: 'Available', note: '49% · indicative valuation $12,000 AUD' },
+  { item: 'Pyadra keeps', note: '9% per credential, 3% of merchandise sales' },
+];
+
+const RISKS = [
+  { t: 'The audience is small', b: '12 supporters and an early YouTube channel. You’d be entering before the proof, not after it — that’s the point, and the risk.' },
+  { t: 'Monetization isn’t active', b: 'No AdSense, no Spotify revenue, no sponsors yet. Today the only revenue is credentials and merch.' },
+  { t: 'Production is real work', b: 'A podcast doesn’t run itself. Episodes need recording, editing and publishing — actively, every season.' },
+  { t: 'Shared infrastructure', b: 'Stripe webhook and database are shared with Pyadra today. Independence is documented and takes 10–12 hours.' },
+];
+
+const FAQ = [
+  { q: 'Is this real?', a: '10 episodes are public on YouTube and the credential system processes real payments through Stripe. Watch first, decide later.' },
+  { q: 'What do supporters get?', a: 'A permanent credential engraved in the archive (O77-S1-XXXXXX), founding member status, early Season 2 access, and direct founder updates.' },
+  { q: 'What can I own?', a: 'Up to 49% of the project — the founders keep 51% and creative direction. Revenue is shared proportionally to your stake.' },
+  { q: 'Where does the money go?', a: 'Straight into Season 2 production. The goal is $1,000 AUD for 10 new episodes — the progress bar on this page is live.' },
+];
+
+/* ---------- pieces ---------- */
+
+function PillButton({ href, children, primary = false }: { href: string; children: React.ReactNode; primary?: boolean }) {
+  return (
+    <motion.a
+      href={href}
+      whileHover={{ scale: 1.04, y: -2 }}
+      whileTap={{ scale: 0.96 }}
+      transition={{ type: 'spring', stiffness: 350, damping: 17 }}
+      className={`inline-block rounded-full px-7 py-3.5 text-sm font-semibold tracking-tight ${
+        primary
+          ? 'bg-[#059669] text-white shadow-lg shadow-[#059669]/25'
+          : 'bg-white text-[#1A1C1A] ring-1 ring-[#1A1C1A]/10 shadow-sm'
+      }`}
+    >
+      {children}
+    </motion.a>
+  );
+}
+
+/* The artifact — Orbit's sphere, grabbable. */
+function PhysicalSphere() {
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const rotateX = useSpring(useTransform(my, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 15 });
+  const rotateY = useSpring(useTransform(mx, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 15 });
 
   return (
-    <div>
-       <div className="flex justify-between items-center text-xs md:text-sm font-mono text-[var(--orbit-cream)]/80 mb-3 uppercase tracking-widest">
-         <span>{label}</span>
-         <span className={`${theme.text}`}>{status} {fraction && `(${fraction})`}</span>
-       </div>
-       <div className="w-full h-[1px] md:h-[2px] bg-white/10 relative rounded-full overflow-hidden">
-          <motion.div 
-             initial={{ width: 0 }}
-             whileInView={{ width: `${percentage}%` }}
-             viewport={{ once: true }}
-             transition={{ duration: 1.5, ease: "easeOut" }}
-             className={`absolute top-0 left-0 h-full ${theme.bg} ${theme.glow}`} 
-          />
-       </div>
+    <div
+      className="relative flex flex-col items-center"
+      onMouseMove={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        mx.set((e.clientX - rect.left) / rect.width - 0.5);
+        my.set((e.clientY - rect.top) / rect.height - 0.5);
+      }}
+      onMouseLeave={() => { mx.set(0); my.set(0); }}
+    >
+      <div aria-hidden className="absolute -inset-16 pointer-events-none" style={{ background: 'radial-gradient(50% 50% at 50% 45%, rgba(5,150,105,0.12), transparent 70%)' }} />
+      <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}>
+        <motion.div
+          drag
+          dragSnapToOrigin
+          dragElastic={0.18}
+          dragTransition={{ bounceStiffness: 300, bounceDamping: 18 }}
+          whileHover={{ scale: 1.04 }}
+          whileDrag={{ scale: 1.08, rotate: 3 }}
+          style={{ rotateX, rotateY, transformPerspective: 900 }}
+          className="relative cursor-grab active:cursor-grabbing touch-none w-56 h-56 md:w-72 md:h-72"
+        >
+          <div className="relative w-full h-full rounded-full bg-[radial-gradient(circle_at_30%_30%,#FFFFFF,#E8E9E8,#C8C9C8)] shadow-[-14px_18px_38px_rgba(10,18,14,0.3)] overflow-hidden">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <img src="/orbit-logo.png" alt="Orbit 77" className="w-3/5 h-3/5 object-contain opacity-75 pointer-events-none select-none" draggable={false} />
+            </div>
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
+              className="absolute inset-0 opacity-30 bg-[conic-gradient(from_0deg,transparent_0deg,transparent_180deg,rgba(255,255,255,0.3)_270deg,transparent_360deg)]"
+            />
+          </div>
+          <motion.span
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: ENTER + 1.6, ...SPRING }}
+            className="absolute -top-2 -right-2 rounded-full bg-white px-3.5 py-1.5 text-[11px] font-semibold text-[#1A1C1A] shadow-md ring-1 ring-[#1A1C1A]/10 rotate-3"
+          >
+            grab me ✦
+          </motion.span>
+        </motion.div>
+      </motion.div>
+      <p className="mt-6 text-center text-xs text-[#6B8070] font-medium">
+        Season 1 complete · Season 2 in orbit
+      </p>
     </div>
   );
 }
 
-// Data for Episodes
-const EPISODES = [
-  { id: 1, title: "The Last Dance", thumb: "https://img.youtube.com/vi/7EYM9ecK3Ng/hqdefault.jpg", link: "https://youtu.be/7EYM9ecK3Ng?si=VNsVy7xsSlpclrzV" },
-  { id: 2, title: "The Invisible Shapes of Love", thumb: "https://img.youtube.com/vi/dKMcW-eGNZs/hqdefault.jpg", link: "https://youtu.be/dKMcW-eGNZs?si=x0WWdJYJGuSv-qld" },
-  { id: 3, title: "What We Carry, What We Let Go", thumb: "https://img.youtube.com/vi/d_tE-SibUfk/hqdefault.jpg", link: "https://youtu.be/d_tE-SibUfk?si=L2Ukmn2nhFF5IwYd" },
-  { id: 4, title: "Faith in the Invisible", thumb: "https://img.youtube.com/vi/LfysC9OWP4w/hqdefault.jpg", link: "https://youtu.be/LfysC9OWP4w?si=hJxIiAgEQwopnDNt" },
-  { id: 5, title: "Alive on Purpose", thumb: "https://img.youtube.com/vi/HJW8opwiCS0/hqdefault.jpg", link: "https://youtu.be/HJW8opwiCS0?si=Mx8scMLOjtf8ZwS3" },
-  { id: 6, title: "Kids Then, Pretenders Now", thumb: "https://img.youtube.com/vi/r3sUwzIg-s8/hqdefault.jpg", link: "https://youtu.be/r3sUwzIg-s8?si=Vrvt2GM0dJZP7L1B" },
-  { id: 7, title: "Trembling Is Not Surrender", thumb: "https://img.youtube.com/vi/mrGCSrx6bYc/hqdefault.jpg", link: "https://youtu.be/mrGCSrx6bYc?si=pzGzcgzuKR2cs7Vp" },
-  { id: 8, title: "They Called Us Strong, We Left Soft", thumb: "https://img.youtube.com/vi/SKIuWBvOw0E/hqdefault.jpg", link: "https://youtu.be/SKIuWBvOw0E?si=sHqOIUUPN78s0BIv" },
-  { id: 9, title: "Everything Changed, We're Still Here", thumb: "https://img.youtube.com/vi/rhG7zcGhGKA/hqdefault.jpg", link: "https://youtu.be/rhG7zcGhGKA?si=ZOtUXzRi37QO060w" },
-  { id: 10, title: "The Part You Don't See", thumb: "https://img.youtube.com/vi/hvCCHVRK9iU/maxresdefault.jpg", link: "https://youtu.be/hvCCHVRK9iU?si=Ii6Byk0Tg_r9aNLC", latest: true },
-];
+/* ---------- the working support flow ---------- */
 
-export default function OrbitEntertainmentDashboard() {
-  const [stripeOpen, setStripeOpen] = useState(false);
-  const [amountAud, setAmountAud] = useState<number | null>(null);
+function SupportCard() {
+  const [tier, setTier] = useState(TIERS[1]);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [supporterName, setSupporterName] = useState("");
-  const [supporterEmail, setSupporterEmail] = useState("");
-  const [isAnonymous, setIsAnonymous] = useState(false);
-  const [supportMessage, setSupportMessage] = useState("");
-  const [checkoutError, setCheckoutError] = useState("");
+  const [error, setError] = useState('');
 
-  // Support goal progress — in AUD
-  const supportGoalAud = 1000;
-  const [supportRaisedAud, setSupportRaisedAud] = useState(0);
-
-  useEffect(() => {
-    fetch('/api/stats/orbit-fund')
-      .then(res => res.json())
-      .then(data => {
-        if (data && typeof data.total === 'number') {
-          setSupportRaisedAud(data.total);
-        }
-      })
-      .catch(console.error);
-  }, []);
-
-  const supportPercentage = Math.min((supportRaisedAud / supportGoalAud) * 100, 100);
-
-  // Bioluminescence tied to scroll depth - blending Green and Amber
-  const { scrollY } = useScroll();
-  const backgroundY = useTransform(scrollY, [0, 4000], ["-50%", "30%"]);
-
-  const handleSupport = async () => {
-    setCheckoutError("");
-    if (!amountAud || amountAud < 2 || loading) return;
-    if (!supporterEmail || !supporterEmail.includes('@')) {
-      setCheckoutError("Please provide a valid email format.");
+  const lockIn = async () => {
+    setError('');
+    if (!email.includes('@')) {
+      setError('Please enter a valid email — your credential is delivered there.');
       return;
     }
-    
+    setLoading(true);
     try {
-      setLoading(true);
-      const res = await fetch("/api/donate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/donate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          intent: "orbit-support",
-          amount: Math.round(amountAud * 100),
-          project_id: "orbit-77",
-          currency: "AUD",
-          supporter_name: supporterName.trim() || "Anonymous",
-          supporter_email: supporterEmail.trim(),
-          is_anonymous: isAnonymous,
-          support_message: supportMessage.trim()
+          intent: 'orbit-support',
+          amount: tier.amount * 100,
+          project_id: 'orbit-77',
+          currency: 'AUD',
+          supporter_name: name.trim() || 'Anonymous',
+          supporter_email: email.trim(),
+          is_anonymous: !name.trim(),
+          support_message: '',
         }),
       });
       const data = await res.json();
       if (data?.url) {
-         window.location.href = data.url;
+        window.location.href = data.url;
       } else {
-         throw new Error(data?.error || "Unable to start checkout");
+        throw new Error(data?.error || 'Unable to start checkout');
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      console.error(errorMessage);
-      setCheckoutError(errorMessage || "Unable to start checkout. Please ensure STRIPE_SECRET_KEY is configured.");
+      setError(err instanceof Error ? err.message : 'Something went wrong — please try again.');
       setLoading(false);
     }
   };
 
-  const fadeUp = {
-    initial: { opacity: 0, y: 30 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true, margin: "-5%" },
-    transition: { duration: 1.2 }
-  };
+  const inputClass =
+    'w-full rounded-2xl bg-[#EDEFED] px-5 py-3.5 text-sm font-medium placeholder:text-[#6B8070]/70 focus:outline-none focus:ring-2 focus:ring-[#059669] transition-shadow';
 
   return (
-    <div className="min-h-screen bg-[var(--orbit-black)] text-[var(--orbit-cream)] overflow-x-hidden font-sans selection:bg-[var(--orbit-green)]/20 selection:text-[var(--orbit-green)] relative flex flex-col items-center">
+    <motion.div {...pop} className="rounded-[32px] bg-white shadow-sm ring-1 ring-[#1A1C1A]/5 p-8 md:p-10 max-w-xl mx-auto">
+      <h3 className="text-2xl font-bold tracking-tight mb-1.5">Lock in your credential</h3>
+      <p className="text-[14px] text-[#3A4A3E] mb-7">
+        A permanent place in the archive — O77-S1-XXXXXX, engraved with your support.
+      </p>
 
-      {/* CRT SCAN LINES */}
-      <ScanLines />
+      <div className="grid grid-cols-3 gap-2.5 mb-4">
+        {TIERS.map((t) => (
+          <button
+            key={t.amount}
+            onClick={() => setTier(t)}
+            className={`rounded-2xl px-3 py-4 text-center transition-all ${
+              tier.amount === t.amount
+                ? 'bg-[#059669]/10 ring-2 ring-[#059669]'
+                : 'bg-[#EDEFED] ring-1 ring-transparent hover:ring-[#1A1C1A]/10'
+            }`}
+          >
+            <span className="block text-xl font-bold tracking-tight">${t.amount}</span>
+            <span className="block text-[11px] font-semibold text-[#6B8070] mt-0.5">{t.name}</span>
+          </button>
+        ))}
+      </div>
 
-      {/* LIVE BACKGROUND */}
-      <LiveBackground color="var(--orbit-green)" intensity="medium" />
-
-      {/* Background Deep Earth / Orbit Gradient */}
-      <motion.div
-        animate={{ opacity: [0.08, 0.15, 0.08] }}
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-        className="fixed left-1/2 -translate-x-1/2 w-[120vw] h-[120vh] rounded-full blur-[180px] pointer-events-none mix-blend-screen z-0"
-        style={{
-          top: backgroundY,
-          background: "radial-gradient(circle at center, rgba(57, 255, 20, 0.12) 0%, rgba(255, 176, 0, 0.05) 50%, transparent 80%)"
-        }}
-      />
-
-      <ProjectNav
-        projectName="Orbit 77"
-        projectColor="var(--orbit-green)"
-        links={[
-          { href: "/exhibitions/galaxy/orbit", label: "Overview" },
-          { href: "/exhibitions/galaxy/orbit/join", label: "Join Crew" }
-        ]}
-      />
-
-      {/* DASHBOARD HUD CONTAINER */}
-      <main className="relative z-10 w-full max-w-[1280px] px-6 lg:px-12 pt-32 pb-24 md:pt-40 mx-auto min-h-screen flex flex-col justify-center items-center">
-        
-        {/* LOGO WATERMARK (Atmospheric) */}
-        <motion.div
-          animate={{ y: [0, -20, 0], opacity: [0.10, 0.15, 0.10] }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-10 md:top-0 left-1/2 -translate-x-1/2 w-[140%] md:w-[130%] max-w-6xl pointer-events-none z-0 flex justify-center select-none pt-10"
+      <div className="space-y-3">
+        <input type="text" placeholder="Display name (optional — or stay anonymous)" value={name} onChange={(e) => setName(e.target.value)} className={inputClass} />
+        <input type="email" placeholder="Your email — the credential arrives here *" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} required />
+        {error && <p className="text-[13px] font-semibold text-red-600 px-1">{error}</p>}
+        <motion.button
+          onClick={lockIn}
+          disabled={loading}
+          whileHover={{ scale: 1.02, y: -1 }}
+          whileTap={{ scale: 0.97 }}
+          transition={{ type: 'spring', stiffness: 350, damping: 17 }}
+          className="w-full rounded-full bg-[#059669] text-white px-7 py-4 text-sm font-semibold shadow-lg shadow-[#059669]/25 disabled:opacity-50"
         >
-           {/* eslint-disable-next-line @next/next/no-img-element */}
-           <img
-             src="/orbit-logo.png"
-             alt="Orbit 77 Element"
-             className="w-full h-auto object-contain blur-[8px] opacity-80"
-           />
-        </motion.div>
-        
-        {/* SECTION 1 — HERO */}
-        <motion.div {...fadeUp} className="w-full mb-12 border-b border-[var(--orbit-green)]/10 pb-16 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+          {loading ? 'Opening checkout…' : `Lock in — $${tier.amount} AUD →`}
+        </motion.button>
+        <p className="text-[12px] text-[#6B8070] text-center font-medium">
+          Secure payment via Stripe · your credential is permanent
+        </p>
+      </div>
+    </motion.div>
+  );
+}
 
-            {/* Left Column - Main Hero Content (8 cols) */}
-            <div className="lg:col-span-8 flex flex-col items-center md:items-start text-center md:text-left gap-5">
+/* ---------- the page ---------- */
 
-              <motion.h1
-                className="text-6xl md:text-7xl lg:text-8xl font-serif italic font-light text-[var(--orbit-cream)] tracking-wider w-full md:-ml-2 cursor-default"
-                animate={{
-                  textShadow: [
-                    "0 0 50px rgba(255,176,0,0.6)",
-                    "0 0 70px rgba(255,176,0,0.8), 2px 0 0 rgba(57,255,20,0.3), -2px 0 0 rgba(255,176,0,0.3)",
-                    "0 0 50px rgba(255,176,0,0.6)"
-                  ]
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                whileHover={{
-                  textShadow: "5px 0 0 rgba(57,255,20,0.9), -5px 0 0 rgba(255,176,0,0.9), 0 0 80px rgba(255,176,0,1)",
-                  scale: 1.02,
-                  transition: { duration: 0.2 }
-                }}
-              >
-                Orbit 77
-              </motion.h1>
+export default function OrbitShowcase() {
+  const [raised, setRaised] = useState<number | null>(null);
 
-              <p className="text-sm md:text-xs font-mono tracking-wide text-[var(--orbit-green)] uppercase w-full font-bold md:pl-2">
-                Real conversations. No filters. No script. No bullshit.
-              </p>
+  useEffect(() => {
+    fetch('/api/stats/orbit-fund')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && typeof data.total === 'number') setRaised(data.total);
+      })
+      .catch(() => setRaised(null));
+  }, []);
 
-              <p className="max-w-xl text-xs md:text-sm font-light text-[var(--orbit-cream)]/80 leading-relaxed mt-2 font-sans md:pl-2">
-                Ten transmissions recorded from Australia. No filters. No script.
-              </p>
+  const pct = raised !== null ? Math.min((raised / FUNDING_GOAL) * 100, 100) : 0;
 
-              <div className="flex flex-col sm:flex-row items-center gap-8 mt-8 w-full md:w-auto md:pl-2">
-                <motion.button
-                  onClick={() => { setAmountAud(20); setStripeOpen(true); }}
-                  animate={{ boxShadow: ["0px 0px 15px rgba(57,255,20,0.3)", "0px 0px 40px rgba(57,255,20,0.6)", "0px 0px 15px rgba(57,255,20,0.3)"] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                  className="w-full sm:w-auto px-10 py-5 rounded-full text-sm md:text-base uppercase font-mono tracking-wide transition-all border border-[var(--orbit-green)] text-[var(--orbit-black)] bg-[var(--orbit-green)] hover:bg-[var(--orbit-green)] hover:shadow-[0_0_50px_rgba(57,255,20,0.9)] font-bold relative overflow-hidden group"
-                >
-                  <div className="absolute inset-0 bg-white/20 w-[100%] group-hover:w-[150%] h-[100%] transform -skew-x-12 -translate-x-[150%] group-hover:translate-x-[150%] transition-all duration-1000 ease-in-out z-0" />
-                  <span className="relative z-10">LOCK IN NOW →</span>
-                </motion.button>
-                <a href="#latest-episode" className="text-sm md:text-base uppercase font-mono tracking-wide text-[var(--orbit-cream)]/90 hover:text-[var(--orbit-gold)] transition-colors md:mr-4 font-bold border-b border-transparent hover:border-[var(--orbit-gold)]">
-                  Watch the latest episode ↓
-                </a>
-              </div>
+  return (
+    <div className="bg-[#EDEFED] text-[#1A1C1A] font-sans overflow-x-clip antialiased selection:bg-[#059669] selection:text-white min-h-screen">
 
-              {/* Value Proposition - Clear and concise */}
-              <div className="mt-8 bg-[var(--orbit-green)]/5 border border-[var(--orbit-green)]/20 rounded-xl p-4 max-w-lg mx-auto md:mx-0 backdrop-blur-sm">
-                <p className="text-xs md:text-sm font-sans text-[var(--orbit-cream)]/95 leading-relaxed text-center md:text-left">
-                  <span className="font-bold text-[var(--orbit-green)]">Fund Season 2. Get your credential.</span>
-                  {" "}Your contribution fuels 10 more transmissions. You receive a permanent digital credential and founding member status.
-                </p>
-              </div>
-            </div>
+      {/* floating pill nav */}
+      <motion.nav
+        initial={{ opacity: 0, y: -16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: ENTER, ...SPRING }}
+        className="fixed top-4 inset-x-0 z-50 flex justify-center px-4"
+      >
+        <div className="flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-md shadow-lg shadow-[#1A1C1A]/5 ring-1 ring-[#1A1C1A]/5 pl-5 pr-1.5 py-1.5">
+          <Link href="/" aria-label="Pyadra · Home" className="flex items-center gap-2 mr-2 group">
+            <PyadraLogo size={22} />
+            <span className="text-sm font-bold tracking-tight transition-colors group-hover:text-[#059669]">
+              Pyadra
+            </span>
+          </Link>
+          <Link href="/exhibitions/galaxy" className="hidden sm:block rounded-full px-3.5 py-2 text-[13px] font-medium text-[#3A4A3E] hover:bg-[#EDEFED] transition-colors">
+            ← Galaxy
+          </Link>
+          <span className="hidden md:block rounded-full px-3.5 py-2 text-[13px] font-medium text-[#6B8070]">
+            Project № 02
+          </span>
+          <motion.a
+            href="#support"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 17 }}
+            className="rounded-full bg-[#1A1C1A] text-white px-5 py-2 text-[13px] font-semibold"
+          >
+            Support
+          </motion.a>
+        </div>
+      </motion.nav>
 
-            {/* Right Column - Orbital Diagram (4 cols) */}
-            <div className="lg:col-span-4 flex items-center justify-center lg:justify-end">
-              <div className="w-full max-w-[300px] space-y-6">
+      {/* ============ HERO ============ */}
+      <section className="relative min-h-[100svh] flex items-center overflow-hidden">
+        <div aria-hidden className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-40 -left-40 w-[640px] h-[640px] rounded-full opacity-60" style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.10), transparent 65%)' }} />
+          <div className="absolute -bottom-56 -right-32 w-[720px] h-[720px] rounded-full opacity-60" style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.10), transparent 65%)' }} />
+        </div>
 
-                {/* SVG Orbital Visualization - Clean, no overlapping labels */}
-                <div className="relative w-full aspect-square flex items-center justify-center">
-                  <svg viewBox="0 0 200 200" className="w-full h-full">
-
-                    {/* Glow effect filters */}
-                    <defs>
-                      <filter id="glow-green">
-                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                        <feMerge>
-                          <feMergeNode in="coloredBlur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
-                      <filter id="glow-gold">
-                        <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
-                        <feMerge>
-                          <feMergeNode in="coloredBlur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
-                    </defs>
-
-                    {/* Background subtle grid */}
-                    <circle cx="100" cy="100" r="90" fill="none" stroke="white" strokeWidth="0.2" opacity="0.05" />
-
-                    {/* Season 1 - Inner orbit (complete circle) */}
-                    <circle
-                      cx="100"
-                      cy="100"
-                      r="55"
-                      fill="none"
-                      stroke="var(--orbit-green)"
-                      strokeWidth="2"
-                      opacity="0.8"
-                      filter="url(#glow-green)"
-                    />
-
-                    {/* Season 2 - Outer orbit (partial based on funding %) */}
-                    <circle
-                      cx="100"
-                      cy="100"
-                      r="80"
-                      fill="none"
-                      stroke="var(--orbit-gold)"
-                      strokeWidth="2.5"
-                      opacity="0.9"
-                      strokeDasharray={`${(supportPercentage / 100) * 502.65} 502.65`}
-                      strokeDashoffset="125.66"
-                      strokeLinecap="round"
-                      filter="url(#glow-gold)"
-                      transform="rotate(-90 100 100)"
-                    />
-
-                    {/* Orbiting satellite on Season 1 */}
-                    <g>
-                      <circle
-                        cx="100"
-                        cy="45"
-                        r="3"
-                        fill="var(--orbit-green)"
-                        filter="url(#glow-green)"
-                      >
-                        <animateTransform
-                          attributeName="transform"
-                          type="rotate"
-                          from="0 100 100"
-                          to="360 100 100"
-                          dur="12s"
-                          repeatCount="indefinite"
-                        />
-                      </circle>
-                    </g>
-
-                    {/* Funding progress indicator on Season 2 arc */}
-                    {supportPercentage > 0 && (
-                      <circle
-                        cx="100"
-                        cy="20"
-                        r="3.5"
-                        fill="var(--orbit-gold)"
-                        filter="url(#glow-gold)"
-                        transform={`rotate(${(supportPercentage / 100) * 360 - 90} 100 100)`}
-                      >
-                        <animate
-                          attributeName="opacity"
-                          values="0.6;1;0.6"
-                          dur="2s"
-                          repeatCount="indefinite"
-                        />
-                      </circle>
-                    )}
-                  </svg>
-
-                  {/* Center - Simple status only */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <p className="text-4xl font-serif italic text-[var(--orbit-cream)] mb-1">O77</p>
-                      <p className="text-[10px] font-mono text-[var(--orbit-cream)]/50 tracking-widest">ACTIVE</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Legend - Clear info below diagram */}
-                <div className="space-y-3 px-4">
-                  {/* Season 1 */}
-                  <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                    <div className="flex items-center gap-3">
-                      <span className="w-2 h-2 bg-[var(--orbit-green)] rounded-full" />
-                      <span className="text-sm font-mono text-[var(--orbit-green)] font-bold">Season 1</span>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-serif italic text-[var(--orbit-cream)]">Complete</p>
-                      <p className="text-[10px] font-mono text-[var(--orbit-cream)]/50">10 episodes</p>
-                    </div>
-                  </div>
-
-                  {/* Season 2 */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="w-2 h-2 bg-[var(--orbit-gold)] rounded-full animate-pulse" />
-                      <span className="text-sm font-mono text-[var(--orbit-gold)] font-bold">Season 2</span>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-serif italic text-[var(--orbit-gold)]">{Math.round(supportPercentage)}% funded</p>
-                      <p className="text-[10px] font-mono text-[var(--orbit-cream)]/50">${supportRaisedAud} / $1,000 AUD</p>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
-          </div>
-        </motion.div>
-
-        {/* SECTION 2 — PROOF */}
-        <div className="w-full mb-16 relative">
-          <div className="absolute left-1/2 -top-16 -translate-x-1/2 w-px h-16 bg-gradient-to-b from-[#39FF14]/80 to-transparent" />
-          <motion.div {...fadeUp} transition={{ delay: 0.1 }} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 lg:gap-6 mb-8 items-center">
-            
-            {/* DOMINANT STAT */}
-            <motion.div
-              animate={{ y: [0, -5, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="bg-[var(--orbit-deep)]/90 backdrop-blur-sm border-2 border-[var(--orbit-green)]/90 rounded-2xl p-8 text-center shadow-[0_0_20px_rgba(57,255,20,0.15)] flex flex-col items-center justify-center transition-all hover:bg-[#0A2211] lg:-mt-4 relative z-10"
+        <div className="relative max-w-6xl mx-auto px-6 w-full grid md:grid-cols-[7fr_5fr] gap-14 md:gap-10 items-center pt-28 pb-20">
+          <div>
+            <motion.span
+              initial={{ opacity: 0, y: 16, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: ENTER + 0.1, ...SPRING }}
+              className="inline-flex items-center gap-2 rounded-full bg-[#059669]/10 text-[#047857] px-4 py-2 text-[12px] font-semibold mb-8"
             >
-              <div className="absolute inset-0 bg-[var(--orbit-green)]/5 rounded-2xl pointer-events-none" />
-              <span className="text-5xl md:text-6xl font-serif italic text-[var(--orbit-green)] mb-3">10</span>
-              <span className="text-xs md:text-sm uppercase font-mono tracking-wide text-[var(--orbit-green)] font-bold leading-relaxed">Episodes Live</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#059669] animate-pulse" />
+              10 episodes live · funding Season 2
+            </motion.span>
+
+            <h1 className="text-4xl md:text-7xl font-bold tracking-[-0.035em] leading-[1.08] md:leading-[1.02] mb-7">
+              {['Real conversations.', 'No script.', 'No filters.'].map((line, i) => (
+                <span key={line} className="block overflow-hidden">
+                  <motion.span
+                    className="block"
+                    initial={{ y: '110%' }}
+                    animate={{ y: 0 }}
+                    transition={{ delay: ENTER + 0.2 + i * 0.09, type: 'spring', stiffness: 110, damping: 20 }}
+                  >
+                    {i === 2 ? <span className="text-[#059669]">{line}</span> : line}
+                  </motion.span>
+                </span>
+              ))}
+            </h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: ENTER + 0.55, ...SPRING }}
+              className="text-lg md:text-xl text-[#3A4A3E] leading-relaxed max-w-md mb-10"
+            >
+              A podcast recorded from Australia exploring life, creation, identity
+              — and what we leave behind. Built for permanence, not virality.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: ENTER + 0.7, ...SPRING }}
+              className="flex items-center gap-3 flex-wrap"
+            >
+              <PillButton href={YOUTUBE_URL} primary>Watch Season 1 →</PillButton>
+              <PillButton href="#support">Support Season 2</PillButton>
             </motion.div>
-
-            {/* SECONDARY STATS (Staggered organically via margins) */}
-            <div className="bg-[var(--orbit-void)]/90 backdrop-blur-sm border border-[var(--orbit-green)]/10 rounded-2xl p-5 text-center flex flex-col items-center justify-center transition-all hover:border-[var(--orbit-green)]/90 mt-4 h-full">
-              <span className="text-3xl md:text-4xl font-serif italic text-[var(--orbit-cream)]/80 mb-2">26</span>
-              <span className="text-xs md:text-sm uppercase font-mono tracking-wide text-[var(--orbit-cream)]/90 font-bold leading-relaxed">Content Pieces Published</span>
-            </div>
-            
-            <div className="bg-[var(--orbit-void)]/90 backdrop-blur-sm border border-[var(--orbit-green)]/10 rounded-2xl p-5 text-center flex flex-col items-center justify-center transition-all hover:border-[var(--orbit-green)]/90 -mt-2 h-full">
-              <span className="text-3xl md:text-4xl font-serif italic text-[var(--orbit-cream)]/80 mb-2">~45m</span>
-              <span className="text-xs md:text-sm uppercase font-mono tracking-wide text-[var(--orbit-cream)]/90 font-bold leading-relaxed">Real Conversations</span>
-            </div>
-            
-            <div className="bg-[var(--orbit-void)]/90 backdrop-blur-sm border border-[var(--orbit-green)]/10 rounded-2xl p-5 text-center flex flex-col items-center justify-center transition-all hover:border-[var(--orbit-green)]/90 mt-6 h-full">
-              <span className="text-3xl md:text-4xl font-serif italic text-[var(--orbit-cream)]/80 mb-2">50+</span>
-              <span className="text-xs md:text-sm uppercase font-mono tracking-wide text-[var(--orbit-cream)]/90 font-bold leading-relaxed">People Behind Orbit</span>
-            </div>
-            
-            <div className="bg-[var(--orbit-void)]/90 backdrop-blur-sm border border-[var(--orbit-green)]/10 rounded-2xl p-5 text-center flex flex-col items-center justify-center transition-all hover:border-[var(--orbit-green)]/90 md:col-span-3 lg:col-span-1 border-dashed mt-2 h-full">
-              <span className="text-3xl md:text-4xl font-serif italic text-[var(--orbit-cream)]/80 mb-2">1</span>
-              <span className="text-xs md:text-sm uppercase font-mono tracking-wide text-[var(--orbit-cream)]/90 font-bold leading-relaxed">Original Song Created</span>
-            </div>
-
-          </motion.div>
-          <p className="text-center text-xs md:text-sm font-mono tracking-wide uppercase font-bold text-[var(--orbit-green)] max-w-2xl mx-auto opacity-60 mt-4">
-            This is not an idea. This is already happening.
-          </p>
-        </div>
-
-        {/* SECTION 3: LATEST EPISODE */}
-        <div id="latest-episode" className="w-full mb-20">
-           <motion.div
-             {...fadeUp}
-             animate={{
-               x: [0, -3, 3, -2, 2, 0],
-             }}
-             transition={{
-               delay: 0.2,
-               x: {
-                 duration: 0.4,
-                 repeat: Infinity,
-                 repeatDelay: 8,
-                 ease: "easeInOut"
-               }
-             }}
-             whileHover={{
-               x: [0, -4, 4, -2, 2, 0],
-               transition: { duration: 0.3 }
-             }}
-             className="bg-[var(--orbit-void)]/90 backdrop-blur-sm border border-[var(--orbit-green)]/90 rounded-2xl p-6 lg:p-10 flex flex-col justify-between group shadow-[0_20px_50px_rgba(0,0,0,0.6)] relative overflow-hidden hover:border-[var(--orbit-green)]/90 transition-colors"
-           >
-               <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--orbit-green)]/5 rounded-full blur-[80px] pointer-events-none" />
-
-               {/* Glitch overlay - auto-triggers every 8s */}
-               <motion.div
-                 animate={{
-                   opacity: [0, 0, 0.25, 0, 0.15, 0],
-                   x: [0, -5, 5, -3, 0],
-                 }}
-                 transition={{
-                   duration: 0.6,
-                   repeat: Infinity,
-                   repeatDelay: 8,
-                   ease: "easeInOut"
-                 }}
-                 className="absolute inset-0 pointer-events-none z-[5]"
-                 style={{
-                   background: "linear-gradient(90deg, transparent 0%, rgba(57,255,20,0.2) 50%, transparent 100%)",
-                   mixBlendMode: "screen"
-                 }}
-               />
-
-               <div className="flex justify-between items-center mb-6 relative z-10">
-                   <span className="text-xs md:text-sm font-mono tracking-wide uppercase text-[var(--orbit-green)] font-bold">
-                     LATEST TRANSMISSION — EP. 10
-                   </span>
-                   <span className="w-2 h-2 bg-[var(--orbit-green)] rounded-full animate-pulse shadow-[0_0_15px_rgba(57,255,20,1)]" />
-               </div>
-
-               {/* Grid layout: Video + Content side by side on large screens */}
-               <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 relative z-10">
-                 {/* Video - 3 columns on large screens */}
-                 <div className="lg:col-span-3">
-                   <div className="w-full aspect-video bg-[#000] rounded-xl overflow-hidden relative border border-[var(--orbit-green)]/40 shadow-[0_0_30px_rgba(57,255,20,0.1)]">
-                     <iframe
-                       src="https://www.youtube.com/embed/hvCCHVRK9iU?rel=0&modestbranding=1&autohide=1&showinfo=0&controls=1"
-                       title="Orbit 77 — Episode 10: The Part You Don't See"
-                       frameBorder="0"
-                       allowFullScreen
-                       className="absolute inset-0 w-full h-full"
-                     />
-                   </div>
-                 </div>
-
-                 {/* Content - 2 columns on large screens */}
-                 <div className="lg:col-span-2 flex flex-col justify-center">
-                   <h3 className="text-3xl lg:text-4xl font-serif text-[var(--orbit-cream)] font-light italic mb-4">The Part You Don&apos;t See</h3>
-                   <p className="text-xs md:text-sm font-light font-sans text-[var(--orbit-cream)]/80 leading-relaxed mb-6">
-                     Our most honest episode yet. The one where we stopped pretending and talked about what it actually takes to build something from nothing.
-                   </p>
-                   <p className="inline-flex items-center gap-3 text-sm md:text-base font-mono tracking-wide font-bold uppercase text-[var(--orbit-black)] bg-[var(--orbit-gold)] px-6 py-3 rounded-sm shadow-[0_0_15px_rgba(255,176,0,0.4)] w-fit">
-                     <span className="w-1.5 h-1.5 bg-[var(--orbit-black)] rounded-full animate-pulse" />
-                     Watch it. Then decide if you want in.
-                   </p>
-                 </div>
-               </div>
-           </motion.div>
-
-        </div>
-
-        {/* SECTION 4B: ALL TRANSMISSIONS (EPISODE GRID) */}
-        <ScrollReveal delay={0.1}>
-        <div className="w-full mb-16 bg-[var(--orbit-void)]/90 backdrop-blur-md rounded-2xl p-6 lg:p-10 border border-[var(--orbit-green)]/10">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-[var(--orbit-green)]/10 pb-6">
-            <div>
-              <span className="text-xs md:text-sm font-mono tracking-wide uppercase text-[var(--orbit-cream)]/90 mb-2 block font-bold">ALL TRANSMISSIONS — SEASON 1</span>
-              <h3 className="text-2xl lg:text-3xl font-serif italic text-[var(--orbit-cream)]">10 episodes. Every one of them real.</h3>
-            </div>
           </div>
-          
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-            {EPISODES.map((ep) => (
-               <a 
-                 key={ep.id} 
-                 href={ep.link} 
-                 target="_blank" 
-                 rel="noreferrer"
-                 className="group flex flex-col gap-3"
-               >
-                 <div className="w-full aspect-video rounded-lg overflow-hidden relative border border-white/5 group-hover:border-[var(--orbit-gold)]/90 transition-colors shadow-[0_5px_15px_rgba(0,0,0,0.5)] bg-[var(--orbit-charcoal)]">
-                   {ep.latest && (
-                      <div className="absolute top-2 right-2 bg-[var(--orbit-green)] text-[var(--orbit-black)] text-xs font-mono tracking-widest px-2 py-1 rounded uppercase font-bold z-10">
-                        LATEST
-                      </div>
-                   )}
-                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                   <img
-                     src={ep.thumb}
-                     alt={ep.title}
-                     className="w-full h-full object-cover opacity-50 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 scale-105 group-hover:scale-100"
-                   />
-                 </div>
-                 <div>
-                   <span className="text-xs font-mono tracking-widest text-[var(--orbit-gold)]/70 block mb-1">EP.{ep.id.toString().padStart(2, '0')}</span>
-                   <p className="text-xs text-[var(--orbit-cream)]/80 font-light leading-snug group-hover:text-[var(--orbit-gold)] transition-colors">{ep.title}</p>
-                 </div>
-               </a>
+
+          <motion.div
+            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: ENTER + 0.5, type: 'spring', stiffness: 90, damping: 16 }}
+            className="mx-auto"
+          >
+            <PhysicalSphere />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ============ PROOF STRIP + LIVE FUNDING ============ */}
+      <section className="max-w-6xl mx-auto px-6 pb-24 md:pb-32 -mt-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          {[
+            { value: '10', label: 'episodes live on YouTube' },
+            { value: 'From $10', label: 'supporter credential' },
+            { value: '49%', label: 'available to own' },
+            { value: '$12,000', label: 'indicative valuation · AUD' },
+          ].map((stat, i) => (
+            <motion.div
+              key={stat.label}
+              {...pop}
+              transition={{ ...SPRING, delay: i * 0.07 }}
+              whileHover={{ y: -4, scale: 1.02 }}
+              className="rounded-3xl bg-white p-6 md:p-8 shadow-sm ring-1 ring-[#1A1C1A]/5"
+            >
+              <div className="text-3xl md:text-4xl font-bold tracking-tight mb-1">{stat.value}</div>
+              <div className="text-[13px] font-medium text-[#6B8070]">{stat.label}</div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* live Season 2 funding bar */}
+        <motion.div {...pop} className="rounded-3xl bg-white p-6 md:p-8 shadow-sm ring-1 ring-[#1A1C1A]/5">
+          <div className="flex items-baseline justify-between flex-wrap gap-2 mb-4">
+            <span className="text-[15px] font-bold tracking-tight">Season 2 production fund</span>
+            <span className="text-[13px] font-semibold text-[#059669]">
+              {raised !== null ? `$${raised.toLocaleString()} of $${FUNDING_GOAL.toLocaleString()} AUD` : 'loading…'}
+            </span>
+          </div>
+          <div className="h-3 rounded-full bg-[#EDEFED] overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: `${pct}%` }}
+              viewport={{ once: true }}
+              transition={{ type: 'spring', stiffness: 60, damping: 20, delay: 0.3 }}
+              className="h-full rounded-full bg-[#059669]"
+            />
+          </div>
+          <p className="text-[12px] font-medium text-[#6B8070] mt-3">
+            Live from the archive — every credential moves this bar.
+          </p>
+        </motion.div>
+
+        <motion.div {...pop} className="flex items-center justify-center gap-2 flex-wrap mt-6">
+          <span className="text-[13px] font-medium text-[#6B8070] mr-1">All public — verify it yourself:</span>
+          {[
+            { label: 'YouTube', href: YOUTUBE_URL },
+            { label: 'orbit77.shop', href: SHOP_URL },
+          ].map((link) => (
+            <motion.a
+              key={link.label}
+              href={link.href}
+              target="_blank"
+              rel="noopener"
+              whileHover={{ scale: 1.06, y: -1 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: 'spring', stiffness: 350, damping: 17 }}
+              className="rounded-full bg-white px-4 py-2 text-[13px] font-semibold ring-1 ring-[#1A1C1A]/8 shadow-sm hover:text-[#059669] transition-colors"
+            >
+              {link.label} ↗
+            </motion.a>
+          ))}
+        </motion.div>
+      </section>
+
+      {/* ============ WHAT YOU TAKE OVER ============ */}
+      <section className="max-w-6xl mx-auto px-6 py-24 md:py-32">
+        <motion.h2 {...pop} className="text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-4 max-w-2xl">
+          Not just a podcast.
+          <span className="text-[#059669]"> A permanent archive.</span>
+        </motion.h2>
+        <motion.p {...pop} className="text-lg text-[#3A4A3E] max-w-md mb-14">
+          Four things transfer with a participation — all of them already exist.
+        </motion.p>
+
+        <div className="grid md:grid-cols-2 gap-4 md:gap-5">
+          {TAKEOVER.map((item, i) => (
+            <motion.div
+              key={item.num}
+              {...pop}
+              transition={{ ...SPRING, delay: i * 0.06 }}
+              whileHover={{ y: -5 }}
+              className="group rounded-[28px] bg-white p-8 md:p-10 shadow-sm ring-1 ring-[#1A1C1A]/5 hover:shadow-xl hover:shadow-[#059669]/5 transition-shadow duration-300"
+            >
+              <span className="inline-flex w-10 h-10 items-center justify-center rounded-2xl bg-[#059669]/10 text-[#047857] text-[13px] font-bold mb-6 group-hover:bg-[#059669] group-hover:text-white transition-colors duration-300">
+                {item.num}
+              </span>
+              <h3 className="text-xl md:text-2xl font-bold tracking-tight mb-2.5">{item.title}</h3>
+              <p className="text-[15px] text-[#3A4A3E] leading-relaxed">{item.body}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ============ THE STORY ============ */}
+      <section className="max-w-6xl mx-auto px-6 py-24 md:py-32">
+        <div className="rounded-[36px] bg-white shadow-sm ring-1 ring-[#1A1C1A]/5 p-8 md:p-16 overflow-hidden relative">
+          <div aria-hidden className="absolute -top-32 -right-32 w-[420px] h-[420px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.07), transparent 65%)' }} />
+          <motion.h2 {...pop} className="text-3xl md:text-5xl font-bold tracking-[-0.03em] mb-3 relative">
+            Where it comes from.
+          </motion.h2>
+          <motion.p {...pop} className="text-lg text-[#3A4A3E] max-w-md mb-12 relative">
+            Two friends, a microphone, and the questions that don&rsquo;t fit anywhere else.
+          </motion.p>
+
+          <div className="grid md:grid-cols-4 gap-8 relative">
+            {STORY.map((step, i) => (
+              <motion.div key={step.year} {...pop} transition={{ ...SPRING, delay: i * 0.08 }}>
+                <span className={`inline-block rounded-full px-3.5 py-1.5 text-[12px] font-bold mb-4 ${
+                  i === STORY.length - 1 ? 'bg-[#059669] text-white' : 'bg-[#EDEFED] text-[#3A4A3E]'
+                }`}>
+                  {step.year}
+                </span>
+                <p className="text-[15px] text-[#3A4A3E] leading-relaxed">{step.text}</p>
+              </motion.div>
             ))}
           </div>
         </div>
-        </ScrollReveal>
+      </section>
 
-        {/* SECTION 7, 8, 9: SUPPORT ORBIT 77, STORE, FOLLOW GRID */}
-        <ScrollReveal delay={0.2}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full mb-10">
+      {/* ============ SUPPORT — the working flow ============ */}
+      <section id="support" className="max-w-6xl mx-auto px-6 py-24 md:py-32">
+        <motion.h2 {...pop} className="text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-4 text-center">
+          Hold the signal.
+        </motion.h2>
+        <motion.p {...pop} className="text-lg text-[#3A4A3E] text-center max-w-md mx-auto mb-14">
+          Season 2 is funded by people, not algorithms. Your credential is permanent.
+        </motion.p>
+        <SupportCard />
+      </section>
 
-           {/* SECTION 7: SUPPORT ORBIT 77 — Spans 2 cols */}
-           <motion.div {...fadeUp} transition={{ delay: 0.6 }} id="support" className="md:col-span-2 bg-[#09150C] backdrop-blur-md border border-[var(--orbit-green)]/90 hover:border-[var(--orbit-green)] rounded-2xl p-6 lg:p-8 flex flex-col justify-between shadow-[0_0_50px_rgba(57,255,20,0.2)] relative overflow-hidden group transition-all duration-700 hover:shadow-[0_0_70px_rgba(57,255,20,0.3)]">
-               <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--orbit-green)]/20 rounded-full blur-[100px] pointer-events-none group-hover:bg-[var(--orbit-green)]/90 transition-colors duration-700" />
+      {/* ============ INCLUDED / THE DEAL ============ */}
+      <section className="max-w-6xl mx-auto px-6 py-24 md:py-32">
+        <motion.h2 {...pop} className="text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-14 max-w-2xl">
+          Everything on the table.
+          <span className="text-[#059669]"> Nothing under it.</span>
+        </motion.h2>
 
-              <div className="relative z-10 flex flex-col h-full justify-between">
-                <div>
-                  <span className="text-sm font-mono tracking-wide uppercase text-[var(--orbit-green)] mb-4 block font-bold drop-shadow-[0_0_10px_rgba(57,255,20,0.5)]">Hold The Signal</span>
+        <div className="grid md:grid-cols-[3fr_2fr] gap-4 md:gap-5">
+          <motion.div {...pop} className="rounded-[28px] bg-white p-8 md:p-10 shadow-sm ring-1 ring-[#1A1C1A]/5">
+            <h3 className="text-lg font-bold tracking-tight mb-6">Comes with it</h3>
+            <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
+              {INCLUDED.map((item, i) => (
+                <motion.li
+                  key={item}
+                  initial={{ opacity: 0, x: -12 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ ...SPRING, delay: i * 0.05 }}
+                  className="flex items-start gap-3 text-[15px] text-[#1A1C1A]"
+                >
+                  <span className="mt-1 flex w-5 h-5 shrink-0 items-center justify-center rounded-full bg-[#059669]/10 text-[#059669] text-[11px] font-bold">✓</span>
+                  {item}
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
 
-                  <h4 className="font-serif italic text-[var(--orbit-green)] text-3xl mb-4 drop-shadow-[0_0_10px_rgba(57,255,20,0.3)]">Season 2 needs you.</h4>
-
-                  <div className="text-sm font-sans text-[var(--orbit-cream)]/95 leading-relaxed mb-6 font-light bg-[var(--orbit-green)]/5 p-5 rounded-xl border border-[var(--orbit-green)]/30 shadow-[0_0_20px_rgba(57,255,20,0.1)] space-y-3">
-                    <p>
-                      <span className="font-bold text-[var(--orbit-green)]">Season 1 is complete.</span> Ten transmissions.
-                      Real conversations. No script. The signal is strong.
-                    </p>
-
-                    <p>
-                      <span className="font-bold text-[var(--orbit-green)]">Season 2 is next.</span> Ten more transmissions.
-                      Deeper questions. Bigger reach. That requires funding.
-                    </p>
-
-                    <div className="pt-3 border-t border-[var(--orbit-green)]/20">
-                      <p className="font-bold text-[var(--orbit-green)] mb-2 text-sm">When you contribute:</p>
-                      <ul className="space-y-1.5 text-xs leading-relaxed ml-1">
-                        <li>→ Permanent digital credential (O77-S1-XXXXXX)</li>
-                        <li>→ Founding member status in Archive</li>
-                        <li>→ Early access to Season 2 episodes</li>
-                        <li>→ Direct updates from Pablo & Eduardo</li>
-                      </ul>
-                    </div>
-
-                    <p className="pt-3 border-t border-[var(--orbit-green)]/20 text-[var(--orbit-green)] font-medium text-sm">
-                      If this frequency resonates — lock in. That's how it reaches further.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Support Progress Bar */}
-                <div className="my-6 border-t border-[var(--orbit-green)]/20 pt-6">
-                  <div className="flex justify-between items-center mb-3">
-                    <p className="text-sm font-mono uppercase tracking-wide text-[var(--orbit-green)] font-bold">Season 2 Fund</p>
-                    <span className="text-xs font-mono text-[var(--orbit-cream)]/80 font-bold bg-[var(--orbit-green)]/10 px-2 py-1 rounded">
-                      ${supportRaisedAud} <span className="text-[var(--orbit-cream)]/90">/ ${supportGoalAud} AUD</span>
-                    </span>
-                  </div>
-
-                  {/* Animated Progress Bar */}
-                  <div className="w-full h-3 bg-[var(--orbit-black)] border border-[var(--orbit-green)]/80 rounded-full overflow-hidden mb-2 relative">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: supportPercentage === 0 ? "2px" : `${supportPercentage}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1.5, ease: "easeOut" }}
-                      className="absolute top-0 left-0 h-full bg-[var(--orbit-green)] rounded-full flex items-center justify-end overflow-hidden"
-                    >
-                      <div className="w-full h-full bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(255,255,255,0.2)_10px,rgba(255,255,255,0.2)_20px)] animate-[progress-scroll_2s_linear_infinite]" />
-                    </motion.div>
-                  </div>
-                  <p className="text-xs font-mono text-[var(--orbit-cream)]/90 text-right mt-2">
-                    Goal: 1,000 AUD — Every contribution extends the reach.
-                  </p>
-                </div>
-
-                <div className="mt-4 relative w-full text-center">
-                  <motion.button
-                    onClick={() => { setAmountAud(20); setStripeOpen(true); }}
-                    animate={{ boxShadow: ["0 0 20px rgba(57,255,20,0.4)", "0 0 50px rgba(57,255,20,0.8)", "0 0 20px rgba(57,255,20,0.4)"] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    className="w-full bg-[var(--orbit-green)] border border-[var(--orbit-green)] text-[var(--orbit-black)] py-5 rounded-xl text-base md:text-xs font-mono uppercase tracking-widest font-bold transition-all cursor-pointer group-hover:bg-white"
-                  >
-                    Lock In Your Frequency →
-                  </motion.button>
-                  <p className="text-sm md:text-xs font-mono text-[var(--orbit-cream)]/90 text-center mt-5 leading-relaxed">
-                    Any amount. One-time only. Credential sent via email.
-                  </p>
-                </div>
-              </div>
-           </motion.div>
-           {/* SECTION 8: STORE */}
-           <motion.div {...fadeUp} transition={{ delay: 0.7 }} className="bg-[var(--orbit-void)]/80 backdrop-blur-sm border border-white/5 hover:border-[var(--orbit-gold)]/80 rounded-2xl p-6 flex flex-col justify-start transition-colors group shadow-sm h-full">
-              <div>
-                <span className="text-xs md:text-sm font-mono tracking-widest uppercase text-[var(--orbit-cream)]/90 mb-2 block font-bold">Official Gear</span>
-                <h4 className="font-serif italic text-[var(--orbit-cream)]/80 text-lg lg:text-xl mb-2">Orbit77.shop</h4>
-                <p className="text-base text-[var(--orbit-cream)]/90 leading-relaxed font-light font-sans mb-4">Support the journey by wearing the brand. Premium streetwear from Australia.</p>
-              </div>
-              <a href="https://orbit77.shop/" target="_blank" rel="noreferrer" className="mt-auto text-xs md:text-sm uppercase font-mono tracking-widest text-[var(--orbit-gold)]/70 font-bold inline-block group-hover:text-[var(--orbit-gold)] transition-colors bg-[var(--orbit-gold)]/5 hover:bg-[var(--orbit-gold)]/10 border border-[var(--orbit-gold)]/20 px-3 py-2 w-fit rounded">
-                Shop Now ↗
-              </a>
-           </motion.div>
-
-           {/* SECTION 9: FOLLOW  */}
-           <motion.div {...fadeUp} transition={{ delay: 0.8 }} className="bg-[var(--orbit-void)]/80 backdrop-blur-sm border border-white/5 hover:border-[var(--orbit-gold)]/80 rounded-2xl p-6 flex flex-col justify-start transition-colors group shadow-sm h-full">
-              <div>
-                <span className="text-xs md:text-sm font-mono tracking-widest uppercase text-[var(--orbit-cream)]/90 mb-2 block font-bold">Signal Check</span>
-                <h4 className="font-serif italic text-[var(--orbit-cream)]/80 text-lg lg:text-xl mb-2">Follow Us</h4>
-                <p className="text-base text-[var(--orbit-cream)]/90 leading-relaxed font-light font-sans mb-4">Watch on YouTube, listen on Spotify, and engage on Instagram.</p>
-              </div>
-              <a href="https://www.youtube.com/@Orbit77Podcast" target="_blank" rel="noreferrer" className="mt-auto text-xs md:text-sm uppercase font-mono tracking-widest text-[var(--orbit-gold)]/70 font-bold inline-block group-hover:text-[var(--orbit-gold)] transition-colors bg-[var(--orbit-gold)]/5 hover:bg-[var(--orbit-gold)]/10 border border-[var(--orbit-gold)]/20 px-3 py-2 w-fit rounded">
-                Subscribe ↗
-              </a>
-           </motion.div>
-
+          <motion.div {...pop} transition={{ ...SPRING, delay: 0.1 }} className="rounded-[28px] bg-[#1A1C1A] text-white p-8 md:p-10 shadow-sm">
+            <h3 className="text-lg font-bold tracking-tight mb-6">The deal, plainly</h3>
+            <ul className="space-y-5">
+              {THE_DEAL.map((entry) => (
+                <li key={entry.item} className="text-[15px] leading-relaxed">
+                  <span className="font-semibold">{entry.item}</span>
+                  <span className="text-white/55"> — {entry.note}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="text-[13px] text-white/45 mt-8 leading-relaxed">
+              Acquisitions happen in conversation, with legal review — never through a checkout.
+            </p>
+          </motion.div>
         </div>
-        </ScrollReveal>
+      </section>
 
-      </main>
+      {/* ============ FOUNDERS NOTE ============ */}
+      <section className="max-w-3xl mx-auto px-6 py-24 md:py-32">
+        <motion.div {...pop} className="rounded-[36px] bg-white shadow-sm ring-1 ring-[#1A1C1A]/5 p-8 md:p-14 text-center">
+          <p className="font-serif italic text-2xl md:text-[1.85rem] font-normal leading-snug text-[#1A1C1A] mb-8">
+            &ldquo;We didn&rsquo;t want an audience. We wanted an archive — conversations
+            that still matter in twenty years.
+            <span className="text-[#059669]"> Every supporter is engraved in it, permanently.</span>&rdquo;
+          </p>
+          <p className="text-[15px] font-bold tracking-tight">Pablo &amp; Eduardo</p>
+          <p className="text-[13px] text-[#6B8070] font-medium mb-8">Founders · Orbit 77, Australia</p>
+          <div className="flex items-center justify-center gap-3 flex-wrap">
+            <PillButton href={`mailto:${CONTACT_EMAIL}?subject=Orbit%2077%20%E2%80%94%20To%20the%20founders`}>
+              Write to the founders
+            </PillButton>
+            <Link
+              href="/exhibitions/galaxy/orbit/join"
+              className="text-[13px] font-semibold text-[#6B8070] hover:text-[#059669] transition-colors"
+            >
+              or join the crew →
+            </Link>
+          </div>
+        </motion.div>
+      </section>
 
-      {/* Stripe Modal — Support Orbit 77 */}
-      {stripeOpen && (
-         <div className="fixed inset-0 z-[99999] bg-[var(--orbit-black)]/90 backdrop-blur-2xl overflow-y-auto px-4 py-8 md:py-16">
-           <motion.div
-             initial={{ opacity: 0, scale: 0.95, y: 20 }}
-             animate={{ opacity: 1, scale: 1, y: 0 }}
-             className="w-full max-w-xl mx-auto bg-[#09120D] border border-[var(--orbit-green)]/90 rounded-2xl p-6 md:p-10 relative flex flex-col shadow-[0_30px_80px_rgba(57,255,20,0.15)] overflow-hidden"
-           >
-             <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--orbit-green)]/5 rounded-full blur-[80px] pointer-events-none" />
-             <div className="absolute bottom-0 left-0 w-48 h-48 bg-[var(--orbit-green)]/10 rounded-full blur-[80px] pointer-events-none" />
+      {/* ============ THE HONEST PART ============ */}
+      <section className="max-w-6xl mx-auto px-6 py-24 md:py-32">
+        <motion.h2 {...pop} className="text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-4 max-w-2xl">
+          The honest part.
+        </motion.h2>
+        <motion.p {...pop} className="text-lg text-[#3A4A3E] max-w-md mb-14">
+          Showing the risks is what makes the rest of this page believable.
+        </motion.p>
 
-             <button
-               onClick={() => setStripeOpen(false)}
-               className="absolute top-6 right-6 text-xs font-mono tracking-wide uppercase text-[var(--orbit-cream)]/90 hover:text-[var(--orbit-green)] transition-colors duration-300 cursor-pointer font-bold z-10"
-             >
-               Close
-             </button>
+        <div className="grid sm:grid-cols-2 gap-4 md:gap-5">
+          {RISKS.map((risk, i) => (
+            <motion.div
+              key={risk.t}
+              {...pop}
+              transition={{ ...SPRING, delay: i * 0.06 }}
+              className="rounded-[28px] bg-white p-7 md:p-8 shadow-sm ring-1 ring-[#1A1C1A]/5"
+            >
+              <h3 className="text-lg font-bold tracking-tight mb-2">{risk.t}</h3>
+              <p className="text-[15px] text-[#3A4A3E] leading-relaxed">{risk.b}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
 
-             <h3 className="text-3xl md:text-4xl font-serif italic text-[var(--orbit-green)] mb-2 text-center relative z-10">
-               Hold The Signal
-             </h3>
-             <p className="text-sm font-light font-sans text-[var(--orbit-cream)]/95 leading-relaxed mb-8 text-center max-w-sm mx-auto relative z-10">
-               Season 1 is live. Expand its reach.
-             </p>
+      {/* ============ FAQ ============ */}
+      <section className="max-w-3xl mx-auto px-6 py-24 md:py-32">
+        <motion.h2 {...pop} className="text-4xl md:text-5xl font-bold tracking-[-0.03em] text-center mb-12">
+          Quick answers.
+        </motion.h2>
+        <div className="space-y-3">
+          {FAQ.map((entry, i) => (
+            <motion.details
+              key={entry.q}
+              {...pop}
+              transition={{ ...SPRING, delay: i * 0.05 }}
+              className="group rounded-[22px] bg-white shadow-sm ring-1 ring-[#1A1C1A]/5 px-7 py-5 open:pb-7"
+            >
+              <summary className="flex items-center justify-between gap-6 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                <h3 className="text-base md:text-lg font-bold tracking-tight">{entry.q}</h3>
+                <span className="flex w-7 h-7 shrink-0 items-center justify-center rounded-full bg-[#EDEFED] text-[#3A4A3E] text-sm font-bold transition-transform duration-300 group-open:rotate-45">+</span>
+              </summary>
+              <p className="text-[15px] text-[#3A4A3E] leading-relaxed mt-4 max-w-xl">{entry.a}</p>
+            </motion.details>
+          ))}
+        </div>
+      </section>
 
-             {/* PREVIEW CARD - "This is what you'll receive" */}
-             <div className="relative z-10 mb-8 border border-[var(--orbit-green)]/80 rounded-2xl bg-gradient-to-br from-[var(--orbit-deep)] to-[var(--orbit-void)] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
-               <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--orbit-green)]/10 rounded-full blur-[40px] pointer-events-none" />
-               <p className="text-sm font-mono tracking-wide uppercase text-[var(--orbit-green)] mb-4 font-bold text-center">
-                 — Your Frequency in the Archive —
-               </p>
-               <div className="flex justify-between items-start mb-6">
-                 <div>
-                   <p className="text-xs font-mono tracking-wide uppercase text-[var(--orbit-green)]/90 mb-1">Orbit 77</p>
-                   <p className="text-sm font-mono tracking-wide uppercase text-[var(--orbit-cream)]/90">Season 1 — 2026</p>
-                 </div>
-                 <div className="w-6 h-6 rounded-full border border-[var(--orbit-green)]/80 flex items-center justify-center">
-                   <span className="w-1.5 h-1.5 rounded-full bg-[var(--orbit-green)]" />
-                 </div>
-               </div>
-               <div className="mb-4">
-                 <p className="text-xs font-mono tracking-wide uppercase text-[var(--orbit-cream)]/90 mb-1">Display Name</p>
-                 <h4 className="text-xl font-serif italic text-[var(--orbit-cream)]">{supporterName || "Your Name"}</h4>
-               </div>
-               <div className="flex justify-between items-end border-t border-[var(--orbit-green)]/10 pt-4 pb-2">
-                 <div className="flex flex-col gap-1">
-                   <p className="text-xs font-mono tracking-wide uppercase text-[var(--orbit-cream)]/90">Role</p>
-                   <p className="text-sm font-mono text-[var(--orbit-green)] tracking-widest font-bold pt-1">Orbit 77 Supporter</p>
-                 </div>
-                 <div className="text-right flex flex-col gap-1">
-                   <p className="text-xs font-mono tracking-wide uppercase text-[var(--orbit-cream)]/90">Archive ID</p>
-                   <p className="text-sm font-mono text-[var(--orbit-cream)]/95 tracking-wide pt-1">O77-S1-XXXXXX</p>
-                 </div>
-               </div>
-             </div>
+      {/* ============ FINAL ============ */}
+      <section className="relative max-w-6xl mx-auto px-6 py-28 md:py-40 text-center overflow-hidden">
+        <div aria-hidden className="absolute inset-x-0 bottom-0 h-[420px] pointer-events-none" style={{ background: 'radial-gradient(60% 100% at 50% 100%, rgba(5,150,105,0.10), transparent 70%)' }} />
+        <motion.h2 {...pop} className="relative text-5xl md:text-7xl font-bold tracking-[-0.035em] leading-[1.02] mb-7">
+          The signal is live.
+        </motion.h2>
+        <motion.p {...pop} className="relative text-lg md:text-xl text-[#3A4A3E] max-w-md mx-auto mb-10">
+          Watch it, hold it, or own a piece of it — the archive remembers all three.
+        </motion.p>
+        <motion.div {...pop} className="relative flex items-center justify-center gap-3 flex-wrap">
+          <PillButton href="#support" primary>Lock in your credential →</PillButton>
+          <PillButton href={`mailto:${CONTACT_EMAIL}?subject=Orbit%2077%20%E2%80%94%20Own%20a%20piece`}>Own a piece</PillButton>
+        </motion.div>
+      </section>
 
-             <div className="relative z-10 mb-5 text-center">
-               <p className="text-sm font-mono tracking-wide uppercase text-[var(--orbit-green)] font-bold">
-                 Your frequency is permanently recorded in the Archive · Orbit 77 · Season 1 · 2026
-               </p>
-             </div>
-
-             {/* Supporter Info Collection */}
-             <div className="relative z-10 flex flex-col gap-4 mb-8">
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <div>
-                   <label className="text-sm uppercase font-mono tracking-widest text-[var(--orbit-cream)]/90 font-bold block mb-2">Display Name</label>
-                   <input
-                     type="text"
-                     value={supporterName}
-                     onChange={e => setSupporterName(e.target.value)}
-                     placeholder="Name for the archive"
-                     className="w-full bg-[var(--orbit-charcoal)] border border-[var(--orbit-green)]/20 focus:border-[var(--orbit-green)] focus:shadow-[0_0_15px_rgba(57,255,20,0.1)] rounded-xl px-4 py-3 text-sm font-sans text-[var(--orbit-cream)] outline-none transition-all placeholder:text-[var(--orbit-cream)]/80"
-                   />
-                 </div>
-                 <div>
-                   <label className="text-sm uppercase font-mono tracking-widest text-[var(--orbit-cream)]/90 font-bold block mb-2">Email Address *</label>
-                   <input
-                     type="email"
-                     required
-                     value={supporterEmail}
-                     onChange={e => setSupporterEmail(e.target.value)}
-                     placeholder="To send your season credential"
-                     className="w-full bg-[var(--orbit-charcoal)] border border-[var(--orbit-green)]/20 focus:border-[var(--orbit-green)] focus:shadow-[0_0_15px_rgba(57,255,20,0.1)] rounded-xl px-4 py-3 text-sm font-sans text-[var(--orbit-cream)] outline-none transition-all placeholder:text-[var(--orbit-cream)]/80"
-                   />
-                 </div>
-               </div>
-
-               <div>
-                 <label className="text-sm uppercase font-mono tracking-widest text-[var(--orbit-cream)]/90 font-bold block mb-2">Public visibility</label>
-                 <div className="flex gap-4">
-                   <button 
-                     onClick={() => setIsAnonymous(false)}
-                     className={`flex-1 py-3 text-xs font-mono tracking-widest uppercase rounded-lg border transition-colors ${!isAnonymous ? 'bg-[var(--orbit-green)]/10 border-[var(--orbit-green)] text-[var(--orbit-green)]' : 'bg-black border-white/10 text-white/90'}`}
-                   >
-                     Public Name
-                   </button>
-                   <button 
-                     onClick={() => setIsAnonymous(true)}
-                     className={`flex-1 py-3 text-xs font-mono tracking-widest uppercase rounded-lg border transition-colors ${isAnonymous ? 'bg-[var(--orbit-green)]/10 border-[var(--orbit-green)] text-[var(--orbit-green)]' : 'bg-black border-white/10 text-white/90'}`}
-                   >
-                     Off-Record
-                   </button>
-                 </div>
-               </div>
-
-               <div>
-                  <label className="text-sm uppercase font-mono tracking-widest text-[var(--orbit-cream)]/90 font-bold block mb-2">Message <span className="opacity-50">(Optional)</span></label>
-                  <input
-                    type="text"
-                    maxLength={120}
-                    value={supportMessage}
-                    onChange={e => setSupportMessage(e.target.value)}
-                    placeholder="Leave a message for the archive."
-                    className="w-full bg-[var(--orbit-charcoal)] border border-[var(--orbit-green)]/20 focus:border-[var(--orbit-green)] focus:shadow-[0_0_15px_rgba(57,255,20,0.1)] rounded-xl px-4 py-3 text-sm font-sans text-[var(--orbit-cream)] outline-none transition-all placeholder:text-[var(--orbit-cream)]/80"
-                  />
-               </div>
-             </div>
-
-             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 relative z-10">
-               {[
-                 { val: 10, label: "Signal Carrier" },
-                 { val: 20, label: "Archive Node", recommended: true },
-                 { val: 50, label: "Transmission Keeper" }
-               ].map(tier => (
-                 <button
-                   key={tier.val}
-                   onClick={() => setAmountAud(tier.val)}
-                   className={`relative py-3 rounded-xl flex flex-col items-center justify-center gap-1 transition-all duration-300 cursor-pointer border-2 ${amountAud === tier.val ? 'bg-[var(--orbit-green)] text-[var(--orbit-black)] border-[var(--orbit-green)] shadow-[0_0_20px_rgba(57,255,20,0.4)]' : 'bg-black/90 text-[var(--orbit-green)] border-[var(--orbit-green)]/20 hover:bg-[var(--orbit-green)]/10 hover:border-[var(--orbit-green)]/90'}`}
-                 >
-                   <span className="text-sm font-mono tracking-widest font-bold">${tier.val} AUD</span>
-                   <span className={`text-xs font-mono tracking-widest uppercase ${amountAud === tier.val ? 'text-[var(--orbit-black)]/70' : 'text-[var(--orbit-cream)]/90'}`}>{tier.label}</span>
-                   {tier.recommended && (
-                     <span className={`absolute -top-2 bg-[var(--orbit-black)] border px-2 py-0.5 text-[10px] font-mono tracking-wide uppercase rounded-full ${amountAud === tier.val ? 'border-[var(--orbit-green)] text-[var(--orbit-green)]' : 'border-[var(--orbit-green)]/80 text-[var(--orbit-green)]/90'}`}>Recommended</span>
-                   )}
-                 </button>
-               ))}
-             </div>
-
-             {checkoutError && (
-               <div className="mb-4 text-center px-4 py-3 bg-[#FF4444]/10 border border-[#FF4444]/80 rounded-lg">
-                 <p className="text-[#FF4444] text-sm md:text-sm font-sans">{checkoutError}</p>
-               </div>
-             )}
-
-             <button
-               onClick={handleSupport}
-               disabled={loading || !amountAud || !supporterEmail}
-               className={`w-full py-4 rounded-full text-sm md:text-sm font-mono tracking-wide uppercase transition-all duration-500 flex justify-center items-center gap-3 cursor-pointer border-2 relative z-10 ${(!amountAud || !supporterEmail || loading) ? 'bg-black/90 text-[var(--orbit-green)]/80 cursor-not-allowed border-white/5' : 'bg-[var(--orbit-green)] border-[var(--orbit-green)] text-[var(--orbit-black)] font-bold hover:shadow-[0_0_30px_rgba(57,255,20,0.5)] hover:bg-[var(--orbit-green)]/90'}`}
-             >
-               {loading ? 'Initializing Protocol...' : 'Lock In Transmission'}
-               {amountAud && supporterEmail && !loading && <span className="text-[var(--orbit-black)] text-lg font-bold">→</span>}
-             </button>
-
-             <p className="text-sm font-mono text-[var(--orbit-cream)]/90 text-center mt-4 leading-relaxed uppercase tracking-wide relative z-10">
-               Encrypted protocol. One-time transmission only.
-             </p>
-           </motion.div>
-         </div>
-      )}
-
+      {/* footer */}
+      <footer className="max-w-6xl mx-auto px-6 pb-10">
+        <div className="flex items-center justify-between flex-wrap gap-4 border-t border-[#1A1C1A]/8 pt-7">
+          <span className="text-[12px] font-medium text-[#6B8070]">© 2026 Pyadra · We document. We verify. You decide.</span>
+          <div className="flex gap-5">
+            <Link href="/exhibitions/galaxy" className="text-[12px] font-medium text-[#6B8070] hover:text-[#059669] transition-colors">Galaxy</Link>
+            <Link href="/" className="text-[12px] font-medium text-[#6B8070] hover:text-[#059669] transition-colors">Home</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

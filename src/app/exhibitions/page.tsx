@@ -1,346 +1,242 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { motion, useMotionValue, useSpring } from "framer-motion";
-import GreenDust from "../components/ui/GreenDust";
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import GreenDust from '../components/ui/GreenDust';
+import PyadraLogo from '@/app/components/brand/PyadraLogo';
 
-// Gem Icon from Galaxy
-const GemIcon = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full text-[#059669] drop-shadow-md">
-    <polygon points="50 5, 95 27.5, 95 72.5, 50 95, 5 72.5, 5 27.5" fill="currentColor" opacity="0.8"/>
-    <polygon points="50 20, 75 35, 75 65, 50 80, 25 65, 25 35" fill="white" opacity="0.2"/>
-    <polygon points="50 5, 95 27.5, 50 50, 5 27.5" fill="white" opacity="0.4"/>
-    <polygon points="95 27.5, 95 72.5, 50 50" fill="black" opacity="0.1"/>
-    <polygon points="5 27.5, 5 72.5, 50 50" fill="white" opacity="0.1"/>
-  </svg>
-);
+/* ------------------------------------------------------------------ */
+/*  PYADRA — EXHIBITIONS                                               */
+/*  Three rooms. One open.                                             */
+/*                                                                     */
+/*  Design language: family.co — springs, pills, rounded cards,        */
+/*  warm direct copy. Consistent with Galaxy and the project pages.    */
+/*                                                                     */
+/*  Per Company_Master: this page shows exhibitions only — name,       */
+/*  theme in one line, number of active projects, one action.          */
+/* ------------------------------------------------------------------ */
 
-// -----------------------------------------------------------------------------
-// MAGNETIC DOOR COMPONENT
-// -----------------------------------------------------------------------------
-function MagneticDoor({ 
-  children,
-  onClick,
-  disabled
-}: { 
-  children: React.ReactNode,
-  onClick?: () => void,
-  disabled?: boolean
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
+const ENTER = 0.75; // template.tsx dissolve ~1.5s — choreography starts after
 
-  const springConfig = { damping: 20, stiffness: 100, mass: 0.2 };
-  const mouseX = useSpring(x, springConfig);
-  const mouseY = useSpring(y, springConfig);
+const SPRING = { type: 'spring' as const, stiffness: 130, damping: 18, mass: 0.9 };
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (disabled || !ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    // Subtle tilt for massive doors
-    x.set((e.clientX - centerX) / 8);
-    y.set((e.clientY - centerY) / 12);
-  };
-
-  const handleMouseLeave = () => {
-    if (disabled) return;
-    x.set(0);
-    y.set(0);
-  };
-
-  return (
-    <motion.div
-      ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      onClick={onClick}
-      style={{ x: mouseX, y: mouseY }}
-      className={`relative h-[450px] md:h-[600px] w-full rounded-2xl flex flex-col overflow-hidden transition-shadow duration-500 ${disabled ? 'cursor-default' : 'cursor-pointer hover:shadow-2xl hover:z-20'} group`}
-    >
-      {children}
-    </motion.div>
-  );
-}
+const ROOMS = [
+  {
+    name: 'Galaxy',
+    theme: 'Memory, time, permanence',
+    detail: '4 live projects',
+    href: '/exhibitions/galaxy',
+    open: true,
+    orb: 'bg-[radial-gradient(circle_at_30%_30%,#10B981,#059669,#047857)]',
+    glow: 'bg-[#059669]',
+  },
+  {
+    name: 'Jungle',
+    theme: 'Organic growth',
+    detail: 'Forming',
+    href: null,
+    open: false,
+    orb: 'bg-[radial-gradient(circle_at_30%_30%,#E8E9E8,#D4DDD6,#B8C0BA)]',
+    glow: 'bg-[#6B8070]',
+  },
+  {
+    name: 'City',
+    theme: 'Metropolitan scale',
+    detail: 'Forming',
+    href: null,
+    open: false,
+    orb: 'bg-[radial-gradient(circle_at_30%_30%,#E8E9E8,#D4DDD6,#B8C0BA)]',
+    glow: 'bg-[#6B8070]',
+  },
+];
 
 export default function ExhibitionsPage() {
-  const [mounted, setMounted] = useState(false);
-  const [visitors, setVisitors] = useState(124);
   const router = useRouter();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
-
-  // Cinematic Entry Variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.2, delayChildren: 0.1 }
-    }
-  };
-
-  const doorVariants = {
-    hidden: { opacity: 0, y: 100, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: { type: "spring" as const, damping: 25, stiffness: 100 }
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-[#EDEFED] text-[#1A1C1A] font-sans flex flex-col relative overflow-hidden">
+    <div className="min-h-[100svh] bg-[#EDEFED] text-[#1A1C1A] flex flex-col relative overflow-hidden antialiased selection:bg-[#059669] selection:text-white">
 
-      {/* ----------------------------------------------------------------------
-          BACKGROUND TEXTURE & GRID (Visual Richness)
-      ---------------------------------------------------------------------- */}
-      {/* 1. Ambient Vignette */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-0 w-full h-[50vh] bg-gradient-to-b from-white/40 to-transparent"></div>
-        <div className="absolute bottom-0 left-0 w-full h-[50vh] bg-gradient-to-t from-[#D4DDD6]/40 to-transparent"></div>
-        <div className="absolute top-0 right-0 w-[50vw] h-full bg-gradient-to-l from-[#D4DDD6]/20 to-transparent"></div>
-        <div className="absolute top-0 left-0 w-[50vw] h-full bg-gradient-to-r from-white/20 to-transparent"></div>
+      {/* soft color field */}
+      <div aria-hidden className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute -top-48 left-1/4 w-[640px] h-[640px] rounded-full opacity-60"
+          style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.08), transparent 65%)' }}
+        />
+        <div
+          className="absolute -bottom-56 right-0 w-[720px] h-[720px] rounded-full opacity-60"
+          style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.08), transparent 65%)' }}
+        />
       </div>
 
-      {/* 2. Architectural Blueprint Grid */}
-      <div 
-        className="absolute inset-0 pointer-events-none z-0 opacity-[0.25]" 
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #D4DDD6 1px, transparent 1px),
-            linear-gradient(to bottom, #D4DDD6 1px, transparent 1px)
-          `,
-          backgroundSize: '40px 40px'
-        }}
-      />
-      
-      {/* 3. Film Grain / Tactile Noise */}
-      <div className="absolute inset-0 pointer-events-none z-0 mix-blend-multiply opacity-[0.4]">
-        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" className="w-full h-full opacity-60" preserveAspectRatio="none">
-          <filter id="noiseFilter">
-            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/>
-          </filter>
-          <rect width="100%" height="100%" filter="url(#noiseFilter)"/>
-        </svg>
-      </div>
+      <GreenDust count={60} />
 
-      {/* 4. Ambient Green Dust */}
-      <GreenDust count={100} />
-
-      {/* ----------------------------------------------------------------------
-          HEADER - Fixed at top
-      ---------------------------------------------------------------------- */}
-      <header className="relative z-10 w-full px-4 md:px-8 py-4 md:py-6 border-b border-[#D4DDD6]/30">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 md:w-8 md:h-8"><GemIcon /></div>
-            <div className="font-mono text-[10px] md:text-xs tracking-[0.4em] uppercase text-[#1A1C1A]">PYADRA</div>
-          </div>
-          <Link href="/" className="font-mono text-[8px] md:text-[9px] uppercase tracking-widest text-[#3A4A3E] hover:text-[#1A1C1A] transition-colors">
+      {/* floating pill nav */}
+      <motion.nav
+        initial={{ opacity: 0, y: -16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: ENTER, ...SPRING }}
+        className="fixed top-4 inset-x-0 z-30 flex justify-center px-4"
+      >
+        <div className="flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-md shadow-lg shadow-[#1A1C1A]/5 ring-1 ring-[#1A1C1A]/5 pl-5 pr-1.5 py-1.5">
+          <Link href="/" aria-label="Pyadra · Home" className="flex items-center gap-2 mr-2 group">
+            <PyadraLogo size={22} />
+            <span className="text-sm font-bold tracking-tight transition-colors group-hover:text-[#059669]">
+              Pyadra
+            </span>
+          </Link>
+          <Link
+            href="/"
+            className="hidden sm:block rounded-full px-3.5 py-2 text-[13px] font-medium text-[#3A4A3E] hover:bg-[#EDEFED] transition-colors"
+          >
             ← Home
           </Link>
+          <span className="rounded-full bg-[#EDEFED] px-3.5 py-2 text-[13px] font-semibold text-[#1A1C1A]">
+            Exhibitions
+          </span>
         </div>
-      </header>
+      </motion.nav>
 
-      {/* ----------------------------------------------------------------------
-          MAIN CONTENT - Hall of Doors
-      ---------------------------------------------------------------------- */}
-      <main className="relative z-10 flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-20 flex flex-col justify-center">
+      <main className="relative z-10 flex-1 flex flex-col justify-center max-w-6xl mx-auto w-full px-6 pt-28 pb-16">
 
-        {/* Introduction */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          className="text-center mb-16 md:mb-20"
+        {/* headline */}
+        <div className="text-center mb-14 md:mb-16">
+          <motion.span
+            initial={{ opacity: 0, y: 16, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: ENTER + 0.1, ...SPRING }}
+            className="inline-flex items-center gap-2 rounded-full bg-[#059669]/10 text-[#047857] px-4 py-2 text-[12px] font-semibold mb-7"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-[#059669] animate-pulse" />
+            You found something
+          </motion.span>
+
+          <h1 className="text-5xl md:text-7xl font-bold tracking-[-0.035em] leading-[1.02] mb-6">
+            {['Three rooms.', 'One open.'].map((line, i) => (
+              <span key={line} className="block overflow-hidden">
+                <motion.span
+                  className="block"
+                  initial={{ y: '110%' }}
+                  animate={{ y: 0 }}
+                  transition={{ delay: ENTER + 0.2 + i * 0.09, type: 'spring', stiffness: 110, damping: 20 }}
+                >
+                  {i === 1 ? <span className="text-[#059669]">{line}</span> : line}
+                </motion.span>
+              </span>
+            ))}
+          </h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: ENTER + 0.5, ...SPRING }}
+            className="text-lg text-[#3A4A3E] font-medium max-w-md mx-auto"
+          >
+            Real projects, documented and verified — waiting for
+            the people who make them grow.
+          </motion.p>
+        </div>
+
+        {/* the rooms */}
+        <div className="grid md:grid-cols-3 gap-4 md:gap-5">
+          {ROOMS.map((room, i) => (
+            <motion.div
+              key={room.name}
+              initial={{ opacity: 0, y: 40, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: ENTER + 0.55 + i * 0.1, type: 'spring', stiffness: 110, damping: 16 }}
+              whileHover={room.open ? { y: -6 } : {}}
+              onClick={() => room.open && room.href && router.push(room.href)}
+              className={`group relative rounded-[32px] p-8 md:p-10 flex flex-col items-center text-center ${
+                room.open
+                  ? 'bg-white shadow-sm ring-1 ring-[#1A1C1A]/5 hover:shadow-xl hover:shadow-[#059669]/10 transition-shadow duration-300 cursor-pointer'
+                  : 'bg-white/45 ring-1 ring-[#1A1C1A]/5'
+              }`}
+            >
+              {/* status chip */}
+              <span
+                className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11px] font-bold mb-8 ${
+                  room.open ? 'bg-[#059669]/10 text-[#047857]' : 'bg-[#EDEFED] text-[#6B8070]'
+                }`}
+              >
+                {room.open && <span className="w-1.5 h-1.5 rounded-full bg-[#059669] animate-pulse" />}
+                {room.open ? 'Open' : 'Forming'}
+              </span>
+
+              {/* the orb */}
+              <div className="relative mb-8">
+                {room.open && (
+                  <motion.div
+                    animate={{ scale: [1, 1.15, 1], opacity: [0.12, 0.3, 0.12] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                    className={`absolute inset-0 rounded-full blur-xl ${room.glow}`}
+                  />
+                )}
+                <div
+                  className={`relative w-24 h-24 md:w-28 md:h-28 rounded-full ${room.orb} ${
+                    room.open
+                      ? 'shadow-[-10px_10px_24px_rgba(0,0,0,0.18)] transition-transform duration-500 group-hover:scale-105'
+                      : 'opacity-50 shadow-[-8px_8px_18px_rgba(0,0,0,0.08)]'
+                  } overflow-hidden`}
+                >
+                  {room.open && (
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+                      className="absolute inset-0 opacity-30 bg-[conic-gradient(from_0deg,transparent_0deg,transparent_180deg,rgba(255,255,255,0.25)_270deg,transparent_360deg)]"
+                    />
+                  )}
+                </div>
+              </div>
+
+              <h2 className={`text-3xl md:text-4xl font-bold tracking-[-0.03em] mb-2 ${room.open ? '' : 'text-[#1A1C1A]/40'}`}>
+                {room.name}
+              </h2>
+              <p className={`text-[15px] font-medium mb-2 ${room.open ? 'text-[#3A4A3E]' : 'text-[#6B8070]/60'}`}>
+                {room.theme}
+              </p>
+              <p className={`text-[13px] font-semibold mb-8 ${room.open ? 'text-[#059669]' : 'text-[#6B8070]/50'}`}>
+                {room.detail}
+              </p>
+
+              {room.open ? (
+                <motion.span
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 17 }}
+                  className="mt-auto inline-block rounded-full bg-[#059669] text-white px-8 py-3.5 text-sm font-semibold shadow-lg shadow-[#059669]/25"
+                >
+                  Enter {room.name} →
+                </motion.span>
+              ) : (
+                <span className="mt-auto inline-block rounded-full bg-[#EDEFED] text-[#6B8070] px-8 py-3.5 text-sm font-semibold">
+                  Sealed
+                </span>
+              )}
+            </motion.div>
+          ))}
+        </div>
+
+        {/* placard */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: ENTER + 1.1, duration: 0.8 }}
+          className="text-[13px] font-medium text-[#6B8070] text-center mt-10"
         >
-          <p className="font-serif text-2xl md:text-3xl italic font-light text-[#059669] mb-6">
-            You found something.
-          </p>
-          <p className="font-sans text-base md:text-lg text-[#3A4A3E] leading-relaxed max-w-2xl mx-auto mb-3">
-            Pyadra is a place where digital projects live.
-          </p>
-          <p className="font-sans text-base md:text-lg text-[#3A4A3E] leading-relaxed max-w-2xl mx-auto">
-            Each one can be experienced. Each one can be yours.
-          </p>
-        </motion.div>
-
-        {/* Exhibitions Grid (The Doors) */}
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-10 perspective-[2000px]"
-        >
-
-          {/* ------------------------------------------------------------------
-              DOOR 1: GALAXY (ACTIVE PORTAL)
-          ------------------------------------------------------------------ */}
-          <motion.div variants={doorVariants} className="h-full">
-            <MagneticDoor onClick={() => router.push("/exhibitions/galaxy")}>
-              <div className="absolute inset-0 bg-gradient-to-b from-[#ECFDF5] via-white to-[#F0FDF4] border-2 border-[#D4DDD6] rounded-2xl transition-all duration-500 group-hover:border-[#059669]" />
-              
-              {/* Monolithic Inner Frame */}
-              <div className="absolute inset-[6px] border border-[#059669]/30 rounded-xl" />
-
-              {/* Shimmer Effect */}
-              <motion.div 
-                animate={{ y: ["-200%", "200%"] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "linear", repeatDelay: 2 }}
-                className="absolute inset-0 z-0 w-full h-[50%] bg-gradient-to-b from-transparent via-white/50 to-transparent skew-y-12 pointer-events-none"
-              />
-
-              {/* Top Section */}
-              <div className="relative z-10 p-8 pt-10 flex flex-col items-center flex-1">
-                {/* Active dot */}
-                <div className="absolute top-6 right-6 flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-[#059669] animate-pulse shadow-[0_0_8px_#059669]"></div>
-                  <span className="font-mono text-[7px] uppercase tracking-[0.3em] text-[#059669] font-bold">ACTIVE</span>
-                </div>
-
-                {/* Portal Icon */}
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#059669] to-[#10B981] flex items-center justify-center text-white text-3xl shadow-xl shadow-[#059669]/40 mb-8 transform transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-2 group-hover:rotate-3">
-                  ✦
-                </div>
-
-                <h2 className="font-serif text-3xl md:text-4xl italic font-light text-[#1A1C1A] mb-4 text-center transition-colors duration-500 group-hover:text-[#059669]">
-                  Galaxy
-                </h2>
-
-                <p className="text-sm text-[#3A4A3E] text-center leading-relaxed max-w-[240px]">
-                  Active projects ready to experience and acquire. From podcasts to time-locked vaults.
-                </p>
-              </div>
-
-              {/* Bottom Section (Details) */}
-              <div className="relative z-10 p-6 border-t border-[#D4DDD6]/50 bg-white/50 backdrop-blur-sm mt-auto transition-colors duration-500 group-hover:bg-white/80">
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center font-mono text-[9px] uppercase tracking-widest text-[#6B8070]">
-                    <span>Projects</span>
-                    <span className="text-[#059669] font-bold">4 Active</span>
-                  </div>
-                  <div className="flex justify-between items-center font-mono text-[9px] uppercase tracking-widest text-[#6B8070]">
-                    <span>Total Value</span>
-                    <span className="text-[#059669] font-bold">$23,000 AUD</span>
-                  </div>
-                  <div className="flex justify-between items-center font-mono text-[9px] uppercase tracking-widest text-[#6B8070]">
-                    <span>Visitors</span>
-                    <span className="text-[#059669] font-bold">{visitors}</span>
-                  </div>
-                </div>
-
-                {/* Call to action */}
-                <div className="mt-6 flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#059669] text-white font-mono text-[9px] uppercase tracking-widest transition-transform duration-500 group-hover:scale-[1.02] shadow-md shadow-[#059669]/20">
-                  <span>Enter Portal</span>
-                  <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
-                </div>
-              </div>
-            </MagneticDoor>
-          </motion.div>
-
-          {/* ------------------------------------------------------------------
-              DOOR 2: JUNGLE (SEALED DOOR)
-          ------------------------------------------------------------------ */}
-          <motion.div variants={doorVariants} className="h-full">
-            <MagneticDoor disabled>
-              <div className="absolute inset-0 bg-[#E5E7E5] border-2 border-[#D4DDD6] rounded-2xl opacity-70 transition-all duration-500 group-hover:bg-[#EDEFED] group-hover:opacity-90" />
-              
-              {/* Heavy Stone Frame */}
-              <div className="absolute inset-[6px] border-2 border-[#D4DDD6]/50 rounded-xl" />
-
-              <div className="relative z-10 p-8 pt-10 flex flex-col items-center flex-1 justify-center grayscale opacity-80">
-                {/* Coming Soon badge */}
-                <div className="absolute top-6 right-6">
-                  <span className="font-mono text-[7px] uppercase tracking-[0.3em] text-[#6B8070]">SEALED</span>
-                </div>
-
-                {/* Sealed Icon */}
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#D4DDD6] to-[#C4CCC6] flex items-center justify-center text-[#6B8070] text-3xl shadow-inner mb-8 border border-[#B4BCB6]">
-                  ◈
-                </div>
-
-                <h2 className="font-serif text-3xl md:text-4xl italic font-light text-[#6B8070] mb-4 text-center">
-                  Jungle
-                </h2>
-
-                <p className="text-sm text-[#6B8070] text-center leading-relaxed max-w-[240px]">
-                  The Living Network. A space for interconnected systems and organic growth.
-                </p>
-              </div>
-
-              {/* Bottom Section (Locked) */}
-              <div className="relative z-10 p-6 border-t border-[#D4DDD6] bg-[#D4DDD6]/20 mt-auto">
-                <button className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-[#A8B3AB] text-[#6B8070] font-mono text-[9px] uppercase tracking-widest transition-colors hover:bg-white/50 hover:text-[#3A4A3E]">
-                  <span>Notify Me</span>
-                  <span className="text-xs">+</span>
-                </button>
-              </div>
-            </MagneticDoor>
-          </motion.div>
-
-          {/* ------------------------------------------------------------------
-              DOOR 3: CITY (SEALED DOOR)
-          ------------------------------------------------------------------ */}
-          <motion.div variants={doorVariants} className="h-full">
-            <MagneticDoor disabled>
-              <div className="absolute inset-0 bg-[#E5E7E5] border-2 border-[#D4DDD6] rounded-2xl opacity-70 transition-all duration-500 group-hover:bg-[#EDEFED] group-hover:opacity-90" />
-              
-              {/* Heavy Stone Frame */}
-              <div className="absolute inset-[6px] border-2 border-[#D4DDD6]/50 rounded-xl" />
-
-              <div className="relative z-10 p-8 pt-10 flex flex-col items-center flex-1 justify-center grayscale opacity-80">
-                {/* Coming Soon badge */}
-                <div className="absolute top-6 right-6">
-                  <span className="font-mono text-[7px] uppercase tracking-[0.3em] text-[#6B8070]">SEALED</span>
-                </div>
-
-                {/* Sealed Icon */}
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#D4DDD6] to-[#C4CCC6] flex items-center justify-center text-[#6B8070] text-3xl shadow-inner mb-8 border border-[#B4BCB6]">
-                  ▣
-                </div>
-
-                <h2 className="font-serif text-3xl md:text-4xl italic font-light text-[#6B8070] mb-4 text-center">
-                  City
-                </h2>
-
-                <p className="text-sm text-[#6B8070] text-center leading-relaxed max-w-[240px]">
-                  Metropolitan Scale. Infrastructure for collaboration and collective creation.
-                </p>
-              </div>
-
-              {/* Bottom Section (Locked) */}
-              <div className="relative z-10 p-6 border-t border-[#D4DDD6] bg-[#D4DDD6]/20 mt-auto">
-                <button className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-[#A8B3AB] text-[#6B8070] font-mono text-[9px] uppercase tracking-widest transition-colors hover:bg-white/50 hover:text-[#3A4A3E]">
-                  <span>Notify Me</span>
-                  <span className="text-xs">+</span>
-                </button>
-              </div>
-            </MagneticDoor>
-          </motion.div>
-
-        </motion.div>
-
+          Every project here is real, documented, and verified before it&rsquo;s shown.
+        </motion.p>
       </main>
 
-      {/* ----------------------------------------------------------------------
-          FOOTER
-      ---------------------------------------------------------------------- */}
-      <footer className="relative z-10 w-full px-4 md:px-8 py-3 md:py-4 border-t border-[#D4DDD6]/30">
-        <div className="flex justify-between items-center font-mono text-[7px] md:text-[8px] uppercase tracking-[0.3em] text-[#6B8070]">
-          <div>PYADRA EXHIBITIONS</div>
-          <div className="hidden md:block">PYADRA.IO</div>
+      {/* footer */}
+      <footer className="relative z-10 max-w-6xl mx-auto w-full px-6 pb-6">
+        <div className="flex justify-between items-center">
+          <span className="text-[12px] font-medium text-[#6B8070]">
+            © 2026 Pyadra · We document. We verify. You decide.
+          </span>
+          <span className="hidden md:block text-[12px] font-medium text-[#6B8070]">pyadra.io</span>
         </div>
       </footer>
-
     </div>
   );
 }
