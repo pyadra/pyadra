@@ -4,7 +4,7 @@ import { ImageResponse } from 'next/og';
    route below the root (project routes can override with their own file). */
 
 export const runtime = 'edge';
-export const alt = 'Pyadra — a museum of living projects. Lo que dejas importa.';
+export const alt = 'Pyadra — a museum of living projects. Discover. Connect. Build. Buy.';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 

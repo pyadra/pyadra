@@ -11,6 +11,7 @@ import {
   useTransform,
 } from 'framer-motion';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import SiteNav from '@/app/components/nav/SiteNav';
 import SiteFooter from '@/app/components/nav/SiteFooter';
@@ -23,8 +24,7 @@ import SiteFooter from '@/app/components/nav/SiteFooter';
 /*  not the other way around. One door leads to the exhibition.        */
 /* ------------------------------------------------------------------ */
 
-const CURTAIN_MS = 3000;         // first visit — the full ceremony
-const CURTAIN_RETURN_MS = 700;   // returning Observers get a short beat, not the wait
+const CURTAIN_MS = 2000;         // every visit — the full ceremony
 const SPRING = { type: 'spring' as const, stiffness: 130, damping: 18, mass: 0.9 };
 
 /* Fixed spark orbit params — no Math.random() (SSR/hydration safe). */
@@ -78,15 +78,27 @@ const SW = 11;
 const SYMBOL_SIZE = 260;
 
 function HeroSymbol({ reduced }: { reduced: boolean }) {
+  const router = useRouter();
   const [met, setMet] = useState(false);
   const height = Math.round((SYMBOL_SIZE * 232) / 240);
+
+  useEffect(() => {
+    router.prefetch('/exhibitions');
+  }, [router]);
+
+  // click → they meet (the shrink), then the door opens
+  const enter = () => {
+    if (met) return;
+    setMet(true);
+    setTimeout(() => router.push('/exhibitions'), reduced ? 150 : 950);
+  };
 
   return (
     <div className="inline-flex flex-col items-center relative z-10">
       <button
         type="button"
-        onClick={() => setMet((m) => !m)}
-        aria-label="Pyadra symbol — tap to see them meet"
+        onClick={enter}
+        aria-label="Pyadra symbol — enter the exhibitions"
         className="cursor-pointer bg-transparent border-0 p-0 block"
         style={{ lineHeight: 0 }}
       >
@@ -182,12 +194,12 @@ function HeroSymbol({ reduced }: { reduced: boolean }) {
         transition={{ duration: 0.8, delay: reduced ? 0 : 1.45 }}
         className="font-mono uppercase text-center text-[#6B8070]"
         style={{
-          fontSize: 'clamp(10px, 4.4vw, 22px)',
-          letterSpacing: '0.34em',
+          fontSize: 'clamp(9px, 3.4vw, 19px)',
+          letterSpacing: '0.3em',
           marginTop: 'clamp(12px, 5vw, 21px)',
         }}
       >
-        LO QUE DEJAS IMPORTA
+        DISCOVER. CONNECT. BUILD. BUY.
       </motion.div>
     </div>
   );
@@ -226,30 +238,73 @@ function LogoShowcase({ reduced }: { reduced: boolean }) {
   );
 }
 
+/* ---------- observer ticket — the admission stub (home only) ---------- */
+
+function ObserverTicket({ id }: { id: string | null }) {
+  if (!id) return null;
+  return (
+    <motion.aside
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 1.8 }}
+      aria-label="Your observer ticket"
+      className="fixed left-3.5 bottom-3.5 md:left-6 md:bottom-6 z-40 flex items-center gap-3 rounded-md border border-[#1A1C1A]/25 bg-[#EDEFED] px-3 py-2 md:px-3.5 md:py-2.5 shadow-[0_6px_18px_rgba(10,18,14,0.12)]"
+    >
+      <div className="flex flex-col gap-0.5">
+        <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-[#6B8070]">
+          Observer №
+        </span>
+        <span className="font-mono text-[15px] font-medium text-[#1A1C1A]">{id}</span>
+      </div>
+      <span
+        aria-hidden
+        className="self-stretch w-px"
+        style={{
+          background:
+            'repeating-linear-gradient(to bottom, rgba(26,28,26,0.35) 0 3px, transparent 3px 7px)',
+        }}
+      />
+      <span
+        className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#047857]"
+        style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+      >
+        Admitted
+      </span>
+    </motion.aside>
+  );
+}
+
 /* ---------- the page ---------- */
 
 export default function PyadraHome() {
   const [curtainUp, setCurtainUp] = useState(false);
+  const [observerId, setObserverId] = useState<string | null>(null);
   const reduced = useReducedMotion() ?? false;
 
   // Every visitor becomes a numbered Observer — Pyadra's quiet signature.
-  // The footer reads the stored id; this only registers first-timers.
+  // Returning visitors read their stored id; first-timers get registered,
+  // and 'pyadra:observer' tells the footer the number arrived mid-session.
   useEffect(() => {
-    if (window.localStorage.getItem('pyadra_observer_id')) return;
+    const stored = window.localStorage.getItem('pyadra_observer_id');
+    if (stored) {
+      setObserverId(stored);
+      return;
+    }
     fetch('/api/observer')
       .then((r) => r.json())
       .then((data) => {
         const formatted = `#${String(data.id).padStart(4, '0')}`;
         window.localStorage.setItem('pyadra_observer_id', formatted);
         window.localStorage.setItem('pyadra_observer_num', String(data.id));
+        setObserverId(formatted);
+        window.dispatchEvent(new Event('pyadra:observer'));
       })
       .catch(() => {});
   }, []);
 
-  // the curtain rises — full ceremony on first visit, a short beat after that
+  // the curtain rises — three seconds of black, every visit
   useEffect(() => {
-    const returning = !!window.localStorage.getItem('pyadra_observer_id');
-    const wait = reduced ? 250 : returning ? CURTAIN_RETURN_MS : CURTAIN_MS;
+    const wait = reduced ? 250 : CURTAIN_MS;
     const t = setTimeout(() => setCurtainUp(true), wait);
     return () => clearTimeout(t);
   }, [reduced]);
@@ -304,7 +359,7 @@ export default function PyadraHome() {
               transition={{ duration: 0.7, delay: 0.95 }}
               className="relative font-serif italic text-[#EDEFED]/60 text-sm md:text-base"
             >
-              Lo que dejas importa
+              Discover. Connect. Build. Buy.
             </motion.p>
           </motion.div>
         )}
@@ -312,6 +367,9 @@ export default function PyadraHome() {
 
       {/* shared nav — home is the root, no breadcrumb */}
       <SiteNav />
+
+      {/* the admission stub — home shows the ticket; elsewhere it lives in the footer */}
+      {curtainUp && <ObserverTicket id={observerId} />}
 
       {/* ============ HERO — the symbol is the focus ============ */}
       <section

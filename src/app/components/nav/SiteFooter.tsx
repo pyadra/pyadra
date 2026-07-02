@@ -31,9 +31,16 @@ const LINKS: { label: string; href: string; external?: boolean }[] = [
 export default function SiteFooter() {
   const [observerId, setObserverId] = useState<string | null>(null);
 
+  // 'pyadra:observer' fires when the home registers a first-time visitor,
+  // so the number appears without a reload.
   useEffect(() => {
-    const id = window.localStorage.getItem('pyadra_observer_id');
-    if (id) setObserverId(id);
+    const read = () => {
+      const id = window.localStorage.getItem('pyadra_observer_id');
+      if (id) setObserverId(id);
+    };
+    read();
+    window.addEventListener('pyadra:observer', read);
+    return () => window.removeEventListener('pyadra:observer', read);
   }, []);
 
   return (

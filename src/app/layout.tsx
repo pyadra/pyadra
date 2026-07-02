@@ -41,7 +41,7 @@ export const metadata = {
     default: 'Pyadra — Where ideas find the people who make them real',
     template: '%s — Pyadra',
   },
-  description: 'A museum of living projects, documented and verified. Contribute money, work or skills — and own part of something that matters. Lo que dejas importa.',
+  description: 'A museum of living projects, documented and verified. Contribute money, work or skills — and own part of something that matters. Discover. Connect. Build. Buy.',
   openGraph: {
     title: 'Pyadra — Where ideas find the people who make them real',
     description: 'A museum of living projects, documented and verified. Contribute money, work or skills — and own part of something that matters.',

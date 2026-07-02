@@ -47,8 +47,8 @@ const PROJECTS: Project[] = [
     proof: '10 episodes live · Season 2 in the works',
     opportunity: 'Open for support',
     enter_url: '/exhibitions/galaxy/orbit',
-    sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFFFFF,#E8E9E8,#C8C9C8)] shadow-[-10px_10px_20px_rgba(0,0,0,0.15)]',
-    glow: 'bg-[#6B8070]',
+    sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#F2FBF5,#CDEBD9,#A3CFB6)] shadow-[-10px_10px_20px_rgba(0,0,0,0.12)]',
+    glow: 'bg-[#A3CFB6]',
     position: 'md:-translate-x-6 md:-translate-y-6 lg:-translate-x-8 lg:-translate-y-8',
   },
   {
@@ -63,8 +63,8 @@ const PROJECTS: Project[] = [
     proof: 'Built & live · Global product · Hosted on Pyadra',
     opportunity: 'Open for acquisition',
     enter_url: '/exhibitions/galaxy/ethernicapsule',
-    sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFFFFF,#D4DDD6,#A0A0A0)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
-    glow: 'bg-white',
+    sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FDF6EA,#EBD8B9,#D3B58C)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
+    glow: 'bg-[#E4C99F]',
     position: 'md:translate-x-6 md:-translate-y-6 lg:translate-x-8 lg:-translate-y-8',
   },
   {
@@ -77,8 +77,8 @@ const PROJECTS: Project[] = [
     proof: 'Prototype built · Shopify store · Printer included',
     opportunity: 'Available to acquire',
     enter_url: '/exhibitions/galaxy/figurines',
-    sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#3A4A3E,#1A1C1A,#050A07)] shadow-[-10px_10px_20px_rgba(0,0,0,0.25)]',
-    glow: 'bg-[#3A4A3E]',
+    sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFFFFF,#FFFFFF,#F2F2F2)] shadow-[-10px_10px_20px_rgba(0,0,0,0.12)]',
+    glow: 'bg-white',
     position: 'md:-translate-x-6 md:translate-y-6 lg:-translate-x-8 lg:translate-y-8',
   },
   {
@@ -91,8 +91,8 @@ const PROJECTS: Project[] = [
     proof: 'Sydney-based · 500+ jobs done · 5.0 reputation',
     opportunity: 'Looking for a partner',
     enter_url: '/exhibitions/galaxy/kangaroo-cleanup',
-    sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#10B981,#059669,#047857,#EDEFED)] shadow-[-10px_10px_20px_rgba(0,0,0,0.15)]',
-    glow: 'bg-[#059669]',
+    sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFFEF9,#F3EFE2,#DCD5C2)] shadow-[-10px_10px_20px_rgba(0,0,0,0.12)]',
+    glow: 'bg-[#EDE8D8]',
     position: 'md:translate-x-6 md:translate-y-6 lg:translate-x-8 lg:translate-y-8',
   },
 ];

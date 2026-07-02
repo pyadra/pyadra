@@ -88,18 +88,8 @@ export default function ExhibitionsPage() {
 
         {/* headline */}
         <div className="text-center mb-14 md:mb-16">
-          <motion.span
-            initial={{ opacity: 0, y: 16, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: ENTER + 0.1, ...SPRING }}
-            className="inline-flex items-center gap-2 rounded-full bg-[#059669]/10 text-[#047857] px-4 py-2 text-[12px] font-semibold mb-7"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#059669] animate-pulse" />
-            The exhibitions
-          </motion.span>
-
-          <h1 className="text-5xl md:text-7xl font-bold tracking-[-0.035em] leading-[1.02] mb-6">
-            {['Welcome to the museum.', 'Step inside.'].map((line, i) => (
+          <h1 className="text-5xl md:text-7xl font-bold tracking-[-0.035em] leading-[1.02] mb-6 uppercase">
+            {['Welcome to', 'Pyadra.'].map((line, i) => (
               <span key={line} className="block overflow-hidden">
                 <motion.span
                   className="block"
@@ -119,19 +109,18 @@ export default function ExhibitionsPage() {
             transition={{ delay: ENTER + 0.5, ...SPRING }}
             className="text-lg text-[#3A4A3E] font-medium max-w-xl mx-auto leading-relaxed"
           >
-            Three exhibitions are set up. In each one, projects you can
-            understand, support, take further — or simply enjoy.
+            Pyadra is a startup where you can discover, meet, build, buy, and
+            support new projects through exhibitions — like walking through a
+            museum of ideas, businesses, and opportunities.
           </motion.p>
 
-          {/* the verification promise — Pyadra's core */}
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: ENTER + 0.65, ...SPRING }}
-            className="inline-flex items-center gap-2 mt-6 rounded-full bg-white/60 backdrop-blur-sm ring-1 ring-[#1A1C1A]/8 px-4 py-2 text-[13px] font-medium text-[#3A4A3E]"
+            className="mt-8 text-[13px] font-semibold text-[#047857]"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
-            Every project here is real, documented, and verified before it&rsquo;s shown.
+            Explore the exhibitions currently open:
           </motion.p>
         </div>
 
