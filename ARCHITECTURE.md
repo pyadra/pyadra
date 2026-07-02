@@ -52,8 +52,8 @@ Pyadra is a monolithic Next.js application using the App Router architecture. Al
 │  │  API Routes                                             │ │
 │  │  • /api/ethernicapsule/* → Capsule operations          │ │
 │  │  • /api/stripe/webhook → Payment confirmation          │ │
-│  │  • /api/cron/* → Scheduled jobs                        │ │
-│  │  • /api/stats → Analytics                              │ │
+│  │  • /api/figurines/* → Figuitoon orders                 │ │
+│  │  • /api/stats/* → Live project stats                   │ │
 │  └────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────┘
                            ↕
@@ -86,10 +86,9 @@ Pyadra is a monolithic Next.js application using the App Router architecture. Al
 ```
 
 **Key Files:**
-- [`src/app/exhibitions/galaxy/ethernicapsule/compose/ComposeForm.tsx`](src/app/exhibitions/galaxy/ethernicapsule/compose/ComposeForm.tsx) - Message composition
+- [`src/app/exhibitions/galaxy/ethernicapsule/compose/ComposeFormUnified.tsx`](src/app/exhibitions/galaxy/ethernicapsule/compose/ComposeFormUnified.tsx) - Message composition
 - [`src/app/api/ethernicapsule/checkout/route.ts`](src/app/api/ethernicapsule/checkout/route.ts) - Stripe session creation
 - [`src/app/api/stripe/webhook/route.ts`](src/app/api/stripe/webhook/route.ts) - Payment confirmation
-- [`src/app/api/cron/ethernicapsule/route.ts`](src/app/api/cron/ethernicapsule/route.ts) - Daily delivery check
 - [`src/app/lib/ethernicapsule-email.ts`](src/app/lib/ethernicapsule-email.ts) - Email templates
 
 **Data Flow:**
@@ -256,8 +255,7 @@ CREATE TABLE ethernicapsule_capsules (
 
 | Route | Method | Purpose | Auth |
 |-------|--------|---------|------|
-| `/api/stats` | GET | Project stats (members, nodes) | Public |
-| `/api/observer` | POST | Create observer ID | Public |
+| `/api/observer` | GET | Create observer ID | Public |
 | `/api/session` | POST | Verify Stripe session | Public |
 
 ### EterniCapsule Routes
@@ -267,7 +265,7 @@ CREATE TABLE ethernicapsule_capsules (
 | `/api/ethernicapsule/checkout` | POST | Create Stripe checkout | Public |
 | `/api/ethernicapsule/verify` | POST | Verify capsule key | Public |
 | `/api/ethernicapsule/edit` | POST | Update pending capsule | Key-based |
-| `/api/cron/ethernicapsule` | GET | Daily delivery check | Cron secret |
+| `/api/ethernicapsule/guardian-access` | POST | Guardian unlock | Token-based |
 
 ### Orbit 77 Routes
 
@@ -391,20 +389,15 @@ Client → Create Checkout Session → Stripe Hosted Checkout → Payment → We
 
 **Scenes:**
 
-1. **Homepage Scene** ([`src/app/components/Scene.tsx`](src/app/components/Scene.tsx))
-   - Floating particles (200)
-   - Ambient light + point lights
-   - Mouse parallax effect
+Three.js lives only inside project experiences — Pyadra navigation pages
+(home, exhibitions, Galaxy) are pure CSS + Framer Motion by design.
 
-2. **Projects Archaeological Scene** ([`src/app/projects/page.tsx`](src/app/projects/page.tsx))
-   - Lantern cursor (spotlight following mouse)
-   - Excavation nodes (project nodes at different depths)
-   - Ground plane with crack lines
-   - Dust particles with GLSL shaders
-
-3. **EterniCapsule 3D Monolith** ([`src/app/ethernicapsule/Capsule3D.tsx`](src/app/ethernicapsule/Capsule3D.tsx))
+1. **EterniCapsule 3D Monolith** ([`src/app/exhibitions/galaxy/ethernicapsule/Capsule3D.tsx`](src/app/exhibitions/galaxy/ethernicapsule/Capsule3D.tsx))
    - Animated monolith with breathing effect
    - State-based rendering (unsealed vs sealed)
+
+2. **Figuitoon Canvas** ([`src/app/exhibitions/galaxy/figurines/components/FigurineCanvas.tsx`](src/app/exhibitions/galaxy/figurines/components/FigurineCanvas.tsx))
+   - Interactive figurine preview
 
 **Optimization:**
 - Dynamic imports with `ssr: false`

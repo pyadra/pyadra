@@ -1,12 +1,20 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { sanitizeString } from '@/app/lib/validation';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { type, project, model, name, email, message } = body;
+    // Sanitize everything — these strings are interpolated into the
+    // notification email's HTML, so raw input means HTML injection.
+    const type = sanitizeString(body.type, 50);
+    const project = sanitizeString(body.project, 100);
+    const model = sanitizeString(body.model, 100);
+    const name = sanitizeString(body.name, 100);
+    const email = sanitizeString(body.email, 150);
+    const message = sanitizeString(body.message, 2000);
 
     // Validation
     if (!name || !email || !project || !model) {
@@ -14,6 +22,9 @@ export async function POST(request: Request) {
         { error: 'Missing required fields' },
         { status: 400 }
       );
+    }
+    if (!email.includes('@')) {
+      return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
     }
 
     if (!resend) {
@@ -27,10 +38,10 @@ export async function POST(request: Request) {
     // Build email content based on type
     const emailContent = buildEmailContent({ type, project, model, name, email, message });
 
-    // Send email to Eduardo
+    // Send notification to the Pyadra inbox
     const { error } = await resend.emails.send({
       from: 'Pyadra Contact <contact@pyadra.io>',
-      to: ['eduardo@pyadra.io'],
+      to: ['pyadra@pyadra.io'],
       subject: emailContent.subject,
       html: emailContent.html,
       replyTo: email,
@@ -55,7 +66,14 @@ export async function POST(request: Request) {
   }
 }
 
-function buildEmailContent({ type, project, model, name, email, message }: any) {
+function buildEmailContent({ type, project, model, name, email, message }: {
+  type: string;
+  project: string;
+  model: string;
+  name: string;
+  email: string;
+  message: string;
+}) {
   if (type === 'express-interest') {
     return {
       subject: `Galaxy Interest: ${project} — ${model}`,

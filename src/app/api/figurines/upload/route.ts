@@ -8,6 +8,15 @@ import crypto from "crypto";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+// Uploads go straight to storage — reject anything that isn't a
+// reasonably-sized image before touching the bucket.
+const MAX_PHOTO_BYTES = 10 * 1024 * 1024; // 10 MB per photo
+function validatePhoto(file: File): string | null {
+  if (!file.type.startsWith("image/")) return "Only image files are allowed";
+  if (file.size > MAX_PHOTO_BYTES) return "Each photo must be under 10 MB";
+  return null;
+}
+
 let stripeClient: Stripe | null = null;
 function getStripe(): Stripe | null {
   if (stripeClient) return stripeClient;
@@ -36,6 +45,11 @@ async function handleInitialUpload(req: Request, formData: FormData, email: stri
   // Validate photo count
   if (photoFiles.length < 3 || photoFiles.length > 5) {
     return NextResponse.json({ error: "Please upload 3-5 photos" }, { status: 400 });
+  }
+
+  for (const file of photoFiles) {
+    const problem = validatePhoto(file);
+    if (problem) return NextResponse.json({ error: problem }, { status: 400 });
   }
 
   // Validate email
@@ -166,6 +180,11 @@ export async function POST(req: Request) {
 
     if (!sessionId || !name || !address || !frontFile || !leftFile || !rightFile) {
        return NextResponse.json({ error: "Missing required geometry data or fields." }, { status: 400 });
+    }
+
+    for (const file of [frontFile, leftFile, rightFile]) {
+      const problem = validatePhoto(file);
+      if (problem) return NextResponse.json({ error: problem }, { status: 400 });
     }
 
     const supabase = getSupabase();
