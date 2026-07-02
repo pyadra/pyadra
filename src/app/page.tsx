@@ -222,16 +222,6 @@ function LogoShowcase({ reduced }: { reduced: boolean }) {
 
       {/* THE SYMBOL — click always works. */}
       <HeroSymbol reduced={reduced} />
-
-      {/* Micro-hint (fades in after the intro settles) */}
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.55 }}
-        transition={{ delay: reduced ? 0 : 1.6, duration: 0.9 }}
-        className="relative z-10 mt-4 t-d6 text-[#3A4A3E]"
-      >
-        tap the symbol — see them meet
-      </motion.p>
     </div>
   );
 }
@@ -239,26 +229,21 @@ function LogoShowcase({ reduced }: { reduced: boolean }) {
 /* ---------- the page ---------- */
 
 export default function PyadraHome() {
-  const [observerId, setObserverId] = useState<string | null>(null);
   const [curtainUp, setCurtainUp] = useState(false);
   const reduced = useReducedMotion() ?? false;
 
   // Every visitor becomes a numbered Observer — Pyadra's quiet signature.
+  // The footer reads the stored id; this only registers first-timers.
   useEffect(() => {
-    const localId = window.localStorage.getItem('pyadra_observer_id');
-    if (localId) {
-      setObserverId(localId);
-      return;
-    }
+    if (window.localStorage.getItem('pyadra_observer_id')) return;
     fetch('/api/observer')
       .then((r) => r.json())
       .then((data) => {
         const formatted = `#${String(data.id).padStart(4, '0')}`;
         window.localStorage.setItem('pyadra_observer_id', formatted);
         window.localStorage.setItem('pyadra_observer_num', String(data.id));
-        setObserverId(formatted);
       })
-      .catch(() => setObserverId(null));
+      .catch(() => {});
   }, []);
 
   // the curtain rises — full ceremony on first visit, a short beat after that
@@ -351,112 +336,39 @@ export default function PyadraHome() {
         {/* ---- the composition ---- */}
         <div className="relative z-10 w-full max-w-3xl mx-auto px-6 flex flex-col items-center text-center gap-8 md:gap-10 py-24">
 
-          {/* badge — D6 micro-label */}
-          {curtainUp && (
-            <motion.span
-              initial={{ opacity: 0, y: 16, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: 0.3, ...SPRING }}
-              className="inline-flex items-center gap-2 rounded-full bg-[#059669]/10 text-[#047857] px-4 py-2 t-d6"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#059669] animate-pulse" />
-              A living collection
-            </motion.span>
-          )}
-
           {/* THE LOGO — mounted only after the curtain lifts, so intro
-              plays as black slides away. The star of the page. */}
+              plays as black slides away. Symbol + PYADRA + tagline.
+              Nothing else competes with it. */}
           <div className="relative w-full flex items-center justify-center min-h-[380px]">
             {curtainUp && <LogoShowcase reduced={reduced} />}
           </div>
 
-          {/* THE WORDS — supporting, not competing. Mounted with the
-              curtain, so the choreography works at any curtain length. */}
+          {/* THE ONE DOOR */}
           {curtainUp && (
-          <div className="flex flex-col items-center gap-5 max-w-xl">
-            {/* D2 headline — DM Sans 700 */}
-            <motion.h1
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.75, ...SPRING }}
-              className="t-d2 text-[#1A1C1A]"
-            >
-              A startup museum for projects, products,{' '}
-              <span
-                className="text-transparent bg-clip-text"
-                style={{
-                  backgroundImage: 'linear-gradient(100deg, #059669 0%, #047857 25%, #34D399 50%, #059669 75%)',
-                  backgroundSize: '220% 100%',
-                  animation: reduced ? undefined : 'py-shimmer 7s linear infinite',
-                }}
-              >
-                and people.
-              </span>
-            </motion.h1>
-
-            {/* D4 body */}
-            <motion.p
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9, ...SPRING }}
-              className="t-d4 text-[#3A4A3E]"
-            >
-              A place to discover, support, and grow what strangers are building.
-            </motion.p>
-
-            {/* D5 italic — the one place serif italic reads well */}
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.05, ...SPRING }}
-              className="t-d5 font-serif italic text-[#3A4A3E]/70"
-            >
-              No one stays a stranger once you meet them.
-            </motion.p>
-
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2, ...SPRING }}
-              className="mt-2"
+              transition={{ delay: 1.0, ...SPRING }}
             >
               <motion.span
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.96 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 17 }}
+                className="inline-block"
               >
                 <Link
                   href="/exhibitions"
-                  className="block rounded-full bg-[#1A1C1A] text-white px-9 py-4 t-d5 font-semibold shadow-lg shadow-[#1A1C1A]/20"
+                  className="block rounded-full bg-[#1A1C1A] text-white px-12 py-4 t-d5 font-semibold shadow-lg shadow-[#1A1C1A]/20"
                 >
-                  Enter the exhibition →
+                  Join
                 </Link>
               </motion.span>
             </motion.div>
-
-            {/* discovery — one quiet line: what's inside, right now */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.45, duration: 0.8 }}
-              className="mt-4"
-            >
-              <Link
-                href="/exhibitions/galaxy"
-                className="t-d6 text-[#6B8070] hover:text-[#059669] transition-colors"
-              >
-                On exhibition now — Orbit 77 · EterniCapsule · Figuitoon · Kangaroo Cleanup
-              </Link>
-            </motion.div>
-          </div>
           )}
         </div>
       </section>
 
       <SiteFooter />
-
-      {/* shimmer keyframes for the "and people" accent */}
-      <style>{`@keyframes py-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }`}</style>
     </div>
   );
 }
