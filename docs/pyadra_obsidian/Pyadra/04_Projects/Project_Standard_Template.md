@@ -2,11 +2,15 @@
 
 _Project document · Pyadra_ _Last updated: {{date}}_
 
+> [!note] Template v2 (June 2026) Updated to match what the projects actually use: added the COPY DECK section, switched the primary type to LOCAL/GLOBAL/GLOCAL (with Pyadra-relation as a secondary field), refreshed the participation models with the learned principles (lower upfront ↔ higher share, valuation methods, revenue-share protection, leave-anytime). Kept the ROADMAP section — it is required, not optional.
+
 ---
 
 ## IDENTITY
 
-**Type:** <!-- Type 1 — Native / Type 2 — External with Internal Product / Type 3 — Exhibited External --> **Exhibition:** <!-- Galaxy / Jungle / City --> **Status:** <!-- Forming / Active / Paused / Archived --> **Founder / Creator:** **Tagline (1 line):**
+**Type (scope):** <!-- LOCAL / GLOBAL / GLOCAL --> **Pyadra relation:** <!-- Native on Pyadra / External with internal product / Exhibited external --> **Exhibition:** <!-- Galaxy / Jungle / City --> **Status:** <!-- Forming / Active / Paused / Archived --> **Founder / Creator:** **Tagline (1 line):**
+
+> [!note] Type system The primary type is SCOPE — LOCAL (operates in one place), GLOBAL (operates anywhere), or GLOCAL (global reach, local production/delivery). The secondary "Pyadra relation" field captures how the project connects to Pyadra (native / internal product / exhibited), which determines the Access links below.
 
 ---
 
@@ -36,9 +40,9 @@ _This block feeds the public dashboard in Galaxy._ _Maximum 2 lines per field. N
 
 **Access:**
 
-- Type 1 — native on Pyadra: `[internal link]`
-- Type 2 — internal product, external project: `[Pyadra product link]` + `[external project link]`
-- Type 3 — exhibited: `[external link]`
+- Native on Pyadra: `[internal link]`
+- Internal product, external project: `[Pyadra product link]` + `[external project link]`
+- Exhibited external: `[external link]`
 
 ---
 
@@ -194,14 +198,18 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 |Product||
 |Operational||
 
-**Participation models:** _Pyadra supports different levels of involvement — from supporter to full owner._
+**Participation models:** _Match the model to the project. Lower upfront ↔ higher permanent share. The project can always leave Pyadra; staying hosted is a negotiated option, not a lock-in. Infrastructure costs are always the operator's. See [[Company_Master]]._
 
 |Model|Description|Investment range|Status|
 |---|---|---|---|
-|Supporter|Contributes to the project, receives a product or credential. No ownership.|Low (product price)|<!-- Active / Planned -->|
-|Partial acquisition|Buys a % of the project. Co-operates with original creator. Revenue share proportional to stake.|Medium|<!-- Active / Planned -->|
-|Full acquisition|Buys 100% of the project. Original creator retains royalty and advisory role.|High|<!-- Active / Planned -->|
-|Hosted ownership|Acquires ownership but project stays inside Pyadra infrastructure. Pyadra maintains deployment and operations.|Medium–High|<!-- Active / Planned -->|
+|Supporter / contribution|Contributes, receives a product or credential. No ownership, no revenue share.|Low (product price)|<!-- Active / Planned -->|
+|Operator / lower upfront|Lower upfront + higher permanent share to Pyadra. Operator runs it, pays infrastructure.|Medium|<!-- Active / Planned -->|
+|Owner / higher upfront|Higher upfront + lower permanent share. Operator keeps more per sale.|High|<!-- Active / Planned -->|
+|Make an offer|Different structure (incl. taking it independent). Private conversation, never a fixed page button.|Negotiable|<!-- Active / Planned -->|
+
+> [!note] Valuation method (pick per project type, see [[Company_Master]]) Business with real history → earnings × market multiple (SDE). Built pre-revenue product → reconstruction cost (what it took to build). Idea stage → potential only (lowest). Do NOT show a hard valuation headline on the page — use a worth narrative; share the exact figure privately in due diligence.
+
+> [!warning] Revenue-share protection If a deal includes a revenue share paid over time, the agreement MUST include a reporting clause, a verification right, and non-payment terms. Never close on a handshake. Legal review required before signing.
 
 **How a participant or buyer makes money:**
 
@@ -219,6 +227,89 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 
 - [ ]
 - [ ]
+
+---
+
+## OPTIONAL — SALE-STAGE SECTIONS
+
+_Activate these only when a project moves into active sale / acquisition (like [[Kangaroo_Cleanup]]). Projects in build/exhibit stage can skip them. They live between ASSET VALUE and COPY DECK._
+
+### METRICS AND NUMBERS (canonical)
+
+_When a project sells, its numbers become a due-diligence matter and deserve a dedicated canonical table. This is THE single source of truth for every number; all other mentions point here._
+
+|Metric|Value|Source|Verifiable|
+|---|---|---|---|
+|||||
+
+### PROOF OF WORK
+
+_Real evidence that the project/business exists and operated. Public, verifiable items a buyer can check themselves._
+
+|Evidence|Status|Availability|Link|
+|---|---|---|---|
+|||||
+
+### RISKS (The Honest Risks)
+
+_Stated plainly, in the buyer's language. Honesty here builds trust._
+
+|Title|Description|
+|---|---|
+|||
+
+### DUE DILIGENCE
+
+> [!note] Does NOT appear on the public page. Shared only when there is confirmed serious interest from a potential buyer.
+
+_Checklist of legal, business, financial and operational items to verify before closing._
+
+- [ ]
+
+### SALE — COPY AND CONVERSION
+
+> [!note] Strategy layer — how the page convinces, not just informs. The emotional hook, the buyer journey, CTAs by stage, and urgency. This guides the COPY DECK below; the exact verbatim strings live in the deck.
+
+**Main hook (hero):**
+
+**Buyer journey:** Arrival → Interest → Conviction → Decision → Action
+
+---
+
+## COPY DECK — LOCKED STRINGS
+
+_The single source of truth for every visible string on the project's page. Claude Code and any builder copy these strings VERBATIM — never paraphrase, invent, or "improve" them. If a string is needed that isn't here, add it here first, then build it. If code and this deck ever disagree, this deck wins._
+
+> [!important] Why this exists This is what stops the page and the document from drifting apart. The page copies from here; it never improvises copy in code. See [[Company_Master]] Project Standard point 14.
+
+> [!note] Numbers rule Every NUMBER (price, metrics, counts) has ONE canonical source — the metrics in WHAT THE USER SEES and the PRODUCTS AND PRICING table (or the canonical METRICS table above, for sale-stage projects). The copy deck and prose point to those; a figure is never updated in two places and left to contradict itself.
+
+### Identity block
+
+- **Type badge:** ``
+- **Status badge:** ``
+- **H1 (project name):** ``
+- **Tagline:** ``
+- **Intro paragraph:** ``
+
+### [Section name — repeat per page section]
+
+_List each visible block (assets/what-you-get, metrics, CTAs, deal/participation cards, risks, FAQ, footer) with its exact strings in code-formatting._
+
+|Field|String|
+|---|---|
+||``|
+
+### Primary CTA
+
+- **Button:** ``
+- **Sub-line:** ``
+
+### Strings that must never appear
+
+```
+(per Copy voice rules — list the banned words/phrases for this project)
+```
 
 ---
 

@@ -1,16 +1,8 @@
----
 
-## tags: [pyadra, project, kangaroo-cleanup, galaxy, local] created: 2026-06-08 version: 1.2 status: active type: LOCAL exhibition: Galaxy
-
-# Kangaroo Cleanup
-
-_Project document · Pyadra · Last updated: June 2026_
-
-> [!important] Read this first This document is the single source of truth for the Kangaroo Cleanup project inside Pyadra. Read [[Company_Master]] before working with this document. Any person or AI building the dashboard, page, or deal structure must read both documents first.
+Project document · Pyadra · Last updated: June 2026_ 
 
 ---
-
-## 01. PROJECT IDENTITY
+## IDENTITY
 
 **Name:** Kangaroo Cleanup **Type:** LOCAL **Exhibition:** [[Galaxy]] **Status:** Warm · Ready for Relaunch **Founder:** Eduardo Díaz **Tagline:** A recycling and environment service built from zero in Sydney, Australia. **Page label:** Project Handover
 
@@ -22,7 +14,7 @@ _Project document · Pyadra · Last updated: June 2026_
 
 **Short description (for cards and previews):** Kangaroo Cleanup is a Sydney-based cleanup and recycling business helping homes, offices and small businesses remove unwanted items, cardboard, furniture, green waste and construction waste quickly and responsibly. With a friendly team, a reliable ute and an eco-conscious mindset, Kangaroo Cleanup makes waste removal simple, stress-free and environmentally responsible.
 
-**Long description (for about / overview):** Kangaroo Cleanup is a small Sydney-based recycling, cleanup and waste removal business founded in November 2023 by Eduardo Díaz, a Latin American international student in Australia. The company helped residential and commercial clients remove unwanted items such as cardboard, furniture, office waste, appliances, green waste, construction materials, metals and general rubbish. The brand focused on friendly service, honest communication, responsible disposal and environmental awareness. Kangaroo Cleanup operated with a ute, a small part-time team and a practical, hardworking approach. The business served more than 120 customers and generated approximately AUD 25,000 in revenue. It is now available for acquisition as a documented, validated project with brand, reputation, operational knowledge and relaunch potential.
+**Long description (for about / overview):** Kangaroo Cleanup is a small Sydney-based recycling, cleanup and waste removal business founded in November 2023 by Eduardo Díaz, a Latin American international student in Australia. The company helped residential and commercial clients remove unwanted items such as cardboard, furniture, office waste, appliances, green waste, construction materials, metals and general rubbish. The brand focused on friendly service, honest communication, responsible disposal and environmental awareness. Kangaroo Cleanup operated with a ute, a small part-time team and a practical, hardworking approach. The business served more than 120 customers and generated approximately AUD 53,000 in gross revenue across two fiscal years (~$30k FY2025, ~$23k FY2024), growing every year. It is now available for acquisition as a documented, validated project with brand, reputation, operational knowledge and relaunch potential.
 
 **What this page must never feel like:**
 
@@ -33,7 +25,7 @@ _Project document · Pyadra · Last updated: June 2026_
 
 ---
 
-## 02. CONTEXT AND HISTORY
+## INTERNAL DESCRIPTION
 
 **Origin:** Kangaroo Cleanup was born while Eduardo lived in Sydney as an international student. He created it to generate income, learn the local market, and build a real business from zero in Australia.
 
@@ -68,7 +60,7 @@ _Project document · Pyadra · Last updated: June 2026_
 
 ---
 
-## 03. DESIGN AND EXPERIENCE
+## EXPERIENCE & DESIGN
 
 **In its own world:** Kangaroo Cleanup has its own visual identity — name, logo, colors, typography, business card, uniform concept. Tone: friendly, practical, Australian, environmentally responsible.
 
@@ -80,7 +72,7 @@ _Project document · Pyadra · Last updated: June 2026_
 
 ---
 
-## 04. ARCHITECTURE
+## ARCHITECTURE
 
 **Can it operate independently from Pyadra?** Yes — it is an external physical business. Pyadra only exhibits it.
 
@@ -94,21 +86,28 @@ _Project document · Pyadra · Last updated: June 2026_
 
 ---
 
-## 05. METRICS AND NUMBERS
+## METRICS AND NUMBERS
+
+> [!important] Canonical source of numbers This table is the single source of truth for every number in this project. If any figure changes, update it HERE FIRST, then propagate to the copy deck (Section 14) and anywhere it appears in prose. Other sections may repeat these numbers for context, but this table wins in any conflict. Never edit a number in the copy deck or in prose without updating this table.
 
 > [!note] Disclaimer All figures are approximate and based on founder records unless marked as publicly verifiable. Revenue figures must be verified during due diligence.
 
 |Metric|Value|Source|Verifiable|
 |---|---|---|---|
 |Years active|2|2023 — 2025|—|
-|Tasks completed|248|Airtasker public|✅ Today|
+|Jobs done (total)|500+|Airtasker + direct (founder records)|Partial · Due diligence|
+|Tasks completed (Airtasker)|248|Airtasker public|✅ Today|
 |Airtasker reviews|213|Airtasker public|✅ Today|
 |Airtasker rating|5.0|Airtasker public|✅ Today|
 |Completion rate|100%|Airtasker public|✅ Today|
 |ID Verified|Yes|Airtasker public|✅ Today|
 |Instagram posts|78|@kangaroocleanup|✅ Today|
-|Estimated revenue|AUD $25,000+|Founder records|Private · Due diligence|
+|Gross revenue FY2025|AUD $30,000 (~)|Founder records|Private · Due diligence|
+|Gross revenue FY2024|AUD $23,000 (~)|Founder records|Private · Due diligence|
+|Revenue trajectory|Grew every year|Founder records|Private · Due diligence|
 |Initial investment|AUD $7,000+|Founder records|Private · Due diligence|
+
+> [!note] Revenue presentation The page presents revenue split by fiscal year (FY2025 ~$30k, FY2024 ~$23k) to show the upward trajectory. The total across the lifetime of the business is approximately AUD $53k. All figures are founder-recorded and confirmed in due diligence under a signed agreement.
 
 **Publicly verifiable links:**
 
@@ -116,11 +115,11 @@ _Project document · Pyadra · Last updated: June 2026_
 - Instagram: `instagram.com/kangaroocleanup`
 - Website: `kangaroocleanup.com.au`
 
-**Indicative valuation range:** AUD $12,000 — $18,000 **Preferred deal:** AUD $15,000 upfront + 1–5% permanent Pyadra stake
+**Private valuation reference (internal — not shown on page):** ~AUD $15,000 — $20,000 (≈1x SDE; see valuation context note at end of document). **Preferred deal:** Grow Together — AUD $5,000 upfront + 8% revenue share + 1–5% permanent Pyadra stake (see Section 10). The page communicates value through the rebuild-cost narrative, not a headline figure.
 
 ---
 
-## 06. ASSETS
+## ASSET VALUE
 
 ### Included in the project
 
@@ -221,7 +220,7 @@ _Project document · Pyadra · Last updated: June 2026_
 
 ---
 
-## 07. PROOF OF WORK
+## PROOF OF WORK
 
 _Real evidence that the business existed and operated._
 
@@ -245,7 +244,7 @@ _Real evidence that the business existed and operated._
 
 ---
 
-## 08. OPERATION
+## CURRENT STATE
 
 **What the business did:** Removal, recycling and responsible disposal service in Sydney. Served homes, offices, end-of-lease customers, and clients with unwanted items.
 
@@ -273,7 +272,7 @@ _Real evidence that the business existed and operated._
 
 ---
 
-## 09. RISKS
+## RISKS (The Honest Risks)
 
 > [!important] Transparency Showing risks does not weaken the project — it makes it credible. Full transparency is what builds trust with the right buyer.
 
@@ -316,66 +315,61 @@ _Real evidence that the business existed and operated._
 
 ---
 
-## 10. PARTICIPATION OPTIONS
+## PARTICIPATION OPTIONS
 
-**Founder deal philosophy:** Eduardo does not want operational responsibility after the handover. No daily calls, no customer service responsibility, no management obligations. He wants the buyer to take full control, with a short optional handover, and Pyadra retains a small permanent stake as established in [[Company_Master]].
+**Founder deal philosophy:** Eduardo does not want operational responsibility after the handover. No daily calls, no customer service responsibility, no management obligations. He wants the buyer to take full control, with a short optional handover, and Pyadra retains a small permanent stake as established in [[Company_Master]]. All three options share a revenue-share structure — the lower the upfront, the higher the share. This keeps the entry door low and aligns both sides over the years.
 
 ---
 
-**Option A — Recommended** **Title:** 95% Handover + Pyadra Permanent Stake **Price:** AUD $15,000 upfront
+**Option A — Grow Together · RECOMMENDED** **Price:** AUD $5,000 upfront + 8% of yearly revenue, shared
 
 |Condition|Detail|
 |---|---|
-|Transfer|95% of the project to the buyer|
+|Upfront|AUD $5,000|
+|Revenue share|8% of yearly revenue, shared|
 |Operational control|100% buyer's responsibility|
 |Pyadra stake|1–5% permanent · defined at closing|
 |Founder responsibility|None — short optional handover only|
-|Best for|Buyer who wants full control from day one|
+|Positioning|The lowest door in. Keep your cash for the van and tools, grow it together over the years. The one the founder would shake hands on.|
+|Best for|Operator with limited upfront capital who wants the lowest entry|
 
 ---
 
-**Option B — Lower Upfront + Revenue Share** **Title:** Lower Upfront + Revenue Share **Price:** AUD $10,000 upfront
+**Option B — Shared Path** **Price:** AUD $8,000 upfront + 5% of yearly revenue, shared
 
 |Condition|Detail|
 |---|---|
-|Transfer|100% of the project to the buyer|
-|Revenue share|2% of gross revenue for 3 years|
+|Upfront|AUD $8,000|
+|Revenue share|5% of yearly revenue, shared|
+|Operational control|100% buyer's responsibility|
 |Pyadra stake|1–5% permanent · defined at closing|
-|Founder responsibility|None operational|
-|Reporting required|Quarterly|
-|Best for|Buyer with limited upfront capital|
+|Founder responsibility|None — short optional handover only|
+|Positioning|Bigger step in, lighter share. Solid commitment, real upside left for both sides.|
+|Best for|Operator who wants to balance upfront and ongoing share|
 
 ---
 
-**Option C — Full Buyout** **Title:** Full Buyout **Price:** AUD $18,000 upfront
+**Option C — Take the Wheel** **Price:** AUD $12,000 upfront + 3% of yearly revenue, shared
 
 |Condition|Detail|
 |---|---|
-|Transfer|Complete acquisition of all assets|
-|Founder upside|None|
-|Revenue share|None|
+|Upfront|AUD $12,000|
+|Revenue share|3% of yearly revenue, shared|
+|Operational control|100% buyer's responsibility|
 |Pyadra stake|1–5% permanent · defined at closing|
-|Founder responsibility|Handover support only|
-|Best for|Buyer who wants a clean acquisition|
+|Founder responsibility|None — short optional handover only|
+|Positioning|Most upfront, smallest share. For the operator who wants it almost clean and keeps nearly everything they earn.|
+|Best for|Operator with capital who wants to retain maximum future revenue|
 
 ---
 
-**Option D — Annual Royalty (optional)** **Title:** 1% Annual Royalty **Price:** To negotiate
-
-|Condition|Detail|
-|---|---|
-|Structure|1% of gross revenue per year|
-|Duration|3–5 years · to be agreed|
-|Pyadra stake|1–5% permanent · defined at closing|
-|Founder responsibility|None operational|
-|Reporting required|Annual|
-|Best for|Buyer who prefers royalty over ownership percentage|
+> [!important] No valuation headline on page The page does NOT display a "$12k–$18k valuation" figure (see Section 14.4 for the reasoning). The internal/private valuation reference is ~$15–20k AUD, used only in due diligence with serious buyers. On the page, the three options above are the structured paths to enter, and the value is communicated through the rebuild-cost narrative, not a headline number.
 
 > [!warning] Deal disclaimer Final valuation and terms are subject to due diligence, asset verification, and written agreement. No deal is active until a signed contract exists. Legal review required before closing.
 
 ---
 
-## 11. DUE DILIGENCE
+## DUE DILIGENCE
 
 > [!note] This information does not appear on the public page. It is shared only when there is confirmed serious interest from a potential buyer.
 
@@ -432,7 +426,7 @@ _Real evidence that the business existed and operated._
 
 ---
 
-## 12. CURRENT STATE AND ROADMAP
+## ROADMAP
 
 **What works today:**
 
@@ -466,7 +460,7 @@ _Real evidence that the business existed and operated._
 
 ---
 
-## 13. SALE — COPY AND CONVERSION
+## SALE — COPY AND CONVERSION
 
 > [!note] This section exists so the page not only informs but convinces. It contains the emotional hook, the buyer journey, the CTAs by stage, and the urgency. The person or AI building the dashboard decides how to present this visually.
 
@@ -501,14 +495,14 @@ _Real evidence that the business existed and operated._
 
 |Buyer question|Direct answer|
 |---|---|
-|Is this real?|Yes. 248 completed tasks, 213 reviews, 5.0 on Airtasker. All public and verifiable right now.|
+|Is this real?|Yes — and you don't have to take my word for it. The Airtasker profile is public; check the reviews, the rating and the completed jobs yourself before you ever message me.|
 |What exactly am I buying?|Brand, reputation, active channels, operational knowledge, and flexible participation options.|
 |Why did it stop?|The founder relocated to Perth and sold the ute. Not because of lack of demand.|
-|Can I make it work?|If you have a vehicle and availability in Sydney, yes.|
+|If you're in Perth, what's really transferable?|Everything except the physical presence — which was always the operator's job. The brand, the 5.0 reputation, the playbook, the disposal contacts, and the live channels all transfer. You skip the two years of building trust from zero.|
 |Is the ute included?|No. It was sold. The buyer needs their own vehicle.|
 |Is the ABN included?|No. The buyer needs their own legal structure.|
-|Why $15,000?|Built brand, public reputation, live channels, documented knowledge, and active demand. This is not an idea — it is a business with proof.|
-|What if it doesn't work?|It is a service business. Results depend on the operator. Risks are documented honestly on this page.|
+|Why this price?|Built brand, public reputation, live channels, documented knowledge, and active demand. Entry starts at $5,000 upfront with a revenue share. This is not an idea — it is a business with proof.|
+|What if it doesn't work?|The demand is proven and the channels are live — what's left is execution. We document every risk honestly below, but you're not gambling on whether the market exists. It does.|
 
 ---
 
@@ -536,7 +530,9 @@ _Real evidence that the business existed and operated._
 
 **Social proof highlight:**
 
-> Airtasker · **5.0 rating · 213 reviews · 248 tasks · 100% completion rate · ID Verified** All public and verifiable today at: `airtasker.com/users/a9226792b540-p-29587653/` Instagram: **78 posts** of real jobs at `@kangaroocleanup` Active website: `kangaroocleanup.com.au` Customers are still calling the active business number today.
+> [!note] This block's job is verification links, NOT repeating the numbers. The stats widget (14.3) already shows the figures. Here, the point is _where to confirm them_ — keep it about the live, clickable proof, not a second recital of 5.0 / 213 / 248.
+
+> The proof is live and public — see it for yourself: the Airtasker profile (`airtasker.com/users/a9226792b540-p-29587653/`), 78 real-job posts on Instagram (`@kangaroocleanup`), and the active website (`kangaroocleanup.com.au`). Customers are still calling the business number today.
 
 _A buyer can verify the reputation before making any inquiry — without contacting the founder._
 
@@ -552,7 +548,169 @@ _A buyer can verify the reputation before making any inquiry — without contact
 
 ---
 
-## 14. RELATED DOCUMENTS
+## COPY DECK — LOCKED STRINGS
+
+> [!important] How to use this section This is the single source of truth for every visible string on the Kangaroo Cleanup page. Claude Code and any builder must copy these strings **verbatim**. Do not paraphrase, rewrite, invent, or "improve" them. If a string is needed that is not in this deck, it must be added here first and approved — never improvised in code. If the code and this deck ever disagree, this deck wins (last reconciled against `page.tsx`, June 2026).
+
+> [!note] Numbers come from Section 05 This deck is the source of truth for _wording_. For any _number_ (jobs, reviews, rating, revenue), Section 05 (Metrics) is the canonical source. If a number changes, update Section 05 first, then update the matching string here. The two must always agree.
+
+---
+
+### 14.1 Identity block
+
+- **Type badge:** `Local · Sydney, NSW`
+- **Status badge:** `Handover Ready`
+- **H1 (project name):** `Kangaroo Cleanup`
+- **Tagline (serif italic, emerald):** `Your own business — without starting from zero.`
+- **Intro paragraph:** `500+ jobs, a 5.0 name, and channels that still ring today — all built one honest job at a time. The hard part's done. You bring the van and show up.`
+
+---
+
+### 14.2 Assets transferred (4 modules)
+
+Section label: `Assets Transferred` · Counter: `4 modules`
+
+|#|Title|Description|
+|---|---|---|
+|1|`A name Sydney already trusts`|`Brand, logo, identity — plus a 5.0 reputation built one honest job at a time. You inherit the reviews.`|
+|2|`Channels that already ring`|`Phone, WhatsApp, website, Instagram, email. Inbound messages from day one, not a cold start.`|
+|3|`The pricing playbook`|`What to charge, how to quote, which Sydney disposal sites to use and what they cost. The margin lives here.`|
+|4|`The mistakes, already paid for`|`Which jobs make money, which to walk away from. You start on year two, not year zero.`|
+
+---
+
+### 14.3 Numbers / live stats
+
+> [!important] Two separate blocks — keep them visually distinct These are two different kinds of number and must NOT be merged into one row or one widget. Block A is publicly verifiable (the buyer can confirm it on Airtasker without contacting the founder). Block B is founder-recorded (only confirmable in due diligence). Mixing them lets the unverifiable numbers borrow the credibility of the verifiable ones — which a sharp buyer notices and which can make them doubt everything. Separating them, clearly labelled, actually _raises_ trust: "this you can check yourself, this I'll show you with records."
+
+---
+
+**BLOCK A — Proof (public · verifiable today)**
+
+Widget header: `Public proof · verify it yourself`
+
+|Label|Value|Sub-description|
+|---|---|---|
+|`Jobs done`|`500+`|`across Airtasker & direct`|
+|`On Airtasker`|`248`|`publicly verifiable`|
+|`Rating`|`5.0 ★`|`213 reviews`|
+|`Completion`|`100%`|`reliable record`|
+
+Context line below the widget:
+
+> `248 verifiable on Airtasker — plus hundreds more by direct referral, once customers started calling instead of booking through the platform.`
+
+> [!note] Why two job numbers The 248 is the publicly verifiable floor (anyone can check it on Airtasker today). The 500+ is the real total — over time, repeat customers called direct instead of going through Airtasker, so the platform number understates the business. Showing both turns a potential question ("why did they leave Airtasker?") into a strength (the business outgrew the platform). The 500+ is founder-recorded; have partial proof (WhatsApp history, job records) ready for serious buyers.
+
+---
+
+**BLOCK B — Revenue (founder-recorded · verified in due diligence)**
+
+Block header (must be shown with the figures): `Revenue · founder-recorded, verified in due diligence`
+
+|Value|Sub|Description|
+|---|---|---|
+|`~$30k`|`AUD · FY2025`|`Invoiced gross revenue`|
+|`~$23k`|`AUD · FY2024`|`Invoiced gross revenue`|
+
+Trajectory line below the figures (this is messaging, NOT a data cell):
+
+> `Grew every year. From zero to a known name in the Sydney cleanup market in two years.`
+
+> [!warning] Revenue strings Revenue figures are founder-recorded. They MUST be shown under the "founder-recorded, verified in due diligence" header — never as a bare number that looks audited or guaranteed. The trajectory line is copy, not a metric; do not format it as a stat cell. The old version mixed "grew every year" and "2 yrs to a known name" into the revenue table as if they were dollar figures — that was confusing and is now fixed.
+
+---
+
+### 14.4 Primary CTA & value line
+
+- **Main button:** `TAKE THIS OVER →`
+- **Value line (shown near the CTA, replaces a hard valuation figure):** `What it takes to build this from zero: 2 years, 500+ jobs, a 5.0 reputation one customer at a time — and a business that cleared real money each year. You can start there. Or start here, from $5,000.`
+
+> [!note] Why no valuation figure on the page We deliberately do NOT show a "$12k–$18k valuation" headline. A buyer with a calculator values an owner-operated, no-contract, currently-inactive service business at roughly 1x SDE — which lands the real value around $15–20k AUD (based on ~$15–25k/yr clear earnings). That figure is defensible in private due diligence, but shown as a headline it invites the buyer to argue it down. Instead the page sells the _cost to rebuild_ (real, undeniable effort) and lets the deal prices state the actual cost of entry. The exact earnings number is shared privately with serious buyers, backed by records.
+
+---
+
+### 14.5 Deal choices
+
+Section label: `Deal Choices`
+
+|Name|Badge|Price|Sub|Description|
+|---|---|---|---|---|
+|`Grow Together`|`Pick` (featured)|`$5,000`|`AUD up front · 8% of yearly revenue, shared`|`The lowest door in. You keep your cash for the van and tools, and we grow this together over the years. The one I'd shake hands on.`|
+|`Shared Path`|—|`$8,000`|`AUD up front · 5% of yearly revenue, shared`|`Bigger step in, lighter share. Solid commitment, real upside left for both sides.`|
+|`Take the Wheel`|—|`$12,000`|`AUD up front · 3% of yearly revenue, shared`|`Most up front, smallest share. For the operator who wants it almost clean and keeps nearly everything they earn.`|
+
+---
+
+### 14.6 Risks (The Honest Risks)
+
+Section label: `The Honest Risks`
+
+|Title|Description|
+|---|---|
+|`It's physical work`|`Lifting, logistics, showing up. No remote version. You have to be in Sydney.`|
+|`Competition is real`|`Other operators work this city. Demand shifts by season and suburb.`|
+|`Reputation is daily`|`The 5.0 rating helps you win — it doesn't win for you. Keep the standard.`|
+|`Numbers get verified`|`Founder-recorded revenue, confirmed in due diligence. Requires a signed agreement.`|
+
+---
+
+### 14.7 Not included
+
+Section label: `Not Included`
+
+|Item|Note|
+|---|---|
+|`The ute`|`it was sold. You bring your own vehicle.`|
+|`The ABN`|`you operate under your own legal structure.`|
+|`A guarantee`|`results depend on your execution.`|
+
+---
+
+### 14.8 FAQ (drawer)
+
+|Q|A|
+|---|---|
+|`Is this real?`|`Yes — and you don't have to take my word for it. The Airtasker profile is public; check the reviews, the rating and the completed jobs yourself before you ever message me.`|
+|`What exactly am I buying?`|`Brand, reputation, active channels, operational playbook, and flexible participation options.`|
+|`Why did it stop?`|`The founder relocated to Perth and sold the ute. Not because of lack of demand.`|
+|`If you're in Perth, what's really transferable?`|`Everything except the physical presence — which was always the operator's job. The brand, the 5.0 reputation, the playbook, the disposal contacts, and the live channels all transfer. You skip the two years of building trust from zero.`|
+|`What if it doesn't work?`|`The demand is proven and the channels are live — what's left is execution. We document every risk honestly below, but you're not gambling on whether the market exists. It does.`|
+
+---
+
+### 14.9 Secondary CTAs & labels
+
+- **FAQ drawer trigger:** `Read FAQ & Founder Story →`
+- **Founder contact button:** `Talk to Eduardo`
+- **Public links:** `Airtasker` · `Instagram` · `Website`
+- **Contact email:** `pyadra@pyadra.io`
+
+**Public link URLs:**
+
+- Airtasker: `https://www.airtasker.com/users/a9226792b540-p-29587653/`
+- Instagram: `https://www.instagram.com/kangaroocleanup`
+- Website: `https://kangaroocleanup.com.au`
+
+---
+
+### 14.10 Strings that must NEVER appear
+
+Per [[Company_Master]] copy voice rules, the page must never contain:
+
+```
+buy now · add to cart · shop · checkout
+disrupting · revolutionary · game-changing
+passive income · guaranteed returns
+"cheap" · "desperate" · "must sell"
+generic Flippa / Gumtree marketplace phrasing
+```
+
+> [!note] The "grab me ✦" micro-label on the draggable logo is a playful interaction hint, not e-commerce language. It is permitted as a single intentional moment. Do not multiply this kind of string elsewhere.
+
+---
+
+## RELATED LINKS
 
 - [[Company_Master]] — read before working with this project
 - [[Galaxy]] — exhibition where this project lives
@@ -560,4 +718,10 @@ _A buyer can verify the reputation before making any inquiry — without contact
 
 ---
 
-_END · Kangaroo Cleanup · v1.2 · Pyadra 2026_
+> [!note] Changelog v1.3 (June 2026) — Reconciled document against `page.tsx` (the live source of truth at time of writing). Updated revenue to FY-split figures (~$30k FY25 / ~$23k FY24). Replaced 4 legacy deal options with the 3 active deals (Grow Together / Shared Path / Take the Wheel). Added Section 14 — COPY DECK — LOCKED STRINGS, the verbatim source for every visible string on the page.
+
+> [!note] Changelog v1.4 (June 2026) — Copy strengthening pass. Hero rewritten in second person with the 500+ jobs lead. Stats now show 500+ total alongside 248 Airtasker-verifiable, with a context line explaining the gap. Section 14.3 split into two clearly-labelled blocks — Block A (public, verifiable proof) and Block B (founder-recorded revenue) — so the unverifiable figures don't borrow credibility from the verifiable ones; also removed the marketing rows ("grew every year", "2 yrs") that were wrongly formatted as revenue data cells. FAQ aligned to the 500+ figure, dropped the weak "Can I make it work?" entry, added two stronger entries (Perth/Sydney transferability + a confident "what if it doesn't work"). Replaced the hard "$12k–$18k valuation" headline with a rebuild-cost narrative (no public valuation figure). See valuation context note below.
+
+> [!important] Valuation context (for internal reference — not shown on page) Market reality for this business: it is owner-operated, has no recurring contracts, and is currently inactive — all of which pull the valuation multiple to the low end. Australian small service businesses like this value at roughly 1x SDE (seller's discretionary earnings). With ~$15–25k/yr clear earnings, the defensible private valuation is around **$15–20k AUD**. The deal prices ($5k–$12k upfront + revenue share) sit at or below that on the upfront, by design — lower entry attracts more operators, and the revenue share is where the founder recovers long-term value. KEY RISK: the revenue share depends on the buyer self-reporting and paying voluntarily once the founder is no longer in the business. This must be protected in the written agreement (reporting clause, verification right, default terms) per [[Company_Master]]'s legal-review rule. Do not close on a handshake.
+
+_END · Kangaroo Cleanup · v1.4 · Pyadra 2026_

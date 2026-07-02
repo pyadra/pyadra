@@ -1,4 +1,3 @@
-# Orbit 77
 
 _Project document · Pyadra_ _Last updated: May 21, 2026_
 
@@ -353,39 +352,124 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 |Product|Operational credential system, three contribution tiers, crew application flow, dynamic funding tracker, 10 episodes of Season 1 content (YouTube)|
 |Operational|Deployment guide, architecture docs, DB schema, independence roadmap (10–12h to fully separate from Pyadra)|
 
-**Participation models:** _Pyadra supports different levels of involvement — from supporter to full owner._
+**Participation model — CONTRIBUTION, not sale (initial draft v1 · iterate with Pablo)**
 
-|Model|Description|Investment range|Status|
+> [!important] Orbit 77 is NOT being sold — it raises support It is the active creative work of Pablo & Eduardo, who keep it. The goal is to fund Season 2, not hand the project over. So the model is layered CONTRIBUTION (crowdfunding-style), not acquisition. People give to be part of the journey and get recognition/perks — NOT equity, NOT revenue share, NOT a vote on the creative direction. This protects the founders' voice (the whole point of Orbit 77) while raising money. This whole section is a v1 starting point to refine with Pablo — numbers are provisional.
+
+**The contribution layers (draft):**
+
+|Layer|Amount (AUD)|What they get|What they do NOT get|
 |---|---|---|---|
-|Supporter|Contributes $10–50 AUD. Receives permanent credential. No ownership.|$10–50 AUD|Active|
-|Partial acquisition|Buys a % of Orbit 77. Co-creates with Pablo & Eduardo. Revenue share proportional to stake. Example: 49% available, 51% retained by founders.|TBD — requires legal review|Planned (Phase 2)|
-|Full acquisition|Buys 100% of Orbit 77. Founders retain royalty + advisory role.|TBD — requires legal review|Planned (Phase 2)|
-|Hosted ownership|Acquires ownership but Orbit stays inside Pyadra infrastructure. Pyadra maintains deployment and operations.|TBD — requires legal review|Planned (Phase 2)|
+|Signal Carrier|$10|Permanent credential, name in the archive|No ownership, no return|
+|Archive Node|$20|Above + early Season 2 access|No ownership, no return|
+|Transmission Keeper|$50|Above + founder updates, higher status|No ownership, no return|
+|**Journey Patron** (new)|$100–500|Name in Season 2 credits, exclusive Bali behind-the-scenes, exclusive merch, episode mention|No ownership, no return|
+|**Co-Producer / Sponsor** (new)|$1,000+|Brand/logo in the podcast, prominent thanks, product placement — for a brand or business wanting exposure|No ownership, no creative control|
+|**Big investor** (rare)|By conversation|If someone wants to put serious money and discuss a real partnership → private talk|Never a page button|
 
-**How a participant or buyer makes money:**
+> [!warning] The $15k reality (honest note) Pablo's full vision (Season 2 = a week in Bali, 3 people, edit in Colombia, then a physical store for Season 3 with painted clothing) needs ~$15,000 AUD. The math does not work as a financial investment: a small podcast cannot repay $15k from its income in a reasonable time (see deal analysis — 4 to 15 years). So $15k will NOT come from "investors expecting a return." It realistically comes from: (a) sponsors/brands wanting exposure (no repayment expected), (b) many small contributors who believe in the journey, and/or (c) starting with a SMALLER goal (~$2–3k) to prove traction first, then raising more once there is proof. Decide the real minimum cost of Season 2 vs the dream version before launching a $15k ask.
+
+**What Pyadra earns here (draft — NEW model type, needs Company Master entry):**
+
+> [!note] Crowdfunding is a new Pyadra model type Pyadra's defined model (transaction fee + 1–5% permanent stake) is for project SALES. A project that RAISES money instead of selling is a case the Company Master does not cover yet. Draft proposal: Pyadra takes a **platform fee of ~5% of funds raised** (like Kickstarter), for providing the credential system, payment processing, and Galaxy exhibition. Plus, as with every project, Pyadra's 1–5% permanent stake still applies to Orbit's future revenue. Since Orbit is the founders' own project, this fee is partly theirs anyway. THIS NEEDS to be added to [[Company_Master]] as a new "contribution/crowdfunding" model once confirmed.
+
+**Revenue streams (what could eventually fund the founders and repay nothing to contributors):**
 
 |Revenue stream|Current state|Potential|
 |---|---|---|
-|Supporter credentials ($10–50 AUD)|Active — supporters confirmed|At full $1,000 goal = Season 2 funded|
-|Merchandise (orbit77.shop)|Active — external store|Variable — grows with audience|
-|Season 2 content monetization|Planned — YouTube AdSense + Spotify|Proportional to audience growth|
-|Sponsorships|Not active — no outreach yet|High potential once audience is proven|
-|Physical Orbit Store|Conceptual — Pablo's long-term vision|Creative space, studio, merchandise, live sessions|
-|Future season credentials (S2, S3…)|Planned|Recurring revenue per season|
+|Supporter credentials ($10–50 AUD)|Active — supporters confirmed|Funds part of a season|
+|Journey Patron / Sponsor tiers|Draft — not built|The realistic path to bigger sums|
+|Merchandise (orbit77.shop)|Active — external store|Variable — the planned core monetization (clothing)|
+|Season 2 content monetization|Planned — YouTube AdSense|Proportional to audience growth (needs marketing)|
+|Physical Orbit Store (Season 3 vision)|Conceptual — Pablo's vision|Clothing people paint in-store, live sessions, studio|
 
-**Post-participation structure:**
+**Open deal questions to resolve with Pablo:**
 
-- Participant / buyer receives: agreed % of revenue streams (credentials, merch, monetization, sponsorships)
-- Original founders retain: perpetual royalty (% TBD), creative direction, minority stake
-- Pyadra receives: transaction fee on acquisition + hosting % if buyer opts for Pyadra-hosted model
+- [ ] Real minimum cost of Season 2 (Bali version vs a leaner version)
+- [ ] Is the first goal $15k, or a smaller proof-of-traction goal first?
+- [ ] Exact Journey Patron / Sponsor amounts and perks
+- [ ] Confirm Pyadra's cut for a contribution model (the ~5% draft above)
+- [ ] Split between Pablo & Eduardo of whatever the founders retain
+- [ ] Legal review (raising money from the public may have regulatory implications)
 
-**What must happen before this project can be sold or partially acquired:**
+---
 
-- [ ] Season 2 funded and in production (validates the model)
-- [ ] Stripe webhook separated from monolith (project must deploy independently)
-- [ ] Independence architecture completed (10–12h)
-- [ ] Legal review completed (ASIC Australia)
-- [ ] Admin dashboard operational (crew + supporter management)
+## COPY DECK — LOCKED STRINGS
+
+> [!important] How to use this section Single source of truth for every visible string on the Orbit 77 dashboard. Claude Code copies verbatim — never paraphrase, invent, or "improve". For any NUMBER (tiers, funding goal, supporters, episodes), the metrics in WHAT THE USER SEES are canonical; update those first. This deck reflects the CONTRIBUTION model (no equity, no "own a piece" — that old framing is removed). Draft amounts are provisional (refine with Pablo).
+
+> [!warning] Orbit is a CONTRIBUTION page, not a sale Remove all "own / 49% / acquire / equity" language. People contribute to fund Season 2 and get recognition/perks — never ownership, revenue share, or creative control. The founders keep Orbit 77.
+
+### Identity block
+
+- **Type badge:** `Global · Podcast`
+- **Status badge:** `Season 2 funding`
+- **H1:** `Orbit 77`
+- **Tagline:** `Real conversations. No script. No filters. No bullshit.`
+- **Intro:** `A podcast recorded from Australia about life, creation, identity and what we leave behind. 10 episodes live. Raw transmissions — no script, no algorithm games.`
+
+### Metrics (dynamic — real data)
+
+|Label|Value (source)|Sub|
+|---|---|---|
+|`Episodes live`|`10` (move to dynamic later)|`on YouTube`|
+|`Season 2 funding`|live `/api/stats/orbit-fund`|`raised so far`|
+|`Supporters`|live `COUNT orbit_supporters`|`and counting`|
+
+> [!warning] No fake numbers Funding and supporter counts are dynamic from the database. The "10 episodes" is a known data-debt hardcode — keep it in one editable place until an `orbit_episodes` table exists.
+
+### Contribution layers (draft v1 — provisional, refine with Pablo)
+
+Section label: `Lock In Your Frequency`
+
+|Name|Amount (AUD)|What they get|
+|---|---|---|
+|`Signal Carrier`|`$10`|`Permanent credential, name in the archive`|
+|`Archive Node`|`$20`|`+ early Season 2 access`|
+|`Transmission Keeper`|`$50`|`+ founder updates, higher status`|
+|`Journey Patron`|`$100–500`|`Name in Season 2 credits, Bali behind-the-scenes, exclusive merch, episode mention`|
+|`Co-Producer / Sponsor`|`$1,000+`|`Brand/logo in the podcast, prominent thanks, product placement`|
+|`Bring serious support`|`Let's talk`|`A private conversation — not a checkout button`|
+
+> [!note] Each contribution returns recognition only — NO ownership, NO revenue share, NO creative vote. The "Bring serious support" door is a contact form, not Stripe.
+
+### Funding goal
+
+- **Goal figure:** EDITABLE config. Candidates: `$1,000` (current) / `$2,000–3,000` (traction-first) / `$15,000` (full Bali vision). Decide with Pablo. The "where the money goes" FAQ must read from the same value so it never contradicts the progress bar.
+
+### Confirmation / ritual strings (keep the approved voice)
+
+- On contribution: `Transmission Recorded`
+- Credential format: `Archive ID: O77-S1-XXXXXX`
+- Primary CTA: `Lock In Your Frequency`
+- Secondary: `Hold The Signal`
+
+### FAQ (drawer)
+
+|Q|A|
+|---|---|
+|`Is this real?`|`10 episodes are public on YouTube and the credential system processes real payments through Stripe. Watch first, decide later.`|
+|`What do I get for contributing?`|`A permanent credential, founding-member status, early Season 2 access, and founder updates. You're funding the journey — recognition, not ownership.`|
+|`Where does the money go?`|`Straight into Season 2 production. The goal and live progress are shown on this page.`|
+|`Can I own part of Orbit 77?`|`No — Orbit stays with Pablo & Eduardo. Contributions fund the work; they don't buy equity or a say in the content. If you want to support at a bigger level, let's talk.`|
+
+### Crew / join
+
+- CTA: `Join the crew` → `/exhibitions/galaxy/orbit/join`
+
+### Secondary CTAs & labels
+
+- **Contact email:** `pyadra@pyadra.io`
+- **Links:** `YouTube` (active) · `Store` (orbit77.shop) · Spotify/Instagram only if real (no dead links)
+- **Footer:** keep existing transmission-style footer
+
+### Strings that must never appear
+
+```
+Support Orbit 77 · Donate Now · Season Pass · Subscribe
+own a piece · 49% · available to own · acquire · equity
+buy now · fake supporter numbers
+```
 
 ---
 
@@ -457,4 +541,6 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 
 ---
 
-_END · ORBIT 77 · v1.2_
+> [!note] Changelog v1.3 (June 2026) — Reframed the deal: Orbit 77 is NOT for sale — it raises CONTRIBUTION to fund Season 2 while Pablo & Eduardo keep it. Replaced the old acquisition models (partial/full/hosted) with a draft layered contribution model (Signal Carrier → Sponsor + private big-investor door), no equity / no revenue share to protect the founders' creative voice. Added the honest $15k reality note (math doesn't work as investment; comes from sponsors / many small contributors / smaller first goal). Flagged that "contribution/crowdfunding" is a NEW Pyadra model type not yet in Company Master (draft: ~5% platform fee). All numbers are v1 to refine with Pablo. Page NOT built yet — skeleton + deal draft only.
+
+_END · ORBIT 77 · v1.3_

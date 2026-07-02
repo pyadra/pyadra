@@ -1,4 +1,4 @@
-# EterniCapsule
+
 
 _Project document · Pyadra_ _Last updated: May 21, 2026_
 
@@ -425,7 +425,7 @@ DB: status = 'guardian_accessed'
 
 _For potential buyers and participants. Answers: what can they get involved in, how, and what do they receive._
 
-**Maturity level:** MVP — no users yet. Fully functional and deployed. First sale not confirmed.
+**Maturity level:** MVP — built, functional, deployed. No users/sales yet. Available now for the hosted participation options above (deployment/independence work done on close).
 
 **What a participant or buyer acquires:**
 
@@ -436,40 +436,169 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 |Product|Operational MVP — full seal → deliver → unlock flow, guardian system, zero-knowledge architecture, mobile-responsive interface|
 |Operational|Deployment guide, architecture docs, DB schema, API documentation, independence roadmap (15–25h to fully separate from Pyadra)|
 
-**Participation models:** _Pyadra supports different levels of involvement — from user to full owner._
+**Participation models:** _Both acquisition options are HOSTED — the project stays inside Pyadra. The operator pays infrastructure costs (hosting, email, database) separately in both. The only variables are upfront price and Pyadra's permanent share per capsule._
 
-|Model|Description|Investment range|Status|
-|---|---|---|---|
-|User|Buys a capsule ($9 AUD). No ownership.|$9 AUD|Active|
-|Partial acquisition|Buys a % of the project. Co-operates with original creator. Revenue share proportional to stake.|TBD — requires legal review|Planned (Phase 2)|
-|Full acquisition|Buys 100% of the project. Creator retains royalty + advisory role.|TBD — requires legal review|Planned (Phase 2)|
-|Hosted ownership|Acquires ownership but project stays inside Pyadra infrastructure. Pyadra maintains deployment and operations.|TBD — requires legal review|Planned (Phase 2)|
+|Option|Upfront|Pyadra retains per capsule|Operator keeps (of net)|Where it lives|Status|
+|---|---|---|---|---|---|
+|User|$9 AUD per capsule|—|—|Pyadra|Active|
+|**Option 1 — Operator**|$4,000 AUD|15%|85%|Hosted in Pyadra|Available|
+|**Option 2 — Owner**|$8,000 AUD|5%|95%|Hosted in Pyadra|Available|
+|**Option 3 — Make an offer**|Negotiable|Negotiable|Negotiable|Negotiable (incl. taking it independent)|By conversation|
+
+> [!important] Model logic Lower upfront = higher permanent share for Pyadra, and vice versa. The cheap entry ($4k) is "paid back" to Pyadra through a higher per-capsule cut over time; the expensive entry ($8k) lets the operator keep almost everything per capsule. Both options stay hosted in Pyadra by default because this project is built on Pyadra infrastructure — but per [[Company_Master]], the project can always leave; staying hosted is a negotiated convenience, not a lock-in. Option 3 (make an offer) covers a buyer who wants a different structure, including taking it independent.
+
+> [!note] Market valuation anchor: ~$12,000 AUD — the cost to rebuild this product from zero (≈150–300h of senior development plus design and concept). This is the _value reference_, not a sale price. The sale happens through the options above. Shown to serious buyers, not as a page headline.
+
+> [!note] Infrastructure is NOT free In both hosted options the operator pays the running costs of infrastructure (Vercel hosting, Resend email, Supabase database, Stripe fees). Pyadra provides exhibition, brand and the platform — not subsidised servers. This must be explicit so a buyer never assumes hosting is included for free. NOTE: Pyadra-provided hosting applies HERE because this project is the founder's own and already lives in Pyadra infra. It is NOT a universal Pyadra rule — for other/external projects, the operator provides their own hosting.
+
+> [!warning] Pyadra share vs creator share — not split yet The percentages above go "to Pyadra". Today the founder is both Pyadra and the creator of EterniCapsule, so the whole cut is theirs. The split between Pyadra's structural platform fee and the creator's build royalty is deferred to Phase 2 (when external creators arrive), and requires legal review per [[Company_Master]]. Do not invent the split now without a real case.
+
+**Transaction fee:** Pyadra charges **5% at closing**, to both sides of the deal (buyer and seller), per [[Company_Master]] Phase 1 model. This is separate from the per-capsule share above.
 
 **How a participant or buyer makes money:**
 
 |Revenue stream|Current state|Potential|
 |---|---|---|
-|Capsule sealing ($9 AUD)|Active — no sales yet|200 capsules/month = $1,800 AUD/month|
+|Capsule sealing ($9 AUD)|Active — no sales yet|At 200 capsules/month, operator nets ~$1,435 AUD/month after Stripe & a 15% Pyadra share|
 |Audio capsules — Tier 2|Not built — concept in VISION.md|$25 AUD per capsule|
 |Video capsules — Tier 3|Not built — concept in VISION.md|$49 AUD per capsule|
 |White-label licensing|Not built|License system to memorial services, therapists, legal firms|
 
+> [!note] Ticket-size reality A $9 capsule is a small ticket — Stripe alone takes ~$0.56 (6%) per sale. The model only produces meaningful recurring income at volume, or via the higher-ticket audio/video tiers. A buyer should understand they are buying a built, unproven product with upside, not a cash-flowing business.
+
 **Post-participation structure:**
 
-- Participant / buyer receives: operational ownership + agreed % of capsule revenue
-- Original creator retains: perpetual royalty (% TBD), advisory role
-- Pyadra receives: transaction fee on acquisition + hosting % if buyer opts for Pyadra-hosted model
+- Operator receives: operational control + the per-capsule majority share (85% or 95% of net, by option)
+- Pyadra receives: the per-capsule share (15% or 5%) + 5% transaction fee at closing, permanently
+- Operator pays: all infrastructure running costs (hosting, email, DB, Stripe fees)
 
-**What must happen before this project can be sold or partially acquired:**
+**What happens when a deal closes:**
 
-- [ ] First real sale confirmed (validates end-to-end with real users)
-- [ ] Stripe webhook separated from monolith (project must deploy independently)
-- [ ] Independence architecture completed and tested (15–25h)
-- [ ] Legal review completed (ASIC Australia — selling stakes may be classified as financial security)
+- [ ] Buyer chooses Option 1, 2, or 3 (see participation models above)
+- [ ] On close: founder does the independence/deployment work needed to hand over (Stripe webhook separation, deployment config) — this is committed work, not a blocker to listing
+- [ ] Legal review of the participation agreement (ASIC Australia — revenue-share terms must be checked; selling stakes may be classified as a financial security)
+- [ ] Signed agreement with reporting + verification terms before any money moves
+
+> [!note] Listing status This project IS available for the deals above now. The independence/deployment work is done _on close_, when there is a real buyer — it is not a precondition to listing. The page may present the project as available. The legal review is mandatory before signing.
 
 ---
 
-## ROADMAP
+## COPY DECK — LOCKED STRINGS
+
+> [!important] How to use this section This is the single source of truth for every visible string on the EterniCapsule **dashboard page** (`page.tsx` — the project-sale page, NOT the /experience app). Claude Code must copy these strings verbatim — do not paraphrase, invent, or "improve". If a string is needed that is not here, add it here first. For any NUMBER, the metrics in "What the user sees before entering" and the participation tables above are canonical — update those first, then the string here.
+
+> [!warning] Two pages, do not confuse them This deck is for the **dashboard** (sells the project). The **/experience** route is the live product app where users actually seal capsules — that has its own ceremonial copy (see Experience & Design section) and is NOT covered here. The dashboard's "ENTER THE VAULT" button is a live demo link into the product — a selling point, not the product page itself.
+
+---
+
+### Identity block
+
+- **Type badge:** `Global · Digital Vault`
+- **Status badge:** `Live`
+- **H1:** `EterniCapsule`
+- **Tagline (serif italic, emerald):** `A cryptographic time capsule. Zero knowledge. Permanent.`
+- **Intro paragraph:** `Write confessions, promises, or truths that cannot be said today. Seal them in client-encrypted vaults, to open only on the exact date you choose.`
+
+### What you get (6 things)
+
+Section label: `What You Get` · counter `6 things`
+
+> [!note] Voice: buyer-facing, not technical These describe what the buyer _receives and owns_, not a tech spec sheet. Lead with the value, not the framework name.
+
+|Title|Description|
+|---|---|
+|`A finished product, live today`|`The whole thing is built and working — compose, seal, pay, deliver, unlock. You're not buying a plan, you're buying something real.`|
+|`The ceremony that makes it special`|`The dark entry ritual, the breathing vault, the 30 seconds of weight before sealing. This is what people pay for — and it's done.`|
+|`Messages no one can read`|`Every message is locked in the user's own browser. Not even you (or Pyadra) can open a sealed capsule. That trust is the product.`|
+|`Payments already flowing`|`Live Stripe checkout, ready to take $9 the moment someone seals. No setup, no integration work.`|
+|`Delivery that runs itself`|`Capsules are delivered automatically on the exact date chosen — no one has to press a button. It just happens.`|
+|`A safety net for emergencies`|`A guardian system lets a trusted person unlock a capsule if something happens to the sender. The hard, human edge cases are handled.`|
+
+> [!note] Technical detail lives elsewhere The full stack (Next.js 16, React 19, AES-256, Supabase, cron, etc.) is real and matters — but it belongs in the ASSET VALUE / due-diligence section for serious buyers, NOT as the page's first impression. The page sells what they get; due diligence proves how it's built.
+
+### Live metrics widget
+
+> [!warning] These numbers MUST be real — never hardcode fake sales The project has had ZERO sales to date. The old code showed "156 sealed / 42 delivered / $1,404" — these were FAKE and must be removed. Per the project rule, all metrics are dynamic from the database. Until there are real capsules, the page shows true zeroes with an honest, inviting frame. Do not display invented activity.
+
+|Label|Value (real / dynamic)|Sub|
+|---|---|---|
+|`Capsules Sealed`|live count (currently `0`)|`be the first`|
+|`Delivered`|live count (currently `0`)|`on schedule`|
+|`Awaiting Delivery`|live count (currently `0`)|`in safe storage`|
+|`Total Value`|live count × $9 (currently `$0`)|`AUD generated`|
+
+Data sources (from project doc): sealed = `COUNT status='sealed'`; delivered = `COUNT status='opened'`; awaiting = `COUNT status='sealed' AND unlock_date > NOW()`; total value = `COUNT × 9`.
+
+### Main CTA — REMOVED (was redundant)
+
+> [!important] Do NOT add a big "ENTER THE VAULT" button The old code had a large "ENTER THE VAULT →" button below the monolith that linked to /experience. Remove it. Access to try the live product is ALREADY on the central monolith/logo (it's clickable / interactive). Repeating it as a big CTA is redundant and, on a project-SALE page, wrongly pushes attention to the product instead of the deal. Keep the monolith interactive as the way to try the product; the sub-line `$9 AUD per capsule · client-side sealed` can stay as a small caption near the monolith if useful, but no large duplicate button.
+
+### Participation panel (the deal)
+
+Section label: `Participation Models`
+
+- **Value anchor (left):** label `What this took to build` · figure `$12,000 AUD` · sub-line `~150 hours of senior development + design`
+- **Availability (right):** label `Availability` · figure `100% Available`
+
+> [!note] Show the work behind the value Instead of a bare "valuation", show what the project represents: the hours and craft that went into it. Format: a figure ($12,000) with a sub-line stating the development effort (~150 hours of senior development + design). This frames the price as "this is what it cost to build — you get it for less" rather than an arbitrary number a buyer can argue down. Adjust the hour count to the real estimate if known; ~150h is the working figure for a built MVP of this complexity.
+
+> [!important] The participation panel is for ACQUIRING THE PROJECT only Do not put "Seal a Capsule" / the $9 product in this panel. Trying the product lives on the central monolith (interactive). This panel is exclusively the three acquisition options below, styled like Kangaroo's deal choices. Selecting any of them opens the **request-information form** (same pattern as Kangaroo's "TAKE THIS OVER" → contact form), NOT a mailto.
+
+Acquisition options (deal cards — open the request-info form on click):
+
+|Name|Sub|Price tag|
+|---|---|---|
+|`Operator — hosted`|`$4k up front · Pyadra keeps 15% per capsule`|`$4,000`|
+|`Owner — hosted`|`$8k up front · Pyadra keeps 5% per capsule`|`$8,000`|
+|`Make an offer`|`Different structure? Let's talk.`|`Let's talk`|
+
+> [!note] Request-info form Mirror Kangaroo's contact form: name, email, optional message, and which option they're interested in (pre-filled from the card they clicked). On submit, it reaches the founder. This replaces the old mailto links for acquisition. "Make an offer" routes to the same form with the message field emphasised.
+
+### Risks (The Honest Risks)
+
+Section label: `The Honest Risks`
+
+> [!note] Voice: plain and honest, not technical Say the real risk in words a buyer feels, not in engineering terms.
+
+|Title|Description|
+|---|---|
+|`No one has bought one yet`|`It's built and it works, but the very first paying customer hasn't happened. You'd be buying proof-of-craft, not proof-of-demand.`|
+|`We don't know where people drop off`|`There's no tracking yet, so we can't tell you exactly where visitors leave before sealing. Finding that out is the first growth job.`|
+|`It still shares plumbing with Pyadra`|`Payments and database currently run on Pyadra's shared setup. Separating it into its own is a known, documented job (done on close if you want it independent).`|
+|`It's built to be slow on purpose`|`The 30-second ritual filters out impatient people. That's a feature for intimacy, but it also caps how fast you can grow volume.`|
+|`Small price, thin margins`|`At $9 a capsule, payment fees alone take about 6%. Real income needs either volume or the bigger audio/video versions on the roadmap.`|
+
+### FAQ (drawer)
+
+Drawer title: `Vault Details` (rename — see note) · trigger: `Read FAQ & Origin Story →`
+
+|Q|A|
+|---|---|
+|`Does it actually work?`|`Yes — the complete flow is live: compose, seal, pay $9, scheduled delivery, unlock with a key. Try it yourself in the vault.`|
+|`Can Pyadra read the messages?`|`No. Messages are encrypted in your browser before they ever reach a server. We store only ciphertext and hashed keys — zero-knowledge by design.`|
+|`What exactly would I own?`|`The code, the brand, the ceremonial experience, the encryption engine and the delivery system — plus a documented roadmap to full independence. It stays hosted in Pyadra unless you negotiate otherwise.`|
+|`Why is there no revenue yet?`|`It launched recently and the first sale is still pending. We say it plainly because everything on Pyadra is said plainly.`|
+
+### Founder quote (drawer)
+
+> `"Everything online can be edited, deleted, taken back. I wanted to build the opposite — a place where sealed means sealed. Once a capsule closes, not even I can open it."` — `Eduardo Díaz` · `Founder · EterniCapsule, 2026`
+
+### Secondary CTAs & labels
+
+- **Drawer contact button:** `Contact the founder`
+- **Contact email (everywhere):** `pyadra@pyadra.io`
+- **Footer:** `© 2026 Pyadra · We document. We verify. You decide.`
+- **Footer links:** `Home` · `Galaxy`
+
+### Strings that must never appear (per Experience & Design copy voice)
+
+```
+Submit · Add to cart · Get started · Learn more · Sign up · Buy now
+fake metrics / invented sales numbers
+"guaranteed" returns · "passive income"
+```
+
+---
 
 **Now (Q2 2026 — May / June):**
 
@@ -498,6 +627,29 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 
 ---
 
+## ROADMAP
+
+_Priorities only. One line per item._
+
+**Now (current quarter):**
+
+- [ ] Get the first real sale (validates the funnel end-to-end with a paying user)
+- [ ] Add basic analytics to see where users drop off before sealing
+- [ ] Fix the dashboard metrics to be real/dynamic (remove any fake numbers)
+
+**Next (following quarter):**
+
+- [ ] Separate the Stripe webhook + database from the Pyadra monolith (independence, ~15–25h) — done on close if a buyer wants it independent
+- [ ] Decide on the audio crystallization spec (necessary or feature creep?)
+
+**Future (no fixed date):**
+
+- [ ] Tier 2 — audio capsules ($25 AUD)
+- [ ] Tier 3 — video capsules ($49 AUD)
+- [ ] White-label licensing (memorial services, therapists, legal firms)
+
+---
+
 ## RELATED LINKS
 
 **Documentation:**
@@ -523,4 +675,10 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 
 ---
 
-_END · ETHERNICAPSULE · v1.6_
+> [!note] Changelog v1.7 (June 2026) — Defined the economic model: two HOSTED participation options (Operator $4k + 15% / Owner $8k + 5%) plus Make-an-offer, all staying in Pyadra; operator pays infrastructure; 5% transaction fee at close; $12k reconstruction-value anchor (not a sale headline). Marked project as available now (deployment work on close, not a precondition). Added COPY DECK — LOCKED STRINGS for the dashboard page, including removal of the FAKE metrics (156/42/$1,404 → real zeroes), email fix to pyadra@pyadra.io, and removal of the "$4,000 valuation" headline. Pyadra-vs-creator share split deferred to Phase 2 with legal review.
+
+> [!note] Changelog v1.8 (June 2026) — Copy refinement pass on the deck: rewrote "Technical Assets" → "What You Get" in buyer-facing language (value, not tech spec); rewrote risks in plain language; value anchor now shows build effort (~150h + $12,000) instead of a bare valuation; removed the redundant big "ENTER THE VAULT" button (product access lives on the monolith); removed "Seal a Capsule" from the acquisition panel (panel is acquisition-only); acquisition cards now open a Kangaroo-style request-info form instead of mailto links.
+
+> [!note] Changelog v1.9 (June 2026) — Restored the ROADMAP section (Now/Next/Future) that had been missing, reconstructed from the project's own dispersed info (first sale + analytics now; independence separation next; audio/video tiers + white-label future).
+
+_END · ETHERNICAPSULE · v1.9_

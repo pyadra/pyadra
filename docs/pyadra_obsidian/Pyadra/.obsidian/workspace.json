@@ -11,10 +11,14 @@
             "id": "0f782724c827e4f7",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "type": "markdown",
+              "state": {
+                "file": "03_Exhibitions/Galaxy.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Galaxy"
             }
           }
         ]
@@ -182,14 +186,14 @@
   },
   "active": "0f782724c827e4f7",
   "lastOpenFiles": [
-    "04_Projects/Kangaroo_Cleanup.md",
     "04_Projects/Figuitoon.md",
     "04_Projects/EterniCapsule.md",
-    "04_Projects/Ebooks.md",
+    "04_Projects/Kangaroo_Cleanup.md",
+    "04_Projects/Orbit77.md",
     "04_Projects/Project_Standard_Template.md",
+    "04_Projects/Ebooks.md",
     "01_Company/Company_Master.md",
     "03_Exhibitions/Galaxy.md",
-    "04_Projects/Orbit77.md",
     "Untitled.md",
     "VISION.md",
     "01_Company/Company_Master.md.md",

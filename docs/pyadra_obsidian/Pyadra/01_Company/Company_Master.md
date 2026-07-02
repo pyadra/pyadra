@@ -1,6 +1,6 @@
 ---
 
-## tags: [pyadra, master, company, core] created: 2026-06-08 version: 2.1 status: active updated: 2026-06-08
+## tags: [pyadra, master, company, core] created: 2026-06-08 version: 2.2 status: active updated: 2026-06-29
 
 # PYADRA — Company Master Document
 
@@ -70,7 +70,9 @@ Every project on Pyadra has a type. The type describes how the project exists in
 
 ---
 
-> [!important] Key principle Every project must be able to exist and operate independently of Pyadra. Pyadra is the space. The project is the protagonist. The project can leave and live elsewhere at any time.
+> [!important] Key principle Every project must be able to exist and operate independently of Pyadra. Pyadra is the space. The project is the protagonist. **The project can always leave and live elsewhere** — that possibility is never removed.
+> 
+> However, a project may _choose_ to stay hosted inside Pyadra's infrastructure when it is built on it (e.g. [[EterniCapsule]]). Staying hosted is an **option agreed between Pyadra and the project's owner**, never an imposition. The right to leave always remains; hosting is a convenience that can be negotiated, priced, and ended. In short: leaving is always possible; staying is a deal, not a lock-in.
 
 ---
 
@@ -165,7 +167,15 @@ This is Pyadra's quality filter. It is what separates Pyadra from every other pl
 
 13. SALE — COPY AND CONVERSION
     Hook · Buyer journey · CTAs by stage · Urgency
+
+14. COPY DECK — LOCKED STRINGS
+    Every visible string on the page, verbatim.
+    The page copies from here, never invents.
+    Numbers have ONE canonical source (the metrics
+    section); all other mentions point to it.
 ```
+
+> [!important] The Copy Deck method (learned June 2026) Each project document must include a COPY DECK — a section listing every visible string on its page exactly as it should appear. Claude Code and any builder copy these strings verbatim and never improvise copy in code. This is what stops the page and the document from drifting apart. Likewise, every NUMBER lives in ONE canonical place (the metrics section); the copy deck and prose point to it, so a figure is never updated in two places and left to contradict itself. See [[Kangaroo_Cleanup]] and [[EterniCapsule]] for worked examples.
 
 ---
 
@@ -264,6 +274,27 @@ Pyadra validates the model with its own projects.
 → Founder builds and documents real projects → Projects are exhibited following the [[Project_Standard_Template]] → Projects are made available for participation → When a participation deal closes, Pyadra retains between **1% and 5% permanent stake** in the project — forever, regardless of who owns it → The exact % is defined per project based on maturity, value, and deal type → Goal: close first transaction and prove the model works
 
 > [!warning] Legal note Any deal involving project participation must be reviewed by legal counsel before closing. Pyadra is registered in Delaware, United States. Regulatory requirements vary by deal type and jurisdiction.
+
+> [!important] Operating principles (defined June 2026) These clarify how Phase 1 deals are structured in practice:
+> 
+> - **Transaction fee:** at closing, Pyadra charges a fee to BOTH sides of the deal (buyer and seller). Working figure: **5% each**. This is separate from the permanent stake.
+> - **Lower upfront ↔ higher permanent share.** A project can be entered cheaply (low upfront, higher per-sale share to Pyadra) or expensively (high upfront, lower share). The two perks trade off so the cheap entry is paid back over time through the larger ongoing cut.
+> - **Hosting is an option, not a lock-in.** A project can always leave Pyadra (see Key Principle, section 4). When a project is built on Pyadra infrastructure (e.g. EterniCapsule), it _may_ stay hosted by agreement between Pyadra and the owner. Staying hosted is negotiated and priced; it never removes the project's right to leave. For external/Phase 2 projects, the operator normally provides their own hosting.
+> - **Infrastructure costs are always the operator's.** Hosting, email, database, and payment-processor fees (Stripe etc.) are paid by whoever operates the project, never absorbed by Pyadra.
+> - **Pyadra is a museum/platform.** It exhibits and earns. A project leaving is normal and allowed — Pyadra's value is in being the best space to be, not in trapping projects.
+> - **Pyadra-share vs creator-share is NOT split yet.** Today the founder is both Pyadra and the creator, so the whole cut is theirs. Splitting the structural platform fee from the creator's build royalty is deferred to Phase 2, with legal review, when a real external case exists. Do not design the split speculatively.
+
+> [!important] How to value a project (learned from real projects, June 2026) Not every project is valued the same way. Match the method to the project's nature:
+> 
+> - **Business with real history** (e.g. [[Kangaroo_Cleanup]]): value by its earnings — roughly seller's discretionary earnings × a market multiple. It has past sales that prove worth. Owner-operated, no-contract, inactive businesses sit at the low end (~1× SDE).
+> - **Built product, pre-revenue** (e.g. [[EterniCapsule]]): value by _reconstruction cost_ — what it would cost to build from zero. No sales yet, but a real built asset. This is the defensible floor.
+> - **Idea / early stage**: value by potential only — the lowest and most fragile. A buyer discounts unproven potential heavily.
+> 
+> **How to present value on the page:** Do NOT show a hard valuation figure as a headline — it invites the buyer to argue it down. Use a narrative of worth instead (Kangaroo: "what it took to build this"; EterniCapsule: "$12k reconstruction value" as an anchor, with entry prices below). The exact number is shared privately with serious buyers, in due diligence.
+
+> [!important] Protecting revenue-share deals (learned from Kangaroo, June 2026) When a deal includes a revenue share the buyer pays over time, that income depends on the buyer self-reporting and paying voluntarily once the founder is no longer operating. This is fragile. Every such agreement MUST include: a reporting clause, a right to verify, and clear terms for non-payment. Never close a revenue-share deal on a handshake. This is mandatory and pairs with the legal-review rule above.
+
+> [!note] Jurisdiction flag — needs resolution Company Master says Pyadra LLC is registered in Delaware, USA. EterniCapsule's doc references ASIC (Australia) for securities review. These must be reconciled with legal counsel — the correct regulator depends on where Pyadra operates and where deals close. Flagged, not resolved.
 
 ---
 
@@ -509,6 +540,17 @@ If yes — we are on the right path.
 - Black removed from palette — smoke gray (#EDEFED) is main background
 - Token and equity reserved for Phase 3 context — not banned entirely
 - Pyadra LLC confirmed registered in Delaware, United States
+- Operating principles added: 5% transaction fee both sides · lower upfront ↔ higher permanent share · infrastructure costs are the operator's
+- Contradiction resolved: projects can ALWAYS leave; staying hosted is a negotiated option (not a lock-in), available when a project is built on Pyadra infra
+- Valuation methods defined by project type: business-with-history (earnings × multiple) · built pre-revenue (reconstruction cost) · idea (potential)
+- Value presentation rule: no hard valuation headline — use a worth narrative, exact figure in private due diligence
+- Revenue-share protection made mandatory: reporting clause + verification right + non-payment terms · never close on a handshake
+- COPY DECK method added to Project Standard (point 14): verbatim locked strings + single canonical source for numbers
+- Pyadra-vs-creator share split deferred to Phase 2 with legal review
+
+---
+
+> [!note] Changelog v2.2 (June 2026) Captured the operating learnings from building Kangaroo Cleanup and EterniCapsule: resolved the leave-vs-stay contradiction, added valuation methods by project type, value-presentation rule, mandatory revenue-share protection, the operating principles (transaction fee, hosting, infrastructure costs), and the Copy Deck method in the Project Standard.
 
 ---
 
@@ -523,4 +565,4 @@ If yes — we are on the right path.
 
 ---
 
-_END OF COMPANY MASTER DOCUMENT v2.1_ _Next update: when first participation deal closes_
+_END OF COMPANY MASTER DOCUMENT v2.2_ _Next update: when first participation deal closes_
