@@ -40,7 +40,7 @@ function InvalidAccessScreen({ reason }: { reason: string }) {
             Return to Orbit 77
           </Link>
           <a
-            href="mailto:orbit@pyadra.io"
+            href="mailto:pyadra@pyadra.io"
             className="inline-block text-[#AEFFA1]/40 font-mono text-[10px] uppercase tracking-widest hover:text-[#AEFFA1]/70 transition-colors"
           >
             Contact Support →
@@ -83,7 +83,7 @@ export default async function ArchivePage({ params }: ArchiveProps) {
 
   if (!supporter) {
     return (
-      <InvalidAccessScreen reason="No supporter found for this archive link. Please contact us at orbit@pyadra.io." />
+      <InvalidAccessScreen reason="No supporter found for this archive link. Please contact us at pyadra@pyadra.io." />
     );
   }
 

@@ -1,13 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 export default function GreenDust({ count = 30 }: { count?: number }) {
   const [particles, setParticles] = useState<{ id: number; left: string; duration: number; delay: number; size: number }[]>([]);
-  
+  const reduced = useReducedMotion() ?? false;
+
   useEffect(() => {
-    const generated = Array.from({ length: count }).map((_, i) => ({
+    if (reduced) return;
+    // Phones don't need (or handle) hundreds of animated nodes — cap them.
+    const effective = window.innerWidth < 768 ? Math.min(count, 60) : count;
+    const generated = Array.from({ length: effective }).map((_, i) => ({
       id: i,
       left: `${Math.random() * 100}%`,
       duration: Math.random() * 20 + 15, // 15 to 35 seconds (lento y majestuoso)
@@ -15,7 +19,7 @@ export default function GreenDust({ count = 30 }: { count?: number }) {
       size: Math.random() * 2.5 + 1 // 1px to 3.5px
     }));
     setParticles(generated);
-  }, [count]);
+  }, [count, reduced]);
 
   return (
     <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden mix-blend-multiply opacity-80">

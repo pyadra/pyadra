@@ -1,110 +1,104 @@
 'use client';
 
-import {
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-} from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import PyadraLogo from '@/app/components/brand/PyadraLogo';
+import Image from 'next/image';
+import SiteNav from '@/app/components/nav/SiteNav';
+import SiteFooter from '@/app/components/nav/SiteFooter';
 
 /* ------------------------------------------------------------------ */
 /*  PYADRA — Project № 02 · Orbit 77                                   */
-/*  Design language: family.co — same skeleton as Kangaroo Cleanup.    */
-/*                                                                     */
-/*  The supporter credential flow is kept FUNCTIONAL:                  */
-/*  POST /api/donate (same payload as before) + live funding from      */
-/*  /api/stats/orbit-fund. Copy is a working skeleton from             */
-/*  Orbit77.md — adjust freely.                                        */
+/*  CONTRIBUTION page (not a sale). Pablo & Eduardo keep the project. */
+/*  Dashboard pattern matches Kangaroo Cleanup + EterniCapsule.       */
 /* ------------------------------------------------------------------ */
 
-const CONTACT_EMAIL = 'eadiaz96@gmail.com';
-const YOUTUBE_URL = 'https://www.youtube.com/@Orbit77Podcast';
-const SHOP_URL = 'https://orbit77.shop/';
-const FUNDING_GOAL = 1000; // AUD — Season 2 production budget
+/* =========== EDITABLE CONFIG — DRAFT v1 — REFINE WITH PABLO ========== */
+const CONFIG = {
+  /**
+   * Season 2 funding goal in AUD.
+   * Candidates being weighed with Pablo:
+   *   1_000  → original $1k budget for 10 episodes
+   *   2_500  → proof-of-traction first goal (recommended in .md)
+   *   15_000 → full Bali vision (needs sponsors, not investors)
+   */
+  FUNDING_GOAL_AUD: 1_000,
+
+  /**
+   * Episodes live. HARDCODED — data debt.
+   * Becomes dynamic in Season 2 via an `orbit_episodes` table.
+   */
+  EPISODES_LIVE: 10,
+
+  CONTACT_EMAIL: 'pyadra@pyadra.io',
+} as const;
+
+/**
+ * Contribution layers — DRAFT v1.
+ * `kind: 'stripe'` → /api/donate (Stripe checkout, credential email).
+ * `kind: 'form'`   → BigInvestor request form (private conversation).
+ */
+type Layer =
+  | { kind: 'stripe'; amount: number; name: string; tagline: string; sub: string; featured?: boolean }
+  | { kind: 'form';   amount: null;   name: string; tagline: string; sub: string; featured?: boolean };
+
+const CONTRIBUTION_LAYERS: Layer[] = [
+  { kind: 'stripe', amount: 10,   name: 'Signal Carrier',        tagline: '$10',          sub: 'Permanent credential, name in the archive.', featured: true },
+  { kind: 'stripe', amount: 20,   name: 'Archive Node',          tagline: '$20',          sub: 'Above + early Season 2 access.' },
+  { kind: 'stripe', amount: 50,   name: 'Transmission Keeper',   tagline: '$50',          sub: 'Above + founder updates, higher status.' },
+  { kind: 'stripe', amount: 100,  name: 'Journey Patron',        tagline: '$100–500',     sub: 'Name in S2 credits, Bali behind-the-scenes, exclusive merch.' },
+  { kind: 'stripe', amount: 1000, name: 'Co-Producer / Sponsor', tagline: '$1,000+',      sub: 'Brand/logo in the podcast, prominent thanks, product placement.' },
+  { kind: 'form',   amount: null, name: 'Big investor',          tagline: "Let's talk",   sub: 'Serious money? Private conversation, not a checkout.' },
+];
+
+const PUBLIC_LINKS = [
+  { label: 'YouTube',     href: 'https://www.youtube.com/@Orbit77Podcast' },
+  { label: 'orbit77.shop', href: 'https://orbit77.shop/' },
+  // Spotify + Instagram are TBD in Orbit77.md — intentionally hidden until real.
+];
+
+/* =================== Type scale — 6 deliberate steps ================== */
+const T = {
+  display: 'text-3xl lg:text-4xl',
+  heading: 'text-base',
+  body: 'text-sm',
+  small: 'text-xs',
+  micro: 'text-[10px]',
+} as const;
 
 const ENTER = 0.75;
-const SPRING = { type: 'spring' as const, stiffness: 130, damping: 18, mass: 0.9 };
-const pop = {
-  initial: { opacity: 0, y: 28, scale: 0.98 },
-  whileInView: { opacity: 1, y: 0, scale: 1 },
-  viewport: { once: true, margin: '-70px' },
-  transition: SPRING,
-};
+const SPRING = { type: 'spring' as const, stiffness: 150, damping: 20 };
 
-const TIERS = [
-  { amount: 10, name: 'Signal Carrier' },
-  { amount: 20, name: 'Archive Node' },
-  { amount: 50, name: 'Transmission Keeper' },
-];
-
-const TAKEOVER = [
-  { num: '01', title: 'A real archive', body: '10 episodes of Season 1, live on YouTube. Raw conversations about life, creation and identity — no script, no filters.' },
-  { num: '02', title: 'A working credential system', body: 'Supporters receive a permanent credential (O77-S1-XXXXXX) engraved in the archive. Stripe live, email delivery, all operational.' },
-  { num: '03', title: 'A brand with a world', body: 'The orbital concept, the transmission aesthetic, the ritual copy voice — plus orbit77.shop, the external merch store.' },
-  { num: '04', title: 'Everything that runs it', body: 'Full source code, database, funding tracker, crew application system, and the independence roadmap (10–12 hours).' },
-];
-
-const STORY = [
-  { year: '2025', text: 'Pablo & Eduardo start recording from Australia — two friends asking the questions most podcasts avoid.' },
-  { year: 'Season 1', text: '10 episodes published. No script, no sponsors, no algorithm games. Built for permanence, not virality.' },
-  { year: 'The archive', text: 'The credential system goes live: supporters become part of the permanent record, not just an audience.' },
-  { year: 'Today', text: 'Season 2 is being funded by the people who believe in it. Every credential moves the needle.' },
-];
-
-const INCLUDED = [
-  '10 published episodes (YouTube channel)',
-  'Credential system — Stripe live + email delivery',
-  'Brand identity and ritual copy guidelines',
-  'orbit77.shop — external merch store',
-  'Crew application system',
-  'Full source code and database schema',
-];
-
-const THE_DEAL = [
-  { item: 'Founders retain', note: '51% — Pablo & Eduardo keep creative direction' },
-  { item: 'Available', note: '49% · indicative valuation $12,000 AUD' },
-  { item: 'Pyadra keeps', note: '9% per credential, 3% of merchandise sales' },
+const WHAT_YOU_FUND = [
+  { title: 'A real archive', desc: `${CONFIG.EPISODES_LIVE} episodes of Season 1, live on YouTube. Raw conversations about life, creation and identity — no script, no filters.` },
+  { title: 'A working credential system', desc: 'Supporters receive a permanent credential (O77-S1-XXXXXX) engraved in the archive. Stripe live, email delivery, all operational.' },
+  { title: 'A brand with a world', desc: 'The orbital concept, the transmission aesthetic, the ritual copy voice — plus orbit77.shop, the external merch store.' },
+  { title: 'The next season', desc: 'Your contribution funds Season 2 production. Founders keep creative control; contributors get recognition, not equity.' },
 ];
 
 const RISKS = [
-  { t: 'The audience is small', b: '12 supporters and an early YouTube channel. You’d be entering before the proof, not after it — that’s the point, and the risk.' },
-  { t: 'Monetization isn’t active', b: 'No AdSense, no Spotify revenue, no sponsors yet. Today the only revenue is credentials and merch.' },
-  { t: 'Production is real work', b: 'A podcast doesn’t run itself. Episodes need recording, editing and publishing — actively, every season.' },
-  { t: 'Shared infrastructure', b: 'Stripe webhook and database are shared with Pyadra today. Independence is documented and takes 10–12 hours.' },
+  { title: 'The audience is small',          desc: 'Early YouTube channel, supporters still being counted. You’d be backing it before the proof — that’s the point, and the risk.' },
+  { title: 'Monetization isn’t active yet',  desc: 'No AdSense, no Spotify revenue, no sponsors yet. Today the only revenue is credentials and merch.' },
+  { title: 'Production is real work',        desc: 'A podcast doesn’t run itself. Episodes need recording, editing and publishing — actively, every season.' },
+  { title: 'Shared infrastructure',          desc: 'Stripe webhook and database are shared with Pyadra today. Independence is documented and takes 10–12 hours.' },
+  { title: 'Draft numbers',                  desc: 'The tiers and the funding goal are v1, still being refined with Pablo. The shape of the deal is right; the exact amounts may shift.' },
 ];
 
-const FAQ = [
-  { q: 'Is this real?', a: '10 episodes are public on YouTube and the credential system processes real payments through Stripe. Watch first, decide later.' },
+const NOT_INCLUDED = [
+  { item: 'Equity',         note: 'no shares, no ownership — Pablo & Eduardo keep the project.' },
+  { item: 'A return',       note: 'this is a contribution, not an investment.' },
+  { item: 'Creative votes', note: 'no influence on episodes, guests or direction.' },
+];
+
+const FAQ_BASE = [
+  { q: 'Is this real?', a: `${CONFIG.EPISODES_LIVE} episodes are public on YouTube and the credential system processes real payments through Stripe. Watch first, decide later.` },
   { q: 'What do supporters get?', a: 'A permanent credential engraved in the archive (O77-S1-XXXXXX), founding member status, early Season 2 access, and direct founder updates.' },
-  { q: 'What can I own?', a: 'Up to 49% of the project — the founders keep 51% and creative direction. Revenue is shared proportionally to your stake.' },
-  { q: 'Where does the money go?', a: 'Straight into Season 2 production. The goal is $1,000 AUD for 10 new episodes — the progress bar on this page is live.' },
+  { q: 'Is this an investment? Do I own a piece?', a: 'No. You’re funding the journey, not buying equity. Pablo & Eduardo keep the project and creative control. Supporters get recognition, perks and a permanent credential — never ownership, never a return, never a vote on the content.' },
 ];
 
-/* ---------- pieces ---------- */
+/* ---------- the interactive monolith (Orbit sphere, draggable) ---------- */
 
-function PillButton({ href, children, primary = false }: { href: string; children: React.ReactNode; primary?: boolean }) {
-  return (
-    <motion.a
-      href={href}
-      whileHover={{ scale: 1.04, y: -2 }}
-      whileTap={{ scale: 0.96 }}
-      transition={{ type: 'spring', stiffness: 350, damping: 17 }}
-      className={`inline-block rounded-full px-7 py-3.5 text-sm font-semibold tracking-tight ${
-        primary
-          ? 'bg-[#059669] text-white shadow-lg shadow-[#059669]/25'
-          : 'bg-white text-[#1A1C1A] ring-1 ring-[#1A1C1A]/10 shadow-sm'
-      }`}
-    >
-      {children}
-    </motion.a>
-  );
-}
-
-/* The artifact — Orbit's sphere, grabbable. */
-function PhysicalSphere() {
+function OrbitSphere() {
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
   const rotateX = useSpring(useTransform(my, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 15 });
@@ -120,8 +114,8 @@ function PhysicalSphere() {
       }}
       onMouseLeave={() => { mx.set(0); my.set(0); }}
     >
-      <div aria-hidden className="absolute -inset-16 pointer-events-none" style={{ background: 'radial-gradient(50% 50% at 50% 45%, rgba(5,150,105,0.12), transparent 70%)' }} />
-      <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}>
+      <div aria-hidden className="absolute -inset-16 pointer-events-none" style={{ background: 'radial-gradient(50% 50% at 50% 45%, rgba(57,255,20,0.10), transparent 70%)' }} />
+      <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}>
         <motion.div
           drag
           dragSnapToOrigin
@@ -130,516 +124,663 @@ function PhysicalSphere() {
           whileHover={{ scale: 1.04 }}
           whileDrag={{ scale: 1.08, rotate: 3 }}
           style={{ rotateX, rotateY, transformPerspective: 900 }}
-          className="relative cursor-grab active:cursor-grabbing touch-none w-56 h-56 md:w-72 md:h-72"
+          className="relative cursor-grab active:cursor-grabbing touch-none w-44 h-44 md:w-56 md:h-56"
         >
-          <div className="relative w-full h-full rounded-full bg-[radial-gradient(circle_at_30%_30%,#FFFFFF,#E8E9E8,#C8C9C8)] shadow-[-14px_18px_38px_rgba(10,18,14,0.3)] overflow-hidden">
+          <div className="relative w-full h-full rounded-full bg-[radial-gradient(circle_at_30%_30%,#FFFFFF,#E8E9E8,#C8C9C8)] shadow-[-14px_18px_38px_rgba(10,18,14,0.5)] overflow-hidden ring-1 ring-white/10">
             <div className="absolute inset-0 flex items-center justify-center">
-              <img src="/orbit-logo.png" alt="Orbit 77" className="w-3/5 h-3/5 object-contain opacity-75 pointer-events-none select-none" draggable={false} />
+              <Image
+                src="/orbit-logo.png"
+                alt="Orbit 77"
+                width={300}
+                height={300}
+                className="w-3/5 h-3/5 object-contain opacity-75 pointer-events-none select-none"
+                draggable={false}
+              />
             </div>
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
-              className="absolute inset-0 opacity-30 bg-[conic-gradient(from_0deg,transparent_0deg,transparent_180deg,rgba(255,255,255,0.3)_270deg,transparent_360deg)]"
+              className="absolute inset-0 opacity-30 bg-[conic-gradient(from_0deg,transparent_0deg,transparent_180deg,rgba(255,255,255,0.4)_270deg,transparent_360deg)]"
             />
           </div>
           <motion.span
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: ENTER + 1.6, ...SPRING }}
-            className="absolute -top-2 -right-2 rounded-full bg-white px-3.5 py-1.5 text-[11px] font-semibold text-[#1A1C1A] shadow-md ring-1 ring-[#1A1C1A]/10 rotate-3"
+            transition={{ delay: ENTER + 1.2, ...SPRING }}
+            className={`absolute -top-2 -right-2 rounded-full bg-white px-3 py-1 ${T.micro} font-mono font-semibold text-[#1A1C1A] shadow-md ring-1 ring-[#1A1C1A]/10 rotate-3`}
           >
             grab me ✦
           </motion.span>
         </motion.div>
       </motion.div>
-      <p className="mt-6 text-center text-xs text-[#6B8070] font-medium">
-        Season 1 complete · Season 2 in orbit
-      </p>
     </div>
   );
 }
 
-/* ---------- the working support flow ---------- */
+/* ---------- Lock-In dialog: handles BOTH Stripe tiers and Big-Investor form ---------- */
 
-function SupportCard() {
-  const [tier, setTier] = useState(TIERS[1]);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const lockIn = async () => {
-    setError('');
-    if (!email.includes('@')) {
-      setError('Please enter a valid email — your credential is delivered there.');
-      return;
-    }
-    setLoading(true);
-    try {
-      const res = await fetch('/api/donate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          intent: 'orbit-support',
-          amount: tier.amount * 100,
-          project_id: 'orbit-77',
-          currency: 'AUD',
-          supporter_name: name.trim() || 'Anonymous',
-          supporter_email: email.trim(),
-          is_anonymous: !name.trim(),
-          support_message: '',
-        }),
-      });
-      const data = await res.json();
-      if (data?.url) {
-        window.location.href = data.url;
-      } else {
-        throw new Error(data?.error || 'Unable to start checkout');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong — please try again.');
-      setLoading(false);
-    }
-  };
-
-  const inputClass =
-    'w-full rounded-2xl bg-[#EDEFED] px-5 py-3.5 text-sm font-medium placeholder:text-[#6B8070]/70 focus:outline-none focus:ring-2 focus:ring-[#059669] transition-shadow';
-
+function Field({
+  label,
+  value,
+  onChange,
+  type = 'text',
+  required = false,
+  placeholder,
+  textarea = false,
+  emphasised = false,
+  autoFocus = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  type?: 'text' | 'email';
+  required?: boolean;
+  placeholder?: string;
+  textarea?: boolean;
+  emphasised?: boolean;
+  autoFocus?: boolean;
+}) {
+  const borderColor = emphasised ? 'border-[#059669]' : 'border-[#1A1C1A]/15';
+  const labelColor = emphasised ? 'text-[#059669]' : 'text-[#6B8070]';
+  const cls = `w-full bg-transparent border-0 border-b ${borderColor} rounded-none px-0 py-2 ${T.body} text-[#1A1C1A] placeholder:text-[#6B8070]/60 focus:outline-none focus:border-[#059669] transition-colors`;
   return (
-    <motion.div {...pop} className="rounded-[32px] bg-white shadow-sm ring-1 ring-[#1A1C1A]/5 p-8 md:p-10 max-w-xl mx-auto">
-      <h3 className="text-2xl font-bold tracking-tight mb-1.5">Lock in your credential</h3>
-      <p className="text-[14px] text-[#3A4A3E] mb-7">
-        A permanent place in the archive — O77-S1-XXXXXX, engraved with your support.
-      </p>
-
-      <div className="grid grid-cols-3 gap-2.5 mb-4">
-        {TIERS.map((t) => (
-          <button
-            key={t.amount}
-            onClick={() => setTier(t)}
-            className={`rounded-2xl px-3 py-4 text-center transition-all ${
-              tier.amount === t.amount
-                ? 'bg-[#059669]/10 ring-2 ring-[#059669]'
-                : 'bg-[#EDEFED] ring-1 ring-transparent hover:ring-[#1A1C1A]/10'
-            }`}
-          >
-            <span className="block text-xl font-bold tracking-tight">${t.amount}</span>
-            <span className="block text-[11px] font-semibold text-[#6B8070] mt-0.5">{t.name}</span>
-          </button>
-        ))}
-      </div>
-
-      <div className="space-y-3">
-        <input type="text" placeholder="Display name (optional — or stay anonymous)" value={name} onChange={(e) => setName(e.target.value)} className={inputClass} />
-        <input type="email" placeholder="Your email — the credential arrives here *" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} required />
-        {error && <p className="text-[13px] font-semibold text-red-600 px-1">{error}</p>}
-        <motion.button
-          onClick={lockIn}
-          disabled={loading}
-          whileHover={{ scale: 1.02, y: -1 }}
-          whileTap={{ scale: 0.97 }}
-          transition={{ type: 'spring', stiffness: 350, damping: 17 }}
-          className="w-full rounded-full bg-[#059669] text-white px-7 py-4 text-sm font-semibold shadow-lg shadow-[#059669]/25 disabled:opacity-50"
-        >
-          {loading ? 'Opening checkout…' : `Lock in — $${tier.amount} AUD →`}
-        </motion.button>
-        <p className="text-[12px] text-[#6B8070] text-center font-medium">
-          Secure payment via Stripe · your credential is permanent
-        </p>
-      </div>
-    </motion.div>
+    <label className="block">
+      <span className={`block font-mono ${T.micro} uppercase tracking-[0.2em] ${labelColor} mb-0.5`}>
+        {label} {required && <span className="text-[#059669]">*</span>}
+      </span>
+      {textarea ? (
+        <textarea rows={emphasised ? 4 : 2} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className={`${cls} resize-none`} />
+      ) : (
+        <input type={type} required={required} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} autoFocus={autoFocus} className={cls} />
+      )}
+    </label>
   );
 }
 
-/* ---------- the page ---------- */
-
-export default function OrbitShowcase() {
-  const [raised, setRaised] = useState<number | null>(null);
+function LockInDialog({
+  open,
+  layer,
+  onClose,
+}: {
+  open: boolean;
+  layer: Layer | null;
+  onClose: () => void;
+}) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
-    fetch('/api/stats/orbit-fund')
-      .then((r) => r.json())
-      .then((data) => {
-        if (data && typeof data.total === 'number') setRaised(data.total);
-      })
-      .catch(() => setRaised(null));
-  }, []);
+    if (!open) return;
+    setStatus('idle');
+    setErrorMsg('');
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [open, onClose]);
 
-  const pct = raised !== null ? Math.min((raised / FUNDING_GOAL) * 100, 100) : 0;
+  if (!layer) return null;
+  const isForm = layer.kind === 'form';
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!layer) return;
+    if (!email.trim()) return;
+    if (isForm && (!name.trim() || !message.trim())) return;
+
+    setStatus('sending');
+    setErrorMsg('');
+
+    try {
+      if (layer.kind === 'stripe') {
+        const res = await fetch('/api/donate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            intent: 'orbit-support',
+            amount: layer.amount * 100,
+            project_id: 'orbit-77',
+            currency: 'AUD',
+            supporter_name: name.trim() || 'Anonymous',
+            supporter_email: email.trim(),
+            is_anonymous: !name.trim(),
+            support_message: message.trim(),
+          }),
+        });
+        const data = await res.json();
+        if (data?.url) {
+          window.location.href = data.url;
+          return; // browser navigating; leave status = 'sending'
+        }
+        throw new Error(data?.error || 'Unable to start checkout');
+      } else {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'express-interest',
+            project: 'Orbit 77',
+            model: layer.name,
+            name: name.trim(),
+            email: email.trim(),
+            message: message.trim(),
+          }),
+        });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || 'Failed to send');
+        }
+        setStatus('success');
+      }
+    } catch (err) {
+      setStatus('error');
+      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong');
+    }
+  }
+
+  const canSubmit =
+    !!email.trim() &&
+    (!isForm || (!!name.trim() && !!message.trim())) &&
+    status !== 'sending';
 
   return (
-    <div className="bg-[#EDEFED] text-[#1A1C1A] font-sans overflow-x-clip antialiased selection:bg-[#059669] selection:text-white min-h-screen">
-
-      {/* floating pill nav */}
-      <motion.nav
-        initial={{ opacity: 0, y: -16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: ENTER, ...SPRING }}
-        className="fixed top-4 inset-x-0 z-50 flex justify-center px-4"
-      >
-        <div className="flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-md shadow-lg shadow-[#1A1C1A]/5 ring-1 ring-[#1A1C1A]/5 pl-5 pr-1.5 py-1.5">
-          <Link href="/" aria-label="Pyadra · Home" className="flex items-center gap-2 mr-2 group">
-            <PyadraLogo size={22} />
-            <span className="text-sm font-bold tracking-tight transition-colors group-hover:text-[#059669]">
-              Pyadra
-            </span>
-          </Link>
-          <Link href="/exhibitions/galaxy" className="hidden sm:block rounded-full px-3.5 py-2 text-[13px] font-medium text-[#3A4A3E] hover:bg-[#EDEFED] transition-colors">
-            ← Galaxy
-          </Link>
-          <span className="hidden md:block rounded-full px-3.5 py-2 text-[13px] font-medium text-[#6B8070]">
-            Project № 02
-          </span>
-          <motion.a
-            href="#support"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 17 }}
-            className="rounded-full bg-[#1A1C1A] text-white px-5 py-2 text-[13px] font-semibold"
-          >
-            Support
-          </motion.a>
-        </div>
-      </motion.nav>
-
-      {/* ============ HERO ============ */}
-      <section className="relative min-h-[100svh] flex items-center overflow-hidden">
-        <div aria-hidden className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-40 -left-40 w-[640px] h-[640px] rounded-full opacity-60" style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.10), transparent 65%)' }} />
-          <div className="absolute -bottom-56 -right-32 w-[720px] h-[720px] rounded-full opacity-60" style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.10), transparent 65%)' }} />
-        </div>
-
-        <div className="relative max-w-6xl mx-auto px-6 w-full grid md:grid-cols-[7fr_5fr] gap-14 md:gap-10 items-center pt-28 pb-20">
-          <div>
-            <motion.span
-              initial={{ opacity: 0, y: 16, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: ENTER + 0.1, ...SPRING }}
-              className="inline-flex items-center gap-2 rounded-full bg-[#059669]/10 text-[#047857] px-4 py-2 text-[12px] font-semibold mb-8"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#059669] animate-pulse" />
-              10 episodes live · funding Season 2
-            </motion.span>
-
-            <h1 className="text-4xl md:text-7xl font-bold tracking-[-0.035em] leading-[1.08] md:leading-[1.02] mb-7">
-              {['Real conversations.', 'No script.', 'No filters.'].map((line, i) => (
-                <span key={line} className="block overflow-hidden">
-                  <motion.span
-                    className="block"
-                    initial={{ y: '110%' }}
-                    animate={{ y: 0 }}
-                    transition={{ delay: ENTER + 0.2 + i * 0.09, type: 'spring', stiffness: 110, damping: 20 }}
-                  >
-                    {i === 2 ? <span className="text-[#059669]">{line}</span> : line}
-                  </motion.span>
-                </span>
-              ))}
-            </h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: ENTER + 0.55, ...SPRING }}
-              className="text-lg md:text-xl text-[#3A4A3E] leading-relaxed max-w-md mb-10"
-            >
-              A podcast recorded from Australia exploring life, creation, identity
-              — and what we leave behind. Built for permanence, not virality.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: ENTER + 0.7, ...SPRING }}
-              className="flex items-center gap-3 flex-wrap"
-            >
-              <PillButton href={YOUTUBE_URL} primary>Watch Season 1 →</PillButton>
-              <PillButton href="#support">Support Season 2</PillButton>
-            </motion.div>
-          </div>
-
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6"
+        >
           <motion.div
-            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            className="absolute inset-0 bg-[#0A120E]/40 backdrop-blur-sm"
+            onClick={status === 'sending' ? undefined : onClose}
+          />
+          <motion.div
+            role="dialog" aria-modal="true"
+            initial={{ opacity: 0, y: 30, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: ENTER + 0.5, type: 'spring', stiffness: 90, damping: 16 }}
-            className="mx-auto"
+            exit={{ opacity: 0, y: 20, scale: 0.96 }}
+            transition={{ type: 'spring', stiffness: 220, damping: 24 }}
+            className="relative z-10 w-full max-w-md rounded-[28px] bg-white shadow-2xl ring-1 ring-[#1A1C1A]/8 max-h-[92vh] overflow-y-auto"
           >
-            <PhysicalSphere />
+            <button
+              type="button"
+              onClick={onClose}
+              className={`absolute top-4 right-4 w-8 h-8 rounded-full bg-[#EDEFED] text-[#3A4A3E] flex items-center justify-center font-mono ${T.body} font-bold hover:bg-[#059669]/10 hover:text-[#059669] transition-colors`}
+            >
+              ✕
+            </button>
+
+            {status === 'success' ? (
+              <div className="p-8 text-center">
+                <div className={`inline-flex w-12 h-12 items-center justify-center rounded-full bg-[#059669]/10 text-[#059669] ${T.heading} font-bold mb-4`}>✓</div>
+                <h3 className="font-serif italic text-2xl text-[#1A1C1A] mb-2">Transmission recorded.</h3>
+                <p className={`${T.body} text-[#3A4A3E] leading-relaxed mb-6 max-w-xs mx-auto`}>
+                  Pablo &amp; Eduardo have received your note. They’ll reach out personally.
+                </p>
+                <button type="button" onClick={onClose} className={`font-mono ${T.small} font-semibold text-[#059669] hover:underline`}>Close</button>
+              </div>
+            ) : (
+              <form onSubmit={submit} className="p-6 md:p-8">
+                <div className={`font-mono ${T.micro} uppercase tracking-[0.22em] text-[#059669] mb-2`}>
+                  {isForm ? 'Orbit 77 · Private channel' : 'Orbit 77 · Lock In Your Frequency'}
+                </div>
+                <h3 className="font-serif text-2xl font-light italic leading-tight mb-2">
+                  {isForm ? 'Tell us the structure you’re thinking.' : `Lock in — ${layer.name}.`}
+                </h3>
+                <p className={`${T.body} text-[#3A4A3E] leading-relaxed mb-5`}>
+                  {isForm
+                    ? 'Sketch the kind of involvement you have in mind — sponsorship, larger contribution, partnership. We reply directly.'
+                    : `Your credential (O77-S1-XXXXXX) is delivered to your email after Stripe checkout. ${layer.kind === 'stripe' && layer.amount >= 100 ? 'For ranges, the exact final amount is set at checkout.' : ''}`}
+                </p>
+
+                <div className="space-y-4">
+                  <Field
+                    label={isForm ? 'Name' : 'Display name'}
+                    value={name}
+                    onChange={setName}
+                    required={isForm}
+                    placeholder={isForm ? '' : 'optional — or stay anonymous'}
+                    autoFocus
+                  />
+                  <Field label="Email" type="email" value={email} onChange={setEmail} required />
+                  <Field
+                    label={isForm ? 'Your proposal' : 'Short note'}
+                    placeholder={isForm ? 'e.g. sponsor a season, fund Bali production, distribution partnership' : 'optional'}
+                    value={message}
+                    onChange={setMessage}
+                    textarea
+                    emphasised={isForm}
+                    required={isForm}
+                  />
+                </div>
+
+                <div className={`mt-4 font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070]`}>
+                  Layer: <span className="text-[#1A1C1A] font-bold">{layer.name}</span>{' '}
+                  · <span className="text-[#059669] font-bold">{layer.tagline}</span>
+                </div>
+
+                {status === 'error' && (
+                  <p className={`${T.small} text-red-700 mt-3`}>
+                    {errorMsg || 'Something went wrong.'} Email <a href={`mailto:${CONFIG.CONTACT_EMAIL}`} className="underline font-semibold">{CONFIG.CONTACT_EMAIL}</a> instead.
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={!canSubmit}
+                  className={`mt-6 w-full rounded-full bg-[#059669] text-white py-3.5 font-mono ${T.small} font-semibold shadow-md shadow-[#059669]/15 disabled:opacity-50 uppercase tracking-wider`}
+                >
+                  {status === 'sending'
+                    ? (isForm ? 'Sending…' : 'Opening checkout…')
+                    : (isForm ? 'Hold The Signal — Send →' : `Lock In — $${layer.kind === 'stripe' ? layer.amount : ''} AUD →`)}
+                </button>
+
+                {!isForm && (
+                  <p className={`${T.micro} font-mono text-[#6B8070] mt-3 text-center uppercase tracking-wider`}>
+                    Secure payment via Stripe · credential is permanent
+                  </p>
+                )}
+              </form>
+            )}
           </motion.div>
-        </div>
-      </section>
-
-      {/* ============ PROOF STRIP + LIVE FUNDING ============ */}
-      <section className="max-w-6xl mx-auto px-6 pb-24 md:pb-32 -mt-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          {[
-            { value: '10', label: 'episodes live on YouTube' },
-            { value: 'From $10', label: 'supporter credential' },
-            { value: '49%', label: 'available to own' },
-            { value: '$12,000', label: 'indicative valuation · AUD' },
-          ].map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              {...pop}
-              transition={{ ...SPRING, delay: i * 0.07 }}
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="rounded-3xl bg-white p-6 md:p-8 shadow-sm ring-1 ring-[#1A1C1A]/5"
-            >
-              <div className="text-3xl md:text-4xl font-bold tracking-tight mb-1">{stat.value}</div>
-              <div className="text-[13px] font-medium text-[#6B8070]">{stat.label}</div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* live Season 2 funding bar */}
-        <motion.div {...pop} className="rounded-3xl bg-white p-6 md:p-8 shadow-sm ring-1 ring-[#1A1C1A]/5">
-          <div className="flex items-baseline justify-between flex-wrap gap-2 mb-4">
-            <span className="text-[15px] font-bold tracking-tight">Season 2 production fund</span>
-            <span className="text-[13px] font-semibold text-[#059669]">
-              {raised !== null ? `$${raised.toLocaleString()} of $${FUNDING_GOAL.toLocaleString()} AUD` : 'loading…'}
-            </span>
-          </div>
-          <div className="h-3 rounded-full bg-[#EDEFED] overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              whileInView={{ width: `${pct}%` }}
-              viewport={{ once: true }}
-              transition={{ type: 'spring', stiffness: 60, damping: 20, delay: 0.3 }}
-              className="h-full rounded-full bg-[#059669]"
-            />
-          </div>
-          <p className="text-[12px] font-medium text-[#6B8070] mt-3">
-            Live from the archive — every credential moves this bar.
-          </p>
         </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
 
-        <motion.div {...pop} className="flex items-center justify-center gap-2 flex-wrap mt-6">
-          <span className="text-[13px] font-medium text-[#6B8070] mr-1">All public — verify it yourself:</span>
-          {[
-            { label: 'YouTube', href: YOUTUBE_URL },
-            { label: 'orbit77.shop', href: SHOP_URL },
-          ].map((link) => (
-            <motion.a
-              key={link.label}
-              href={link.href}
-              target="_blank"
-              rel="noopener"
-              whileHover={{ scale: 1.06, y: -1 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: 'spring', stiffness: 350, damping: 17 }}
-              className="rounded-full bg-white px-4 py-2 text-[13px] font-semibold ring-1 ring-[#1A1C1A]/8 shadow-sm hover:text-[#059669] transition-colors"
-            >
-              {link.label} ↗
-            </motion.a>
-          ))}
-        </motion.div>
-      </section>
+/* ---------- main layout ---------- */
 
-      {/* ============ WHAT YOU TAKE OVER ============ */}
-      <section className="max-w-6xl mx-auto px-6 py-24 md:py-32">
-        <motion.h2 {...pop} className="text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-4 max-w-2xl">
-          Not just a podcast.
-          <span className="text-[#059669]"> A permanent archive.</span>
-        </motion.h2>
-        <motion.p {...pop} className="text-lg text-[#3A4A3E] max-w-md mb-14">
-          Four things transfer with a participation — all of them already exist.
-        </motion.p>
+export default function OrbitDashboard() {
+  const [raised, setRaised] = useState<number | null>(null);
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [dialog, setDialog] = useState<{ open: boolean; layer: Layer | null }>({ open: false, layer: null });
 
-        <div className="grid md:grid-cols-2 gap-4 md:gap-5">
-          {TAKEOVER.map((item, i) => (
-            <motion.div
-              key={item.num}
-              {...pop}
-              transition={{ ...SPRING, delay: i * 0.06 }}
-              whileHover={{ y: -5 }}
-              className="group rounded-[28px] bg-white p-8 md:p-10 shadow-sm ring-1 ring-[#1A1C1A]/5 hover:shadow-xl hover:shadow-[#059669]/5 transition-shadow duration-300"
-            >
-              <span className="inline-flex w-10 h-10 items-center justify-center rounded-2xl bg-[#059669]/10 text-[#047857] text-[13px] font-bold mb-6 group-hover:bg-[#059669] group-hover:text-white transition-colors duration-300">
-                {item.num}
+  const openDialog = (layer: Layer) => setDialog({ open: true, layer });
+  const closeDialog = () => setDialog(d => ({ ...d, open: false }));
+
+  // Live Season 2 funding total — graceful fallback to "loading" if it fails.
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/stats/orbit-fund')
+      .then((r) => {
+        if (!r.ok) throw new Error(`orbit-fund responded ${r.status}`);
+        return r.json();
+      })
+      .then((data: { total?: number } | null) => {
+        if (cancelled || !data) return;
+        if (typeof data.total === 'number') setRaised(data.total);
+      })
+      .catch((err) => {
+        console.warn('[orbit] funding stats fetch failed', err);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  const goal = CONFIG.FUNDING_GOAL_AUD;
+  const pct = raised !== null ? Math.min((raised / goal) * 100, 100) : 0;
+  const raisedDisplay = raised !== null ? `$${raised.toLocaleString('en-AU')}` : '$…';
+
+  const FAQ = [
+    ...FAQ_BASE,
+    { q: 'Where does the money go?', a: `Straight into Season 2 production. The goal is $${goal.toLocaleString('en-AU')} AUD — the progress bar on this page is live, and every credential moves it.` },
+  ];
+
+  return (
+    <div className="bg-[#EDEFED] text-[#1A1C1A] font-serif antialiased selection:bg-[#059669] selection:text-white min-h-screen lg:h-screen lg:overflow-hidden flex flex-col justify-between py-4 lg:py-6 px-4 lg:px-8 relative">
+
+      <LockInDialog open={dialog.open} layer={dialog.layer} onClose={closeDialog} />
+
+      {/* Background ambient light */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute -top-40 -left-40 w-[640px] h-[640px] rounded-full opacity-35" style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.12), transparent 70%)' }} />
+        <div className="absolute -bottom-56 -right-32 w-[720px] h-[720px] rounded-full opacity-40" style={{ background: 'radial-gradient(circle, rgba(57,255,20,0.08), transparent 70%)' }} />
+      </div>
+
+      {/* shared nav */}
+      <SiteNav
+        variant="inline"
+        crumbs={[
+          { label: 'Galaxy', href: '/exhibitions/galaxy' },
+          { label: 'Orbit 77' },
+        ]}
+        status={{ label: 'For support', live: true }}
+      />
+
+      {/* Main dashboard content */}
+      <main className="relative z-10 w-full max-w-7xl mx-auto flex-grow grid grid-cols-1 lg:grid-cols-[1.05fr_1.3fr_1.05fr] gap-4 lg:gap-6 my-4 overflow-y-auto lg:overflow-hidden h-full">
+
+        {/* LEFT COLUMN: Identity & What You Fund */}
+        <div className="flex flex-col gap-4 lg:gap-5 h-full lg:overflow-hidden">
+
+          {/* Identity panel */}
+          <div className="rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm">
+            <div className="flex items-center gap-2 mb-3">
+              <span className={`rounded-full bg-black/5 text-[#3A4A3E] px-2.5 py-1 ${T.micro} font-mono tracking-wider uppercase`}>
+                Global · Podcast Archive
               </span>
-              <h3 className="text-xl md:text-2xl font-bold tracking-tight mb-2.5">{item.title}</h3>
-              <p className="text-[15px] text-[#3A4A3E] leading-relaxed">{item.body}</p>
-            </motion.div>
-          ))}
+              <span className={`rounded-full bg-[#059669]/10 text-[#047857] px-2.5 py-1 ${T.micro} font-mono font-semibold uppercase tracking-wider`}>
+                Funding S2
+              </span>
+            </div>
+            <h1 className={`${T.display} font-bold tracking-tight mb-2 leading-none`}>
+              Orbit 77
+            </h1>
+            <p className={`font-serif italic ${T.heading} text-[#059669] mb-4 leading-snug`}>
+              Real conversations. No filters. No script. No bullshit.
+            </p>
+            <p className={`${T.body} text-[#3A4A3E] leading-relaxed`}>
+              A podcast recorded from Australia exploring life, creation, identity — and what we leave behind. {CONFIG.EPISODES_LIVE} episodes live. Built for permanence, not virality.
+            </p>
+          </div>
+
+          {/* What you fund */}
+          <div className="rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 flex-grow flex flex-col shadow-sm lg:overflow-hidden">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-[#6B8070]`}>
+                What You Fund
+              </h2>
+              <span className={`font-mono ${T.micro} text-[#059669] bg-[#059669]/10 px-2 py-0.5 rounded-full font-bold`}>
+                4 pieces
+              </span>
+            </div>
+
+            <div className="flex-grow overflow-y-auto pr-1 space-y-3 custom-scrollbar">
+              {WHAT_YOU_FUND.map((item) => (
+                <div
+                  key={item.title}
+                  className="p-3 rounded-2xl bg-white/50 border border-white/40 hover:bg-white hover:shadow-sm transition-all duration-200"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={`flex w-4.5 h-4.5 shrink-0 items-center justify-center rounded-full bg-[#059669]/10 text-[#059669] ${T.micro} font-mono font-bold`}>✓</span>
+                    <h3 className={`${T.body} font-bold text-[#1A1C1A]`}>{item.title}</h3>
+                  </div>
+                  <p className={`${T.small} text-[#6B8070] pl-6 leading-relaxed`}>{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      </section>
 
-      {/* ============ THE STORY ============ */}
-      <section className="max-w-6xl mx-auto px-6 py-24 md:py-32">
-        <div className="rounded-[36px] bg-white shadow-sm ring-1 ring-[#1A1C1A]/5 p-8 md:p-16 overflow-hidden relative">
-          <div aria-hidden className="absolute -top-32 -right-32 w-[420px] h-[420px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.07), transparent 65%)' }} />
-          <motion.h2 {...pop} className="text-3xl md:text-5xl font-bold tracking-[-0.03em] mb-3 relative">
-            Where it comes from.
-          </motion.h2>
-          <motion.p {...pop} className="text-lg text-[#3A4A3E] max-w-md mb-12 relative">
-            Two friends, a microphone, and the questions that don&rsquo;t fit anywhere else.
-          </motion.p>
+        {/* MIDDLE COLUMN: Orbit sphere + live funding bar + stats */}
+        <div className="flex flex-col gap-4 lg:gap-5 h-full">
 
-          <div className="grid md:grid-cols-4 gap-8 relative">
-            {STORY.map((step, i) => (
-              <motion.div key={step.year} {...pop} transition={{ ...SPRING, delay: i * 0.08 }}>
-                <span className={`inline-block rounded-full px-3.5 py-1.5 text-[12px] font-bold mb-4 ${
-                  i === STORY.length - 1 ? 'bg-[#059669] text-white' : 'bg-[#EDEFED] text-[#3A4A3E]'
-                }`}>
-                  {step.year}
+          {/* Monolith (dark, orbit aesthetic) */}
+          <div className="rounded-[32px] bg-[#0A120D] border border-white/5 shadow-2xl p-6 relative flex flex-col items-center justify-center flex-grow min-h-[380px] lg:min-h-0 overflow-hidden">
+            {/* Subtle green grid overlay — transmission feel */}
+            <div
+              className="absolute inset-0 pointer-events-none z-0 opacity-[0.08]"
+              style={{
+                backgroundImage: 'linear-gradient(to right, #39FF14 1px, transparent 1px), linear-gradient(to bottom, #39FF14 1px, transparent 1px)',
+                backgroundSize: '24px 24px',
+              }}
+            />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(57,255,20,0.08),transparent_60%)] pointer-events-none" />
+
+            <div className="relative z-10 flex flex-col items-center justify-center py-2">
+              <OrbitSphere />
+              <p className={`mt-6 text-center ${T.micro} font-mono text-[#86efac]/70 uppercase tracking-[0.22em]`}>
+                Season 1 complete · Season 2 in orbit
+              </p>
+            </div>
+
+            {/* Live funding bar — the page's heartbeat */}
+            <div className="relative z-20 w-full mt-4">
+              <div className="flex items-baseline justify-between mb-1.5">
+                <span className={`font-mono ${T.micro} uppercase tracking-wider text-[#86efac]/70`}>Season 2 fund</span>
+                <span className={`font-mono ${T.micro} font-bold text-[#86efac]`}>
+                  {raised !== null ? `${raisedDisplay} / $${goal.toLocaleString('en-AU')} AUD` : 'loading…'}
                 </span>
-                <p className="text-[15px] text-[#3A4A3E] leading-relaxed">{step.text}</p>
-              </motion.div>
+              </div>
+              <div className="h-1.5 rounded-full bg-white/5 overflow-hidden ring-1 ring-white/5">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${pct}%` }}
+                  transition={{ type: 'spring', stiffness: 60, damping: 20, delay: 0.3 }}
+                  className="h-full rounded-full bg-[#39FF14] shadow-[0_0_12px_rgba(57,255,20,0.5)]"
+                />
+              </div>
+              <p className={`${T.micro} font-mono text-white/40 mt-2 text-center uppercase tracking-wider`}>
+                every credential moves this bar
+              </p>
+            </div>
+          </div>
+
+          {/* Stats — Block A (live) */}
+          <div className="grid grid-cols-4 gap-2 shrink-0">
+            {[
+              { label: 'Episodes', value: String(CONFIG.EPISODES_LIVE), desc: 'live on YouTube' },
+              { label: 'Raised', value: raisedDisplay, desc: 'Season 2 fund · live' },
+              { label: 'Goal', value: `$${(goal / 1000).toFixed(goal % 1000 === 0 ? 0 : 1)}k`, desc: 'AUD · draft v1' },
+              { label: 'Progress', value: `${Math.round(pct)}%`, desc: 'funded' },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="rounded-xl bg-white/70 backdrop-blur-sm p-3 ring-1 ring-black/5 hover:bg-white transition-all shadow-sm text-center"
+              >
+                <div className={`font-mono ${T.micro} uppercase tracking-wider text-[#6B8070] mb-0.5`}>
+                  {stat.label}
+                </div>
+                <div className={`${T.heading} font-bold tracking-tight text-[#1A1C1A] leading-none mb-0.5`}>
+                  {stat.value}
+                </div>
+                <div className={`font-mono ${T.micro} text-[#6B8070] truncate leading-none`}>
+                  {stat.desc}
+                </div>
+              </div>
             ))}
           </div>
         </div>
-      </section>
 
-      {/* ============ SUPPORT — the working flow ============ */}
-      <section id="support" className="max-w-6xl mx-auto px-6 py-24 md:py-32">
-        <motion.h2 {...pop} className="text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-4 text-center">
-          Hold the signal.
-        </motion.h2>
-        <motion.p {...pop} className="text-lg text-[#3A4A3E] text-center max-w-md mx-auto mb-14">
-          Season 2 is funded by people, not algorithms. Your credential is permanent.
-        </motion.p>
-        <SupportCard />
-      </section>
+        {/* RIGHT COLUMN: Contribution layers + Risks */}
+        <div className="flex flex-col gap-4 lg:gap-5 h-full lg:overflow-hidden">
 
-      {/* ============ INCLUDED / THE DEAL ============ */}
-      <section className="max-w-6xl mx-auto px-6 py-24 md:py-32">
-        <motion.h2 {...pop} className="text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-14 max-w-2xl">
-          Everything on the table.
-          <span className="text-[#059669]"> Nothing under it.</span>
-        </motion.h2>
-
-        <div className="grid md:grid-cols-[3fr_2fr] gap-4 md:gap-5">
-          <motion.div {...pop} className="rounded-[28px] bg-white p-8 md:p-10 shadow-sm ring-1 ring-[#1A1C1A]/5">
-            <h3 className="text-lg font-bold tracking-tight mb-6">Comes with it</h3>
-            <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
-              {INCLUDED.map((item, i) => (
-                <motion.li
-                  key={item}
-                  initial={{ opacity: 0, x: -12 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ ...SPRING, delay: i * 0.05 }}
-                  className="flex items-start gap-3 text-[15px] text-[#1A1C1A]"
-                >
-                  <span className="mt-1 flex w-5 h-5 shrink-0 items-center justify-center rounded-full bg-[#059669]/10 text-[#059669] text-[11px] font-bold">✓</span>
-                  {item}
-                </motion.li>
-              ))}
-            </ul>
-          </motion.div>
-
-          <motion.div {...pop} transition={{ ...SPRING, delay: 0.1 }} className="rounded-[28px] bg-[#1A1C1A] text-white p-8 md:p-10 shadow-sm">
-            <h3 className="text-lg font-bold tracking-tight mb-6">The deal, plainly</h3>
-            <ul className="space-y-5">
-              {THE_DEAL.map((entry) => (
-                <li key={entry.item} className="text-[15px] leading-relaxed">
-                  <span className="font-semibold">{entry.item}</span>
-                  <span className="text-white/55"> — {entry.note}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="text-[13px] text-white/45 mt-8 leading-relaxed">
-              Acquisitions happen in conversation, with legal review — never through a checkout.
+          {/* Contribution layers */}
+          <div className="rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm">
+            <div className="flex justify-between items-center mb-1">
+              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-[#6B8070]`}>
+                Contribution Layers
+              </h2>
+              <span className={`font-mono ${T.micro} text-[#6B8070]/70 uppercase tracking-wider`}>
+                draft v1
+              </span>
+            </div>
+            <p className={`${T.micro} text-[#6B8070] mb-4 italic`}>
+              Funding the journey · no equity, no return, no vote on content.
             </p>
-          </motion.div>
-        </div>
-      </section>
 
-      {/* ============ FOUNDERS NOTE ============ */}
-      <section className="max-w-3xl mx-auto px-6 py-24 md:py-32">
-        <motion.div {...pop} className="rounded-[36px] bg-white shadow-sm ring-1 ring-[#1A1C1A]/5 p-8 md:p-14 text-center">
-          <p className="font-serif italic text-2xl md:text-[1.85rem] font-normal leading-snug text-[#1A1C1A] mb-8">
-            &ldquo;We didn&rsquo;t want an audience. We wanted an archive — conversations
-            that still matter in twenty years.
-            <span className="text-[#059669]"> Every supporter is engraved in it, permanently.</span>&rdquo;
-          </p>
-          <p className="text-[15px] font-bold tracking-tight">Pablo &amp; Eduardo</p>
-          <p className="text-[13px] text-[#6B8070] font-medium mb-8">Founders · Orbit 77, Australia</p>
-          <div className="flex items-center justify-center gap-3 flex-wrap">
-            <PillButton href={`mailto:${CONTACT_EMAIL}?subject=Orbit%2077%20%E2%80%94%20To%20the%20founders`}>
-              Write to the founders
-            </PillButton>
-            <Link
-              href="/exhibitions/galaxy/orbit/join"
-              className="text-[13px] font-semibold text-[#6B8070] hover:text-[#059669] transition-colors"
-            >
-              or join the crew →
-            </Link>
+            <div className="space-y-1.5">
+              {CONTRIBUTION_LAYERS.map((layer) => (
+                <button
+                  key={layer.name}
+                  type="button"
+                  onClick={() => openDialog(layer)}
+                  className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all group text-left ${
+                    layer.featured
+                      ? 'bg-[#059669]/5 border-2 border-[#059669] hover:bg-[#059669]/10'
+                      : 'bg-white/50 border border-white/40 hover:bg-white'
+                  }`}
+                >
+                  <div className="pr-2 min-w-0">
+                    <div className={`font-bold text-[#1A1C1A] group-hover:text-[#059669] transition-colors flex items-center gap-1.5 ${T.body}`}>
+                      <span className="truncate">{layer.name}</span>
+                      {layer.featured && (
+                        <span className={`font-mono ${T.micro} bg-[#059669] text-white px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider shrink-0`}>
+                          Entry
+                        </span>
+                      )}
+                    </div>
+                    <div className={`${T.small} text-[#6B8070] mt-0.5 line-clamp-1`}>{layer.sub}</div>
+                  </div>
+                  <span className={`font-mono font-bold ${layer.kind === 'form' ? 'text-[#6B8070] bg-black/5' : 'text-[#059669] bg-[#059669]/10'} px-2 py-0.5 rounded shrink-0 ${T.small}`}>
+                    {layer.tagline}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
-        </motion.div>
-      </section>
 
-      {/* ============ THE HONEST PART ============ */}
-      <section className="max-w-6xl mx-auto px-6 py-24 md:py-32">
-        <motion.h2 {...pop} className="text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-4 max-w-2xl">
-          The honest part.
-        </motion.h2>
-        <motion.p {...pop} className="text-lg text-[#3A4A3E] max-w-md mb-14">
-          Showing the risks is what makes the rest of this page believable.
-        </motion.p>
+          {/* The Honest Risks */}
+          <div className="rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 flex-grow flex flex-col justify-between shadow-sm lg:overflow-hidden">
+            <div className="lg:overflow-hidden flex flex-col flex-grow">
+              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-red-700/80 mb-3 shrink-0 flex items-center gap-1.5`}>
+                <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
+                The Honest Risks
+              </h2>
 
-        <div className="grid sm:grid-cols-2 gap-4 md:gap-5">
-          {RISKS.map((risk, i) => (
+              <div className="flex-grow overflow-y-auto space-y-3 custom-scrollbar pr-1">
+                {RISKS.map((risk) => (
+                  <div key={risk.title} className="p-2.5 rounded-xl bg-red-50/20 border border-red-100/10">
+                    <div className={`${T.small} font-bold text-red-950 mb-0.5`}>⚠️ {risk.title}</div>
+                    <p className={`${T.small} text-[#3A4A3E] leading-relaxed pl-3`}>{risk.desc}</p>
+                  </div>
+                ))}
+
+                {/* What contributors DO NOT get */}
+                <div className="border-t border-black/5 pt-2 mt-2">
+                  <div className={`font-mono ${T.micro} uppercase tracking-wider text-[#6B8070] mb-1.5`}>What you don&rsquo;t get</div>
+                  <div className="space-y-1">
+                    {NOT_INCLUDED.map(not => (
+                      <div key={not.item} className={`${T.small} text-[#3A4A3E] flex items-baseline gap-1`}>
+                        <span className="text-red-700 font-bold">•</span>
+                        <span><span className="font-bold">{not.item}</span> — {not.note}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowDrawer(true)}
+              className={`w-full text-center mt-3 bg-white/90 hover:bg-white py-2.5 rounded-2xl font-mono ${T.small} font-bold text-[#6B8070] hover:text-[#059669] transition-colors border border-black/5 shrink-0 uppercase tracking-wider`}
+            >
+              Read FAQ &amp; Origin Story →
+            </button>
+          </div>
+        </div>
+      </main>
+
+      {/* Slide-over Drawer — Origin Story + FAQ */}
+      <AnimatePresence>
+        {showDrawer && (
+          <>
             <motion.div
-              key={risk.t}
-              {...pop}
-              transition={{ ...SPRING, delay: i * 0.06 }}
-              className="rounded-[28px] bg-white p-7 md:p-8 shadow-sm ring-1 ring-[#1A1C1A]/5"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowDrawer(false)}
+              className="fixed inset-0 bg-[#020503] z-40 cursor-pointer"
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'tween', duration: 0.35, ease: 'easeOut' }}
+              className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-[#0A120D] text-[#F4EFEA] z-50 p-6 md:p-8 shadow-2xl flex flex-col justify-between overflow-y-auto"
             >
-              <h3 className="text-lg font-bold tracking-tight mb-2">{risk.t}</h3>
-              <p className="text-[15px] text-[#3A4A3E] leading-relaxed">{risk.b}</p>
+              <div>
+                <div className="flex justify-between items-center border-b border-white/5 pb-4 mb-6">
+                  <h3 className="font-serif italic text-2xl text-[#F4EFEA]">The Origin Story</h3>
+                  <button
+                    onClick={() => setShowDrawer(false)}
+                    className={`flex w-7 h-7 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white font-mono ${T.small} transition-colors`}
+                  >✕</button>
+                </div>
+
+                {/* Founders' quote */}
+                <div className="p-5 rounded-2xl bg-white/5 border border-white/10 mb-8">
+                  <p className={`font-serif italic ${T.heading} leading-relaxed text-[#F4EFEA] mb-4`}>
+                    &ldquo;We didn&rsquo;t want an audience. We wanted an archive — conversations
+                    that still matter in twenty years. Every supporter is engraved in it, permanently.&rdquo;
+                  </p>
+                  <div className="text-right">
+                    <span className={`block ${T.small} font-bold text-[#F4EFEA]`}>Pablo &amp; Eduardo</span>
+                    <span className={`block ${T.micro} text-[#86efac]/60 font-mono uppercase tracking-wider`}>Founders · Orbit 77, Australia</span>
+                  </div>
+                </div>
+
+                {/* Verify Links */}
+                <div className="mb-6">
+                  <div className={`font-mono ${T.micro} uppercase tracking-wider text-[#86efac]/60 mb-2`}>Verify Links</div>
+                  <div className="flex gap-2 flex-wrap">
+                    {PUBLIC_LINKS.map(link => (
+                      <a
+                        key={link.label}
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`rounded-full bg-white/5 border border-white/10 px-3 py-1 font-mono ${T.small} hover:bg-white/10 transition-colors`}
+                      >
+                        {link.label} ↗
+                      </a>
+                    ))}
+                  </div>
+                </div>
+
+                {/* FAQ */}
+                <h4 className={`font-mono ${T.micro} font-bold uppercase tracking-wider text-[#86efac]/60 mb-3`}>
+                  Quick FAQ
+                </h4>
+                <div className="space-y-4">
+                  {FAQ.map(item => (
+                    <div key={item.q} className="border-b border-white/5 pb-3 last:border-b-0">
+                      <h5 className={`${T.body} font-bold text-[#F4EFEA] mb-1 leading-snug`}>{item.q}</h5>
+                      <p className={`${T.small} text-white/60 leading-relaxed`}>{item.a}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-white/5 pt-6 mt-8 space-y-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowDrawer(false);
+                    const big = CONTRIBUTION_LAYERS.find(l => l.kind === 'form');
+                    if (big) openDialog(big);
+                  }}
+                  className={`w-full text-center rounded-full bg-white/5 hover:bg-white/10 text-white py-3 font-mono ${T.small} font-bold transition-all border border-white/10 uppercase tracking-wider`}
+                >
+                  Contact the founders
+                </button>
+                <Link
+                  href="/exhibitions/galaxy/orbit/join"
+                  className={`block text-center font-mono ${T.micro} text-white/50 hover:text-[#F4EFEA] transition-colors uppercase tracking-wider`}
+                >
+                  Or join the crew →
+                </Link>
+                <span className={`block text-center font-mono ${T.micro} text-white/40`}>
+                  {CONFIG.CONTACT_EMAIL}
+                </span>
+              </div>
             </motion.div>
-          ))}
-        </div>
-      </section>
+          </>
+        )}
+      </AnimatePresence>
 
-      {/* ============ FAQ ============ */}
-      <section className="max-w-3xl mx-auto px-6 py-24 md:py-32">
-        <motion.h2 {...pop} className="text-4xl md:text-5xl font-bold tracking-[-0.03em] text-center mb-12">
-          Quick answers.
-        </motion.h2>
-        <div className="space-y-3">
-          {FAQ.map((entry, i) => (
-            <motion.details
-              key={entry.q}
-              {...pop}
-              transition={{ ...SPRING, delay: i * 0.05 }}
-              className="group rounded-[22px] bg-white shadow-sm ring-1 ring-[#1A1C1A]/5 px-7 py-5 open:pb-7"
-            >
-              <summary className="flex items-center justify-between gap-6 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-                <h3 className="text-base md:text-lg font-bold tracking-tight">{entry.q}</h3>
-                <span className="flex w-7 h-7 shrink-0 items-center justify-center rounded-full bg-[#EDEFED] text-[#3A4A3E] text-sm font-bold transition-transform duration-300 group-open:rotate-45">+</span>
-              </summary>
-              <p className="text-[15px] text-[#3A4A3E] leading-relaxed mt-4 max-w-xl">{entry.a}</p>
-            </motion.details>
-          ))}
-        </div>
-      </section>
+      <SiteFooter />
 
-      {/* ============ FINAL ============ */}
-      <section className="relative max-w-6xl mx-auto px-6 py-28 md:py-40 text-center overflow-hidden">
-        <div aria-hidden className="absolute inset-x-0 bottom-0 h-[420px] pointer-events-none" style={{ background: 'radial-gradient(60% 100% at 50% 100%, rgba(5,150,105,0.10), transparent 70%)' }} />
-        <motion.h2 {...pop} className="relative text-5xl md:text-7xl font-bold tracking-[-0.035em] leading-[1.02] mb-7">
-          The signal is live.
-        </motion.h2>
-        <motion.p {...pop} className="relative text-lg md:text-xl text-[#3A4A3E] max-w-md mx-auto mb-10">
-          Watch it, hold it, or own a piece of it — the archive remembers all three.
-        </motion.p>
-        <motion.div {...pop} className="relative flex items-center justify-center gap-3 flex-wrap">
-          <PillButton href="#support" primary>Lock in your credential →</PillButton>
-          <PillButton href={`mailto:${CONTACT_EMAIL}?subject=Orbit%2077%20%E2%80%94%20Own%20a%20piece`}>Own a piece</PillButton>
-        </motion.div>
-      </section>
-
-      {/* footer */}
-      <footer className="max-w-6xl mx-auto px-6 pb-10">
-        <div className="flex items-center justify-between flex-wrap gap-4 border-t border-[#1A1C1A]/8 pt-7">
-          <span className="text-[12px] font-medium text-[#6B8070]">© 2026 Pyadra · We document. We verify. You decide.</span>
-          <div className="flex gap-5">
-            <Link href="/exhibitions/galaxy" className="text-[12px] font-medium text-[#6B8070] hover:text-[#059669] transition-colors">Galaxy</Link>
-            <Link href="/" className="text-[12px] font-medium text-[#6B8070] hover:text-[#059669] transition-colors">Home</Link>
-          </div>
-        </div>
-      </footer>
+      {/* Custom scrollbar styles */}
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(0, 0, 0, 0.05);
+          border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(0, 0, 0, 0.1);
+        }
+      `}</style>
     </div>
   );
 }

@@ -1,565 +1,655 @@
 'use client';
 
-import {
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-} from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { useRef } from 'react';
-import PyadraLogo from '@/app/components/brand/PyadraLogo';
+import SiteNav from '@/app/components/nav/SiteNav';
+import SiteFooter from '@/app/components/nav/SiteFooter';
+import Capsule3D from './Capsule3D';
 
 /* ------------------------------------------------------------------ */
 /*  PYADRA — Project № 01 · EterniCapsule                              */
-/*  The showcase page — the product itself lives at ./experience       */
-/*  (the ceremonial app: entry ritual, compose, seal, unlock).         */
-/*                                                                     */
-/*  Design language: family.co — same skeleton as Kangaroo Cleanup.    */
-/*  Copy is a working skeleton from EterniCapsule.md — adjust freely.  */
+/*  Showcase Dashboard — Single-screen, highly interactive.            */
+/*  Fits on one screen on desktop, stacks responsively on mobile.       */
 /* ------------------------------------------------------------------ */
 
-const CONTACT_EMAIL = 'eadiaz96@gmail.com';
+const CONTACT_EMAIL = 'pyadra@pyadra.io';
 const EXPERIENCE_URL = '/exhibitions/galaxy/ethernicapsule/experience';
+const SPRING = { type: 'spring' as const, stiffness: 150, damping: 20 };
 
-const ENTER = 0.75;
-const SPRING = { type: 'spring' as const, stiffness: 130, damping: 18, mass: 0.9 };
-const pop = {
-  initial: { opacity: 0, y: 28, scale: 0.98 },
-  whileInView: { opacity: 1, y: 0, scale: 1 },
-  viewport: { once: true, margin: '-70px' },
-  transition: SPRING,
+// Type scale — 5 deliberate steps, no 1px sprawl.
+const T = {
+  display: 'text-3xl lg:text-4xl',
+  heading: 'text-base',
+  body: 'text-sm',
+  small: 'text-xs',
+  micro: 'text-[10px]',
 };
 
-const STATS = [
-  { value: 'Live', label: 'fully operational' },
-  { value: '$9', label: 'per capsule · fixed' },
-  { value: 'Zero', label: 'knowledge — we can’t read it' },
-  { value: '100%', label: 'available to own' },
+type Stats = { sealed: number; delivered: number; awaiting: number; totalValueAUD: number };
+const ZERO_STATS: Stats = { sealed: 0, delivered: 0, awaiting: 0, totalValueAUD: 0 };
+
+const WHAT_YOU_GET = [
+  { title: 'A finished product, live today', desc: "The whole thing is built and working — compose, seal, pay, deliver, unlock. You're not buying a plan, you're buying something real." },
+  { title: 'The ceremony that makes it special', desc: "The dark entry ritual, the breathing vault, the 30 seconds of weight before sealing. This is what people pay for — and it's done." },
+  { title: 'Messages no one can read', desc: 'Every message is locked in the user’s own browser. Not even you (or Pyadra) can open a sealed capsule. That trust is the product.' },
+  { title: 'Payments already flowing', desc: 'Live Stripe checkout, ready to take $9 the moment someone seals. No setup, no integration work.' },
+  { title: 'Delivery that runs itself', desc: 'Capsules are delivered automatically on the exact date chosen — no one has to press a button. It just happens.' },
+  { title: 'A safety net for emergencies', desc: 'A guardian system lets a trusted person unlock a capsule if something happens to the sender. The hard, human edge cases are handled.' },
 ];
 
-const TAKEOVER = [
-  { num: '01', title: 'A working product', body: 'The full flow is built and deployed: compose, seal, pay, deliver, unlock. Stripe live, daily delivery cron, guardian system.' },
-  { num: '02', title: 'A ceremonial brand', body: 'The breathing 3D capsule, the entry ritual, the audio engine, the copy voice — an experience no competitor can copy-paste.' },
-  { num: '03', title: 'Zero-knowledge engine', body: 'Messages are encrypted in the browser. The server stores only ciphertext and hashed keys. Not even Pyadra can read a capsule.' },
-  { num: '04', title: 'Room to grow', body: 'Audio capsules ($25), video capsules ($49) and white-label licensing for memorial, therapy and legal services — all documented, none built yet.' },
+const RISKS = [
+  { title: 'No one has bought one yet', desc: "It’s built and it works, but the very first paying customer hasn’t happened. You’d be buying proof-of-craft, not proof-of-demand." },
+  { title: "We don’t know where people drop off", desc: "There’s no tracking yet, so we can’t tell you exactly where visitors leave before sealing. Finding that out is the first growth job." },
+  { title: 'It still shares plumbing with Pyadra', desc: "Payments and database currently run on Pyadra’s shared setup. Separating it into its own is a known, documented job (done on close if you want it independent)." },
+  { title: 'It’s built to be slow on purpose', desc: "The 30-second ritual filters out impatient people. That’s a feature for intimacy, but it also caps how fast you can grow volume." },
+  { title: 'Small price, thin margins', desc: 'At $9 a capsule, payment fees alone take about 6%. Real income needs either volume or the bigger audio/video versions on the roadmap.' },
 ];
 
-const STORY = [
-  { year: '2026', text: 'Built around one question: where do the words go that can’t be said today?' },
-  { year: 'The ritual', text: 'A 30-second entry of darkness and slow text. No skip button. The friction is the product.' },
-  { year: 'The vault', text: 'Client-side AES encryption, three keys — sender, recipient, guardian. Sealed means sealed.' },
-  { year: 'Today', text: 'Fully functional and deployed. Waiting for its first real sale — that honesty is part of the deal.' },
-];
-
-const INCLUDED = [
-  'Full source code — Next.js, React, TypeScript',
-  '3D capsule interface and entry ritual',
-  'Client-side encryption engine (AES + SHA-256)',
-  'Stripe checkout, live mode',
-  'Scheduled delivery system (daily cron + email)',
-  'Guardian emergency-access system',
-];
-
-const THE_DEAL = [
-  { item: 'Pyadra keeps', note: '$1 of every $9 generated (~11%) — hosting and operation' },
-  { item: 'Operational effort', note: 'autonomous system — it runs itself on Pyadra infrastructure' },
-  { item: 'Indicative valuation', note: '$4,000 AUD · 100% available' },
+const FAQ = [
+  { q: 'Does it actually work?', a: 'Yes — the complete flow is live: compose, seal, pay $9, scheduled delivery, unlock with a key. Try it yourself in the vault.' },
+  { q: 'Can Pyadra read the messages?', a: 'No. Messages are encrypted in your browser before they ever reach a server. We store only ciphertext and hashed keys — zero-knowledge by design.' },
+  { q: 'What exactly would I own?', a: 'The code, the brand, the ceremonial experience, the encryption engine and the delivery system — plus a documented roadmap to full independence. It stays hosted in Pyadra unless you negotiate otherwise.' },
+  { q: 'Why is there no revenue yet?', a: 'It launched recently and the first sale is still pending. We say it plainly because everything on Pyadra is said plainly.' },
 ];
 
 const DEALS = [
   {
-    name: 'Seal a capsule',
-    price: '$9',
-    sub: 'AUD · the product, today',
-    desc: 'Write the words, choose the date, seal it. Only your recipient can ever open it.',
-    chip: null,
-    featured: false,
-    cta: 'Enter the vault →',
-    href: EXPERIENCE_URL,
-  },
-  {
-    name: 'Own it, Pyadra runs it',
-    price: 'Let’s talk',
-    sub: 'hosted ownership',
-    desc: 'You own the project; it keeps living on Pyadra infrastructure. The system is autonomous — it runs itself.',
-    chip: 'Best fit',
+    name: 'Operator — hosted',
+    sub: '$4k up front · Pyadra keeps 15% per capsule',
+    price: '$4,000',
     featured: true,
-    cta: 'Start a conversation',
-    href: `mailto:${CONTACT_EMAIL}?subject=EterniCapsule%20%E2%80%94%20Hosted%20Ownership`,
   },
   {
-    name: 'Take it completely',
-    price: 'Let’s talk',
-    sub: '100% · operate it anywhere',
-    desc: 'Full acquisition with the independence roadmap included. Creator retains a royalty and advisory role.',
-    chip: null,
+    name: 'Owner — hosted',
+    sub: '$8k up front · Pyadra keeps 5% per capsule',
+    price: '$8,000',
     featured: false,
-    cta: 'Start a conversation',
-    href: `mailto:${CONTACT_EMAIL}?subject=EterniCapsule%20%E2%80%94%20Full%20Acquisition`,
+  },
+  {
+    name: 'Make an offer',
+    sub: "Different structure? Let's talk.",
+    price: "Let's talk",
+    featured: false,
   },
 ];
 
-const RISKS = [
-  { t: 'No first sale yet', b: 'The product is fully built and deployed, but the first real paying user hasn’t arrived. You’d be buying proof of craft, not proof of demand.' },
-  { t: 'The funnel is unmeasured', b: 'Many arrive, few seal — and there are no analytics yet to know where people leave. That data is the next priority.' },
-  { t: 'Shared infrastructure', b: 'Stripe webhook and database are shared with Pyadra today. Full independence is documented and takes 15–25 hours.' },
-  { t: 'Intentional friction', b: 'The 30-second ritual filters out impatient users by design. That limits volume — and creates the value.' },
-];
+/* ---------- request-info form (mirrors Kangaroo's ContactDialog) ---------- */
 
-const FAQ = [
-  { q: 'Does it actually work?', a: 'Yes — the complete flow is live: compose, seal, pay $9, scheduled delivery, unlock with a key. Try it yourself before asking anyone anything.' },
-  { q: 'Can Pyadra read the messages?', a: 'No. Messages are encrypted in your browser before they ever reach a server. We store only ciphertext and hashed keys — zero-knowledge by design.' },
-  { q: 'What exactly would I own?', a: 'The code, the brand, the ceremonial experience, the encryption engine and the delivery system — plus a documented roadmap to full independence.' },
-  { q: 'Why is there no revenue yet?', a: 'It launched recently and the first sale is still pending. We say it plainly because everything on Pyadra is said plainly.' },
-];
-
-/* ---------- pieces ---------- */
-
-function PillButton({ href, children, primary = false }: { href: string; children: React.ReactNode; primary?: boolean }) {
+function Field({
+  label,
+  value,
+  onChange,
+  type = 'text',
+  required = false,
+  placeholder,
+  disabled = false,
+  textarea = false,
+  autoFocus = false,
+  emphasised = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  type?: 'text' | 'email' | 'tel';
+  required?: boolean;
+  placeholder?: string;
+  disabled?: boolean;
+  textarea?: boolean;
+  autoFocus?: boolean;
+  emphasised?: boolean;
+}) {
+  const borderColor = emphasised ? 'border-[#059669]' : 'border-[#1A1C1A]/15';
+  const sharedClass =
+    `w-full bg-transparent border-0 border-b ${borderColor} rounded-none px-0 py-2 ${T.body} text-[#1A1C1A] placeholder:text-[#6B8070]/60 focus:outline-none focus:border-[#059669] transition-colors disabled:opacity-50`;
   return (
-    <motion.a
-      href={href}
-      whileHover={{ scale: 1.04, y: -2 }}
-      whileTap={{ scale: 0.96 }}
-      transition={{ type: 'spring', stiffness: 350, damping: 17 }}
-      className={`inline-block rounded-full px-7 py-3.5 text-sm font-semibold tracking-tight ${
-        primary
-          ? 'bg-[#059669] text-white shadow-lg shadow-[#059669]/25'
-          : 'bg-white text-[#1A1C1A] ring-1 ring-[#1A1C1A]/10 shadow-sm'
-      }`}
-    >
-      {children}
-    </motion.a>
+    <label className="block">
+      <span className={`block font-mono ${T.micro} uppercase tracking-[0.2em] ${emphasised ? 'text-[#059669]' : 'text-[#6B8070]'} mb-0.5`}>
+        {label} {required && <span className="text-[#059669]">*</span>}
+      </span>
+      {textarea ? (
+        <textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          rows={emphasised ? 4 : 2}
+          placeholder={placeholder}
+          disabled={disabled}
+          className={`${sharedClass} resize-none`}
+        />
+      ) : (
+        <input
+          type={type}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          disabled={disabled}
+          required={required}
+          autoFocus={autoFocus}
+          className={sharedClass}
+        />
+      )}
+    </label>
   );
 }
 
-/* The artifact — the project's sphere, grabbable like a real object. */
-function PhysicalSphere() {
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const rotateX = useSpring(useTransform(my, [-0.5, 0.5], [10, -10]), { stiffness: 150, damping: 15 });
-  const rotateY = useSpring(useTransform(mx, [-0.5, 0.5], [-10, 10]), { stiffness: 150, damping: 15 });
-  const ref = useRef<HTMLDivElement>(null);
+function RequestInfoDialog({
+  open,
+  model,
+  onClose,
+}: {
+  open: boolean;
+  model: string;
+  onClose: () => void;
+}) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const isOffer = model === 'Make an offer';
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [open, onClose]);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name.trim() || !email.trim()) return;
+    if (isOffer && !message.trim()) return;
+
+    setStatus('sending');
+    setErrorMsg('');
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'express-interest',
+          project: 'EterniCapsule',
+          model,
+          name: name.trim(),
+          email: email.trim(),
+          message: message.trim() || undefined,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to send');
+      }
+      setStatus('success');
+    } catch (err) {
+      setStatus('error');
+      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong');
+    }
+  }
 
   return (
-    <div
-      ref={ref}
-      className="relative flex flex-col items-center"
-      onMouseMove={(e) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        mx.set((e.clientX - rect.left) / rect.width - 0.5);
-        my.set((e.clientY - rect.top) / rect.height - 0.5);
-      }}
-      onMouseLeave={() => { mx.set(0); my.set(0); }}
-    >
-      <div
-        aria-hidden
-        className="absolute -inset-16 pointer-events-none"
-        style={{ background: 'radial-gradient(50% 50% at 50% 45%, rgba(5,150,105,0.12), transparent 70%)' }}
-      />
-      <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}>
+    <AnimatePresence>
+      {open && (
         <motion.div
-          drag
-          dragSnapToOrigin
-          dragElastic={0.18}
-          dragTransition={{ bounceStiffness: 300, bounceDamping: 18 }}
-          whileHover={{ scale: 1.04 }}
-          whileDrag={{ scale: 1.08, rotate: 3 }}
-          style={{ rotateX, rotateY, transformPerspective: 900 }}
-          className="relative cursor-grab active:cursor-grabbing touch-none w-56 h-56 md:w-72 md:h-72"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6"
         >
-          <div className="relative w-full h-full rounded-full bg-[radial-gradient(circle_at_30%_30%,#FFFFFF,#D4DDD6,#A0A0A0)] shadow-[-14px_18px_38px_rgba(10,18,14,0.35)] overflow-hidden">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
-              className="absolute inset-0 opacity-30 bg-[conic-gradient(from_0deg,transparent_0deg,transparent_180deg,rgba(255,255,255,0.3)_270deg,transparent_360deg)]"
-            />
-          </div>
-          <motion.span
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: ENTER + 1.6, ...SPRING }}
-            className="absolute -top-2 -right-2 rounded-full bg-white px-3.5 py-1.5 text-[11px] font-semibold text-[#1A1C1A] shadow-md ring-1 ring-[#1A1C1A]/10 rotate-3"
+          <motion.div
+            className="absolute inset-0 bg-[#0A120E]/40 backdrop-blur-sm"
+            onClick={status === 'sending' ? undefined : onClose}
+          />
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            initial={{ opacity: 0, y: 30, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.96 }}
+            transition={{ type: 'spring', stiffness: 220, damping: 24 }}
+            className="relative z-10 w-full max-w-md rounded-[28px] bg-white shadow-2xl ring-1 ring-[#1A1C1A]/8 max-h-[92vh] overflow-y-auto"
           >
-            grab me ✦
-          </motion.span>
+            <button
+              type="button"
+              onClick={onClose}
+              className={`absolute top-4 right-4 w-8 h-8 rounded-full bg-[#EDEFED] text-[#3A4A3E] flex items-center justify-center font-mono ${T.body} font-bold hover:bg-[#059669]/10 hover:text-[#059669] transition-colors`}
+            >
+              ✕
+            </button>
+
+            {status === 'success' ? (
+              <div className="p-8 text-center">
+                <div className={`inline-flex w-12 h-12 items-center justify-center rounded-full bg-[#059669]/10 text-[#059669] ${T.heading} font-bold mb-4`}>
+                  ✓
+                </div>
+                <h3 className="font-serif italic text-2xl text-[#1A1C1A] mb-2">Got it.</h3>
+                <p className={`${T.body} text-[#3A4A3E] leading-relaxed mb-6 max-w-xs mx-auto`}>
+                  Your request has reached Eduardo. He’ll get back to you within 24 hours.
+                </p>
+                <button type="button" onClick={onClose} className={`font-mono ${T.small} font-semibold text-[#059669] hover:underline`}>
+                  Close
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={submit} className="p-6 md:p-8">
+                <div className={`font-mono ${T.micro} uppercase tracking-[0.22em] text-[#059669] mb-2`}>
+                  EterniCapsule Enquiry
+                </div>
+                <h3 className="font-serif text-2xl font-light italic leading-tight mb-2">
+                  {isOffer ? 'Tell us your structure.' : 'Talk with Eduardo.'}
+                </h3>
+                <p className={`${T.body} text-[#3A4A3E] leading-relaxed mb-5`}>
+                  {isOffer
+                    ? 'Sketch the shape of the deal you’re thinking of — upfront, share, hosted or independent. Eduardo will reply directly.'
+                    : 'Leave your details below. Eduardo handles negotiations directly and personally.'}
+                </p>
+
+                <div className="space-y-4">
+                  <Field label="Name" value={name} onChange={setName} required autoFocus />
+                  <Field label="Email" type="email" value={email} onChange={setEmail} required />
+                  <Field
+                    label={isOffer ? 'Your offer' : 'Short note'}
+                    placeholder={isOffer ? 'e.g. lower upfront, larger Pyadra share — or take it independent at $X' : 'optional'}
+                    value={message}
+                    onChange={setMessage}
+                    textarea
+                    emphasised={isOffer}
+                    required={isOffer}
+                  />
+                </div>
+
+                <div className={`mt-4 font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070]`}>
+                  Interest: <span className="text-[#1A1C1A] font-bold">{model}</span>
+                </div>
+
+                {status === 'error' && (
+                  <p className={`${T.small} text-red-700 mt-3`}>
+                    {errorMsg || 'Something went wrong.'} Email <a href={`mailto:${CONTACT_EMAIL}`} className="underline font-semibold">{CONTACT_EMAIL}</a> instead.
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={
+                    status === 'sending' ||
+                    !name.trim() ||
+                    !email.trim() ||
+                    (isOffer && !message.trim())
+                  }
+                  className={`mt-6 w-full rounded-full bg-[#059669] text-white py-3.5 font-mono ${T.small} font-semibold shadow-md shadow-[#059669]/15 disabled:opacity-50 uppercase tracking-wider`}
+                >
+                  {status === 'sending' ? 'Sending…' : 'Send Request'}
+                </button>
+              </form>
+            )}
+          </motion.div>
         </motion.div>
-      </motion.div>
-      <p className="mt-6 text-center text-xs text-[#6B8070] font-medium">
-        The vault — sealed words, opened on the day you choose
-      </p>
-    </div>
+      )}
+    </AnimatePresence>
   );
 }
 
-/* ---------- the page ---------- */
+/* ---------- main layout ---------- */
 
 export default function EterniCapsuleShowcase() {
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [stats, setStats] = useState<Stats>(ZERO_STATS);
+  const [dialog, setDialog] = useState<{ open: boolean; model: string }>({
+    open: false,
+    model: 'Operator — hosted',
+  });
+
+  const openDialog = (model: string) => setDialog({ open: true, model });
+  const closeDialog = () => setDialog(d => ({ ...d, open: false }));
+
+  // Live capsule metrics. Resolves to honest zeroes on any failure — never invented activity.
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/stats/ethernicapsule')
+      .then((r) => {
+        if (!r.ok) throw new Error(`stats/ethernicapsule responded ${r.status}`);
+        return r.json();
+      })
+      .then((data: Partial<Stats> | null) => {
+        if (cancelled || !data) return;
+        setStats({
+          sealed: typeof data.sealed === 'number' ? data.sealed : 0,
+          delivered: typeof data.delivered === 'number' ? data.delivered : 0,
+          awaiting: typeof data.awaiting === 'number' ? data.awaiting : 0,
+          totalValueAUD: typeof data.totalValueAUD === 'number' ? data.totalValueAUD : 0,
+        });
+      })
+      .catch((err) => {
+        console.warn('[ethernicapsule] stats fetch failed, showing zeroes', err);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const metricCells = [
+    { value: String(stats.sealed), label: 'Capsules Sealed', sub: 'be the first' },
+    { value: String(stats.delivered), label: 'Delivered', sub: 'on schedule' },
+    { value: String(stats.awaiting), label: 'Awaiting Delivery', sub: 'in safe storage' },
+    { value: `$${stats.totalValueAUD.toLocaleString('en-AU')}`, label: 'Total Value', sub: 'AUD generated' },
+  ];
+
   return (
-    <div className="bg-[#EDEFED] text-[#1A1C1A] font-sans overflow-x-clip antialiased selection:bg-[#059669] selection:text-white min-h-screen">
+    <div className={`bg-[#EDEFED] text-[#1A1C1A] font-serif antialiased selection:bg-[#059669] selection:text-white min-h-screen lg:h-screen lg:overflow-hidden flex flex-col justify-between py-4 lg:py-6 px-4 lg:px-8 relative`}>
 
-      {/* floating pill nav */}
-      <motion.nav
-        initial={{ opacity: 0, y: -16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: ENTER, ...SPRING }}
-        className="fixed top-4 inset-x-0 z-50 flex justify-center px-4"
-      >
-        <div className="flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-md shadow-lg shadow-[#1A1C1A]/5 ring-1 ring-[#1A1C1A]/5 pl-5 pr-1.5 py-1.5">
-          <Link href="/" aria-label="Pyadra · Home" className="flex items-center gap-2 mr-2 group">
-            <PyadraLogo size={22} />
-            <span className="text-sm font-bold tracking-tight transition-colors group-hover:text-[#059669]">
-              Pyadra
-            </span>
-          </Link>
-          <Link href="/exhibitions/galaxy" className="hidden sm:block rounded-full px-3.5 py-2 text-[13px] font-medium text-[#3A4A3E] hover:bg-[#EDEFED] transition-colors">
-            ← Galaxy
-          </Link>
-          <span className="hidden md:block rounded-full px-3.5 py-2 text-[13px] font-medium text-[#6B8070]">
-            Project № 01
-          </span>
-          <motion.a
-            href={`mailto:${CONTACT_EMAIL}?subject=EterniCapsule%20%E2%80%94%20Contact`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 17 }}
-            className="rounded-full bg-[#1A1C1A] text-white px-5 py-2 text-[13px] font-semibold"
-          >
-            Contact
-          </motion.a>
-        </div>
-      </motion.nav>
+      <RequestInfoDialog open={dialog.open} model={dialog.model} onClose={closeDialog} />
 
-      {/* ============ HERO ============ */}
-      <section className="relative min-h-[100svh] flex items-center overflow-hidden">
-        <div aria-hidden className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-40 -left-40 w-[640px] h-[640px] rounded-full opacity-60" style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.10), transparent 65%)' }} />
-          <div className="absolute -bottom-56 -right-32 w-[720px] h-[720px] rounded-full opacity-60" style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.10), transparent 65%)' }} />
-        </div>
+      {/* Background ambient light */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute -top-40 -left-40 w-[640px] h-[640px] rounded-full opacity-30" style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.12), transparent 70%)' }} />
+        <div className="absolute -bottom-56 -right-32 w-[720px] h-[720px] rounded-full opacity-35" style={{ background: 'radial-gradient(circle, rgba(212,175,110,0.12), transparent 70%)' }} />
+      </div>
 
-        <div className="relative max-w-6xl mx-auto px-6 w-full grid md:grid-cols-[7fr_5fr] gap-14 md:gap-10 items-center pt-28 pb-20">
-          <div>
-            <motion.span
-              initial={{ opacity: 0, y: 16, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: ENTER + 0.1, ...SPRING }}
-              className="inline-flex items-center gap-2 rounded-full bg-[#059669]/10 text-[#047857] px-4 py-2 text-[12px] font-semibold mb-8"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#059669] animate-pulse" />
-              Live · Global · Digital vault
-            </motion.span>
+      {/* shared nav */}
+      <SiteNav
+        variant="inline"
+        crumbs={[
+          { label: 'Galaxy', href: '/exhibitions/galaxy' },
+          { label: 'EterniCapsule' },
+        ]}
+        status={{ label: 'For sale', live: true }}
+      />
 
-            <h1 className="text-4xl md:text-7xl font-bold tracking-[-0.035em] leading-[1.08] md:leading-[1.02] mb-7">
-              {['A vault for words', 'you can’t', 'say today.'].map((line, i) => (
-                <span key={line} className="block overflow-hidden">
-                  <motion.span
-                    className="block"
-                    initial={{ y: '110%' }}
-                    animate={{ y: 0 }}
-                    transition={{ delay: ENTER + 0.2 + i * 0.09, type: 'spring', stiffness: 110, damping: 20 }}
-                  >
-                    {i === 2 ? <span className="text-[#059669]">{line}</span> : line}
-                  </motion.span>
+      {/* Main dashboard content */}
+      <main className="relative z-10 w-full max-w-7xl mx-auto flex-grow grid grid-cols-1 lg:grid-cols-[1.05fr_1.3fr_1.05fr] gap-4 lg:gap-6 my-4 overflow-y-auto lg:overflow-hidden h-full">
+
+        {/* LEFT COLUMN: Identity & What You Get */}
+        <div className="flex flex-col gap-4 lg:gap-5 h-full lg:overflow-hidden">
+
+          {/* Identity panel */}
+          <div className="rounded-3xl bg-white/70 backdrop-blur-md p-6 ring-1 ring-black/5 flex flex-col justify-between shadow-sm">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <span className={`rounded-full bg-black/5 text-[#3A4A3E] px-2.5 py-1 ${T.micro} font-mono tracking-wider uppercase`}>
+                  Global · Digital Vault
                 </span>
-              ))}
-            </h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: ENTER + 0.55, ...SPRING }}
-              className="text-lg md:text-xl text-[#3A4A3E] leading-relaxed max-w-md mb-10"
-            >
-              Write them, seal them in digital metal, and choose the exact day
-              they can be opened. Not even Pyadra can read them.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: ENTER + 0.7, ...SPRING }}
-              className="flex items-center gap-3 flex-wrap"
-            >
-              <PillButton href={EXPERIENCE_URL} primary>
-                Seal a capsule — $9 →
-              </PillButton>
-              <PillButton href="#own">Own the project</PillButton>
-            </motion.div>
+                <span className={`rounded-full bg-[#059669]/10 text-[#047857] px-2.5 py-1 ${T.micro} font-mono font-semibold uppercase tracking-wider`}>
+                  Live
+                </span>
+              </div>
+              <h1 className={`${T.display} font-bold tracking-tight mb-2 leading-none`}>
+                EterniCapsule
+              </h1>
+              <p className={`font-serif italic ${T.heading} text-[#059669] mb-4`}>
+                A cryptographic time capsule. Zero knowledge. Permanent.
+              </p>
+              <p className={`${T.body} text-[#3A4A3E] leading-relaxed`}>
+                Write confessions, promises, or truths that cannot be said today. Seal them in client-encrypted vaults, to open only on the exact date you choose.
+              </p>
+            </div>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 40, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: ENTER + 0.5, type: 'spring', stiffness: 90, damping: 16 }}
-            className="mx-auto"
-          >
-            <PhysicalSphere />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ============ PROOF STRIP ============ */}
-      <section className="max-w-6xl mx-auto px-6 pb-24 md:pb-32 -mt-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {STATS.map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              {...pop}
-              transition={{ ...SPRING, delay: i * 0.07 }}
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="rounded-3xl bg-white p-6 md:p-8 shadow-sm ring-1 ring-[#1A1C1A]/5"
-            >
-              <div className="text-3xl md:text-4xl font-bold tracking-tight mb-1">{stat.value}</div>
-              <div className="text-[13px] font-medium text-[#6B8070]">{stat.label}</div>
-            </motion.div>
-          ))}
-        </div>
-        <motion.p {...pop} className="text-[13px] font-medium text-[#6B8070] text-center mt-6">
-          Don&rsquo;t take our word for it —{' '}
-          <Link href={EXPERIENCE_URL} className="font-semibold text-[#059669] hover:underline underline-offset-4">
-            open the vault and see it breathe →
-          </Link>
-        </motion.p>
-      </section>
-
-      {/* ============ WHAT YOU TAKE OVER ============ */}
-      <section id="own" className="max-w-6xl mx-auto px-6 py-24 md:py-32">
-        <motion.h2 {...pop} className="text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-4 max-w-2xl">
-          Built like a ritual.
-          <span className="text-[#059669]"> Engineered like a vault.</span>
-        </motion.h2>
-        <motion.p {...pop} className="text-lg text-[#3A4A3E] max-w-md mb-14">
-          Four things transfer with the project — and all four already work.
-        </motion.p>
-
-        <div className="grid md:grid-cols-2 gap-4 md:gap-5">
-          {TAKEOVER.map((item, i) => (
-            <motion.div
-              key={item.num}
-              {...pop}
-              transition={{ ...SPRING, delay: i * 0.06 }}
-              whileHover={{ y: -5 }}
-              className="group rounded-[28px] bg-white p-8 md:p-10 shadow-sm ring-1 ring-[#1A1C1A]/5 hover:shadow-xl hover:shadow-[#059669]/5 transition-shadow duration-300"
-            >
-              <span className="inline-flex w-10 h-10 items-center justify-center rounded-2xl bg-[#059669]/10 text-[#047857] text-[13px] font-bold mb-6 group-hover:bg-[#059669] group-hover:text-white transition-colors duration-300">
-                {item.num}
+          {/* What You Get */}
+          <div className="rounded-3xl bg-white/70 backdrop-blur-md p-6 ring-1 ring-black/5 flex-grow flex flex-col shadow-sm lg:overflow-hidden">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-[#6B8070]`}>
+                What You Get
+              </h2>
+              <span className={`font-mono ${T.micro} text-[#059669] bg-[#059669]/10 px-2 py-0.5 rounded-full font-bold`}>
+                6 things
               </span>
-              <h3 className="text-xl md:text-2xl font-bold tracking-tight mb-2.5">{item.title}</h3>
-              <p className="text-[15px] text-[#3A4A3E] leading-relaxed">{item.body}</p>
-            </motion.div>
-          ))}
+            </div>
+
+            <div className="flex-grow overflow-y-auto pr-1 space-y-3 custom-scrollbar">
+              {WHAT_YOU_GET.map((asset) => (
+                <div
+                  key={asset.title}
+                  className="p-3 rounded-2xl bg-white/50 border border-white/40 hover:bg-white hover:shadow-sm transition-all duration-200"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={`flex w-4.5 h-4.5 shrink-0 items-center justify-center rounded-full bg-[#059669]/10 text-[#059669] ${T.micro} font-mono font-bold`}>
+                      ✓
+                    </span>
+                    <h3 className={`${T.body} font-bold text-[#1A1C1A]`}>{asset.title}</h3>
+                  </div>
+                  <p className={`${T.small} text-[#6B8070] pl-6 leading-relaxed`}>
+                    {asset.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      </section>
 
-      {/* ============ THE STORY ============ */}
-      <section className="max-w-6xl mx-auto px-6 py-24 md:py-32">
-        <div className="rounded-[36px] bg-white shadow-sm ring-1 ring-[#1A1C1A]/5 p-8 md:p-16 overflow-hidden relative">
-          <div aria-hidden className="absolute -top-32 -right-32 w-[420px] h-[420px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.07), transparent 65%)' }} />
-          <motion.h2 {...pop} className="text-3xl md:text-5xl font-bold tracking-[-0.03em] mb-3 relative">
-            Why does it exist?
-          </motion.h2>
-          <motion.p {...pop} className="text-lg text-[#3A4A3E] max-w-md mb-12 relative">
-            Some words are too early, too fragile, or too dangerous for today.
-          </motion.p>
+        {/* MIDDLE COLUMN: Capsule 3D Monolith & Live Stats */}
+        <div className="flex flex-col gap-4 lg:gap-5 h-full">
 
-          <div className="grid md:grid-cols-4 gap-8 relative">
-            {STORY.map((step, i) => (
-              <motion.div key={step.year} {...pop} transition={{ ...SPRING, delay: i * 0.08 }}>
-                <span className={`inline-block rounded-full px-3.5 py-1.5 text-[12px] font-bold mb-4 ${
-                  i === STORY.length - 1 ? 'bg-[#059669] text-white' : 'bg-[#EDEFED] text-[#3A4A3E]'
-                }`}>
-                  {step.year}
-                </span>
-                <p className="text-[15px] text-[#3A4A3E] leading-relaxed">{step.text}</p>
+          {/* Monolith Container — clickable, IS the way to try the product */}
+          <div className="rounded-[32px] bg-[#1A1410] border border-white/5 shadow-2xl p-6 relative flex flex-col items-center justify-center flex-grow min-h-[380px] lg:min-h-0 overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,110,0.06),transparent_60%)] pointer-events-none" />
+
+            <Link
+              href={EXPERIENCE_URL}
+              aria-label="Enter the vault — try the live product"
+              className="relative z-10 group flex flex-col items-center justify-center py-4 scale-95 lg:scale-100"
+            >
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }} transition={SPRING}>
+                <Capsule3D isSealed={false} glowIntensity={0.45} />
               </motion.div>
+              <span
+                className={`mt-4 font-mono ${T.micro} uppercase tracking-[0.22em] text-[#C4B5A8] opacity-70 group-hover:opacity-100 group-hover:text-[#D4AF6E] transition-opacity`}
+              >
+                $9 AUD per capsule · client-side sealed
+              </span>
+            </Link>
+          </div>
+
+          {/* Metrics Widget — all live, honest zeroes until the first capsule */}
+          <div className="grid grid-cols-2 gap-3 lg:gap-4 shrink-0">
+            {metricCells.map((stat) => (
+              <div
+                key={stat.label}
+                className="rounded-2xl bg-white/70 backdrop-blur-md p-4 ring-1 ring-black/5 hover:bg-white transition-all shadow-sm"
+              >
+                <div className={`font-mono ${T.micro} uppercase tracking-wider text-[#6B8070] mb-1`}>
+                  {stat.label}
+                </div>
+                <div className={`${T.heading} font-bold tracking-tight text-[#1A1C1A] leading-none mb-0.5`}>
+                  {stat.value}
+                </div>
+                <div className={`font-mono ${T.micro} text-[#3A4A3E] font-medium opacity-85`}>
+                  {stat.sub}
+                </div>
+              </div>
             ))}
           </div>
         </div>
-      </section>
 
-      {/* ============ INCLUDED / THE DEAL ============ */}
-      <section className="max-w-6xl mx-auto px-6 py-24 md:py-32">
-        <motion.h2 {...pop} className="text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-14 max-w-2xl">
-          Everything on the table.
-          <span className="text-[#059669]"> Nothing under it.</span>
-        </motion.h2>
+        {/* RIGHT COLUMN: Participation & Risks */}
+        <div className="flex flex-col gap-4 lg:gap-5 h-full lg:overflow-hidden">
 
-        <div className="grid md:grid-cols-[3fr_2fr] gap-4 md:gap-5">
-          <motion.div {...pop} className="rounded-[28px] bg-white p-8 md:p-10 shadow-sm ring-1 ring-[#1A1C1A]/5">
-            <h3 className="text-lg font-bold tracking-tight mb-6">Comes with it</h3>
-            <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
-              {INCLUDED.map((item, i) => (
-                <motion.li
-                  key={item}
-                  initial={{ opacity: 0, x: -12 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ ...SPRING, delay: i * 0.05 }}
-                  className="flex items-start gap-3 text-[15px] text-[#1A1C1A]"
+          {/* Participation Panel — acquisition only (3 deals) */}
+          <div className="rounded-3xl bg-white/70 backdrop-blur-md p-6 ring-1 ring-black/5 shadow-sm">
+            <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-[#6B8070] mb-4`}>
+              Participation Models
+            </h2>
+
+            {/* Build-effort anchor (not a sale-price headline) */}
+            <div className="flex justify-between items-end border-b border-black/5 pb-3 mb-4">
+              <div>
+                <span className={`font-mono ${T.micro} text-[#6B8070] uppercase tracking-wider`}>What this took to build</span>
+                <div className={`${T.heading} font-bold text-[#1A1C1A] leading-none mt-1`}>$12,000 AUD</div>
+                <div className={`font-mono ${T.micro} text-[#6B8070] mt-1`}>~150 hours of senior development + design</div>
+              </div>
+              <div className="text-right">
+                <span className={`font-mono ${T.micro} text-[#6B8070] uppercase tracking-wider`}>Availability</span>
+                <div className={`${T.body} font-semibold text-[#059669] leading-none mt-1`}>100% Available</div>
+              </div>
+            </div>
+
+            {/* Deal cards — Kangaroo style, button → opens request-info form */}
+            <div className="space-y-2">
+              {DEALS.map((deal) => (
+                <button
+                  key={deal.name}
+                  type="button"
+                  onClick={() => openDialog(deal.name)}
+                  className={`w-full flex items-center justify-between p-3 rounded-xl transition-all group text-left ${
+                    deal.featured
+                      ? 'bg-[#059669]/5 border-2 border-[#059669] hover:bg-[#059669]/10'
+                      : 'bg-white/50 border border-white/40 hover:bg-white'
+                  }`}
                 >
-                  <span className="mt-1 flex w-5 h-5 shrink-0 items-center justify-center rounded-full bg-[#059669]/10 text-[#059669] text-[11px] font-bold">✓</span>
-                  {item}
-                </motion.li>
+                  <div className="pr-2">
+                    <div className={`font-bold text-[#1A1C1A] group-hover:text-[#059669] transition-colors flex items-center gap-1.5 ${T.body}`}>
+                      {deal.name}
+                      {deal.featured && (
+                        <span className={`font-mono ${T.micro} bg-[#059669] text-white px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider`}>
+                          Pick
+                        </span>
+                      )}
+                    </div>
+                    <div className={`${T.small} text-[#3A4A3E] mt-0.5`}>{deal.sub}</div>
+                  </div>
+                  <span className={`font-mono font-bold text-[#059669] bg-[#059669]/10 px-2 py-0.5 rounded shrink-0 ${T.small}`}>
+                    {deal.price}
+                  </span>
+                </button>
               ))}
-            </ul>
-          </motion.div>
+            </div>
 
-          <motion.div {...pop} transition={{ ...SPRING, delay: 0.1 }} className="rounded-[28px] bg-[#1A1C1A] text-white p-8 md:p-10 shadow-sm">
-            <h3 className="text-lg font-bold tracking-tight mb-6">The deal, plainly</h3>
-            <ul className="space-y-5">
-              {THE_DEAL.map((entry) => (
-                <li key={entry.item} className="text-[15px] leading-relaxed">
-                  <span className="font-semibold">{entry.item}</span>
-                  <span className="text-white/55"> — {entry.note}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="text-[13px] text-white/45 mt-8 leading-relaxed">
-              Final terms are agreed in conversation and reviewed legally before anything closes.
+            <p className={`${T.small} text-[#6B8070] italic leading-relaxed mt-3`}>
+              Both paid options stay hosted in Pyadra. Operator pays the infrastructure (Vercel, Resend, Supabase, Stripe fees).
             </p>
-          </motion.div>
-        </div>
-      </section>
+          </div>
 
-      {/* ============ FOUNDER NOTE ============ */}
-      <section className="max-w-3xl mx-auto px-6 py-24 md:py-32">
-        <motion.div {...pop} className="rounded-[36px] bg-white shadow-sm ring-1 ring-[#1A1C1A]/5 p-8 md:p-14 text-center">
-          <p className="font-serif italic text-2xl md:text-[1.85rem] font-normal leading-snug text-[#1A1C1A] mb-8">
-            &ldquo;Everything online can be edited, deleted, taken back. I wanted to build
-            the opposite — a place where sealed means sealed.
-            <span className="text-[#059669]"> Once a capsule closes, not even I can open it.</span>&rdquo;
-          </p>
-          <p className="text-[15px] font-bold tracking-tight">Eduardo Díaz</p>
-          <p className="text-[13px] text-[#6B8070] font-medium mb-8">Founder · EterniCapsule, 2026</p>
-          <PillButton href={`mailto:${CONTACT_EMAIL}?subject=EterniCapsule%20%E2%80%94%20To%20Eduardo`}>
-            Write to Eduardo
-          </PillButton>
-        </motion.div>
-      </section>
+          {/* The Honest Risks Panel */}
+          <div className="rounded-3xl bg-white/70 backdrop-blur-md p-6 ring-1 ring-black/5 flex-grow flex flex-col justify-between shadow-sm lg:overflow-hidden">
+            <div className="lg:overflow-hidden flex flex-col flex-grow">
+              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-red-700/80 mb-3 shrink-0 flex items-center gap-1.5`}>
+                <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
+                The Honest Risks
+              </h2>
 
-      {/* ============ WAYS IN ============ */}
-      <section className="max-w-6xl mx-auto px-6 py-24 md:py-32">
-        <motion.h2 {...pop} className="text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-4 text-center">
-          Three ways in.
-        </motion.h2>
-        <motion.p {...pop} className="text-lg text-[#3A4A3E] text-center max-w-md mx-auto mb-14">
-          Use it for $9, or own a piece of it. Acquisitions happen in conversation — never through a checkout.
-        </motion.p>
+              <div className="flex-grow overflow-y-auto space-y-3 custom-scrollbar pr-1">
+                {RISKS.map((risk) => (
+                  <div
+                    key={risk.title}
+                    className="p-3 rounded-2xl bg-red-50/20 border border-red-100/10"
+                  >
+                    <div className={`${T.small} font-bold text-red-950 mb-0.5`}>
+                      ⚠️ {risk.title}
+                    </div>
+                    <p className={`${T.small} text-[#3A4A3E] leading-relaxed pl-4`}>
+                      {risk.desc}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-        <div className="grid md:grid-cols-3 gap-4 md:gap-5 items-stretch">
-          {DEALS.map((deal, i) => (
-            <motion.div
-              key={deal.name}
-              {...pop}
-              transition={{ ...SPRING, delay: i * 0.08 }}
-              whileHover={{ y: -6 }}
-              className={`relative rounded-[28px] p-8 md:p-10 flex flex-col ${
-                deal.featured
-                  ? 'bg-[#1A1C1A] text-white shadow-xl shadow-[#1A1C1A]/15'
-                  : 'bg-white shadow-sm ring-1 ring-[#1A1C1A]/5'
-              }`}
+            {/* CTA to FAQ Drawer */}
+            <button
+              onClick={() => setShowDrawer(true)}
+              className={`w-full text-center mt-3 bg-white/90 hover:bg-white py-2.5 rounded-2xl font-mono ${T.small} font-bold text-[#6B8070] hover:text-[#059669] transition-colors border border-black/5 shrink-0 uppercase tracking-wider`}
             >
-              {deal.chip && (
-                <span className="absolute -top-3 left-8 rounded-full bg-[#059669] text-white px-3.5 py-1.5 text-[11px] font-bold shadow-md">
-                  {deal.chip}
-                </span>
-              )}
-              <h3 className="text-lg font-bold tracking-tight mb-6">{deal.name}</h3>
-              <div className="text-4xl md:text-5xl font-bold tracking-tight mb-1">{deal.price}</div>
-              <div className={`text-[13px] font-medium mb-6 ${deal.featured ? 'text-white/50' : 'text-[#6B8070]'}`}>{deal.sub}</div>
-              <p className={`text-[15px] leading-relaxed mb-8 flex-1 ${deal.featured ? 'text-white/70' : 'text-[#3A4A3E]'}`}>{deal.desc}</p>
-              <motion.a
-                href={deal.href}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 17 }}
-                className={`block text-center rounded-full px-6 py-3.5 text-sm font-semibold ${
-                  deal.featured
-                    ? 'bg-[#059669] text-white shadow-lg shadow-[#059669]/30'
-                    : 'bg-[#EDEFED] text-[#1A1C1A] hover:bg-[#059669]/10'
-                }`}
-              >
-                {deal.cta}
-              </motion.a>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ============ THE HONEST PART ============ */}
-      <section className="max-w-6xl mx-auto px-6 py-24 md:py-32">
-        <motion.h2 {...pop} className="text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-4 max-w-2xl">
-          The honest part.
-        </motion.h2>
-        <motion.p {...pop} className="text-lg text-[#3A4A3E] max-w-md mb-14">
-          Showing the risks is what makes the rest of this page believable.
-        </motion.p>
-
-        <div className="grid sm:grid-cols-2 gap-4 md:gap-5">
-          {RISKS.map((risk, i) => (
-            <motion.div
-              key={risk.t}
-              {...pop}
-              transition={{ ...SPRING, delay: i * 0.06 }}
-              className="rounded-[28px] bg-white p-7 md:p-8 shadow-sm ring-1 ring-[#1A1C1A]/5"
-            >
-              <h3 className="text-lg font-bold tracking-tight mb-2">{risk.t}</h3>
-              <p className="text-[15px] text-[#3A4A3E] leading-relaxed">{risk.b}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ============ FAQ ============ */}
-      <section className="max-w-3xl mx-auto px-6 py-24 md:py-32">
-        <motion.h2 {...pop} className="text-4xl md:text-5xl font-bold tracking-[-0.03em] text-center mb-12">
-          Quick answers.
-        </motion.h2>
-        <div className="space-y-3">
-          {FAQ.map((entry, i) => (
-            <motion.details
-              key={entry.q}
-              {...pop}
-              transition={{ ...SPRING, delay: i * 0.05 }}
-              className="group rounded-[22px] bg-white shadow-sm ring-1 ring-[#1A1C1A]/5 px-7 py-5 open:pb-7"
-            >
-              <summary className="flex items-center justify-between gap-6 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-                <h3 className="text-base md:text-lg font-bold tracking-tight">{entry.q}</h3>
-                <span className="flex w-7 h-7 shrink-0 items-center justify-center rounded-full bg-[#EDEFED] text-[#3A4A3E] text-sm font-bold transition-transform duration-300 group-open:rotate-45">+</span>
-              </summary>
-              <p className="text-[15px] text-[#3A4A3E] leading-relaxed mt-4 max-w-xl">{entry.a}</p>
-            </motion.details>
-          ))}
-        </div>
-      </section>
-
-      {/* ============ FINAL ============ */}
-      <section className="relative max-w-6xl mx-auto px-6 py-28 md:py-40 text-center overflow-hidden">
-        <div aria-hidden className="absolute inset-x-0 bottom-0 h-[420px] pointer-events-none" style={{ background: 'radial-gradient(60% 100% at 50% 100%, rgba(5,150,105,0.10), transparent 70%)' }} />
-        <motion.h2 {...pop} className="relative text-5xl md:text-7xl font-bold tracking-[-0.035em] leading-[1.02] mb-7">
-          Some words can&rsquo;t wait.
-          <span className="text-[#059669]"> Some must.</span>
-        </motion.h2>
-        <motion.p {...pop} className="relative text-lg md:text-xl text-[#3A4A3E] max-w-md mx-auto mb-10">
-          Seal one today, or take the whole vault with you.
-        </motion.p>
-        <motion.div {...pop} className="relative flex items-center justify-center gap-3 flex-wrap">
-          <PillButton href={EXPERIENCE_URL} primary>Seal a capsule — $9 →</PillButton>
-          <PillButton href={`mailto:${CONTACT_EMAIL}?subject=EterniCapsule%20%E2%80%94%20Private%20Info`}>Request private info</PillButton>
-        </motion.div>
-      </section>
-
-      {/* footer */}
-      <footer className="max-w-6xl mx-auto px-6 pb-10">
-        <div className="flex items-center justify-between flex-wrap gap-4 border-t border-[#1A1C1A]/8 pt-7">
-          <span className="text-[12px] font-medium text-[#6B8070]">© 2026 Pyadra · We document. We verify. You decide.</span>
-          <div className="flex gap-5">
-            <Link href="/exhibitions/galaxy" className="text-[12px] font-medium text-[#6B8070] hover:text-[#059669] transition-colors">Galaxy</Link>
-            <Link href="/" className="text-[12px] font-medium text-[#6B8070] hover:text-[#059669] transition-colors">Home</Link>
+              Read FAQ & Origin Story →
+            </button>
           </div>
         </div>
-      </footer>
+      </main>
+
+      {/* Slide-over Drawer for FAQ & Founder's Note */}
+      <AnimatePresence>
+        {showDrawer && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowDrawer(false)}
+              className="fixed inset-0 bg-[#0D0907] z-40 cursor-pointer"
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'tween', duration: 0.35, ease: 'easeOut' }}
+              className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-[#1A1410] text-[#F5E6D3] z-50 p-8 shadow-2xl flex flex-col justify-between overflow-y-auto"
+            >
+              <div>
+                <div className="flex justify-between items-center border-b border-white/5 pb-4 mb-6">
+                  <h3 className="font-serif italic text-2xl text-[#E8D9D0]">The Origin Story</h3>
+                  <button
+                    onClick={() => setShowDrawer(false)}
+                    className={`flex w-7 h-7 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white font-mono ${T.small} transition-colors`}
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {/* Founder Quote */}
+                <div className="p-5 rounded-2xl bg-[#2C2218] border border-white/5 mb-8">
+                  <p className={`font-serif italic ${T.heading} leading-relaxed text-[#E8D9D0] mb-4`}>
+                    &ldquo;Everything online can be edited, deleted, taken back. I wanted to build
+                    the opposite — a place where sealed means sealed.
+                    Once a capsule closes, not even I can open it.&rdquo;
+                  </p>
+                  <div className="text-right">
+                    <span className={`block ${T.small} font-bold text-[#F5E6D3]`}>Eduardo Díaz</span>
+                    <span className={`block ${T.micro} text-[#C4B5A8] font-mono`}>Founder · EterniCapsule, 2026</span>
+                  </div>
+                </div>
+
+                {/* FAQ section */}
+                <h4 className={`font-mono ${T.micro} font-bold uppercase tracking-wider text-[#C4B5A8] mb-4`}>
+                  Quick Answers (FAQ)
+                </h4>
+                <div className="space-y-5">
+                  {FAQ.map(item => (
+                    <div key={item.q} className="border-b border-white/5 pb-4 last:border-b-0">
+                      <h5 className={`${T.body} font-bold text-[#E8D9D0] mb-1.5`}>{item.q}</h5>
+                      <p className={`${T.small} text-[#C4B5A8] leading-relaxed`}>{item.a}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-white/5 pt-6 mt-8 space-y-2">
+                <button
+                  type="button"
+                  onClick={() => { setShowDrawer(false); openDialog('Make an offer'); }}
+                  className={`w-full text-center rounded-full bg-white/5 hover:bg-white/10 text-white py-3 font-mono ${T.small} font-bold transition-all border border-white/10 uppercase tracking-wider`}
+                >
+                  Contact the founder
+                </button>
+                <span className={`block text-center font-mono ${T.micro} text-[#C4B5A8]`}>
+                  {CONTACT_EMAIL}
+                </span>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      <SiteFooter />
+
+      {/* Custom scrollbar styles helper */}
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(0, 0, 0, 0.05);
+          border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(0, 0, 0, 0.1);
+        }
+      `}</style>
     </div>
   );
 }

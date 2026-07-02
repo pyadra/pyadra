@@ -44,7 +44,9 @@ export default function CustomCursor() {
         width: isHovering ? 48 : 16,
         height: isHovering ? 48 : 16,
         borderColor: isHovering ? color + "80" : color + "60",
-        backgroundColor: isHovering ? color + "10" : "transparent"
+        // Framer can't interpolate the "transparent" keyword — use the same
+        // hex color with 00 alpha so both keyframes are the same format.
+        backgroundColor: isHovering ? color + "10" : color + "00"
       }}
       transition={{ type: "spring", stiffness: 350, damping: 25, mass: 0.5 }}
     />

@@ -7,7 +7,8 @@ import {
   useTransform,
 } from 'framer-motion';
 import Link from 'next/link';
-import PyadraLogo from '@/app/components/brand/PyadraLogo';
+import SiteNav from '@/app/components/nav/SiteNav';
+import SiteFooter from '@/app/components/nav/SiteFooter';
 
 /* ------------------------------------------------------------------ */
 /*  PYADRA — THE STORE · the museum shop                               */
@@ -21,7 +22,7 @@ import PyadraLogo from '@/app/components/brand/PyadraLogo';
 /*  No generic e-commerce language: "take it home", never "buy now".  */
 /* ------------------------------------------------------------------ */
 
-const CONTACT_EMAIL = 'eadiaz96@gmail.com';
+const CONTACT_EMAIL = 'pyadra@pyadra.io';
 
 const ENTER = 0.75;
 const SPRING = { type: 'spring' as const, stiffness: 130, damping: 18, mass: 0.9 };
@@ -200,28 +201,8 @@ export default function PyadraStore() {
   return (
     <div className="bg-[#EDEFED] text-[#1A1C1A] font-sans overflow-x-clip antialiased selection:bg-[#059669] selection:text-white min-h-screen">
 
-      {/* floating pill nav */}
-      <motion.nav
-        initial={{ opacity: 0, y: -16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: ENTER, ...SPRING }}
-        className="fixed top-4 inset-x-0 z-50 flex justify-center px-4"
-      >
-        <div className="flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-md shadow-lg shadow-[#1A1C1A]/5 ring-1 ring-[#1A1C1A]/5 pl-5 pr-1.5 py-1.5">
-          <Link href="/" aria-label="Pyadra · Home" className="flex items-center gap-2 mr-2 group">
-            <PyadraLogo size={22} />
-            <span className="text-sm font-bold tracking-tight transition-colors group-hover:text-[#059669]">
-              Pyadra
-            </span>
-          </Link>
-          <Link href="/exhibitions/galaxy" className="hidden sm:block rounded-full px-3.5 py-2 text-[13px] font-medium text-[#3A4A3E] hover:bg-[#EDEFED] transition-colors">
-            ← Galaxy
-          </Link>
-          <span className="rounded-full bg-[#EDEFED] px-3.5 py-2 text-[13px] font-semibold text-[#1A1C1A]">
-            The Store
-          </span>
-        </div>
-      </motion.nav>
+      {/* shared nav */}
+      <SiteNav crumbs={[{ label: 'The Store' }]} />
 
       {/* ============ ENTRY ============ */}
       <section className="relative pt-36 md:pt-44 pb-16 md:pb-20 overflow-hidden">
@@ -302,16 +283,7 @@ export default function PyadraStore() {
         </motion.div>
       </section>
 
-      {/* footer */}
-      <footer className="max-w-5xl mx-auto px-6 pb-10">
-        <div className="flex items-center justify-between flex-wrap gap-4 border-t border-[#1A1C1A]/8 pt-7">
-          <span className="text-[12px] font-medium text-[#6B8070]">© 2026 Pyadra · We document. We verify. You decide.</span>
-          <div className="flex gap-5">
-            <Link href="/exhibitions/galaxy" className="text-[12px] font-medium text-[#6B8070] hover:text-[#059669] transition-colors">Galaxy</Link>
-            <Link href="/" className="text-[12px] font-medium text-[#6B8070] hover:text-[#059669] transition-colors">Home</Link>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

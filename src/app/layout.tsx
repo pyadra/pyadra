@@ -1,38 +1,52 @@
 import './globals.css'
 import CustomCursor from "./components/interactive/CustomCursor";
-// import Preloader from "./components/Preloader"; // removed unused component
 import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/react";
-import { Inter, Space_Grotesk, Cormorant_Garamond, JetBrains_Mono } from 'next/font/google'
+import { Fraunces, DM_Sans, IBM_Plex_Mono } from 'next/font/google'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' })
-const space = Space_Grotesk({ subsets: ['latin'], variable: '--font-space', display: 'swap' })
-// Brand typography per Company_Master: Cormorant Garamond (serif, emotional,
-// titles) + JetBrains Mono (data, labels, metrics)
-const cormorant = Cormorant_Garamond({
+/* Pyadra design system — three fonts, three roles, ONE place.
+   Loaded once via next/font (self-hosted, preloaded, no FOUT).
+   Mapped to Tailwind's font-serif/sans/mono via CSS vars in globals.css. */
+
+// DISPLAY — Fraunces (variable serif). Wordmark & ceremonial headlines (D1).
+const fraunces = Fraunces({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
+  weight: ['400', '500', '600'],
   style: ['normal', 'italic'],
-  variable: '--font-cormorant',
-  display: 'swap',
-})
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['300', '400', '500'],
-  variable: '--font-jetbrains',
+  variable: '--font-fraunces',
   display: 'swap',
 })
 
+// TEXT / UI — DM Sans. Page headlines, body, nav, buttons, descriptions (D2–D5).
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-dm-sans',
+  display: 'swap',
+})
+
+// LABELS / PRICES — IBM Plex Mono. Micro-labels, tags, prices, states (D6).
+const ibmMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-ibm-mono',
+  display: 'swap',
+})
+
+/* og:image / twitter:image come from src/app/opengraph-image.tsx
+   (Next file convention) — no hand-written image URLs here. */
 export const metadata = {
   metadataBase: new URL('https://pyadra.io'),
-  title: 'Pyadra — Where ideas find the people who make them real',
+  title: {
+    default: 'Pyadra — Where ideas find the people who make them real',
+    template: '%s — Pyadra',
+  },
   description: 'A museum of living projects, documented and verified. Contribute money, work or skills — and own part of something that matters. Lo que dejas importa.',
   openGraph: {
     title: 'Pyadra — Where ideas find the people who make them real',
     description: 'A museum of living projects, documented and verified. Contribute money, work or skills — and own part of something that matters.',
     url: 'https://pyadra.io',
     siteName: 'Pyadra',
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Pyadra — a museum of living projects' }],
     locale: 'en_US',
     type: 'website',
   },
@@ -40,14 +54,16 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Pyadra — Where ideas find the people who make them real',
     description: 'A museum of living projects, documented and verified. Contribute money, work or skills — and own part of something that matters.',
-    images: ['/og-image.jpg'],
   },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${inter.variable} ${space.variable} ${cormorant.variable} ${jetbrainsMono.variable}`}>
-      <body>
+    <html
+      lang="en"
+      className={`${fraunces.variable} ${dmSans.variable} ${ibmMono.variable}`}
+    >
+      <body className="font-sans">
          <Providers>
             <CustomCursor />
             {children}

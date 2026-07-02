@@ -1,10 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import GreenDust from '../components/ui/GreenDust';
-import PyadraLogo from '@/app/components/brand/PyadraLogo';
+import SiteNav from '@/app/components/nav/SiteNav';
+import SiteFooter from '@/app/components/nav/SiteFooter';
 
 /* ------------------------------------------------------------------ */
 /*  PYADRA — EXHIBITIONS                                               */
@@ -21,11 +21,21 @@ const ENTER = 0.75; // template.tsx dissolve ~1.5s — choreography starts after
 
 const SPRING = { type: 'spring' as const, stiffness: 130, damping: 18, mass: 0.9 };
 
-const ROOMS = [
+type Room = {
+  name: string;
+  theme: string;
+  detail: string;
+  href: string | null;
+  open: boolean;
+  orb: string;
+  glow: string;
+};
+
+const ROOMS: Room[] = [
   {
     name: 'Galaxy',
-    theme: 'Memory, time, permanence',
-    detail: '4 live projects',
+    theme: 'Built projects, ready for their next chapter',
+    detail: '4 active projects',
     href: '/exhibitions/galaxy',
     open: true,
     orb: 'bg-[radial-gradient(circle_at_30%_30%,#10B981,#059669,#047857)]',
@@ -71,31 +81,8 @@ export default function ExhibitionsPage() {
 
       <GreenDust count={60} />
 
-      {/* floating pill nav */}
-      <motion.nav
-        initial={{ opacity: 0, y: -16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: ENTER, ...SPRING }}
-        className="fixed top-4 inset-x-0 z-30 flex justify-center px-4"
-      >
-        <div className="flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-md shadow-lg shadow-[#1A1C1A]/5 ring-1 ring-[#1A1C1A]/5 pl-5 pr-1.5 py-1.5">
-          <Link href="/" aria-label="Pyadra · Home" className="flex items-center gap-2 mr-2 group">
-            <PyadraLogo size={22} />
-            <span className="text-sm font-bold tracking-tight transition-colors group-hover:text-[#059669]">
-              Pyadra
-            </span>
-          </Link>
-          <Link
-            href="/"
-            className="hidden sm:block rounded-full px-3.5 py-2 text-[13px] font-medium text-[#3A4A3E] hover:bg-[#EDEFED] transition-colors"
-          >
-            ← Home
-          </Link>
-          <span className="rounded-full bg-[#EDEFED] px-3.5 py-2 text-[13px] font-semibold text-[#1A1C1A]">
-            Exhibitions
-          </span>
-        </div>
-      </motion.nav>
+      {/* shared nav */}
+      <SiteNav crumbs={[{ label: 'Exhibitions' }]} />
 
       <main className="relative z-10 flex-1 flex flex-col justify-center max-w-6xl mx-auto w-full px-6 pt-28 pb-16">
 
@@ -108,11 +95,11 @@ export default function ExhibitionsPage() {
             className="inline-flex items-center gap-2 rounded-full bg-[#059669]/10 text-[#047857] px-4 py-2 text-[12px] font-semibold mb-7"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-[#059669] animate-pulse" />
-            You found something
+            The exhibitions
           </motion.span>
 
           <h1 className="text-5xl md:text-7xl font-bold tracking-[-0.035em] leading-[1.02] mb-6">
-            {['Three rooms.', 'One open.'].map((line, i) => (
+            {['Welcome to the museum.', 'Step inside.'].map((line, i) => (
               <span key={line} className="block overflow-hidden">
                 <motion.span
                   className="block"
@@ -130,10 +117,21 @@ export default function ExhibitionsPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: ENTER + 0.5, ...SPRING }}
-            className="text-lg text-[#3A4A3E] font-medium max-w-md mx-auto"
+            className="text-lg text-[#3A4A3E] font-medium max-w-xl mx-auto leading-relaxed"
           >
-            Real projects, documented and verified — waiting for
-            the people who make them grow.
+            Three exhibitions are set up. In each one, projects you can
+            understand, support, take further — or simply enjoy.
+          </motion.p>
+
+          {/* the verification promise — Pyadra's core */}
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: ENTER + 0.65, ...SPRING }}
+            className="inline-flex items-center gap-2 mt-6 rounded-full bg-white/60 backdrop-blur-sm ring-1 ring-[#1A1C1A]/8 px-4 py-2 text-[13px] font-medium text-[#3A4A3E]"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
+            Every project here is real, documented, and verified before it&rsquo;s shown.
           </motion.p>
         </div>
 
@@ -150,7 +148,7 @@ export default function ExhibitionsPage() {
               className={`group relative rounded-[32px] p-8 md:p-10 flex flex-col items-center text-center ${
                 room.open
                   ? 'bg-white shadow-sm ring-1 ring-[#1A1C1A]/5 hover:shadow-xl hover:shadow-[#059669]/10 transition-shadow duration-300 cursor-pointer'
-                  : 'bg-white/45 ring-1 ring-[#1A1C1A]/5'
+                  : 'bg-white/25 ring-1 ring-[#1A1C1A]/5 opacity-55 saturate-75'
               }`}
             >
               {/* status chip */}
@@ -195,7 +193,7 @@ export default function ExhibitionsPage() {
               <p className={`text-[15px] font-medium mb-2 ${room.open ? 'text-[#3A4A3E]' : 'text-[#6B8070]/60'}`}>
                 {room.theme}
               </p>
-              <p className={`text-[13px] font-semibold mb-8 ${room.open ? 'text-[#059669]' : 'text-[#6B8070]/50'}`}>
+              <p className={`text-[13px] font-semibold mb-6 ${room.open ? 'text-[#059669]' : 'text-[#6B8070]/50'}`}>
                 {room.detail}
               </p>
 
@@ -217,26 +215,9 @@ export default function ExhibitionsPage() {
           ))}
         </div>
 
-        {/* placard */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: ENTER + 1.1, duration: 0.8 }}
-          className="text-[13px] font-medium text-[#6B8070] text-center mt-10"
-        >
-          Every project here is real, documented, and verified before it&rsquo;s shown.
-        </motion.p>
       </main>
 
-      {/* footer */}
-      <footer className="relative z-10 max-w-6xl mx-auto w-full px-6 pb-6">
-        <div className="flex justify-between items-center">
-          <span className="text-[12px] font-medium text-[#6B8070]">
-            © 2026 Pyadra · We document. We verify. You decide.
-          </span>
-          <span className="hidden md:block text-[12px] font-medium text-[#6B8070]">pyadra.io</span>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

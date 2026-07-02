@@ -4,16 +4,19 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand typography (Company_Master): Cormorant Garamond + JetBrains Mono.
-     The var() fonts are loaded via next/font in layout.tsx. */
-  --font-serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
-  --font-sans: var(--font-inter), "Inter", system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  /* ------------------------------------------------------------------
+     PYADRA DESIGN SYSTEM v1 — Three fonts, three roles.
+     Fonts loaded once via next/font in layout.tsx.
+     Never introduce a fourth family — extend weight or size instead.
+     ------------------------------------------------------------------ */
+  --font-serif: var(--font-fraunces), "Fraunces", Georgia, serif;      /* DISPLAY */
+  --font-sans:  var(--font-dm-sans),  "DM Sans", system-ui, sans-serif; /* TEXT / UI */
+  --font-mono:  var(--font-ibm-mono), "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace; /* LABELS */
 }
 
 :root {
   --background: #EDEFED; /* Beige claro Pyadra */
-  --foreground: #F3F3F3; /* Blanco roto */
+  --foreground: #1A1C1A; /* Texto principal — readable on the light bg by default */
 
   /* Pyadra Global Design Tokens (Emerald + Natural Beige) */
   /* Backgrounds */
@@ -147,4 +150,71 @@ html, body {
   100% {
     transform: translateX(150%) skewX(-30deg);
   }
+}
+
+/* ==================================================================
+   PYADRA · Type scale — SIX sizes, never a seventh.
+   Use .t-d1 … .t-d6 in JSX (or Tailwind font-x / text-y combos as raw
+   tokens if you need finer control).
+
+   D1  DISPLAY     Fraunces 600 · 52px   · wordmark + hero
+   D2  HEADLINE    DM Sans 700  · 38px   · page titles
+   D3  SUBHEAD     DM Sans 600  · 24px   · section headings
+   D4  BODY        DM Sans 400  · 16px   · paragraphs (default)
+   D5  SMALL       DM Sans 400  · 13px   · captions, small copy
+   D6  MICRO       IBM Plex Mono· 11px   · UPPERCASE labels, chips
+   ================================================================== */
+
+.t-d1 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 52px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.t-d2 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.t-d3 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.t-d4 {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.t-d5 {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.t-d6 {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 1.4;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Responsive step-downs on small screens — never below WCAG 12px min. */
+@media (max-width: 640px) {
+  .t-d1 { font-size: 40px; }
+  .t-d2 { font-size: 30px; }
+  .t-d3 { font-size: 20px; }
 }
