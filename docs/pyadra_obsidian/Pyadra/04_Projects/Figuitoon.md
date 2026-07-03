@@ -314,10 +314,10 @@ Section label: `The Honest Risks`
 
 ### Founder block (drawer — updated July 2026)
 
-- **Founder:** Charina (surname: deck history says "Loja", owner message July 2026 says "Oan" — CONFIRM before deploy)
+- **Founder:** Charina Oan (surname confirmed by owner, July 2026 — earlier deck versions said "Loja")
 - **Photo:** `public/images/figuitoon/charina_founder.jpg` · chip `Charina · Philippines`
 - **Quote (serif italic):** `"I'm from the Philippines and helping people is just who I am. Figuitoon caught me because I love new things — innovating, creating something people haven't seen before."`
-- **Signature:** `Charina` · `Founder · Figuitoon, 2026`
+- **Signature:** `Charina Oan` · `Founder · Figuitoon, 2026`
 
 ### Secondary CTAs & labels
 

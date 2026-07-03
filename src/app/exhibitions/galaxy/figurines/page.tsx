@@ -589,7 +589,7 @@ export default function FiguitoonDashboard() {
                   <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-4 ring-1 ring-white/10">
                     <Image
                       src="/images/figuitoon/charina_founder.jpg"
-                      alt="Charina, founder of Figuitoon"
+                      alt="Charina Oan, founder of Figuitoon"
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 100vw, 448px"
@@ -604,7 +604,7 @@ export default function FiguitoonDashboard() {
                     haven&rsquo;t seen before.&rdquo;
                   </p>
                   <div className="text-right">
-                    <span className={`block ${T.small} font-bold text-[#E9D5FF]`}>Charina</span>
+                    <span className={`block ${T.small} font-bold text-[#E9D5FF]`}>Charina Oan</span>
                     <span className={`block ${T.micro} text-[#E9D5FF]/60 font-mono uppercase tracking-[0.18em]`}>Founder · Figuitoon, 2026</span>
                   </div>
                 </div>
