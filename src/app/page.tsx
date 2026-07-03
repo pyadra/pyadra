@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import SiteNav from '@/app/components/nav/SiteNav';
 import SiteFooter from '@/app/components/nav/SiteFooter';
+import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
 
 /* ------------------------------------------------------------------ */
 /*  PYADRA — HOME · The Threshold                                      */
@@ -393,6 +394,9 @@ export default function PyadraHome() {
 
         {/* museum spotlight follows the cursor */}
         <motion.div aria-hidden className="absolute inset-0 pointer-events-none" style={{ background: spotlight }} />
+
+        {/* galaxy atmosphere — grid, grain, green dust */}
+        <MuseumAtmosphere />
 
         {/* ---- the composition ---- */}
         <div className="relative z-10 w-full max-w-3xl mx-auto px-6 flex flex-col items-center text-center gap-8 md:gap-10 py-24">

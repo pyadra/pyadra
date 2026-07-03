@@ -12,7 +12,8 @@ export async function GET() {
 
     const { data, error } = await supabase
       .from('orbit_support_credentials')
-      .select('amount_aud');
+      .select('amount_aud')
+      .eq('payment_status', 'paid');
 
     if (error) {
       console.error("Supabase fetch error:", error);

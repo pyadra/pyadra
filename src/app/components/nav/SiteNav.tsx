@@ -12,10 +12,12 @@
 /*  backdrop-blur, emerald accent. Same style, everywhere.             */
 /* ------------------------------------------------------------------ */
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import PyadraLogo from '@/app/components/brand/PyadraLogo';
+import BringIdeaDialog from '@/app/components/nav/BringIdeaDialog';
 
 export type NavCrumb = { label: string; href?: string };
 export type NavAction = { label: string; href: string };
@@ -49,6 +51,7 @@ export default function SiteNav({
   const pathname = usePathname();
   const onStore = !!pathname && pathname.startsWith('/store');
   const rightActions: NavAction[] = actions ?? (onStore ? [] : [{ label: 'Store', href: '/store' }]);
+  const [showIdea, setShowIdea] = useState(false);
 
   const pill = (
     <div className="flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-md shadow-lg shadow-[#1A1C1A]/5 ring-1 ring-[#1A1C1A]/5 pl-2 pr-1.5 py-1.5">
@@ -141,6 +144,15 @@ export default function SiteNav({
             {a.label}
           </Link>
         ))}
+        <button
+          type="button"
+          onClick={() => setShowIdea(true)}
+          className="inline-flex items-center gap-1.5 rounded-full bg-[#059669]/10 text-[#047857] px-3 py-1.5 t-d5 font-medium hover:bg-[#059669] hover:text-white transition-colors whitespace-nowrap"
+        >
+          <span aria-hidden className="text-[10px]">✦</span>
+          <span className="hidden sm:inline">Bring your idea</span>
+          <span className="sm:hidden">Idea</span>
+        </button>
         {status && (
           <span
             role="status"
@@ -165,25 +177,33 @@ export default function SiteNav({
         transition: REVEAL_SPRING,
       };
 
+  const ideaDialog = <BringIdeaDialog open={showIdea} onClose={() => setShowIdea(false)} />;
+
   if (variant === 'floating') {
     return (
-      <motion.nav
-        {...wrapperMotion}
-        className="fixed top-4 inset-x-0 z-50 flex justify-center px-4"
-      >
-        {pill}
-      </motion.nav>
+      <>
+        <motion.nav
+          {...wrapperMotion}
+          className="fixed top-4 inset-x-0 z-50 flex justify-center px-4"
+        >
+          {pill}
+        </motion.nav>
+        {ideaDialog}
+      </>
     );
   }
 
   // inline — flows with the page layout (project dashboards).
   // Centered inside the max-w-7xl container, matching the floating variant.
   return (
-    <motion.header
-      {...wrapperMotion}
-      className="relative z-20 w-full max-w-7xl mx-auto mb-4 lg:mb-0 flex justify-center"
-    >
-      {pill}
-    </motion.header>
+    <>
+      <motion.header
+        {...wrapperMotion}
+        className="relative z-20 w-full max-w-7xl mx-auto mb-4 lg:mb-0 flex justify-center"
+      >
+        {pill}
+      </motion.header>
+      {ideaDialog}
+    </>
   );
 }

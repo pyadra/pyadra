@@ -224,7 +224,7 @@ export default function GalaxyExhibition() {
         </svg>
       </div>
 
-      <GreenDust count={140} />
+      <GreenDust count={280} />
 
       {/* shared nav */}
       <SiteNav

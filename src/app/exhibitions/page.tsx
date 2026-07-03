@@ -2,7 +2,7 @@
 
 import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import GreenDust from '../components/ui/GreenDust';
+import MuseumAtmosphere from '../components/ui/MuseumAtmosphere';
 import SiteNav from '@/app/components/nav/SiteNav';
 import SiteFooter from '@/app/components/nav/SiteFooter';
 
@@ -127,7 +127,7 @@ export default function ExhibitionsPage() {
         />
       </div>
 
-      <GreenDust count={60} />
+      <MuseumAtmosphere />
 
       {/* shared nav */}
       <SiteNav crumbs={[{ label: 'Exhibitions' }]} />

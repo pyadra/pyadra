@@ -24,9 +24,10 @@
 **Public metrics (all real — no sales yet):**
 
 - Figurines sold: 0 (be the first)
-- Models in catalogue: 10 (South American football editions)
+- Styles in catalogue: +100 (teams, sports & professions) — owner-confirmed July 2026
 - Price: $49 AUD (launch / validation price)
 - Production: in-house, Bambu 3D printer
+- Project value: $15,000 AUD · launch sale price: $11,500 AUD (owner-decided July 2026)
 
 ---
 
@@ -256,24 +257,28 @@ Everything else (more categories, accessories, premium versions) is secondary. T
 - **Status badge:** `Prototype · Pre-launch`
 - **H1:** `Figuitoon`
 - **Tagline (serif italic):** `Your face. Your team. Your figurine.`
-- **Intro:** `Upload a photo, pick a model, and get a custom 3D-printed mini version of you — stylized, collectible, one of a kind.`
+- **Intro:** `Figuitoon turns one photo into a mini you — a 3D-printed figurine in your favourite team's colors, your sport or your profession. Made for gifts, keepsakes and collectors.`
 
-### What you get (product — customer view)
+### What you get (PROJECT — buyer view, updated July 2026)
 
-Section label: `What You Get`
+> [!important] This page sells the PROJECT, not figurines (owner decision, July 2026) "What You Get" lists what the buyer of the project takes, not what a figurine customer receives. Figurine-customer copy lives on the Shopify store, not here.
+
+Section label: `What You Get` · counter `6 assets`
 
 |Title|Description|
 |---|---|
-|`A mini you`|`A stylized figurine with your face — cartoon style, big head, your own collectible. Not an exact replica; a fun version of you.`|
-|`Your team's colors`|`Themed bodies in your team's colors and patterns. The shirt is the star.`|
-|`Printed in-house`|`3D-printed on our own printer, assembled by hand, ~15–16 cm with base.`|
-|`Made for you`|`Each figurine is made to order from your photo. No two are the same.`|
+|`The store`|`A polished Shopify e-commerce where customers order their figuitoons — products, inventory and deliveries managed in one place.`|
+|`100+ styles`|`More than one hundred designs across teams, sports and professions, ready to sell.`|
+|`The brand`|`Name, logo, visual identity and the Instagram presence — all included.`|
+|`The 3D printer`|`The Bambu printer that produces every figurine comes with the project.`|
+|`The software pipeline`|`Turns a customer's photo into a stylized render, then into a print-ready 3D file.`|
+|`The know-how`|`Print settings, measurements, filaments, 3D structure — and what we've learned about making it profitable.`|
 
 ### Store metrics (real — no sales yet)
 
 |Label|Value|Sub|
 |---|---|---|
-|`Models`|`10`|`football editions`|
+|`Styles`|`+100`|`teams & professions`|
 |`Price`|`$49 AUD`|`launch price`|
 |`Made to order`|`100%`|`from your photo`|
 
@@ -281,13 +286,11 @@ Section label: `What You Get`
 
 ### How it works (the flow)
 
-Section label: `How It Works`
+> [!note] Removed from the Pyadra page (owner decision, July 2026) The 5-step flow panel was redundant with the intro and the pipeline asset. Kept here only as internal reference: `1. Pick a model` · `2. Upload a clear front photo` · `3. We stylize your face` · `4. We print & assemble` · `5. Delivered to you`
 
-`1. Pick a model` · `2. Upload a clear front photo` · `3. We stylize your face` · `4. We print & assemble` · `5. Delivered to you`
+### Expectation-setting
 
-### Expectation-setting (must be visible)
-
-> `The render is a reference. Your figurine is hand-made and 3D-printed, so colors, texture and small details will vary. That's what makes it yours.`
+> [!note] Removed from the Pyadra page (owner decision, July 2026) The render-is-a-reference disclaimer is figurine-customer copy — it belongs on the Shopify store, not on the project-sale page. Old string kept for the store: `The render is a reference. Your figurine is hand-made and 3D-printed, so colors, texture and small details will vary. That's what makes it yours.`
 
 ### The honest risks (handover/acquisition zone)
 
@@ -300,19 +303,28 @@ Section label: `The Honest Risks`
 |`Quality still maturing`|`It prints and assembles, but finish, waste and calibration still need work to reach premium quality.`|
 |`Built to hand over`|`It's designed to run without the original builder — but the operations manual is still being written.`|
 
-### Acquisition / handover panel (DRAFT — depends on Charina decision)
+### Acquisition panel (updated July 2026 — direct sale, launch price)
 
-- **Value anchor:** label `What's been built` · figure `$11,500 AUD (draft)` · sub-line `brand, store, pipeline, printer, files, know-how`
+- **Value anchor:** label `Project value` · figure `$15,000 AUD` · sub-line `brand, store, pipeline, printer, files, know-how`
+- **Launch price line:** `Launch price — the full project for $11,500 AUD instead of $15,000.`
 - **Availability:** `By conversation`
+- **Deal cards:** `Take it all` (featured, `$11,500`, sub `Everything included — store, brand, printer, files, styles, know-how.`) · `Make an offer` (`Let's talk`, sub `Different structure? Let's talk.`)
 
-> [!important] Do NOT build the sale cards until the Charina path is decided The sale of Figuitoon is most likely a HANDOVER to Charina (future CEO/owner), not a sale to a stranger. The printer is hers. Until Eduardo decides handover-to-Charina vs sell-to-external, this panel stays as a single "Let's talk" conversation door — no fixed deal cards, no hard price headline.
+> [!note] Owner decision (July 2026) Eduardo values the project at $15,000 AUD and sells it at $11,500 AUD as a launch price. This IS a direct sale — the buyer takes everything, including the 3D printer.
+
+### Founder block (drawer — updated July 2026)
+
+- **Founder:** Charina (surname: deck history says "Loja", owner message July 2026 says "Oan" — CONFIRM before deploy)
+- **Photo:** `public/images/figuitoon/charina_founder.jpg` · chip `Charina · Philippines`
+- **Quote (serif italic):** `"I'm from the Philippines and helping people is just who I am. Figuitoon caught me because I love new things — innovating, creating something people haven't seen before."`
+- **Signature:** `Charina` · `Founder · Figuitoon, 2026`
 
 ### Secondary CTAs & labels
 
 - **Product CTA:** `Make mine →` (to the Shopify product / upload)
 - **Project CTA:** `Talk about Figuitoon` (handover/acquisition conversation)
 - **Contact email:** `pyadra@pyadra.io`
-- **Social:** `Instagram` · `TikTok`
+- **Social:** `Instagram` → `https://www.instagram.com/figuitoon` (button in drawer next to the store button) · `TikTok` (TBD)
 
 ### Strings that must never appear
 

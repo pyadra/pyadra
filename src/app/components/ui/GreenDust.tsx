@@ -10,7 +10,7 @@ export default function GreenDust({ count = 30 }: { count?: number }) {
   useEffect(() => {
     if (reduced) return;
     // Phones don't need (or handle) hundreds of animated nodes — cap them.
-    const effective = window.innerWidth < 768 ? Math.min(count, 60) : count;
+    const effective = window.innerWidth < 768 ? Math.min(count, 120) : count;
     const generated = Array.from({ length: effective }).map((_, i) => ({
       id: i,
       left: `${Math.random() * 100}%`,

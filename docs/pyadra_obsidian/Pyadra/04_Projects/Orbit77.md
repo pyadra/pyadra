@@ -405,8 +405,25 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 - **Type badge:** `Global · Podcast`
 - **Status badge:** `Season 2 funding`
 - **H1:** `Orbit 77`
-- **Tagline:** `Real conversations. No script. No filters. No bullshit.`
-- **Intro:** `A podcast recorded from Australia about life, creation, identity and what we leave behind. 10 episodes live. Raw transmissions — no script, no algorithm games.`
+- **Tagline:** `Real conversations. No filters. No script. No bullshit.`
+- **Intro:** `Orbit 77 is a podcast created in Sydney that does things differently, moving through three orbits: real talks about life, art and music. 10 episodes live — built for permanence, not virality.`
+
+> [!note] Intro rewritten July 2026 Now says plainly where it was made (Sydney) and its three pillars (life, art, music), per owner feedback.
+
+### What your support builds (left column, replaces "What You Fund")
+
+Section label: `What Your Support Builds` · counter `6 goals`
+
+> [!important] Orbit is not for sale — nothing transfers Buyers/visitors don't take anything home here. This section lists what the contributions make possible (the vision), not assets received.
+
+|Title|Description|
+|---|---|
+|`More listeners`|`Growing the audience on YouTube and Spotify, getting Season 1 in front of the people it was made for.`|
+|`Seasons 2, 3 and 4`|`Recording and releasing the next three seasons — life, art and music, one orbit at a time.`|
+|`The clothing brand`|`orbit77.shop is live today. Support helps refresh the designs and grow the merch that funds the show.`|
+|`A physical home`|`A space in Sydney to record the podcast, paint and sell the clothing — studio, gallery and store in one.`|
+|`Events & parties`|`Live Orbit 77 nights with sponsors and brands — the conversations, in a room full of people.`|
+|`A real community`|`The Orbit 77 community, each member with their own credential, permanently in the archive.`|
 
 ### Metrics (dynamic — real data)
 
@@ -422,20 +439,24 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 
 Section label: `Lock In Your Frequency`
 
-|Name|Amount (AUD)|What they get|
-|---|---|---|
-|`Signal Carrier`|`$10`|`Permanent credential, name in the archive`|
-|`Archive Node`|`$20`|`+ early Season 2 access`|
-|`Transmission Keeper`|`$50`|`+ founder updates, higher status`|
-|`Journey Patron`|`$100–500`|`Name in Season 2 credits, Bali behind-the-scenes, exclusive merch, episode mention`|
-|`Co-Producer / Sponsor`|`$1,000+`|`Brand/logo in the podcast, prominent thanks, product placement`|
-|`Bring serious support`|`Let's talk`|`A private conversation — not a checkout button`|
+**Panel intro line (above the layers):** `Pick a layer, pay by card, and your name is engraved in the archive with a permanent credential. No equity, no return — you're funding the journey.`
 
-> [!note] Each contribution returns recognition only — NO ownership, NO revenue share, NO creative vote. The "Bring serious support" door is a contact form, not Stripe.
+|Name|Amount (AUD)|What they get (sub-line, one line)|
+|---|---|---|
+|`Signal Carrier`|`$10`|`Your name in the archive + a permanent credential.`|
+|`Archive Node`|`$20`|`Everything above + early access to Season 2.`|
+|`Transmission Keeper`|`$50`|`Everything above + direct updates from Pablo.`|
+|`Journey Patron`|`$100–500`|`Everything above + name in S2 credits, behind-the-scenes, exclusive merch.`|
+|`Co-Producer / Sponsor`|`$1,000+`|`Your brand named in the podcast + product placement.`|
+|`Big investor`|`Let's talk`|`Bigger support? A private conversation with Pablo — not a checkout.`|
+
+> [!note] Each contribution returns recognition only — NO ownership, NO revenue share, NO creative vote. The "Big investor" door is a contact form, not Stripe. Sub-lines rewritten July 2026 to say plainly what each layer does (owner feedback: "ser más claros un poquitico").
 
 ### Funding goal
 
-- **Goal figure:** EDITABLE config. Candidates: `$1,000` (current) / `$2,000–3,000` (traction-first) / `$15,000` (full Bali vision). Decide with Pablo. The "where the money goes" FAQ must read from the same value so it never contradicts the progress bar.
+- **Goal figure:** `$10,000 AUD` — DECIDED by owner July 2026 (was draft $1,000). Raised so far: `$0` real — progress `0%`. The "where the money goes" FAQ reads from the same config value so it never contradicts the progress bar.
+
+> [!warning] Raised must show real $0 The live API (`/api/stats/orbit-fund`) sums `orbit_support_credentials`. Any test-mode Stripe rows in that table must be deleted from Supabase or the page shows fake money (it was showing $690 of test payments). The API filters `payment_status = 'paid'`.
 
 ### Confirmation / ritual strings (keep the approved voice)
 
@@ -451,7 +472,15 @@ Section label: `Lock In Your Frequency`
 |`Is this real?`|`10 episodes are public on YouTube and the credential system processes real payments through Stripe. Watch first, decide later.`|
 |`What do I get for contributing?`|`A permanent credential, founding-member status, early Season 2 access, and founder updates. You're funding the journey — recognition, not ownership.`|
 |`Where does the money go?`|`Straight into Season 2 production. The goal and live progress are shown on this page.`|
-|`Can I own part of Orbit 77?`|`No — Orbit stays with Pablo & Eduardo. Contributions fund the work; they don't buy equity or a say in the content. If you want to support at a bigger level, let's talk.`|
+|`Can I own part of Orbit 77?`|`No — Orbit stays with Pablo. Contributions fund the work; they don't buy equity or a say in the content. If you want to support at a bigger level, let's talk.`|
+
+### Founder block (drawer)
+
+> [!important] The founder shown is Pablo Ramírez only (July 2026) The old "Pablo & Eduardo" joint signature is replaced. Drawer shows Pablo's photo (like Kangaroo/EterniCapsule founder blocks), his quote, and his name. All page copy referring to the founders now says **Pablo** — enquiries still arrive at pyadra@pyadra.io.
+
+- **Photo:** `public/images/orbit/pablo_founder.jpg` (landscape 4:3 preferred) · alt `Pablo Ramírez, founder of Orbit 77` · caption chip `Pablo · Sydney`
+- **Quote:** `"I'm a graphic designer who likes to listen, help and build things with other people. Orbit 77 is where all of that lives — art, deep conversations, and orbiting at high frequencies."`
+- **Signature:** `Pablo Ramírez` · `Founder · Orbit 77, Sydney 2025`
 
 ### Crew / join
 

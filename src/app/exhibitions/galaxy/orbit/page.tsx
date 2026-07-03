@@ -6,23 +6,18 @@ import Link from 'next/link';
 import Image from 'next/image';
 import SiteNav from '@/app/components/nav/SiteNav';
 import SiteFooter from '@/app/components/nav/SiteFooter';
+import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
 
 /* ------------------------------------------------------------------ */
 /*  PYADRA — Project № 02 · Orbit 77                                   */
-/*  CONTRIBUTION page (not a sale). Pablo & Eduardo keep the project. */
+/*  CONTRIBUTION page (not a sale). Pablo keeps the project. */
 /*  Dashboard pattern matches Kangaroo Cleanup + EterniCapsule.       */
 /* ------------------------------------------------------------------ */
 
 /* =========== EDITABLE CONFIG — DRAFT v1 — REFINE WITH PABLO ========== */
 const CONFIG = {
-  /**
-   * Season 2 funding goal in AUD.
-   * Candidates being weighed with Pablo:
-   *   1_000  → original $1k budget for 10 episodes
-   *   2_500  → proof-of-traction first goal (recommended in .md)
-   *   15_000 → full Bali vision (needs sponsors, not investors)
-   */
-  FUNDING_GOAL_AUD: 1_000,
+  // Season 2 funding goal in AUD — $10,000, decided by owner July 2026.
+  FUNDING_GOAL_AUD: 10_000,
 
   /**
    * Episodes live. HARDCODED — data debt.
@@ -43,12 +38,12 @@ type Layer =
   | { kind: 'form';   amount: null;   name: string; tagline: string; sub: string; featured?: boolean };
 
 const CONTRIBUTION_LAYERS: Layer[] = [
-  { kind: 'stripe', amount: 10,   name: 'Signal Carrier',        tagline: '$10',          sub: 'Permanent credential, name in the archive.', featured: true },
-  { kind: 'stripe', amount: 20,   name: 'Archive Node',          tagline: '$20',          sub: 'Above + early Season 2 access.' },
-  { kind: 'stripe', amount: 50,   name: 'Transmission Keeper',   tagline: '$50',          sub: 'Above + founder updates, higher status.' },
-  { kind: 'stripe', amount: 100,  name: 'Journey Patron',        tagline: '$100–500',     sub: 'Name in S2 credits, Bali behind-the-scenes, exclusive merch.' },
-  { kind: 'stripe', amount: 1000, name: 'Co-Producer / Sponsor', tagline: '$1,000+',      sub: 'Brand/logo in the podcast, prominent thanks, product placement.' },
-  { kind: 'form',   amount: null, name: 'Big investor',          tagline: "Let's talk",   sub: 'Serious money? Private conversation, not a checkout.' },
+  { kind: 'stripe', amount: 10,   name: 'Signal Carrier',        tagline: '$10',          sub: 'Your name in the archive + a permanent credential.', featured: true },
+  { kind: 'stripe', amount: 20,   name: 'Archive Node',          tagline: '$20',          sub: 'Everything above + early access to Season 2.' },
+  { kind: 'stripe', amount: 50,   name: 'Transmission Keeper',   tagline: '$50',          sub: 'Everything above + direct updates from Pablo.' },
+  { kind: 'stripe', amount: 100,  name: 'Journey Patron',        tagline: '$100–500',     sub: 'Everything above + name in S2 credits, behind-the-scenes, exclusive merch.' },
+  { kind: 'stripe', amount: 1000, name: 'Co-Producer / Sponsor', tagline: '$1,000+',      sub: 'Your brand named in the podcast + product placement.' },
+  { kind: 'form',   amount: null, name: 'Big investor',          tagline: "Let's talk",   sub: 'Bigger support? A private conversation with Pablo — not a checkout.' },
 ];
 
 const PUBLIC_LINKS = [
@@ -57,23 +52,23 @@ const PUBLIC_LINKS = [
   // Spotify + Instagram are TBD in Orbit77.md — intentionally hidden until real.
 ];
 
-/* =================== Type scale — 6 deliberate steps ================== */
+/* ============ Type scale — Design System v1 roles, dashboard density ============ */
+// display=Fraunces title · heading=16 · body=14 (card body) · small=13 (D5) · micro=11 (D6)
 const T = {
   display: 'text-3xl lg:text-4xl',
   heading: 'text-base',
   body: 'text-sm',
-  small: 'text-xs',
-  micro: 'text-[10px]',
+  small: 'text-[13px]',
+  micro: 'text-[11px]',
 } as const;
 
-const ENTER = 0.75;
-const SPRING = { type: 'spring' as const, stiffness: 150, damping: 20 };
-
-const WHAT_YOU_FUND = [
-  { title: 'A real archive', desc: `${CONFIG.EPISODES_LIVE} episodes of Season 1, live on YouTube. Raw conversations about life, creation and identity — no script, no filters.` },
-  { title: 'A working credential system', desc: 'Supporters receive a permanent credential (O77-S1-XXXXXX) engraved in the archive. Stripe live, email delivery, all operational.' },
-  { title: 'A brand with a world', desc: 'The orbital concept, the transmission aesthetic, the ritual copy voice — plus orbit77.shop, the external merch store.' },
-  { title: 'The next season', desc: 'Your contribution funds Season 2 production. Founders keep creative control; contributors get recognition, not equity.' },
+const WHAT_SUPPORT_BUILDS = [
+  { title: 'More listeners', desc: 'Growing the audience on YouTube and Spotify, getting Season 1 in front of the people it was made for.' },
+  { title: 'Seasons 2, 3 and 4', desc: 'Recording and releasing the next three seasons — life, art and music, one orbit at a time.' },
+  { title: 'The clothing brand', desc: 'orbit77.shop is live today. Support helps refresh the designs and grow the merch that funds the show.' },
+  { title: 'A physical home', desc: 'A space in Sydney to record the podcast, paint and sell the clothing — studio, gallery and store in one.' },
+  { title: 'Events & parties', desc: 'Live Orbit 77 nights with sponsors and brands — the conversations, in a room full of people.' },
+  { title: 'A real community', desc: 'The Orbit 77 community, each member with their own credential, permanently in the archive.' },
 ];
 
 const RISKS = [
@@ -81,11 +76,11 @@ const RISKS = [
   { title: 'Monetization isn’t active yet',  desc: 'No AdSense, no Spotify revenue, no sponsors yet. Today the only revenue is credentials and merch.' },
   { title: 'Production is real work',        desc: 'A podcast doesn’t run itself. Episodes need recording, editing and publishing — actively, every season.' },
   { title: 'Shared infrastructure',          desc: 'Stripe webhook and database are shared with Pyadra today. Independence is documented and takes 10–12 hours.' },
-  { title: 'Draft numbers',                  desc: 'The tiers and the funding goal are v1, still being refined with Pablo. The shape of the deal is right; the exact amounts may shift.' },
+  { title: 'Draft tiers',                    desc: 'The goal is set — $10,000 AUD for Season 2. The tiers are v1, still being refined with Pablo; the exact perks may shift.' },
 ];
 
 const NOT_INCLUDED = [
-  { item: 'Equity',         note: 'no shares, no ownership — Pablo & Eduardo keep the project.' },
+  { item: 'Equity',         note: 'no shares, no ownership — Pablo keeps the project.' },
   { item: 'A return',       note: 'this is a contribution, not an investment.' },
   { item: 'Creative votes', note: 'no influence on episodes, guests or direction.' },
 ];
@@ -93,7 +88,7 @@ const NOT_INCLUDED = [
 const FAQ_BASE = [
   { q: 'Is this real?', a: `${CONFIG.EPISODES_LIVE} episodes are public on YouTube and the credential system processes real payments through Stripe. Watch first, decide later.` },
   { q: 'What do supporters get?', a: 'A permanent credential engraved in the archive (O77-S1-XXXXXX), founding member status, early Season 2 access, and direct founder updates.' },
-  { q: 'Is this an investment? Do I own a piece?', a: 'No. You’re funding the journey, not buying equity. Pablo & Eduardo keep the project and creative control. Supporters get recognition, perks and a permanent credential — never ownership, never a return, never a vote on the content.' },
+  { q: 'Is this an investment? Do I own a piece?', a: 'No. You’re funding the journey, not buying equity. Pablo keeps the project and creative control. Supporters get recognition, perks and a permanent credential — never ownership, never a return, never a vote on the content.' },
 ];
 
 /* ---------- the interactive monolith (Orbit sphere, draggable) ---------- */
@@ -143,14 +138,6 @@ function OrbitSphere() {
               className="absolute inset-0 opacity-30 bg-[conic-gradient(from_0deg,transparent_0deg,transparent_180deg,rgba(255,255,255,0.4)_270deg,transparent_360deg)]"
             />
           </div>
-          <motion.span
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: ENTER + 1.2, ...SPRING }}
-            className={`absolute -top-2 -right-2 rounded-full bg-white px-3 py-1 ${T.micro} font-mono font-semibold text-[#1A1C1A] shadow-md ring-1 ring-[#1A1C1A]/10 rotate-3`}
-          >
-            grab me ✦
-          </motion.span>
         </motion.div>
       </motion.div>
     </div>
@@ -318,7 +305,7 @@ function LockInDialog({
                 <div className={`inline-flex w-12 h-12 items-center justify-center rounded-full bg-[#059669]/10 text-[#059669] ${T.heading} font-bold mb-4`}>✓</div>
                 <h3 className="font-serif italic text-2xl text-[#1A1C1A] mb-2">Transmission recorded.</h3>
                 <p className={`${T.body} text-[#3A4A3E] leading-relaxed mb-6 max-w-xs mx-auto`}>
-                  Pablo &amp; Eduardo have received your note. They’ll reach out personally.
+                  Pablo has received your note. He’ll reach out personally.
                 </p>
                 <button type="button" onClick={onClose} className={`font-mono ${T.small} font-semibold text-[#059669] hover:underline`}>Close</button>
               </div>
@@ -371,7 +358,7 @@ function LockInDialog({
                 <button
                   type="submit"
                   disabled={!canSubmit}
-                  className={`mt-6 w-full rounded-full bg-[#059669] text-white py-3.5 font-mono ${T.small} font-semibold shadow-md shadow-[#059669]/15 disabled:opacity-50 uppercase tracking-wider`}
+                  className={`mt-6 w-full rounded-full bg-[#059669] text-white py-3.5 font-mono ${T.small} font-semibold shadow-md shadow-[#059669]/15 disabled:opacity-50 uppercase tracking-[0.18em]`}
                 >
                   {status === 'sending'
                     ? (isForm ? 'Sending…' : 'Opening checkout…')
@@ -379,7 +366,7 @@ function LockInDialog({
                 </button>
 
                 {!isForm && (
-                  <p className={`${T.micro} font-mono text-[#6B8070] mt-3 text-center uppercase tracking-wider`}>
+                  <p className={`${T.micro} font-mono text-[#6B8070] mt-3 text-center uppercase tracking-[0.18em]`}>
                     Secure payment via Stripe · credential is permanent
                   </p>
                 )}
@@ -430,7 +417,7 @@ export default function OrbitDashboard() {
   ];
 
   return (
-    <div className="bg-[#EDEFED] text-[#1A1C1A] font-serif antialiased selection:bg-[#059669] selection:text-white min-h-screen lg:h-screen lg:overflow-hidden flex flex-col justify-between py-4 lg:py-6 px-4 lg:px-8 relative">
+    <div className="bg-[#EDEFED] text-[#1A1C1A] antialiased selection:bg-[#059669] selection:text-white min-h-screen lg:h-screen lg:overflow-hidden flex flex-col justify-between py-4 lg:py-6 px-4 lg:px-8 relative">
 
       <LockInDialog open={dialog.open} layer={dialog.layer} onClose={closeDialog} />
 
@@ -439,6 +426,9 @@ export default function OrbitDashboard() {
         <div className="absolute -top-40 -left-40 w-[640px] h-[640px] rounded-full opacity-35" style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.12), transparent 70%)' }} />
         <div className="absolute -bottom-56 -right-32 w-[720px] h-[720px] rounded-full opacity-40" style={{ background: 'radial-gradient(circle, rgba(57,255,20,0.08), transparent 70%)' }} />
       </div>
+
+      {/* galaxy atmosphere — grid, grain, green dust */}
+      <MuseumAtmosphere />
 
       {/* shared nav */}
       <SiteNav
@@ -459,37 +449,37 @@ export default function OrbitDashboard() {
           {/* Identity panel */}
           <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm">
             <div className="flex items-center gap-2 mb-3">
-              <span className={`rounded-full bg-black/5 text-[#3A4A3E] px-2.5 py-1 ${T.micro} font-mono tracking-wider uppercase`}>
+              <span className={`rounded-full bg-black/5 text-[#3A4A3E] px-2.5 py-1 ${T.micro} font-mono tracking-[0.18em] uppercase`}>
                 Global · Podcast Archive
               </span>
-              <span className={`rounded-full bg-[#059669]/10 text-[#047857] px-2.5 py-1 ${T.micro} font-mono font-semibold uppercase tracking-wider`}>
+              <span className={`rounded-full bg-[#059669]/10 text-[#047857] px-2.5 py-1 ${T.micro} font-mono font-semibold uppercase tracking-[0.18em]`}>
                 Funding S2
               </span>
             </div>
-            <h1 className={`${T.display} font-bold tracking-tight mb-2 leading-none`}>
+            <h1 className={`${T.display} font-serif font-semibold tracking-[-0.01em] mb-2 leading-none`}>
               Orbit 77
             </h1>
             <p className={`font-serif italic ${T.heading} text-[#059669] mb-4 leading-snug`}>
               Real conversations. No filters. No script. No bullshit.
             </p>
             <p className={`${T.body} text-[#3A4A3E] leading-relaxed`}>
-              A podcast recorded from Australia exploring life, creation, identity — and what we leave behind. {CONFIG.EPISODES_LIVE} episodes live. Built for permanence, not virality.
+              Orbit 77 is a podcast created in Sydney that does things differently, moving through three orbits: real talks about life, art and music. {CONFIG.EPISODES_LIVE} episodes live — built for permanence, not virality.
             </p>
           </div>
 
-          {/* What you fund */}
+          {/* What your support builds */}
           <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 flex-grow flex flex-col shadow-sm lg:overflow-hidden">
             <div className="flex justify-between items-center mb-4">
-              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-[#6B8070]`}>
-                What You Fund
+              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-[0.18em] text-[#6B8070]`}>
+                What Your Support Builds
               </h2>
               <span className={`font-mono ${T.micro} text-[#059669] bg-[#059669]/10 px-2 py-0.5 rounded-full font-bold`}>
-                4 pieces
+                6 goals
               </span>
             </div>
 
             <div className="flex-grow overflow-y-auto pr-1 space-y-3 custom-scrollbar">
-              {WHAT_YOU_FUND.map((item) => (
+              {WHAT_SUPPORT_BUILDS.map((item) => (
                 <div
                   key={item.title}
                   className="p-3 rounded-2xl bg-white/50 border border-white/40 hover:bg-white hover:shadow-sm transition-all duration-200"
@@ -530,7 +520,7 @@ export default function OrbitDashboard() {
             {/* Live funding bar — the page's heartbeat */}
             <div className="relative z-20 w-full mt-4">
               <div className="flex items-baseline justify-between mb-1.5">
-                <span className={`font-mono ${T.micro} uppercase tracking-wider text-[#86efac]/70`}>Season 2 fund</span>
+                <span className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#86efac]/70`}>Season 2 fund</span>
                 <span className={`font-mono ${T.micro} font-bold text-[#86efac]`}>
                   {raised !== null ? `${raisedDisplay} / $${goal.toLocaleString('en-AU')} AUD` : 'loading…'}
                 </span>
@@ -543,7 +533,7 @@ export default function OrbitDashboard() {
                   className="h-full rounded-full bg-[#39FF14] shadow-[0_0_12px_rgba(57,255,20,0.5)]"
                 />
               </div>
-              <p className={`${T.micro} font-mono text-white/40 mt-2 text-center uppercase tracking-wider`}>
+              <p className={`${T.micro} font-mono text-white/40 mt-2 text-center uppercase tracking-[0.18em]`}>
                 every credential moves this bar
               </p>
             </div>
@@ -554,17 +544,17 @@ export default function OrbitDashboard() {
             {[
               { label: 'Episodes', value: String(CONFIG.EPISODES_LIVE), desc: 'live on YouTube' },
               { label: 'Raised', value: raisedDisplay, desc: 'Season 2 fund · live' },
-              { label: 'Goal', value: `$${(goal / 1000).toFixed(goal % 1000 === 0 ? 0 : 1)}k`, desc: 'AUD · draft v1' },
+              { label: 'Goal', value: `$${(goal / 1000).toFixed(goal % 1000 === 0 ? 0 : 1)}k`, desc: 'AUD · Season 2' },
               { label: 'Progress', value: `${Math.round(pct)}%`, desc: 'funded' },
             ].map((stat) => (
               <div
                 key={stat.label}
                 className="rounded-xl bg-white/70 backdrop-blur-sm p-3 ring-1 ring-black/5 hover:bg-white transition-all shadow-sm text-center"
               >
-                <div className={`font-mono ${T.micro} uppercase tracking-wider text-[#6B8070] mb-0.5`}>
+                <div className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070] mb-0.5`}>
                   {stat.label}
                 </div>
-                <div className={`${T.heading} font-bold tracking-tight text-[#1A1C1A] leading-none mb-0.5`}>
+                <div className={`${T.heading} font-serif font-semibold text-[#1A1C1A] leading-none mb-0.5`}>
                   {stat.value}
                 </div>
                 <div className={`font-mono ${T.micro} text-[#6B8070] truncate leading-none`}>
@@ -579,26 +569,26 @@ export default function OrbitDashboard() {
         <div className="rise-col rise-col-3 flex flex-col gap-4 lg:gap-5 h-full lg:overflow-hidden">
 
           {/* Contribution layers */}
-          <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm">
+          <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-4 lg:p-5 ring-1 ring-black/5 shadow-sm">
             <div className="flex justify-between items-center mb-1">
-              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-[#6B8070]`}>
+              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-[0.18em] text-[#6B8070]`}>
                 Contribution Layers
               </h2>
-              <span className={`font-mono ${T.micro} text-[#6B8070]/70 uppercase tracking-wider`}>
+              <span className={`font-mono ${T.micro} text-[#6B8070]/70 uppercase tracking-[0.18em]`}>
                 draft v1
               </span>
             </div>
-            <p className={`${T.micro} text-[#6B8070] mb-4 italic`}>
-              Funding the journey · no equity, no return, no vote on content.
+            <p className={`${T.micro} text-[#6B8070] mb-3 leading-snug`}>
+              Pick a layer, pay by card — your name is engraved in the archive with a permanent credential. No equity, no return.
             </p>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               {CONTRIBUTION_LAYERS.map((layer) => (
                 <button
                   key={layer.name}
                   type="button"
                   onClick={() => openDialog(layer)}
-                  className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all group text-left ${
+                  className={`w-full flex items-center justify-between py-1.5 px-2 rounded-xl transition-all group text-left ${
                     layer.featured
                       ? 'bg-[#059669]/5 border-2 border-[#059669] hover:bg-[#059669]/10'
                       : 'bg-white/50 border border-white/40 hover:bg-white'
@@ -608,12 +598,12 @@ export default function OrbitDashboard() {
                     <div className={`font-bold text-[#1A1C1A] group-hover:text-[#059669] transition-colors flex items-center gap-1.5 ${T.body}`}>
                       <span className="truncate">{layer.name}</span>
                       {layer.featured && (
-                        <span className={`font-mono ${T.micro} bg-[#059669] text-white px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider shrink-0`}>
+                        <span className={`font-mono ${T.micro} bg-[#059669] text-white px-1.5 py-0.5 rounded-full font-bold uppercase tracking-[0.18em] shrink-0`}>
                           Entry
                         </span>
                       )}
                     </div>
-                    <div className={`${T.small} text-[#6B8070] mt-0.5 line-clamp-1`}>{layer.sub}</div>
+                    <div className={`${T.micro} text-[#6B8070] mt-0.5 line-clamp-1 leading-snug`}>{layer.sub}</div>
                   </div>
                   <span className={`font-mono font-bold ${layer.kind === 'form' ? 'text-[#6B8070] bg-black/5' : 'text-[#059669] bg-[#059669]/10'} px-2 py-0.5 rounded shrink-0 ${T.small}`}>
                     {layer.tagline}
@@ -624,14 +614,14 @@ export default function OrbitDashboard() {
           </div>
 
           {/* The Honest Risks */}
-          <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 flex-grow flex flex-col justify-between shadow-sm lg:overflow-hidden">
+          <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-4 lg:p-5 ring-1 ring-black/5 flex-grow flex flex-col justify-between shadow-sm lg:overflow-hidden" style={{ minHeight: 'auto' }}>
             <div className="lg:overflow-hidden flex flex-col flex-grow">
-              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-red-700/80 mb-3 shrink-0 flex items-center gap-1.5`}>
+              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-[0.18em] text-red-700/80 mb-2.5 shrink-0 flex items-center gap-1.5`}>
                 <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
                 The Honest Risks
               </h2>
 
-              <div className="flex-grow overflow-y-auto space-y-3 custom-scrollbar pr-1">
+              <div className="flex-grow overflow-y-auto space-y-2 custom-scrollbar pr-1 lg:min-h-[140px]">
                 {RISKS.map((risk) => (
                   <div key={risk.title} className="p-2.5 rounded-xl bg-red-50/20 border border-red-100/10">
                     <div className={`${T.small} font-bold text-red-950 mb-0.5`}>⚠️ {risk.title}</div>
@@ -641,7 +631,7 @@ export default function OrbitDashboard() {
 
                 {/* What contributors DO NOT get */}
                 <div className="border-t border-black/5 pt-2 mt-2">
-                  <div className={`font-mono ${T.micro} uppercase tracking-wider text-[#6B8070] mb-1.5`}>What you don&rsquo;t get</div>
+                  <div className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070] mb-1.5`}>What you don&rsquo;t get</div>
                   <div className="space-y-1">
                     {NOT_INCLUDED.map(not => (
                       <div key={not.item} className={`${T.small} text-[#3A4A3E] flex items-baseline gap-1`}>
@@ -657,7 +647,7 @@ export default function OrbitDashboard() {
             <button
               type="button"
               onClick={() => setShowDrawer(true)}
-              className={`w-full text-center mt-3 bg-white/90 hover:bg-white py-2.5 rounded-2xl font-mono ${T.small} font-bold text-[#6B8070] hover:text-[#059669] transition-colors border border-black/5 shrink-0 uppercase tracking-wider`}
+              className={`w-full text-center mt-3 bg-white/90 hover:bg-white py-2.5 rounded-2xl font-mono ${T.small} font-bold text-[#6B8070] hover:text-[#059669] transition-colors border border-black/5 shrink-0 uppercase tracking-[0.18em]`}
             >
               Read FAQ &amp; Origin Story →
             </button>
@@ -692,21 +682,34 @@ export default function OrbitDashboard() {
                   >✕</button>
                 </div>
 
-                {/* Founders' quote */}
+                {/* Founder */}
                 <div className="p-5 rounded-2xl bg-white/5 border border-white/10 mb-8">
+                  <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-4 ring-1 ring-white/10">
+                    <Image
+                      src="/images/orbit/pablo_founder.jpg"
+                      alt="Pablo Ramírez, founder of Orbit 77"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 448px"
+                    />
+                    <span className={`absolute bottom-2 left-2 rounded-full bg-black/60 backdrop-blur-sm px-2.5 py-1 ${T.micro} font-mono uppercase tracking-[0.18em] text-[#86efac]`}>
+                      Pablo · Sydney
+                    </span>
+                  </div>
                   <p className={`font-serif italic ${T.heading} leading-relaxed text-[#F4EFEA] mb-4`}>
-                    &ldquo;We didn&rsquo;t want an audience. We wanted an archive — conversations
-                    that still matter in twenty years. Every supporter is engraved in it, permanently.&rdquo;
+                    &ldquo;I&rsquo;m a graphic designer who likes to listen, help and build things
+                    with other people. Orbit 77 is where all of that lives — art, deep
+                    conversations, and orbiting at high frequencies.&rdquo;
                   </p>
                   <div className="text-right">
-                    <span className={`block ${T.small} font-bold text-[#F4EFEA]`}>Pablo &amp; Eduardo</span>
-                    <span className={`block ${T.micro} text-[#86efac]/60 font-mono uppercase tracking-wider`}>Founders · Orbit 77, Australia</span>
+                    <span className={`block ${T.small} font-bold text-[#F4EFEA]`}>Pablo Ramírez</span>
+                    <span className={`block ${T.micro} text-[#86efac]/60 font-mono uppercase tracking-[0.18em]`}>Founder · Orbit 77, Sydney 2025</span>
                   </div>
                 </div>
 
                 {/* Verify Links */}
                 <div className="mb-6">
-                  <div className={`font-mono ${T.micro} uppercase tracking-wider text-[#86efac]/60 mb-2`}>Verify Links</div>
+                  <div className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#86efac]/60 mb-2`}>Verify Links</div>
                   <div className="flex gap-2 flex-wrap">
                     {PUBLIC_LINKS.map(link => (
                       <a
@@ -723,7 +726,7 @@ export default function OrbitDashboard() {
                 </div>
 
                 {/* FAQ */}
-                <h4 className={`font-mono ${T.micro} font-bold uppercase tracking-wider text-[#86efac]/60 mb-3`}>
+                <h4 className={`font-mono ${T.micro} font-bold uppercase tracking-[0.18em] text-[#86efac]/60 mb-3`}>
                   Quick FAQ
                 </h4>
                 <div className="space-y-4">
@@ -744,13 +747,13 @@ export default function OrbitDashboard() {
                     const big = CONTRIBUTION_LAYERS.find(l => l.kind === 'form');
                     if (big) openDialog(big);
                   }}
-                  className={`w-full text-center rounded-full bg-white/5 hover:bg-white/10 text-white py-3 font-mono ${T.small} font-bold transition-all border border-white/10 uppercase tracking-wider`}
+                  className={`w-full text-center rounded-full bg-white/5 hover:bg-white/10 text-white py-3 font-mono ${T.small} font-bold transition-all border border-white/10 uppercase tracking-[0.18em]`}
                 >
-                  Contact the founders
+                  Contact the founder
                 </button>
                 <Link
                   href="/exhibitions/galaxy/orbit/join"
-                  className={`block text-center font-mono ${T.micro} text-white/50 hover:text-[#F4EFEA] transition-colors uppercase tracking-wider`}
+                  className={`block text-center font-mono ${T.micro} text-white/50 hover:text-[#F4EFEA] transition-colors uppercase tracking-[0.18em]`}
                 >
                   Or join the crew →
                 </Link>

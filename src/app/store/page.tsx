@@ -9,6 +9,7 @@ import {
 import Link from 'next/link';
 import SiteNav from '@/app/components/nav/SiteNav';
 import SiteFooter from '@/app/components/nav/SiteFooter';
+import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
 
 /* ------------------------------------------------------------------ */
 /*  PYADRA — THE STORE · the museum shop                               */
@@ -200,6 +201,9 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
 export default function PyadraStore() {
   return (
     <div className="bg-[#EDEFED] text-[#1A1C1A] font-sans overflow-x-clip antialiased selection:bg-[#059669] selection:text-white min-h-screen">
+
+      {/* galaxy atmosphere — grid, grain, green dust (fixed: page scrolls) */}
+      <MuseumAtmosphere fixed />
 
       {/* shared nav */}
       <SiteNav crumbs={[{ label: 'The Store' }]} />

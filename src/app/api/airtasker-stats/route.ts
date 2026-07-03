@@ -11,6 +11,14 @@ const PROFILE_URL =
 const FALLBACK_TASKS = 248;
 const FALLBACK_REVIEWS = 213;
 
+// The business is dormant, so real numbers can only drift slightly above the
+// last-known-good 248/213. Anything outside these windows is a bad parse
+// (e.g. a year like "2018" scraped from unrelated markup) — reject it.
+const TASKS_MIN = 240;
+const TASKS_MAX = 500;
+const REVIEWS_MIN = 205;
+const REVIEWS_MAX = 500;
+
 function parseStats(html: string): { tasks?: number; reviews?: number } {
   const out: { tasks?: number; reviews?: number } = {};
 
@@ -60,20 +68,18 @@ export async function GET() {
     const html = await res.text();
     const parsed = parseStats(html);
 
-    const tasks =
-      typeof parsed.tasks === 'number' && parsed.tasks > 0
-        ? parsed.tasks
-        : FALLBACK_TASKS;
-    const reviews =
-      typeof parsed.reviews === 'number' && parsed.reviews > 0
-        ? parsed.reviews
-        : FALLBACK_REVIEWS;
+    const tasksValid =
+      typeof parsed.tasks === 'number' && parsed.tasks >= TASKS_MIN && parsed.tasks <= TASKS_MAX;
+    const reviewsValid =
+      typeof parsed.reviews === 'number' && parsed.reviews >= REVIEWS_MIN && parsed.reviews <= REVIEWS_MAX;
+    const tasks = tasksValid ? (parsed.tasks as number) : FALLBACK_TASKS;
+    const reviews = reviewsValid ? (parsed.reviews as number) : FALLBACK_REVIEWS;
 
     return NextResponse.json(
       {
         tasks,
         reviews,
-        source: parsed.tasks && parsed.reviews ? 'airtasker' : 'partial',
+        source: tasksValid && reviewsValid ? 'airtasker' : 'partial',
       },
       { headers: { 'Cache-Control': 'public, s-maxage=3600' } },
     );

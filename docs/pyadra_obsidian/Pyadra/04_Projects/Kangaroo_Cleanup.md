@@ -562,7 +562,7 @@ _A buyer can verify the reputation before making any inquiry — without contact
 - **Status badge:** `Handover Ready`
 - **H1 (project name):** `Kangaroo Cleanup`
 - **Tagline (serif italic, emerald):** `Your own business — without starting from zero.`
-- **Intro paragraph:** `500+ jobs, a 5.0 name, and channels that still ring today — all built one honest job at a time. The hard part's done. You bring the van and show up.`
+- **Intro paragraph:** `Kangaroo Cleanup is a recycling and waste removal business built in Sydney in 2023. Furniture, green waste, office clear-outs, household junk — collected, loaded and disposed of responsibly. 500+ jobs later, the channels still ring today.`
 
 ---
 
@@ -572,10 +572,10 @@ Section label: `Assets Transferred` · Counter: `4 modules`
 
 |#|Title|Description|
 |---|---|---|
-|1|`A name Sydney already trusts`|`Brand, logo, identity — plus a 5.0 reputation built one honest job at a time. You inherit the reviews.`|
-|2|`Channels that already ring`|`Phone, WhatsApp, website, Instagram, email. Inbound messages from day one, not a cold start.`|
-|3|`The pricing playbook`|`What to charge, how to quote, which Sydney disposal sites to use and what they cost. The margin lives here.`|
-|4|`The mistakes, already paid for`|`Which jobs make money, which to walk away from. You start on year two, not year zero.`|
+|1|`The brand & its 5.0 reputation`|`The name, logo and visual identity — plus the public Airtasker profile: 5.0 rating, 213 reviews. Sydney already trusts it; you inherit that trust.`|
+|2|`The customer channels`|`Business phone, WhatsApp, website, Instagram and email — all live, with customers still calling today. Inbound work from day one.`|
+|3|`Pricing & recycling know-how`|`What to charge for each job, how to quote, and which Sydney disposal and recycling sites to use — with their real costs. The margin lives here.`|
+|4|`Two years of experience`|`Which jobs make money, which to walk away from, and the mistakes already paid for. You start on year two, not year zero.`|
 
 ---
 
@@ -598,7 +598,7 @@ Widget header: `Public proof · verify it yourself`
 
 Context line below the widget:
 
-> `248 verifiable on Airtasker — plus hundreds more by direct referral, once customers started calling instead of booking through the platform.`
+> `248 verifiable on Airtasker — the rest came by direct referral.`
 
 > [!note] Why two job numbers The 248 is the publicly verifiable floor (anyone can check it on Airtasker today). The 500+ is the real total — over time, repeat customers called direct instead of going through Airtasker, so the platform number understates the business. Showing both turns a potential question ("why did they leave Airtasker?") into a strength (the business outgrew the platform). The 500+ is founder-recorded; have partial proof (WhatsApp history, job records) ready for serious buyers.
 
@@ -610,8 +610,10 @@ Block header (must be shown with the figures): `Revenue · founder-recorded, ver
 
 |Value|Sub|Description|
 |---|---|---|
-|`~$30k`|`AUD · FY2025`|`Invoiced gross revenue`|
 |`~$23k`|`AUD · FY2024`|`Invoiced gross revenue`|
+|`~$30k`|`AUD · FY2025`|`Invoiced gross revenue`|
+
+> [!note] Display order FY2024 renders on the LEFT and FY2025 on the RIGHT (chronological, left→right), so the upward trajectory reads naturally.
 
 Trajectory line below the figures (this is messaging, NOT a data cell):
 
@@ -624,7 +626,7 @@ Trajectory line below the figures (this is messaging, NOT a data cell):
 ### 14.4 Primary CTA & value line
 
 - **Main button:** `TAKE THIS OVER →`
-- **Value line (shown near the CTA, replaces a hard valuation figure):** `What it takes to build this from zero: 2 years, 500+ jobs, a 5.0 reputation one customer at a time — and a business that cleared real money each year. You can start there. Or start here, from $5,000.`
+- **Value line (shown near the CTA, replaces a hard valuation figure):** `Don't start from zero — it's already built. Meet Eduardo and grow it together, from $5,000.`
 
 > [!note] Why no valuation figure on the page We deliberately do NOT show a "$12k–$18k valuation" headline. A buyer with a calculator values an owner-operated, no-contract, currently-inactive service business at roughly 1x SDE — which lands the real value around $15–20k AUD (based on ~$15–25k/yr clear earnings). That figure is defensible in private due diligence, but shown as a headline it invites the buyer to argue it down. Instead the page sells the _cost to rebuild_ (real, undeniable effort) and lets the deal prices state the actual cost of entry. The exact earnings number is shared privately with serious buyers, backed by records.
 
@@ -721,6 +723,8 @@ generic Flippa / Gumtree marketplace phrasing
 > [!note] Changelog v1.3 (June 2026) — Reconciled document against `page.tsx` (the live source of truth at time of writing). Updated revenue to FY-split figures (~$30k FY25 / ~$23k FY24). Replaced 4 legacy deal options with the 3 active deals (Grow Together / Shared Path / Take the Wheel). Added Section 14 — COPY DECK — LOCKED STRINGS, the verbatim source for every visible string on the page.
 
 > [!note] Changelog v1.4 (June 2026) — Copy strengthening pass. Hero rewritten in second person with the 500+ jobs lead. Stats now show 500+ total alongside 248 Airtasker-verifiable, with a context line explaining the gap. Section 14.3 split into two clearly-labelled blocks — Block A (public, verifiable proof) and Block B (founder-recorded revenue) — so the unverifiable figures don't borrow credibility from the verifiable ones; also removed the marketing rows ("grew every year", "2 yrs") that were wrongly formatted as revenue data cells. FAQ aligned to the 500+ figure, dropped the weak "Can I make it work?" entry, added two stronger entries (Perth/Sydney transferability + a confident "what if it doesn't work"). Replaced the hard "$12k–$18k valuation" headline with a rebuild-cost narrative (no public valuation figure). See valuation context note below.
+
+> [!note] Changelog v1.5 (July 2026) — Clarity pass, owner-directed. Intro rewritten to say WHAT the business is (recycling & waste removal, Sydney 2023, main items) before the proof. Assets Transferred modules retitled to name the asset directly (brand+reputation / channels / pricing & recycling know-how / experience). Value line shortened to "Don't start from zero…". Airtasker context line shortened. Revenue blocks now render FY2024 left, FY2025 right (chronological). Page accent: ~10% Kangaroo brand blue-purple (#7C6FE0 family) on the location badge, asset checkmarks and the grab-me chip — everything else stays Pyadra emerald. Airtasker stats API hardened with plausibility ranges (a scraped "2018" was rendering as the task count). Page body typography corrected from serif-everywhere to DM Sans body per Design System v1.
 
 > [!important] Valuation context (for internal reference — not shown on page) Market reality for this business: it is owner-operated, has no recurring contracts, and is currently inactive — all of which pull the valuation multiple to the low end. Australian small service businesses like this value at roughly 1x SDE (seller's discretionary earnings). With ~$15–25k/yr clear earnings, the defensible private valuation is around **$15–20k AUD**. The deal prices ($5k–$12k upfront + revenue share) sit at or below that on the upfront, by design — lower entry attracts more operators, and the revenue share is where the founder recovers long-term value. KEY RISK: the revenue share depends on the buyer self-reporting and paying voluntarily once the founder is no longer in the business. This must be protected in the written agreement (reporting clause, verification right, default terms) per [[Company_Master]]'s legal-review rule. Do not close on a handshake.
 

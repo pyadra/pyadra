@@ -496,8 +496,10 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 - **Type badge:** `Global · Digital Vault`
 - **Status badge:** `Live`
 - **H1:** `EterniCapsule`
-- **Tagline (serif italic, emerald):** `A cryptographic time capsule. Zero knowledge. Permanent.`
-- **Intro paragraph:** `Write confessions, promises, or truths that cannot be said today. Seal them in client-encrypted vaults, to open only on the exact date you choose.`
+- **Tagline (serif italic, emerald):** `Leave a message in time. It opens on the date you choose.`
+- **Intro paragraph:** `EterniCapsule is an app for saying something today that can only be read in the future — a promise, an apology, words for someone you're not ready to talk to yet. You write it, seal it and pick the date. Until that day arrives, no one can open it — not even us.`
+
+> [!note] Voice: plain first, crypto second (July 2026) The old tagline ("A cryptographic time capsule. Zero knowledge. Permanent.") tested as not understandable. Lead with what the app does for a person; the encryption proof lives in What You Get and the FAQ.
 
 ### What you get (6 things)
 
@@ -507,12 +509,14 @@ Section label: `What You Get` · counter `6 things`
 
 |Title|Description|
 |---|---|
-|`A finished product, live today`|`The whole thing is built and working — compose, seal, pay, deliver, unlock. You're not buying a plan, you're buying something real.`|
-|`The ceremony that makes it special`|`The dark entry ritual, the breathing vault, the 30 seconds of weight before sealing. This is what people pay for — and it's done.`|
-|`Messages no one can read`|`Every message is locked in the user's own browser. Not even you (or Pyadra) can open a sealed capsule. That trust is the product.`|
-|`Payments already flowing`|`Live Stripe checkout, ready to take $9 the moment someone seals. No setup, no integration work.`|
-|`Delivery that runs itself`|`Capsules are delivered automatically on the exact date chosen — no one has to press a button. It just happens.`|
+|`The finished app`|`Frontend, backend and database — built, live and working today. Write, seal, pay, deliver, unlock: the whole journey already works.`|
+|`The brand & the design`|`The name, the logo, the gold identity and the ceremonial vault design. The look people remember is done.`|
+|`Messages no one can read`|`Each message is locked inside the sender's own browser before it travels. Not even you (or Pyadra) can open a sealed capsule. That trust is the product.`|
+|`Payments already flowing`|`Stripe checkout is live and takes $9 the moment someone seals. No setup, no integration work.`|
+|`Email & delivery that run themselves`|`The mail service and scheduler deliver every capsule on its exact date, automatically. Nobody presses a button.`|
 |`A safety net for emergencies`|`A guardian system lets a trusted person unlock a capsule if something happens to the sender. The hard, human edge cases are handled.`|
+
+> [!note] Rewritten July 2026 for directness Each item now names the concrete asset (app, brand/design, security, payments, email/delivery, guardian) in plain words — technological but understandable, per owner feedback.
 
 > [!note] Technical detail lives elsewhere The full stack (Next.js 16, React 19, AES-256, Supabase, cron, etc.) is real and matters — but it belongs in the ASSET VALUE / due-diligence section for serious buyers, NOT as the page's first impression. The page sells what they get; due diligence proves how it's built.
 
@@ -537,8 +541,10 @@ Data sources (from project doc): sealed = `COUNT status='sealed'`; delivered = `
 
 Section label: `Participation Models`
 
-- **Value anchor (left):** label `What this took to build` · figure `$12,000 AUD` · sub-line `~150 hours of senior development + design`
+- **Value anchor (left):** label `What it cost to build` · figure `$12,000 AUD` · sub-line `~150 hours of senior dev + design. This is the build cost — not the price.`
 - **Availability (right):** label `Availability` · figure `100% Available`
+
+> [!important] $12,000 is NOT the asking price (July 2026) The figure was being read as "the buyer pays $12,000". The label and sub-line must make explicit that this is what building it cost, and that the deals below start lower.
 
 > [!note] Show the work behind the value Instead of a bare "valuation", show what the project represents: the hours and craft that went into it. Format: a figure ($12,000) with a sub-line stating the development effort (~150 hours of senior development + design). This frames the price as "this is what it cost to build — you get it for less" rather than an arbitrary number a buyer can argue down. Adjust the hour count to the real estimate if known; ~150h is the working figure for a built MVP of this complexity.
 
@@ -546,11 +552,15 @@ Section label: `Participation Models`
 
 Acquisition options (deal cards — open the request-info form on click):
 
-|Name|Sub|Price tag|
-|---|---|---|
-|`Operator — hosted`|`$4k up front · Pyadra keeps 15% per capsule`|`$4,000`|
-|`Owner — hosted`|`$8k up front · Pyadra keeps 5% per capsule`|`$8,000`|
-|`Make an offer`|`Different structure? Let's talk.`|`Let's talk`|
+|Name|Sub|Description (one line under the sub)|Price tag|
+|---|---|---|---|
+|`Operator — hosted`|`$4k up front · Pyadra keeps 15% per capsule`|—|`$4,000`|
+|`Owner — hosted`|`$8k up front · Pyadra keeps 5% per capsule`|—|`$8,000`|
+|`Make an offer`|`Different structure? Let's talk.`|`Including taking the full architecture to your own servers.`|`Let's talk`|
+
+**Panel footnote:** `"Hosted" = the app keeps running on Pyadra's servers; you cover its running costs (hosting, email, database, payment fees). Prefer your own servers? Make an offer.`
+
+> [!warning] One-screen budget (July 2026) The page is single-screen on desktop; the Participation panel must stay ≤ ~455px tall or it crushes The Honest Risks panel below it. That's why "hosted" is explained once in the footnote (not repeated per deal card) and only "Make an offer" carries a description line. Don't add more lines to this panel without re-checking the risks panel is still visible at 1440×810.
 
 > [!note] Request-info form Mirror Kangaroo's contact form: name, email, optional message, and which option they're interested in (pre-filled from the card they clicked). On submit, it reaches the founder. This replaces the old mailto links for acquisition. "Make an offer" routes to the same form with the message field emphasised.
 
@@ -562,11 +572,13 @@ Section label: `The Honest Risks`
 
 |Title|Description|
 |---|---|
-|`No one has bought one yet`|`It's built and it works, but the very first paying customer hasn't happened. You'd be buying proof-of-craft, not proof-of-demand.`|
-|`We don't know where people drop off`|`There's no tracking yet, so we can't tell you exactly where visitors leave before sealing. Finding that out is the first growth job.`|
-|`It still shares plumbing with Pyadra`|`Payments and database currently run on Pyadra's shared setup. Separating it into its own is a known, documented job (done on close if you want it independent).`|
-|`It's built to be slow on purpose`|`The 30-second ritual filters out impatient people. That's a feature for intimacy, but it also caps how fast you can grow volume.`|
-|`Small price, thin margins`|`At $9 a capsule, payment fees alone take about 6%. Real income needs either volume or the bigger audio/video versions on the roadmap.`|
+|`No one has bought one yet`|`The app is finished and working, but the first paying customer hasn't arrived. You'd be buying a finished product, not a proven market.`|
+|`We can't see where visitors give up`|`There are no analytics installed, so we don't know why people leave without sealing a capsule. Installing them and finding out is the new owner's first job.`|
+|`It runs on Pyadra's servers today`|`Hosting, database and payments all live on Pyadra's accounts. Moving everything to your own is a documented job (~20 hours), done on close if you take it independent.`|
+|`It's slow on purpose`|`Sealing takes a deliberate 30-second ritual. That's what makes it feel important — but it also means it will never be a fast, impulse-buy product.`|
+|`$9 is a small ticket`|`Payment fees take about 6% of each $9 capsule. Real income needs volume — or the planned $25 audio and $49 video capsules.`|
+
+> [!note] Rewritten July 2026 Titles and descriptions restated in words a first-time visitor understands without knowing the project (owner feedback: "yo lo entiendo porque sé de qué es el proyecto, pero la gente no").
 
 ### FAQ (drawer)
 
@@ -579,9 +591,13 @@ Drawer title: `Vault Details` (rename — see note) · trigger: `Read FAQ & Orig
 |`What exactly would I own?`|`The code, the brand, the ceremonial experience, the encryption engine and the delivery system — plus a documented roadmap to full independence. It stays hosted in Pyadra unless you negotiate otherwise.`|
 |`Why is there no revenue yet?`|`It launched recently and the first sale is still pending. We say it plainly because everything on Pyadra is said plainly.`|
 
-### Founder quote (drawer)
+### Founder block (drawer)
 
-> `"Everything online can be edited, deleted, taken back. I wanted to build the opposite — a place where sealed means sealed. Once a capsule closes, not even I can open it."` — `Eduardo Díaz` · `Founder · EterniCapsule, 2026`
+> [!important] The founder is Cristian Niño (July 2026) Eduardo is handing this project to Cristian Niño. The drawer shows Cristian's photo (like Kangaroo's founder block), his quote, and his name. All dialog copy ("Talk with…", "…will reply") says **Cristian**, not Eduardo. Enquiries still arrive at pyadra@pyadra.io.
+
+- **Photo:** `public/images/ethernicapsule/cristian_founder.jpg` (landscape 4:3 preferred) · alt `Cristian Niño, founder of EterniCapsule` · caption chip `Cristian · Australia`
+- **Quote:** `"I came to Australia as an IT student with a suitcase and a head full of ideas. I like building things that feel different — and EterniCapsule is the one I couldn't let go: a place where sealed means sealed, until the day you chose."`
+- **Signature:** `Cristian Niño` · `Founder · EterniCapsule, 2025`
 
 ### Secondary CTAs & labels
 

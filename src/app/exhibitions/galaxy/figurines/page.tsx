@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import SiteNav from '@/app/components/nav/SiteNav';
 import SiteFooter from '@/app/components/nav/SiteFooter';
+import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
 
 /* ------------------------------------------------------------------ */
 /*  PYADRA — Project № 03 · Figuitoon                                  */
@@ -16,14 +17,14 @@ import SiteFooter from '@/app/components/nav/SiteFooter';
 /* ============== EDITABLE CONFIG ============== */
 const CONFIG = {
   PRICE_AUD: 49,
-  MODELS_COUNT: 10,
-  VALUE_ANCHOR_AUD: 11_500,
+  /** Project valuation vs launch sale price — decided by owner July 2026 */
+  VALUE_ANCHOR_AUD: 15_000,
+  SALE_PRICE_AUD: 11_500,
   CONTACT_EMAIL: 'pyadra@pyadra.io',
   /** Live Shopify storefront */
   SHOPIFY_URL: 'https://www.figuitoon.com',
   SOCIAL: {
-    /** TODO: real Instagram URL */
-    instagram: '',
+    instagram: 'https://www.instagram.com/figuitoon',
     /** TODO: real TikTok URL */
     tiktok: '',
   },
@@ -31,8 +32,8 @@ const CONFIG = {
 
 const DEALS = [
   {
-    name: 'Take it over',
-    sub: 'Everything included — store, brand, printer, files, know-how.',
+    name: 'Take it all',
+    sub: 'Everything included — store, brand, printer, files, styles, know-how.',
     price: '$11,500',
     featured: true,
   },
@@ -46,18 +47,12 @@ const DEALS = [
 type Deal = typeof DEALS[number];
 
 const WHAT_YOU_GET = [
-  { title: 'A mini you',          desc: 'A stylized figurine with your face — cartoon style, big head, your own collectible. Not an exact replica; a fun version of you.' },
-  { title: "Your team's colors",  desc: "Themed bodies in your team's colors and patterns. The shirt is the star." },
-  { title: 'Printed in-house',    desc: '3D-printed on our own printer, assembled by hand, ~15–16 cm with base.' },
-  { title: 'Made for you',        desc: 'Each figurine is made to order from your photo. No two are the same.' },
-];
-
-const HOW_IT_WORKS = [
-  'Pick a model',
-  'Upload a clear front photo',
-  'We stylize your face',
-  'We print & assemble',
-  'Delivered to you',
+  { title: 'The store',             desc: 'A polished Shopify e-commerce where customers order their figuitoons — products, inventory and deliveries managed in one place.' },
+  { title: '100+ styles',           desc: 'More than one hundred designs across teams, sports and professions, ready to sell.' },
+  { title: 'The brand',             desc: 'Name, logo, visual identity and the Instagram presence — all included.' },
+  { title: 'The 3D printer',        desc: 'The Bambu printer that produces every figurine comes with the project.' },
+  { title: 'The software pipeline', desc: "Turns a customer's photo into a stylized render, then into a print-ready 3D file." },
+  { title: 'The know-how',          desc: "Print settings, measurements, filaments, 3D structure — and what we've learned about making it profitable." },
 ];
 
 const RISKS = [
@@ -69,9 +64,9 @@ const RISKS = [
 
 const FAQ = [
   { q: 'Does it really work end-to-end?', a: 'Yes — the pipeline runs from photo to physical figurine. The Shopify store is live for orders. The first paying customer is still pending; everything else has been tested.' },
-  { q: 'Will my figurine look exactly like the render?', a: "The render is a reference. Your figurine is hand-made and 3D-printed, so colors, texture and small details will vary. That's what makes it yours." },
+  { q: 'Why $11,500 and not $15,000?', a: "The project is valued at $15,000 AUD — brand, store, styles, printer, pipeline and know-how. $11,500 is the launch price while Figuitoon is new to the museum." },
   { q: 'What exactly is for sale on this page?', a: 'The whole project — brand, Shopify store, the 3D printer, files, pipeline and know-how. Buying a figurine is a separate thing (the Make mine button).' },
-  { q: 'Why $49?', a: 'It is a launch / validation price set before the true per-figurine cost is fully measured. It may change once production costs and waste are properly calculated.' },
+  { q: 'Why $49 per figurine?', a: 'It is a launch / validation price set before the true per-figurine cost is fully measured. It may change once production costs and waste are properly calculated.' },
 ];
 
 type SocialLink = { label: string; href: string };
@@ -87,8 +82,8 @@ const T = {
   display: 'text-3xl lg:text-4xl',
   heading: 'text-base',
   body: 'text-sm',
-  small: 'text-xs',
-  micro: 'text-[10px]',
+  small: 'text-[13px]',
+  micro: 'text-[11px]',
 } as const;
 
 const ENTER = 0.75;
@@ -278,7 +273,7 @@ function RequestInfoDialog({
                 <div className={`inline-flex w-12 h-12 items-center justify-center rounded-full bg-[#059669]/10 text-[#059669] ${T.heading} font-bold mb-4`}>✓</div>
                 <h3 className="font-serif italic text-2xl text-[#1A1C1A] mb-2">Got it.</h3>
                 <p className={`${T.body} text-[#3A4A3E] leading-relaxed mb-6 max-w-xs mx-auto`}>
-                  Eduardo has your note. He&rsquo;ll get back to you within 24 hours.
+                  Charina has your note. She&rsquo;ll get back to you within 24 hours.
                 </p>
                 <button type="button" onClick={onClose} className={`font-mono ${T.small} font-semibold text-[#059669] hover:underline`}>Close</button>
               </div>
@@ -292,8 +287,8 @@ function RequestInfoDialog({
                 </h3>
                 <p className={`${T.body} text-[#3A4A3E] leading-relaxed mb-5`}>
                   {isOffer
-                    ? 'Sketch the shape of the deal you’re thinking of — upfront, share, take it independent. Eduardo will reply directly.'
-                    : 'Leave your details below. Eduardo handles negotiations directly and personally.'}
+                    ? 'Sketch the shape of the deal you’re thinking of — upfront, share, take it independent. Charina will reply directly.'
+                    : 'Leave your details below. Charina handles negotiations directly and personally.'}
                 </p>
 
                 <div className="space-y-4">
@@ -323,7 +318,7 @@ function RequestInfoDialog({
                 <button
                   type="submit"
                   disabled={status === 'sending' || !name.trim() || !email.trim() || (isOffer && !message.trim())}
-                  className={`mt-6 w-full rounded-full bg-[#059669] text-white py-3.5 font-mono ${T.small} font-semibold shadow-md shadow-[#059669]/15 disabled:opacity-50 uppercase tracking-wider`}
+                  className={`mt-6 w-full rounded-full bg-[#059669] text-white py-3.5 font-mono ${T.small} font-semibold shadow-md shadow-[#059669]/15 disabled:opacity-50 uppercase tracking-[0.18em]`}
                 >
                   {status === 'sending' ? 'Sending…' : 'Send Request'}
                 </button>
@@ -346,7 +341,7 @@ export default function FiguitoonDashboard() {
   const closeDialog = () => setDialog(d => ({ ...d, open: false }));
 
   return (
-    <div className="bg-[#EDEFED] text-[#1A1C1A] font-serif antialiased selection:bg-[#059669] selection:text-white min-h-screen lg:h-screen lg:overflow-hidden flex flex-col justify-between py-4 lg:py-6 px-4 lg:px-8 relative">
+    <div className="bg-[#EDEFED] text-[#1A1C1A] antialiased selection:bg-[#059669] selection:text-white min-h-screen lg:h-screen lg:overflow-hidden flex flex-col justify-between py-4 lg:py-6 px-4 lg:px-8 relative">
 
       <RequestInfoDialog open={dialog.open} deal={dialog.deal} onClose={closeDialog} />
 
@@ -355,6 +350,9 @@ export default function FiguitoonDashboard() {
         <div className="absolute -top-40 -left-40 w-[640px] h-[640px] rounded-full opacity-35" style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.12), transparent 70%)' }} />
         <div className="absolute -bottom-56 -right-32 w-[720px] h-[720px] rounded-full opacity-40" style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.10), transparent 70%)' }} />
       </div>
+
+      {/* galaxy atmosphere — grid, grain, green dust */}
+      <MuseumAtmosphere />
 
       {/* shared nav */}
       <SiteNav
@@ -375,30 +373,30 @@ export default function FiguitoonDashboard() {
           {/* Identity panel */}
           <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm">
             <div className="flex items-center gap-2 mb-3 flex-wrap">
-              <span className={`rounded-full bg-black/5 text-[#3A4A3E] px-2.5 py-1 ${T.micro} font-mono tracking-wider uppercase`}>
+              <span className={`rounded-full bg-black/5 text-[#3A4A3E] px-2.5 py-1 ${T.micro} font-mono tracking-[0.18em] uppercase`}>
                 Local production · Global store
               </span>
-              <span className={`rounded-full bg-[#7C3AED]/10 text-[#5B21B6] px-2.5 py-1 ${T.micro} font-mono font-semibold uppercase tracking-wider`}>
+              <span className={`rounded-full bg-[#7C3AED]/10 text-[#5B21B6] px-2.5 py-1 ${T.micro} font-mono font-semibold uppercase tracking-[0.18em]`}>
                 Prototype · Pre-launch
               </span>
             </div>
-            <h1 className={`${T.display} font-bold tracking-tight mb-2 leading-none`}>Figuitoon</h1>
+            <h1 className={`${T.display} font-serif font-semibold tracking-[-0.01em] mb-2 leading-none`}>Figuitoon</h1>
             <p className={`font-serif italic ${T.heading} text-[#7C3AED] mb-4 leading-snug`}>
               Your face. Your team. Your figurine.
             </p>
             <p className={`${T.body} text-[#3A4A3E] leading-relaxed`}>
-              Upload a photo, pick a model, and get a custom 3D-printed mini version of you — stylized, collectible, one of a kind.
+              Figuitoon turns one photo into a mini you — a 3D-printed figurine in your favourite team&rsquo;s colors, your sport or your profession. Made for gifts, keepsakes and collectors.
             </p>
           </div>
 
           {/* What You Get */}
           <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 flex-grow flex flex-col shadow-sm lg:overflow-hidden">
             <div className="flex justify-between items-center mb-4">
-              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-[#6B8070]`}>
+              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-[0.18em] text-[#6B8070]`}>
                 What You Get
               </h2>
               <span className={`font-mono ${T.micro} text-[#7C3AED] bg-[#7C3AED]/10 px-2 py-0.5 rounded-full font-bold`}>
-                4 things
+                6 assets
               </span>
             </div>
 
@@ -443,7 +441,7 @@ export default function FiguitoonDashboard() {
               >
                 Make mine →
               </motion.a>
-              <p className={`font-mono ${T.micro} uppercase tracking-wider text-[#E9D5FF]/80 mt-2.5`}>
+              <p className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#E9D5FF]/80 mt-2.5`}>
                 ${CONFIG.PRICE_AUD} AUD · ships from Perth
               </p>
             </div>
@@ -452,60 +450,44 @@ export default function FiguitoonDashboard() {
           {/* Store metrics — real, honest, no fake sales */}
           <div className="grid grid-cols-3 gap-2 shrink-0">
             {[
-              { label: 'Models',         value: String(CONFIG.MODELS_COUNT), desc: 'football editions' },
+              { label: 'Styles',         value: '+100',                      desc: 'teams & professions' },
               { label: 'Price',          value: `$${CONFIG.PRICE_AUD} AUD`,  desc: 'launch price' },
-              { label: 'Made to order',  value: '100%',                       desc: 'from your photo' },
+              { label: 'Made to order',  value: '100%',                      desc: 'from your photo' },
             ].map((stat) => (
               <div
                 key={stat.label}
                 className="rounded-xl bg-white/70 backdrop-blur-sm p-3 ring-1 ring-black/5 hover:bg-white transition-all shadow-sm text-center"
               >
-                <div className={`font-mono ${T.micro} uppercase tracking-wider text-[#6B8070] mb-0.5`}>{stat.label}</div>
-                <div className={`${T.heading} font-bold tracking-tight text-[#1A1C1A] leading-none mb-0.5`}>{stat.value}</div>
+                <div className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070] mb-0.5`}>{stat.label}</div>
+                <div className={`${T.heading} font-serif font-semibold text-[#1A1C1A] leading-none mb-0.5`}>{stat.value}</div>
                 <div className={`font-mono ${T.micro} text-[#6B8070] truncate leading-none`}>{stat.desc}</div>
               </div>
             ))}
           </div>
 
-          {/* Expectation-setting line — visible near the product */}
-          <p className={`${T.small} italic text-[#3A4A3E] leading-relaxed text-center px-2 shrink-0`}>
-            The render is a reference. Your figurine is hand-made and 3D-printed, so colors, texture and small details will vary. That&rsquo;s what makes it yours.
-          </p>
         </div>
 
-        {/* RIGHT COLUMN: How It Works + Acquisition + Risks */}
+        {/* RIGHT COLUMN: Acquisition + Risks */}
         <div className="rise-col rise-col-3 flex flex-col gap-4 lg:gap-5 h-full lg:overflow-hidden">
-
-          {/* How It Works — compact 5-step card */}
-          <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm shrink-0">
-            <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-[#6B8070] mb-3`}>
-              How It Works
-            </h2>
-            <ol className="space-y-1.5">
-              {HOW_IT_WORKS.map((step, i) => (
-                <li key={step} className="flex items-baseline gap-2.5">
-                  <span className={`font-mono ${T.micro} font-bold text-[#7C3AED] w-4 shrink-0`}>{i + 1}.</span>
-                  <span className={`${T.small} text-[#1A1C1A]`}>{step}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
 
           {/* Acquisition panel — Kangaroo / EterniCapsule pattern */}
           <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm">
-            <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-[#6B8070] mb-4`}>
+            <h2 className={`font-mono ${T.small} font-bold uppercase tracking-[0.18em] text-[#6B8070] mb-4`}>
               Acquire the Project
             </h2>
 
-            {/* Build-value anchor (not a sale-price headline) */}
+            {/* Value anchor + launch price */}
             <div className="flex justify-between items-end border-b border-black/5 pb-3 mb-4">
               <div>
-                <span className={`font-mono ${T.micro} text-[#6B8070] uppercase tracking-wider`}>What&rsquo;s been built</span>
-                <div className={`${T.heading} font-bold text-[#1A1C1A] leading-none mt-1`}>${CONFIG.VALUE_ANCHOR_AUD.toLocaleString('en-AU')} AUD</div>
+                <span className={`font-mono ${T.micro} text-[#6B8070] uppercase tracking-[0.18em]`}>Project value</span>
+                <div className={`${T.heading} font-serif font-semibold text-[#1A1C1A] leading-none mt-1`}>
+                  <span className="line-through decoration-[#6B8070]/50 text-[#6B8070]">${CONFIG.VALUE_ANCHOR_AUD.toLocaleString('en-AU')}</span>{' '}
+                  ${CONFIG.SALE_PRICE_AUD.toLocaleString('en-AU')} AUD
+                </div>
                 <div className={`font-mono ${T.micro} text-[#6B8070] mt-1`}>brand, store, pipeline, printer, files, know-how</div>
               </div>
               <div className="text-right">
-                <span className={`font-mono ${T.micro} text-[#6B8070] uppercase tracking-wider`}>Availability</span>
+                <span className={`font-mono ${T.micro} text-[#6B8070] uppercase tracking-[0.18em]`}>Availability</span>
                 <div className={`${T.body} font-semibold text-[#059669] leading-none mt-1`}>By conversation</div>
               </div>
             </div>
@@ -527,7 +509,7 @@ export default function FiguitoonDashboard() {
                     <div className={`font-bold text-[#1A1C1A] group-hover:text-[#059669] transition-colors flex items-center gap-1.5 ${T.body}`}>
                       {deal.name}
                       {deal.featured && (
-                        <span className={`font-mono ${T.micro} bg-[#059669] text-white px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider shrink-0`}>
+                        <span className={`font-mono ${T.micro} bg-[#059669] text-white px-1.5 py-0.5 rounded-full font-bold uppercase tracking-[0.18em] shrink-0`}>
                           Pick
                         </span>
                       )}
@@ -542,14 +524,14 @@ export default function FiguitoonDashboard() {
             </div>
 
             <p className={`${T.small} text-[#6B8070] italic leading-relaxed mt-3`}>
-              The printer is part of the deal. Final terms set in writing with Charina (intended CEO/owner) involved.
+              Launch price — the full project for $11,500 instead of $15,000. The buyer takes everything, printer included. Final terms set in writing.
             </p>
           </div>
 
           {/* The Honest Risks */}
           <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 flex-grow flex flex-col justify-between shadow-sm lg:overflow-hidden">
             <div className="lg:overflow-hidden flex flex-col flex-grow">
-              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-red-700/80 mb-3 shrink-0 flex items-center gap-1.5`}>
+              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-[0.18em] text-red-700/80 mb-3 shrink-0 flex items-center gap-1.5`}>
                 <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
                 The Honest Risks
               </h2>
@@ -567,7 +549,7 @@ export default function FiguitoonDashboard() {
             <button
               type="button"
               onClick={() => setShowDrawer(true)}
-              className={`w-full text-center mt-3 bg-white/90 hover:bg-white py-2.5 rounded-2xl font-mono ${T.small} font-bold text-[#6B8070] hover:text-[#059669] transition-colors border border-black/5 shrink-0 uppercase tracking-wider`}
+              className={`w-full text-center mt-3 bg-white/90 hover:bg-white py-2.5 rounded-2xl font-mono ${T.small} font-bold text-[#6B8070] hover:text-[#059669] transition-colors border border-black/5 shrink-0 uppercase tracking-[0.18em]`}
             >
               Read FAQ &amp; The Full Story →
             </button>
@@ -602,27 +584,40 @@ export default function FiguitoonDashboard() {
                   >✕</button>
                 </div>
 
-                {/* Creator quote */}
+                {/* Founder */}
                 <div className="p-5 rounded-2xl bg-white/5 border border-white/10 mb-8">
+                  <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-4 ring-1 ring-white/10">
+                    <Image
+                      src="/images/figuitoon/charina_founder.jpg"
+                      alt="Charina, founder of Figuitoon"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 448px"
+                    />
+                    <span className={`absolute bottom-2 left-2 rounded-full bg-black/60 backdrop-blur-sm px-2.5 py-1 ${T.micro} font-mono uppercase tracking-[0.18em] text-[#E9D5FF]`}>
+                      Charina · Philippines
+                    </span>
+                  </div>
                   <p className={`font-serif italic ${T.heading} leading-relaxed text-[#E9D5FF] mb-4`}>
-                    &ldquo;A website gets closed. A figurine sits on a desk, travels in a bag, and starts conversations.
-                    The physical object is the door into everything we build.&rdquo;
+                    &ldquo;I&rsquo;m from the Philippines and helping people is just who I am. Figuitoon
+                    caught me because I love new things — innovating, creating something people
+                    haven&rsquo;t seen before.&rdquo;
                   </p>
                   <div className="text-right">
-                    <span className={`block ${T.small} font-bold text-[#E9D5FF]`}>Eduardo Díaz</span>
-                    <span className={`block ${T.micro} text-[#E9D5FF]/60 font-mono uppercase tracking-wider`}>Creator · Figuitoon, 2026</span>
+                    <span className={`block ${T.small} font-bold text-[#E9D5FF]`}>Charina</span>
+                    <span className={`block ${T.micro} text-[#E9D5FF]/60 font-mono uppercase tracking-[0.18em]`}>Founder · Figuitoon, 2026</span>
                   </div>
                 </div>
 
                 {/* Verify / Try links */}
                 <div className="mb-6">
-                  <div className={`font-mono ${T.micro} uppercase tracking-wider text-[#E9D5FF]/60 mb-2`}>See it for yourself</div>
+                  <div className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#E9D5FF]/60 mb-2`}>See it for yourself</div>
                   <div className="flex gap-2 flex-wrap">
                     <a
                       href={CONFIG.SHOPIFY_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`rounded-full bg-[#7C3AED] text-white border border-[#7C3AED] px-3 py-1 font-mono ${T.small} hover:bg-[#6D28D9] transition-colors uppercase tracking-wider`}
+                      className={`rounded-full bg-[#7C3AED] text-white border border-[#7C3AED] px-3 py-1 font-mono ${T.small} hover:bg-[#6D28D9] transition-colors uppercase tracking-[0.18em]`}
                     >
                       Make mine ↗
                     </a>
@@ -641,7 +636,7 @@ export default function FiguitoonDashboard() {
                 </div>
 
                 {/* FAQ */}
-                <h4 className={`font-mono ${T.micro} font-bold uppercase tracking-wider text-[#E9D5FF]/60 mb-3`}>
+                <h4 className={`font-mono ${T.micro} font-bold uppercase tracking-[0.18em] text-[#E9D5FF]/60 mb-3`}>
                   Quick FAQ
                 </h4>
                 <div className="space-y-4">
@@ -661,7 +656,7 @@ export default function FiguitoonDashboard() {
                     setShowDrawer(false);
                     openDialog(DEALS.find(d => d.name === 'Make an offer')!);
                   }}
-                  className={`w-full text-center rounded-full bg-white/5 hover:bg-white/10 text-white py-3 font-mono ${T.small} font-bold transition-all border border-white/10 uppercase tracking-wider`}
+                  className={`w-full text-center rounded-full bg-white/5 hover:bg-white/10 text-white py-3 font-mono ${T.small} font-bold transition-all border border-white/10 uppercase tracking-[0.18em]`}
                 >
                   Talk about Figuitoon
                 </button>

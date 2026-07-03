@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import SiteNav from '@/app/components/nav/SiteNav';
 import SiteFooter from '@/app/components/nav/SiteFooter';
+import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
 
 /* ------------------------------------------------------------------ */
 /*  PYADRA — Project № 04 · Kangaroo Cleanup                           */
@@ -17,14 +18,14 @@ const CONTACT_EMAIL = 'pyadra@pyadra.io';
 const ENTER = 0.75;
 const SPRING = { type: 'spring' as const, stiffness: 150, damping: 20 };
 
-// Type scale — deliberate steps, no 1px sprawl.
-// display=4xl/3xl · heading=base · body=sm (14px) · small=xs (12px) · micro=10px
+// Type scale — Design System v1 roles, dashboard density.
+// display=Fraunces title · heading=16 · body=14 (card body) · small=13 (D5) · micro=11 (D6)
 const T = {
   display: 'text-3xl lg:text-4xl',
   heading: 'text-base',
   body: 'text-sm',
-  small: 'text-xs',
-  micro: 'text-[10px]',
+  small: 'text-[13px]',
+  micro: 'text-[11px]',
 };
 
 // Last-known-good Airtasker numbers (Section 05 — June 2026).
@@ -38,10 +39,10 @@ const PUBLIC_LINKS = [
 ];
 
 const TAKEOVER = [
-  { title: 'A name Sydney already trusts', desc: 'Brand, logo, identity — plus a 5.0 reputation built one honest job at a time. You inherit the reviews.' },
-  { title: 'Channels that already ring', desc: 'Phone, WhatsApp, website, Instagram, email. Inbound messages from day one, not a cold start.' },
-  { title: 'The pricing playbook', desc: 'What to charge, how to quote, which Sydney disposal sites to use and what they cost. The margin lives here.' },
-  { title: 'The mistakes, already paid for', desc: 'Which jobs make money, which to walk away from. You start on year two, not year zero.' },
+  { title: 'The brand & its 5.0 reputation', desc: 'The name, logo and visual identity — plus the public Airtasker profile: 5.0 rating, 213 reviews. Sydney already trusts it; you inherit that trust.' },
+  { title: 'The customer channels', desc: 'Business phone, WhatsApp, website, Instagram and email — all live, with customers still calling today. Inbound work from day one.' },
+  { title: 'Pricing & recycling know-how', desc: 'What to charge for each job, how to quote, and which Sydney disposal and recycling sites to use — with their real costs. The margin lives here.' },
+  { title: 'Two years of experience', desc: 'Which jobs make money, which to walk away from, and the mistakes already paid for. You start on year two, not year zero.' },
 ];
 
 const RISKS = [
@@ -137,7 +138,7 @@ function PhysicalCard() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: ENTER + 1.2, ...SPRING }}
-            className={`absolute -top-2 -right-2 rounded-full bg-white px-3 py-1 ${T.micro} font-mono font-semibold text-[#1A1C1A] shadow-md ring-1 ring-[#1A1C1A]/10 rotate-3`}
+            className={`absolute -top-2 -right-2 rounded-full bg-white px-3 py-1 ${T.micro} font-mono font-semibold text-[#5B50CE] shadow-md ring-1 ring-[#7C6FE0]/25 rotate-3`}
           >
             grab me ✦
           </motion.span>
@@ -391,7 +392,7 @@ export default function KangarooCleanupPage() {
   }, []);
 
   return (
-    <div className={`bg-[#EDEFED] text-[#1A1C1A] font-serif antialiased selection:bg-[#059669] selection:text-white min-h-screen lg:h-screen lg:overflow-hidden flex flex-col justify-between py-4 lg:py-6 px-4 lg:px-8 relative`}>
+    <div className={`bg-[#EDEFED] text-[#1A1C1A] antialiased selection:bg-[#059669] selection:text-white min-h-screen lg:h-screen lg:overflow-hidden flex flex-col justify-between py-4 lg:py-6 px-4 lg:px-8 relative`}>
 
       <ContactDialog open={dialog.open} model={dialog.model} onClose={closeDialog} />
 
@@ -400,6 +401,9 @@ export default function KangarooCleanupPage() {
         <div className="absolute -top-40 -left-40 w-[640px] h-[640px] rounded-full opacity-35" style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.12), transparent 70%)' }} />
         <div className="absolute -bottom-56 -right-32 w-[720px] h-[720px] rounded-full opacity-40" style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.10), transparent 70%)' }} />
       </div>
+
+      {/* galaxy atmosphere — grid, grain, green dust */}
+      <MuseumAtmosphere />
 
       {/* shared nav */}
       <SiteNav
@@ -421,21 +425,21 @@ export default function KangarooCleanupPage() {
           <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-md p-6 ring-1 ring-black/5 flex flex-col justify-between shadow-sm">
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <span className={`rounded-full bg-black/5 text-[#3A4A3E] px-2.5 py-1 ${T.micro} font-mono tracking-wider uppercase`}>
+                <span className={`rounded-full bg-[#7C6FE0]/10 text-[#5B50CE] px-2.5 py-1 ${T.micro} font-mono tracking-[0.18em] uppercase`}>
                   Local · Sydney, NSW
                 </span>
-                <span className={`rounded-full bg-[#059669]/10 text-[#047857] px-2.5 py-1 ${T.micro} font-mono font-semibold uppercase tracking-wider`}>
+                <span className={`rounded-full bg-[#059669]/10 text-[#047857] px-2.5 py-1 ${T.micro} font-mono font-semibold uppercase tracking-[0.18em]`}>
                   Handover Ready
                 </span>
               </div>
-              <h1 className={`${T.display} font-bold tracking-tight mb-2 leading-none`}>
+              <h1 className={`${T.display} font-serif font-semibold tracking-[-0.01em] mb-2 leading-none`}>
                 Kangaroo Cleanup
               </h1>
               <p className={`font-serif italic ${T.heading} text-[#059669] mb-4`}>
                 Your own business — without starting from zero.
               </p>
               <p className={`${T.body} text-[#3A4A3E] leading-relaxed`}>
-                500+ jobs, a 5.0 name, and channels that still ring today — all built one honest job at a time. The hard part’s done. You bring the van and show up.
+                Kangaroo Cleanup is a recycling and waste removal business built in Sydney in 2023. Furniture, green waste, office clear-outs, household junk — collected, loaded and disposed of responsibly. 500+ jobs later, the channels still ring today.
               </p>
             </div>
           </div>
@@ -443,7 +447,7 @@ export default function KangarooCleanupPage() {
           {/* Included Assets */}
           <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-md p-6 ring-1 ring-black/5 flex-grow flex flex-col shadow-sm lg:overflow-hidden">
             <div className="flex justify-between items-center mb-4">
-              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-[#6B8070]`}>
+              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-[0.18em] text-[#6B8070]`}>
                 Assets Transferred
               </h2>
               <span className={`font-mono ${T.micro} text-[#059669] bg-[#059669]/10 px-2 py-0.5 rounded-full font-bold`}>
@@ -458,7 +462,7 @@ export default function KangarooCleanupPage() {
                   className="p-3 rounded-2xl bg-white/50 border border-white/40 hover:bg-white hover:shadow-sm transition-all duration-200"
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    <span className={`flex w-4.5 h-4.5 shrink-0 items-center justify-center rounded-full bg-[#059669]/10 text-[#059669] ${T.micro} font-mono font-bold`}>
+                    <span className={`flex w-4.5 h-4.5 shrink-0 items-center justify-center rounded-full bg-[#7C6FE0]/10 text-[#5B50CE] ${T.micro} font-mono font-bold`}>
                       ✓
                     </span>
                     <h3 className={`${T.body} font-bold text-[#1A1C1A]`}>{item.title}</h3>
@@ -503,7 +507,7 @@ export default function KangarooCleanupPage() {
                 TAKE THIS OVER →
               </motion.button>
               <p className={`${T.small} text-[#3A4A3E] mt-3 leading-relaxed font-serif italic`}>
-                What it takes to build this from zero: 2 years, 500+ jobs, a 5.0 reputation one customer at a time — and a business that cleared real money each year. You can start there. Or start here, from $5,000.
+                Don&rsquo;t start from zero — it&rsquo;s already built. Meet Eduardo and grow it together, from $5,000.
               </p>
             </div>
           </div>
@@ -512,7 +516,7 @@ export default function KangarooCleanupPage() {
           <div className="shrink-0 space-y-3">
             {/* BLOCK A — Public, verifiable today */}
             <div>
-              <div className={`flex items-center gap-1.5 mb-1.5 font-mono ${T.micro} uppercase tracking-wider text-[#047857]`}>
+              <div className={`flex items-center gap-1.5 mb-1.5 font-mono ${T.micro} uppercase tracking-[0.18em] text-[#047857]`}>
                 <span className="w-1.5 h-1.5 rounded-full bg-[#059669] animate-pulse" />
                 Public proof · verify it yourself
               </div>
@@ -527,10 +531,10 @@ export default function KangarooCleanupPage() {
                     key={stat.label}
                     className="rounded-xl bg-white/70 backdrop-blur-md p-3 ring-1 ring-black/5 hover:bg-white transition-all shadow-sm text-center"
                   >
-                    <div className={`font-mono ${T.micro} uppercase tracking-wider text-[#6B8070] mb-0.5`}>
+                    <div className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070] mb-0.5`}>
                       {stat.label}
                     </div>
-                    <div className={`${T.heading} font-bold tracking-tight text-[#1A1C1A] leading-none mb-0.5`}>
+                    <div className={`${T.heading} font-serif font-semibold text-[#1A1C1A] leading-none mb-0.5`}>
                       {stat.value}
                     </div>
                     <div className={`font-mono ${T.micro} text-[#6B8070] truncate leading-none`}>
@@ -540,29 +544,29 @@ export default function KangarooCleanupPage() {
                 ))}
               </div>
               <p className={`${T.small} text-[#6B8070] italic leading-relaxed mt-2`}>
-                {stats.tasks} verifiable on Airtasker — plus hundreds more by direct referral, once customers started calling instead of booking through the platform.
+                {stats.tasks} verifiable on Airtasker — the rest came by direct referral.
               </p>
             </div>
 
             {/* BLOCK B — Founder-recorded revenue, verified in due diligence */}
             <div>
-              <div className={`flex items-center gap-1.5 mb-1.5 font-mono ${T.micro} uppercase tracking-wider text-[#6B8070]`}>
+              <div className={`flex items-center gap-1.5 mb-1.5 font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070]`}>
                 <span className="w-1.5 h-1.5 rounded-full bg-[#6B8070]" />
                 Revenue · founder-recorded, verified in due diligence
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { value: '~$30k', sub: 'AUD · FY2025', desc: 'Invoiced gross revenue' },
                   { value: '~$23k', sub: 'AUD · FY2024', desc: 'Invoiced gross revenue' },
+                  { value: '~$30k', sub: 'AUD · FY2025', desc: 'Invoiced gross revenue' },
                 ].map((row) => (
                   <div
                     key={row.sub}
                     className="rounded-xl bg-white/70 backdrop-blur-md p-3 ring-1 ring-black/5 shadow-sm text-center"
                   >
-                    <div className={`${T.heading} font-bold tracking-tight text-[#1A1C1A] leading-none mb-0.5`}>
+                    <div className={`${T.heading} font-serif font-semibold text-[#1A1C1A] leading-none mb-0.5`}>
                       {row.value}
                     </div>
-                    <div className={`font-mono ${T.micro} uppercase tracking-wider text-[#047857] mb-0.5`}>
+                    <div className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#047857] mb-0.5`}>
                       {row.sub}
                     </div>
                     <div className={`font-mono ${T.micro} text-[#6B8070] truncate leading-none`}>
@@ -583,7 +587,7 @@ export default function KangarooCleanupPage() {
 
           {/* Participation Options */}
           <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-md p-6 ring-1 ring-black/5 shadow-sm">
-            <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-[#6B8070] mb-4`}>
+            <h2 className={`font-mono ${T.small} font-bold uppercase tracking-[0.18em] text-[#6B8070] mb-4`}>
               Deal Choices
             </h2>
 
@@ -602,7 +606,7 @@ export default function KangarooCleanupPage() {
                     <div className={`font-bold text-[#1A1C1A] group-hover:text-[#059669] transition-colors flex items-center gap-1.5 ${T.body}`}>
                       {deal.name}
                       {deal.featured && (
-                        <span className={`font-mono ${T.micro} bg-[#059669] text-white px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider`}>
+                        <span className={`font-mono ${T.micro} bg-[#059669] text-white px-1.5 py-0.5 rounded-full font-bold uppercase tracking-[0.18em]`}>
                           Pick
                         </span>
                       )}
@@ -621,7 +625,7 @@ export default function KangarooCleanupPage() {
           {/* Risks and Exclusions */}
           <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-md p-6 ring-1 ring-black/5 flex-grow flex flex-col justify-between shadow-sm lg:overflow-hidden">
             <div className="lg:overflow-hidden flex flex-col flex-grow">
-              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-red-700/80 mb-3 shrink-0 flex items-center gap-1.5`}>
+              <h2 className={`font-mono ${T.small} font-bold uppercase tracking-[0.18em] text-red-700/80 mb-3 shrink-0 flex items-center gap-1.5`}>
                 <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
                 The Honest Risks
               </h2>
@@ -644,7 +648,7 @@ export default function KangarooCleanupPage() {
 
                 {/* Exclusions */}
                 <div className="border-t border-black/5 pt-2 mt-2">
-                  <div className={`font-mono ${T.micro} uppercase tracking-wider text-[#6B8070] mb-1.5`}>Not Included</div>
+                  <div className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070] mb-1.5`}>Not Included</div>
                   <div className="space-y-1">
                     {NOT_INCLUDED.map(not => (
                       <div key={not.item} className={`${T.small} text-[#3A4A3E] flex items-baseline gap-1`}>
@@ -660,7 +664,7 @@ export default function KangarooCleanupPage() {
             {/* CTA to FAQ Drawer */}
             <button
               onClick={() => setShowDrawer(true)}
-              className={`w-full text-center mt-3 bg-white/90 hover:bg-white py-2.5 rounded-2xl font-mono ${T.small} font-bold text-[#6B8070] hover:text-[#059669] transition-colors border border-black/5 shrink-0 uppercase tracking-wider`}
+              className={`w-full text-center mt-3 bg-white/90 hover:bg-white py-2.5 rounded-2xl font-mono ${T.small} font-bold text-[#6B8070] hover:text-[#059669] transition-colors border border-black/5 shrink-0 uppercase tracking-[0.18em]`}
             >
               Read FAQ & Founder Story →
             </button>
@@ -709,7 +713,7 @@ export default function KangarooCleanupPage() {
                       sizes="400px"
                       className="object-cover"
                     />
-                    <div className={`absolute bottom-2 left-3 font-mono ${T.micro} uppercase tracking-wider text-white bg-black/40 px-2 py-0.5 rounded`}>
+                    <div className={`absolute bottom-2 left-3 font-mono ${T.micro} uppercase tracking-[0.18em] text-white bg-black/40 px-2 py-0.5 rounded`}>
                       Eduardo · Sydney
                     </div>
                   </div>
@@ -726,7 +730,7 @@ export default function KangarooCleanupPage() {
 
                 {/* Verification strip */}
                 <div className="mb-6">
-                  <div className={`font-mono ${T.micro} uppercase tracking-wider text-[#6B8070] mb-2`}>Verify Links</div>
+                  <div className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070] mb-2`}>Verify Links</div>
                   <div className="flex gap-2 flex-wrap">
                     {PUBLIC_LINKS.map(link => (
                       <a
@@ -743,7 +747,7 @@ export default function KangarooCleanupPage() {
                 </div>
 
                 {/* FAQ section */}
-                <h4 className={`font-mono ${T.micro} font-bold uppercase tracking-wider text-[#6B8070] mb-3`}>
+                <h4 className={`font-mono ${T.micro} font-bold uppercase tracking-[0.18em] text-[#6B8070] mb-3`}>
                   Quick FAQ
                 </h4>
                 <div className="space-y-4">
@@ -759,7 +763,7 @@ export default function KangarooCleanupPage() {
               <div className="border-t border-white/5 pt-6 mt-8 space-y-2">
                 <button
                   onClick={() => { setShowDrawer(false); openDialog('Talk to Eduardo'); }}
-                  className={`w-full text-center rounded-full bg-[#059669] hover:bg-[#047857] text-white py-3 font-mono ${T.small} font-bold transition-all uppercase tracking-wider`}
+                  className={`w-full text-center rounded-full bg-[#059669] hover:bg-[#047857] text-white py-3 font-mono ${T.small} font-bold transition-all uppercase tracking-[0.18em]`}
                 >
                   Talk to Eduardo
                 </button>
