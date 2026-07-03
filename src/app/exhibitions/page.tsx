@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import GreenDust from '../components/ui/GreenDust';
 import SiteNav from '@/app/components/nav/SiteNav';
@@ -60,6 +60,54 @@ const ROOMS: Room[] = [
     glow: 'bg-[#6B8070]',
   },
 ];
+
+/* The open room leans toward the cursor — a display case acknowledging
+   the visitor. Transform-only springs; mouse events never fire on touch,
+   so mobile pays nothing for this. */
+function RoomCard({
+  active,
+  className,
+  onClick,
+  entrance,
+  children,
+}: {
+  active: boolean;
+  className: string;
+  onClick: () => void;
+  entrance: { delay: number };
+  children: React.ReactNode;
+}) {
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const rotateX = useSpring(useTransform(my, [-0.5, 0.5], [3.5, -3.5]), { stiffness: 160, damping: 20 });
+  const rotateY = useSpring(useTransform(mx, [-0.5, 0.5], [-3.5, 3.5]), { stiffness: 160, damping: 20 });
+  const reduced = useReducedMotion() ?? false;
+  const tilt = active && !reduced;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ delay: entrance.delay, type: 'spring', stiffness: 110, damping: 16 }}
+      whileHover={active ? { y: -6 } : {}}
+      onClick={onClick}
+      onMouseMove={
+        tilt
+          ? (e) => {
+              const r = e.currentTarget.getBoundingClientRect();
+              mx.set((e.clientX - r.left) / r.width - 0.5);
+              my.set((e.clientY - r.top) / r.height - 0.5);
+            }
+          : undefined
+      }
+      onMouseLeave={tilt ? () => { mx.set(0); my.set(0); } : undefined}
+      style={tilt ? { rotateX, rotateY, transformPerspective: 1100 } : undefined}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export default function ExhibitionsPage() {
   const router = useRouter();
@@ -127,12 +175,10 @@ export default function ExhibitionsPage() {
         {/* the rooms */}
         <div className="grid md:grid-cols-3 gap-4 md:gap-5">
           {ROOMS.map((room, i) => (
-            <motion.div
+            <RoomCard
               key={room.name}
-              initial={{ opacity: 0, y: 40, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: ENTER + 0.55 + i * 0.1, type: 'spring', stiffness: 110, damping: 16 }}
-              whileHover={room.open ? { y: -6 } : {}}
+              active={room.open}
+              entrance={{ delay: ENTER + 0.55 + i * 0.1 }}
               onClick={() => room.open && room.href && router.push(room.href)}
               className={`group relative rounded-[32px] p-8 md:p-10 flex flex-col items-center text-center ${
                 room.open
@@ -150,8 +196,12 @@ export default function ExhibitionsPage() {
                 {room.open ? 'Open' : 'Forming'}
               </span>
 
-              {/* the orb */}
-              <div className="relative mb-8">
+              {/* the orb — floats while it waits, like it's suspended in the case */}
+              <motion.div
+                className="relative mb-8"
+                animate={room.open ? { y: [0, -6, 0] } : undefined}
+                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+              >
                 {room.open && (
                   <motion.div
                     animate={{ scale: [1, 1.15, 1], opacity: [0.12, 0.3, 0.12] }}
@@ -174,7 +224,7 @@ export default function ExhibitionsPage() {
                     />
                   )}
                 </div>
-              </div>
+              </motion.div>
 
               <h2 className={`text-3xl md:text-4xl font-bold tracking-[-0.03em] mb-2 ${room.open ? '' : 'text-[#1A1C1A]/40'}`}>
                 {room.name}
@@ -187,20 +237,15 @@ export default function ExhibitionsPage() {
               </p>
 
               {room.open ? (
-                <motion.span
-                  whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.96 }}
-                  transition={{ type: 'spring', stiffness: 350, damping: 17 }}
-                  className="mt-auto inline-block rounded-full bg-[#059669] text-white px-8 py-3.5 text-sm font-semibold shadow-lg shadow-[#059669]/25"
-                >
+                <span className="cta-glow mt-auto inline-block rounded-full bg-[#059669] text-white px-8 py-3.5 text-sm font-semibold shadow-lg shadow-[#059669]/25">
                   Enter {room.name} →
-                </motion.span>
+                </span>
               ) : (
                 <span className="mt-auto inline-block rounded-full bg-[#EDEFED] text-[#6B8070] px-8 py-3.5 text-sm font-semibold">
                   Sealed
                 </span>
               )}
-            </motion.div>
+            </RoomCard>
           ))}
         </div>
 

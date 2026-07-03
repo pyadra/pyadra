@@ -218,3 +218,52 @@ html, body {
   .t-d2 { font-size: 30px; }
   .t-d3 { font-size: 20px; }
 }
+
+/* ==================================================================
+   PYADRA · Motion utilities — CSS-only, transform/opacity, zero JS.
+   Used by the project dossiers for entrance choreography and panel
+   feedback. Framer Motion handles hero pages; these keep the heavy
+   dashboard pages cheap.
+   ================================================================== */
+
+@keyframes py-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Columns rise in sequence after the template dissolve settles.
+   Fill mode 'both' keeps them hidden until their delay hits. */
+.rise-col   { animation: py-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.rise-col-1 { animation-delay: 0.80s; }
+.rise-col-2 { animation-delay: 0.95s; }
+.rise-col-3 { animation-delay: 1.10s; }
+
+/* Panel feedback — a quiet lift. Never scales (no layout shift). */
+.panel-lift {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (hover: hover) {
+  .panel-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px -12px rgba(10, 18, 14, 0.18);
+  }
+}
+
+/* Primary CTA glow — accent bloom on hover, tap shrink on press. */
+.cta-glow {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.3s ease;
+}
+@media (hover: hover) {
+  .cta-glow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 32px -8px var(--glow-color, rgba(5, 150, 105, 0.45));
+  }
+}
+.cta-glow:active { transform: scale(0.97); }
+
+@media (prefers-reduced-motion: reduce) {
+  .rise-col { animation: none; }
+  .panel-lift, .panel-lift:hover, .cta-glow, .cta-glow:hover { transition: none; transform: none; }
+}

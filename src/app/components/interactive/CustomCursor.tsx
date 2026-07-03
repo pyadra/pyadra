@@ -1,52 +1,61 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { usePathname } from "next/navigation";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+
+/* ------------------------------------------------------------------ */
+/*  PYADRA · CustomCursor — a quiet emerald halo that trails the       */
+/*  pointer and blooms over interactive elements.                      */
+/*                                                                     */
+/*  Performance contract: position updates go through motion values    */
+/*  (compositor only, zero React re-renders per mousemove). State is   */
+/*  only touched when hover-over-interactive CHANGES.                  */
+/*  Renders nothing on touch devices.                                  */
+/* ------------------------------------------------------------------ */
+
+const EMERALD = "#059669";
 
 export default function CustomCursor() {
-  const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
-  const [isHovering, setIsHovering] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
-  const pathname = usePathname();
-  
-  // High-End Detail: Cursor adapts color perfectly to the Alien Orbit or the Warm Incubator
-  const isOrbit = pathname?.includes("/orbit");
-  const color = isOrbit ? "#39FF14" : "#DCA88F";
+  const [hovering, setHovering] = useState(false);
+
+  const x = useMotionValue(-100);
+  const y = useMotionValue(-100);
+  const sx = useSpring(x, { stiffness: 400, damping: 28, mass: 0.4 });
+  const sy = useSpring(y, { stiffness: 400, damping: 28, mass: 0.4 });
 
   useEffect(() => {
-    // Media query to ensure mobile touch devices do not render the custom cursor overlay
-    if (window.matchMedia("(pointer: fine)").matches) {
-      setIsDesktop(true);
-    }
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+    setIsDesktop(true);
 
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-      
+    let wasInteractive = false;
+    const onMove = (e: MouseEvent) => {
+      x.set(e.clientX);
+      y.set(e.clientY);
       const target = e.target as HTMLElement;
-      // Sniff out interactive components like links, iframes, buttons to trigger expansion
-      const isInteractive = !!target.closest("a, button, input, iframe, [data-interactive]");
-      setIsHovering(isInteractive);
+      const isInteractive = !!target.closest("a, button, input, textarea, [data-interactive]");
+      if (isInteractive !== wasInteractive) {
+        wasInteractive = isInteractive;
+        setHovering(isInteractive);
+      }
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+    window.addEventListener("mousemove", onMove, { passive: true });
+    return () => window.removeEventListener("mousemove", onMove);
+  }, [x, y]);
 
   if (!isDesktop) return null;
 
   return (
-    <motion.div 
-      className="fixed top-0 left-0 rounded-full border pointer-events-none z-[9999] mix-blend-screen"
-      animate={{ 
-        x: mousePos.x - (isHovering ? 24 : 8), 
-        y: mousePos.y - (isHovering ? 24 : 8),
-        width: isHovering ? 48 : 16,
-        height: isHovering ? 48 : 16,
-        borderColor: isHovering ? color + "80" : color + "60",
-        // Framer can't interpolate the "transparent" keyword — use the same
-        // hex color with 00 alpha so both keyframes are the same format.
-        backgroundColor: isHovering ? color + "10" : color + "00"
+    <motion.div
+      aria-hidden
+      className="fixed top-0 left-0 rounded-full border pointer-events-none z-[9999]"
+      style={{ x: sx, y: sy, translateX: "-50%", translateY: "-50%" }}
+      animate={{
+        width: hovering ? 44 : 14,
+        height: hovering ? 44 : 14,
+        borderColor: hovering ? EMERALD + "66" : EMERALD + "4D",
+        backgroundColor: hovering ? EMERALD + "14" : EMERALD + "00",
       }}
       transition={{ type: "spring", stiffness: 350, damping: 25, mass: 0.5 }}
     />

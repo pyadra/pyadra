@@ -370,10 +370,10 @@ export default function FiguitoonDashboard() {
       <main className="relative z-10 w-full max-w-7xl mx-auto flex-grow grid grid-cols-1 lg:grid-cols-[1.05fr_1.3fr_1.05fr] gap-4 lg:gap-6 my-4 overflow-y-auto lg:overflow-hidden h-full">
 
         {/* LEFT COLUMN: Identity + What You Get */}
-        <div className="flex flex-col gap-4 lg:gap-5 h-full lg:overflow-hidden">
+        <div className="rise-col rise-col-1 flex flex-col gap-4 lg:gap-5 h-full lg:overflow-hidden">
 
           {/* Identity panel */}
-          <div className="rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm">
+          <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm">
             <div className="flex items-center gap-2 mb-3 flex-wrap">
               <span className={`rounded-full bg-black/5 text-[#3A4A3E] px-2.5 py-1 ${T.micro} font-mono tracking-wider uppercase`}>
                 Local production · Global store
@@ -392,7 +392,7 @@ export default function FiguitoonDashboard() {
           </div>
 
           {/* What You Get */}
-          <div className="rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 flex-grow flex flex-col shadow-sm lg:overflow-hidden">
+          <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 flex-grow flex flex-col shadow-sm lg:overflow-hidden">
             <div className="flex justify-between items-center mb-4">
               <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-[#6B8070]`}>
                 What You Get
@@ -420,7 +420,7 @@ export default function FiguitoonDashboard() {
         </div>
 
         {/* MIDDLE COLUMN: Orb + Make-mine product CTA + metrics + expectation line */}
-        <div className="flex flex-col gap-4 lg:gap-5 h-full">
+        <div className="rise-col rise-col-2 flex flex-col gap-4 lg:gap-5 h-full">
 
           {/* Warm-dark monolith with the orb and the PRODUCT CTA (amber) */}
           <div className="rounded-[32px] bg-[#1A0F2E] border border-white/5 shadow-2xl p-6 relative flex flex-col items-center justify-center flex-grow min-h-[380px] lg:min-h-0 overflow-hidden">
@@ -439,7 +439,7 @@ export default function FiguitoonDashboard() {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 transition={SPRING}
-                className={`block text-center rounded-full bg-[#7C3AED] text-white px-8 py-3.5 font-mono ${T.body} font-semibold tracking-wide shadow-lg shadow-[#7C3AED]/30 hover:bg-[#6D28D9] uppercase`}
+                className={`cta-glow [--glow-color:rgba(124,58,237,0.45)] block text-center rounded-full bg-[#7C3AED] text-white px-8 py-3.5 font-mono ${T.body} font-semibold tracking-wide shadow-lg shadow-[#7C3AED]/30 hover:bg-[#6D28D9] uppercase`}
               >
                 Make mine →
               </motion.a>
@@ -474,10 +474,10 @@ export default function FiguitoonDashboard() {
         </div>
 
         {/* RIGHT COLUMN: How It Works + Acquisition + Risks */}
-        <div className="flex flex-col gap-4 lg:gap-5 h-full lg:overflow-hidden">
+        <div className="rise-col rise-col-3 flex flex-col gap-4 lg:gap-5 h-full lg:overflow-hidden">
 
           {/* How It Works — compact 5-step card */}
-          <div className="rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm shrink-0">
+          <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm shrink-0">
             <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-[#6B8070] mb-3`}>
               How It Works
             </h2>
@@ -492,7 +492,7 @@ export default function FiguitoonDashboard() {
           </div>
 
           {/* Acquisition panel — Kangaroo / EterniCapsule pattern */}
-          <div className="rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm">
+          <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm">
             <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-[#6B8070] mb-4`}>
               Acquire the Project
             </h2>
@@ -547,7 +547,7 @@ export default function FiguitoonDashboard() {
           </div>
 
           {/* The Honest Risks */}
-          <div className="rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 flex-grow flex flex-col justify-between shadow-sm lg:overflow-hidden">
+          <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 flex-grow flex flex-col justify-between shadow-sm lg:overflow-hidden">
             <div className="lg:overflow-hidden flex flex-col flex-grow">
               <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-red-700/80 mb-3 shrink-0 flex items-center gap-1.5`}>
                 <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />

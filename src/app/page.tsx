@@ -95,12 +95,15 @@ function HeroSymbol({ reduced }: { reduced: boolean }) {
 
   return (
     <div className="inline-flex flex-col items-center relative z-10">
-      <button
+      <motion.button
         type="button"
         onClick={enter}
         aria-label="Pyadra symbol — enter the exhibitions"
         className="cursor-pointer bg-transparent border-0 p-0 block"
         style={{ lineHeight: 0 }}
+        whileHover={reduced ? undefined : { scale: 1.04 }}
+        whileTap={reduced ? undefined : { scale: 0.96 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 18 }}
       >
         <svg
           width={SYMBOL_SIZE}
@@ -169,7 +172,7 @@ function HeroSymbol({ reduced }: { reduced: boolean }) {
             style={{ transformOrigin: '120px 134px', transformBox: 'fill-box' }}
           />
         </svg>
-      </button>
+      </motion.button>
 
       {/* PYADRA word */}
       <motion.div
@@ -408,19 +411,18 @@ export default function PyadraHome() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.0, ...SPRING }}
             >
-              <motion.span
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.96 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 17 }}
-                className="inline-block"
+              <Link
+                href="/exhibitions"
+                className="cta-glow group relative block rounded-full bg-[#1A1C1A] text-white px-12 py-4 t-d5 font-semibold shadow-lg shadow-[#1A1C1A]/20 overflow-hidden"
               >
-                <Link
-                  href="/exhibitions"
-                  className="block rounded-full bg-[#1A1C1A] text-white px-12 py-4 t-d5 font-semibold shadow-lg shadow-[#1A1C1A]/20"
-                >
-                  Join
-                </Link>
-              </motion.span>
+                {/* emerald bloom seeps in from below on hover */}
+                <span
+                  aria-hidden
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{ background: 'radial-gradient(80% 120% at 50% 130%, rgba(5,150,105,0.55), transparent 70%)' }}
+                />
+                <span className="relative">Join</span>
+              </Link>
             </motion.div>
           )}
         </div>

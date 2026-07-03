@@ -224,7 +224,7 @@ export default function GalaxyExhibition() {
         </svg>
       </div>
 
-      <GreenDust count={250} />
+      <GreenDust count={140} />
 
       {/* shared nav */}
       <SiteNav
@@ -265,15 +265,27 @@ export default function GalaxyExhibition() {
       <main className="relative z-10 flex-1 w-full px-4 md:px-8 lg:px-12 py-4 md:py-6 flex items-center justify-center">
         <div className="w-full max-w-[1100px] relative">
 
-          {/* orbital rings */}
+          {/* orbital rings — the dashed ones drift, so the field is never still */}
           <motion.div
             className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10 md:opacity-15"
             style={{ x: ringsX, y: ringsY }}
           >
             <svg viewBox="0 0 800 800" className="w-full h-full text-[#059669]">
-              <circle cx="400" cy="400" r="140" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="4 4" />
+              <motion.g
+                animate={{ rotate: 360 }}
+                transition={{ duration: 240, repeat: Infinity, ease: 'linear' }}
+                style={{ transformOrigin: '400px 400px' }}
+              >
+                <circle cx="400" cy="400" r="140" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="4 4" />
+              </motion.g>
               <circle cx="400" cy="400" r="260" fill="none" stroke="currentColor" strokeWidth="1" />
-              <circle cx="400" cy="400" r="380" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="2 6" />
+              <motion.g
+                animate={{ rotate: -360 }}
+                transition={{ duration: 360, repeat: Infinity, ease: 'linear' }}
+                style={{ transformOrigin: '400px 400px' }}
+              >
+                <circle cx="400" cy="400" r="380" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="2 6" />
+              </motion.g>
             </svg>
           </motion.div>
 
@@ -318,8 +330,18 @@ export default function GalaxyExhibition() {
                     {project.type} · {project.kind}
                   </span>
 
-                  {/* sphere — untouched */}
-                  <div className="relative mb-4">
+                  {/* sphere — floats in place, each on its own rhythm,
+                      so the field breathes even without a cursor */}
+                  <motion.div
+                    className="relative mb-4"
+                    animate={{ y: [0, -7, 0] }}
+                    transition={{
+                      duration: 5 + index * 0.8,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                      delay: index * 0.9,
+                    }}
+                  >
                     <motion.div
                       animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.3, 0.1] }}
                       transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: index * 0.5 }}
@@ -335,7 +357,7 @@ export default function GalaxyExhibition() {
                         className="absolute inset-0 opacity-30 bg-[conic-gradient(from_0deg,transparent_0deg,transparent_180deg,rgba(255,255,255,0.2)_270deg,transparent_360deg)]"
                       />
                     </div>
-                  </div>
+                  </motion.div>
 
                   {/* 4-line copy per sphere */}
                   <h3 className="text-lg md:text-2xl font-bold tracking-[-0.02em] text-center mb-1 transition-colors duration-300 group-hover:text-[#059669]">

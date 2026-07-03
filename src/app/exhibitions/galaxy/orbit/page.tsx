@@ -454,10 +454,10 @@ export default function OrbitDashboard() {
       <main className="relative z-10 w-full max-w-7xl mx-auto flex-grow grid grid-cols-1 lg:grid-cols-[1.05fr_1.3fr_1.05fr] gap-4 lg:gap-6 my-4 overflow-y-auto lg:overflow-hidden h-full">
 
         {/* LEFT COLUMN: Identity & What You Fund */}
-        <div className="flex flex-col gap-4 lg:gap-5 h-full lg:overflow-hidden">
+        <div className="rise-col rise-col-1 flex flex-col gap-4 lg:gap-5 h-full lg:overflow-hidden">
 
           {/* Identity panel */}
-          <div className="rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm">
+          <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm">
             <div className="flex items-center gap-2 mb-3">
               <span className={`rounded-full bg-black/5 text-[#3A4A3E] px-2.5 py-1 ${T.micro} font-mono tracking-wider uppercase`}>
                 Global · Podcast Archive
@@ -478,7 +478,7 @@ export default function OrbitDashboard() {
           </div>
 
           {/* What you fund */}
-          <div className="rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 flex-grow flex flex-col shadow-sm lg:overflow-hidden">
+          <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 flex-grow flex flex-col shadow-sm lg:overflow-hidden">
             <div className="flex justify-between items-center mb-4">
               <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-[#6B8070]`}>
                 What You Fund
@@ -506,7 +506,7 @@ export default function OrbitDashboard() {
         </div>
 
         {/* MIDDLE COLUMN: Orbit sphere + live funding bar + stats */}
-        <div className="flex flex-col gap-4 lg:gap-5 h-full">
+        <div className="rise-col rise-col-2 flex flex-col gap-4 lg:gap-5 h-full">
 
           {/* Monolith (dark, orbit aesthetic) */}
           <div className="rounded-[32px] bg-[#0A120D] border border-white/5 shadow-2xl p-6 relative flex flex-col items-center justify-center flex-grow min-h-[380px] lg:min-h-0 overflow-hidden">
@@ -576,10 +576,10 @@ export default function OrbitDashboard() {
         </div>
 
         {/* RIGHT COLUMN: Contribution layers + Risks */}
-        <div className="flex flex-col gap-4 lg:gap-5 h-full lg:overflow-hidden">
+        <div className="rise-col rise-col-3 flex flex-col gap-4 lg:gap-5 h-full lg:overflow-hidden">
 
           {/* Contribution layers */}
-          <div className="rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm">
+          <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm">
             <div className="flex justify-between items-center mb-1">
               <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-[#6B8070]`}>
                 Contribution Layers
@@ -624,7 +624,7 @@ export default function OrbitDashboard() {
           </div>
 
           {/* The Honest Risks */}
-          <div className="rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 flex-grow flex flex-col justify-between shadow-sm lg:overflow-hidden">
+          <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 flex-grow flex flex-col justify-between shadow-sm lg:overflow-hidden">
             <div className="lg:overflow-hidden flex flex-col flex-grow">
               <h2 className={`font-mono ${T.small} font-bold uppercase tracking-wider text-red-700/80 mb-3 shrink-0 flex items-center gap-1.5`}>
                 <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
