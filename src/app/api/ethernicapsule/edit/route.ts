@@ -48,8 +48,7 @@ export async function POST(req: Request) {
       .update({
         recipient_name: recipient_name ? sanitizeString(recipient_name, 100) : null,
         message: sanitizeString(message, 15000),
-        guardian_email: guardian_email ? sanitizeString(guardian_email, 150) : null,
-        last_edited_at: new Date().toISOString()
+        guardian_email: guardian_email ? sanitizeString(guardian_email, 150) : null
       })
       .eq("id", capsule.id);
 

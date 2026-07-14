@@ -17,10 +17,12 @@ import { getSupabase } from "@/app/lib/db";
 import { sanitizeString } from "@/app/lib/validation";
 import crypto from "crypto";
 
+// 16 random bytes = 128 bits. Keys are stored only as unsalted SHA-256
+// hashes, so the key itself must be strong enough to resist offline
+// brute-force if the database ever leaks.
 function generateKey(prefix: string) {
-  const segment1 = crypto.randomBytes(2).toString('hex').toUpperCase();
-  const segment2 = crypto.randomBytes(2).toString('hex').toUpperCase();
-  return `${prefix}-${segment1}-${segment2}`;
+  const segments = crypto.randomBytes(16).toString('hex').toUpperCase().match(/.{8}/g)!;
+  return `${prefix}-${segments.join('-')}`;
 }
 
 function hashKey(key: string) {
