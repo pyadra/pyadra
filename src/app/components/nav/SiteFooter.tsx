@@ -23,7 +23,7 @@ import { useEffect, useState } from 'react';
 const LINKS: { label: string; href: string; external?: boolean }[] = [
   { label: 'Manifesto', href: '/manifesto' },
   { label: 'Contact',   href: 'mailto:pyadra@pyadra.io',        external: true },
-  { label: 'Instagram', href: 'https://instagram.com/pyadra',   external: true },
+  { label: 'Instagram', href: 'https://instagram.com/pyadra.io', external: true },
   { label: 'Terms',     href: '/legal/terms' },
   { label: 'Privacy',   href: '/legal/privacy' },
 ];

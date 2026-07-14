@@ -16,6 +16,10 @@ export default function Terms() {
           ← Pyadra
         </Link>
 
+        <div className="inline-flex items-center gap-2 rounded-full bg-[#059669]/10 text-[#047857] px-4 py-2 t-d6 mb-6">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
+          The house rules
+        </div>
         <h1 className="font-serif font-semibold text-4xl md:text-5xl tracking-tight mb-3">
           Terms
         </h1>
@@ -26,7 +30,7 @@ export default function Terms() {
 
         <div className="space-y-8 t-d4 text-[#3A4A3E] leading-relaxed">
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">
+            <strong className="font-semibold text-[#047857]">
               1. Contributions.
             </strong>{" "}
             Actions labeled as support or sponsorship on pyadra.io (for
@@ -35,7 +39,7 @@ export default function Terms() {
           </p>
 
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">
+            <strong className="font-semibold text-[#047857]">
               2. What support is — and isn&rsquo;t.
             </strong>{" "}
             Support is cultural and artistic backing. It does not constitute
@@ -45,7 +49,7 @@ export default function Terms() {
           </p>
 
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">
+            <strong className="font-semibold text-[#047857]">
               3. EterniCapsule.
             </strong>{" "}
             A capsule is a best-effort digital keepsake, not a guaranteed
@@ -59,7 +63,7 @@ export default function Terms() {
           </p>
 
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">
+            <strong className="font-semibold text-[#047857]">
               4. Acceptable use.
             </strong>{" "}
             Don&rsquo;t use pyadra.io for anything unlawful, harmful, or abusive,
@@ -68,7 +72,7 @@ export default function Terms() {
           </p>
 
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">
+            <strong className="font-semibold text-[#047857]">
               5. Our work.
             </strong>{" "}
             The visual and sound design, the experiences, and the Pyadra name
@@ -77,7 +81,7 @@ export default function Terms() {
           </p>
 
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">
+            <strong className="font-semibold text-[#047857]">
               6. As-is service.
             </strong>{" "}
             pyadra.io is provided &ldquo;as is&rdquo; and &ldquo;as available,&rdquo; without
@@ -86,7 +90,7 @@ export default function Terms() {
           </p>
 
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">
+            <strong className="font-semibold text-[#047857]">
               7. Limitation of liability.
             </strong>{" "}
             To the maximum extent permitted by law, Pyadra&rsquo;s total liability
@@ -96,7 +100,7 @@ export default function Terms() {
           </p>
 
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">
+            <strong className="font-semibold text-[#047857]">
               8. Governing law.
             </strong>{" "}
             These terms are governed by the laws of the State of Delaware,
@@ -104,7 +108,7 @@ export default function Terms() {
           </p>
 
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">9. Contact.</strong>{" "}
+            <strong className="font-semibold text-[#047857]">9. Contact.</strong>{" "}
             Questions about these terms:{" "}
             <a
               href="mailto:pyadra@pyadra.io"

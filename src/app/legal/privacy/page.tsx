@@ -15,6 +15,10 @@ export default function Privacy() {
           ← Pyadra
         </Link>
 
+        <div className="inline-flex items-center gap-2 rounded-full bg-[#059669]/10 text-[#047857] px-4 py-2 t-d6 mb-6">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
+          The museum&rsquo;s promise
+        </div>
         <h1 className="font-serif font-semibold text-4xl md:text-5xl tracking-tight mb-3">
           Privacy
         </h1>
@@ -27,7 +31,7 @@ export default function Privacy() {
           </p>
 
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">1. Payments.</strong>{" "}
+            <strong className="font-semibold text-[#047857]">1. Payments.</strong>{" "}
             Pyadra never sees or stores your card details. All payments are
             handled by Stripe. After a payment we keep the confirmation: the
             amount, the project you supported, the name and email you provided,
@@ -35,7 +39,7 @@ export default function Privacy() {
           </p>
 
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">
+            <strong className="font-semibold text-[#047857]">
               2. Supporting a project (Orbit 77).
             </strong>{" "}
             When you support a project we store your name, email, display name
@@ -45,7 +49,7 @@ export default function Privacy() {
           </p>
 
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">
+            <strong className="font-semibold text-[#047857]">
               3. EterniCapsule.
             </strong>{" "}
             When you seal a capsule we store your name and email, the
@@ -59,7 +63,7 @@ export default function Privacy() {
           </p>
 
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">
+            <strong className="font-semibold text-[#047857]">
               4. The observer ticket.
             </strong>{" "}
             Your visit to the home page is counted with a sequential number
@@ -68,7 +72,7 @@ export default function Privacy() {
           </p>
 
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">
+            <strong className="font-semibold text-[#047857]">
               5. Analytics &amp; cookies.
             </strong>{" "}
             We use Vercel Analytics, which is anonymized and cookie-free. We do
@@ -76,7 +80,7 @@ export default function Privacy() {
           </p>
 
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">
+            <strong className="font-semibold text-[#047857]">
               6. Who processes data for us.
             </strong>{" "}
             Stripe (payments), Supabase (database), Resend (transactional
@@ -85,7 +89,7 @@ export default function Privacy() {
           </p>
 
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">
+            <strong className="font-semibold text-[#047857]">
               7. Your choices.
             </strong>{" "}
             To ask what we hold about you, correct it, or delete it, write to{" "}
@@ -100,13 +104,13 @@ export default function Privacy() {
           </p>
 
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">8. Age.</strong>{" "}
+            <strong className="font-semibold text-[#047857]">8. Age.</strong>{" "}
             Pyadra is not directed at children under 13 and we do not knowingly
             collect their data.
           </p>
 
           <p>
-            <strong className="font-semibold text-[#1A1C1A]">9. Changes.</strong>{" "}
+            <strong className="font-semibold text-[#047857]">9. Changes.</strong>{" "}
             If what we collect changes, this page changes first. The effective
             date above tells you when it was last revised.
           </p>

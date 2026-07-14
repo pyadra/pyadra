@@ -68,7 +68,7 @@ try {
   await waitForServer();
   for (const [path, statuses, mustContain] of CHECKS) {
     try {
-      const res = await fetch(BASE + path, { redirect: 'manual' });
+      const res = await fetch(BASE + path, { redirect: 'manual', signal: AbortSignal.timeout(15_000) });
       const okStatus = statuses.includes(res.status);
       let okBody = true;
       if (okStatus && mustContain) {
