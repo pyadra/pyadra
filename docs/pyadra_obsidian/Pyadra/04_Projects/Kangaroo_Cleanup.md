@@ -1,10 +1,9 @@
-
-Project document · Pyadra · Last updated: June 2026_ 
+_Project document · Pyadra · Last updated: July 2026_
 
 ---
 ## IDENTITY
 
-**Name:** Kangaroo Cleanup **Type:** LOCAL **Exhibition:** [[Galaxy]] **Status:** Warm · Ready for Relaunch **Founder:** Eduardo Díaz **Tagline:** A recycling and environment service built from zero in Sydney, Australia. **Page label:** Project Handover
+**Name:** Kangaroo Cleanup **Type (scope):** LOCAL **Pyadra relation:** Exhibited external **Exhibition:** [[Galaxy]] **Status:** Paused (business) · For sale (exhibition) **Founder:** Eduardo Díaz **Tagline:** A recycling and environment service built from zero in Sydney, Australia. **Page label:** Project Handover
 
 **What it is in 2 lines:** Kangaroo Cleanup is a recycling and removal business built from zero in Sydney, Australia. Validated with real customers, with an active reputation and communication channels still alive today.
 
@@ -550,7 +549,7 @@ _A buyer can verify the reputation before making any inquiry — without contact
 
 ## COPY DECK — LOCKED STRINGS
 
-> [!important] How to use this section This is the single source of truth for every visible string on the Kangaroo Cleanup page. Claude Code and any builder must copy these strings **verbatim**. Do not paraphrase, rewrite, invent, or "improve" them. If a string is needed that is not in this deck, it must be added here first and approved — never improvised in code. If the code and this deck ever disagree, this deck wins (last reconciled against `page.tsx`, June 2026).
+> [!important] How to use this section This is the single source of truth for every visible string on the Kangaroo Cleanup page. Claude Code and any builder must copy these strings **verbatim**. Do not paraphrase, rewrite, invent, or "improve" them. If a string is needed that is not in this deck, it must be added here first and approved — never improvised in code. If the code and this deck ever disagree, this deck wins (last reconciled against `page.tsx`, July 14 2026 — verified verbatim match).
 
 > [!note] Numbers come from Section 05 This deck is the source of truth for _wording_. For any _number_ (jobs, reviews, rating, revenue), Section 05 (Metrics) is the canonical source. If a number changes, update Section 05 first, then update the matching string here. The two must always agree.
 
@@ -558,8 +557,9 @@ _A buyer can verify the reputation before making any inquiry — without contact
 
 ### 14.1 Identity block
 
+- **Nav status badge (SiteNav, live dot):** `For sale`
 - **Type badge:** `Local · Sydney, NSW`
-- **Status badge:** `Handover Ready`
+- **Status badge (identity panel):** `Handover Ready`
 - **H1 (project name):** `Kangaroo Cleanup`
 - **Tagline (serif italic, emerald):** `Your own business — without starting from zero.`
 - **Intro paragraph:** `Kangaroo Cleanup is a recycling and waste removal business built in Sydney in 2023. Furniture, green waste, office clear-outs, household junk — collected, loaded and disposed of responsibly. 500+ jobs later, the channels still ring today.`
@@ -696,7 +696,45 @@ Section label: `Not Included`
 
 ---
 
-### 14.10 Strings that must NEVER appear
+### 14.10 Contact dialog (verbatim)
+
+_The dialog opened by every deal button and CTA. `{model}` is the deal/CTA name that opened it._
+
+|Field|String|
+|---|---|
+|Kicker|`Handover Enquiry`|
+|Heading|`Talk with Eduardo.`|
+|Intro|`Leave your details below. Eduardo handles negotiations directly and personally.`|
+|Field labels|`Name` · `Email` · `Phone` (placeholder: `optional — for direct call`) · `Short note` (placeholder: `optional`)|
+|Interest line|`Interest: {model}`|
+|Submit button|`Send Request` (sending state: `Sending…`)|
+|Success heading|`Got it.`|
+|Success body|`Eduardo has received your contact request. He will reach out to you within 24 hours.`|
+|Error fallback|`Something went wrong. Email pyadra@pyadra.io instead.`|
+
+---
+
+### 14.11 FAQ drawer shell (verbatim)
+
+|Field|String|
+|---|---|
+|Drawer title|`The Full Story`|
+|Founder quote|`"I showed up to a country where I knew nobody, bought a beat-up ute, and built this with my own hands — one honest job at a time. I'm only letting it go because I had to move, not because I stopped believing in it. If you're willing to graft, it pays — and it grows."`|
+|Founder byline|`Eduardo Díaz` / `Founder · Sydney 2023 — Perth 2026`|
+|Photo caption chip|`Eduardo · Sydney`|
+|Links label|`Verify Links`|
+|FAQ label|`Quick FAQ`|
+|Bottom button|`Talk to Eduardo`|
+
+---
+
+### 14.12 Playful micro-strings
+
+- **Draggable logo chip:** `grab me ✦` (permitted single playful moment — see note in 14.13)
+
+---
+
+### 14.13 Strings that must NEVER appear
 
 Per [[Company_Master]] copy voice rules, the page must never contain:
 
@@ -708,7 +746,7 @@ passive income · guaranteed returns
 generic Flippa / Gumtree marketplace phrasing
 ```
 
-> [!note] The "grab me ✦" micro-label on the draggable logo is a playful interaction hint, not e-commerce language. It is permitted as a single intentional moment. Do not multiply this kind of string elsewhere.
+> [!note] The "grab me ✦" micro-label (14.12) is a playful interaction hint, not e-commerce language. It is permitted as a single intentional moment. Do not multiply this kind of string elsewhere.
 
 ---
 
@@ -726,6 +764,8 @@ generic Flippa / Gumtree marketplace phrasing
 
 > [!note] Changelog v1.5 (July 2026) — Clarity pass, owner-directed. Intro rewritten to say WHAT the business is (recycling & waste removal, Sydney 2023, main items) before the proof. Assets Transferred modules retitled to name the asset directly (brand+reputation / channels / pricing & recycling know-how / experience). Value line shortened to "Don't start from zero…". Airtasker context line shortened. Revenue blocks now render FY2024 left, FY2025 right (chronological). Page accent: ~10% Kangaroo brand blue-purple (#7C6FE0 family) on the location badge, asset checkmarks and the grab-me chip — everything else stays Pyadra emerald. Airtasker stats API hardened with plausibility ranges (a scraped "2018" was rendering as the task count). Page body typography corrected from serif-everywhere to DM Sans body per Design System v1.
 
+> [!note] Changelog v1.6 (July 14, 2026) — Full reconciliation against `page.tsx` (live production). Verified copy deck 14.1–14.8 matches the page verbatim — no drift found in the main sections. Added the strings that existed on the page but were missing from the deck: nav status badge `For sale` (14.1), the complete contact dialog (new 14.10), the FAQ drawer shell incl. the founder quote (new 14.11), and the playful chip (14.12); banned strings moved to 14.13. Adopted template-v2 identity fields: Type (scope) + Pyadra relation (Exhibited external); Status normalized to "Paused (business) · For sale (exhibition)" — the business is not operating, the sale exhibition is live, and the page's nav badge says `For sale`. Header date fixed (was still "June 2026") and END version corrected (footer said v1.4 while the changelog was at v1.5).
+
 > [!important] Valuation context (for internal reference — not shown on page) Market reality for this business: it is owner-operated, has no recurring contracts, and is currently inactive — all of which pull the valuation multiple to the low end. Australian small service businesses like this value at roughly 1x SDE (seller's discretionary earnings). With ~$15–25k/yr clear earnings, the defensible private valuation is around **$15–20k AUD**. The deal prices ($5k–$12k upfront + revenue share) sit at or below that on the upfront, by design — lower entry attracts more operators, and the revenue share is where the founder recovers long-term value. KEY RISK: the revenue share depends on the buyer self-reporting and paying voluntarily once the founder is no longer in the business. This must be protected in the written agreement (reporting clause, verification right, default terms) per [[Company_Master]]'s legal-review rule. Do not close on a handshake.
 
-_END · Kangaroo Cleanup · v1.4 · Pyadra 2026_
+_END · Kangaroo Cleanup · v1.6 · Pyadra 2026_

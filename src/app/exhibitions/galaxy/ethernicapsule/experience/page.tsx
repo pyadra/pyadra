@@ -655,7 +655,7 @@ export default function EterniCapsuleEntry() {
                   <span className="text-xs text-[var(--etn-ash)] uppercase tracking-wider font-mono">SEAL</span>
                 </div>
                 <p className="text-[var(--etn-ash)]/70 text-xs leading-relaxed font-light mt-1 md:mt-0" style={{ fontFamily: 'var(--font-eb-garamond)' }}>
-                  Encrypt it with a passphrase. The capsule glows as the fire hardens your words into permanent form.
+                  Seal it behind its key. The capsule glows as the fire hardens your words into permanent form.
                 </p>
               </motion.div>
 

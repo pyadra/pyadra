@@ -1,12 +1,12 @@
+_Project document · Pyadra · Last updated: July 14, 2026_
 
-
-_Project document · Pyadra_ _Last updated: May 21, 2026_
+> [!warning] TRUTH CORRECTION (July 14, 2026) — read before quoting security claims The product is NOT zero-knowledge today. There is NO client-side encryption in the code: messages are stored in plaintext on Supabase's encrypted infrastructure. What IS true: capsule access requires a unique 128-bit key, keys are stored only as SHA-256 hashes (a lost key is genuinely unrecoverable), and the operator uses the service role server-side only. The public page copy was corrected the same day to stop claiming "encrypted in your browser / not even us can read it" — a false claim is a legal and due-diligence liability. Client-side AES is on the roadmap; when it ships, restore the stronger copy.
 
 ---
 
 ## IDENTITY
 
-**Type:** Type 1 — Native Project **Exhibition:** Galaxy **Status:** Active (in production since April 2026) **Founder / Creator:** Eduardo Díaz **Tagline (1 line):** Cryptographic vault. Zero knowledge. Permanent.
+**Type (scope):** GLOBAL **Pyadra relation:** Native on Pyadra **Exhibition:** Galaxy **Status:** Active (in production since April 2026) **Founder / Creator:** Cristian Niño (page, since July 2026; built by Eduardo Díaz) **Tagline (1 line):** Sealed until its day. Key-locked. Permanent.
 
 ---
 
@@ -20,7 +20,7 @@ _This block feeds the public dashboard in Galaxy._ _Maximum 2 lines per field. N
 
 **What they receive by participating:**
 
-> A permanent message delivered on the date you choose. Only the person you select can open it — not even Pyadra can read it.
+> A permanent message that opens on the date you choose. Only the keyholder can open it — and lost keys are unrecoverable, even by Pyadra.
 
 **Main product:**
 
@@ -28,7 +28,7 @@ _This block feeds the public dashboard in Galaxy._ _Maximum 2 lines per field. N
 |---|---|---|
 |Product name|Capsule Sealing|Capsule Sealing|
 |Price|$9 AUD|Fixed — no tiers, no dynamic pricing|
-|What's included|Your message sealed, encrypted, and delivered on the exact day you choose. Only your recipient can open it.|Client-side AES encryption, permanent DB storage, scheduled email delivery via Resend, optional guardian system, unique access keys (sender / recipient / guardian)|
+|What's included|Your message sealed behind a unique key and openable only on the day you choose.|128-bit access keys (sender / capsule / guardian token) stored as SHA-256 hashes only; message stored on encrypted infrastructure (plaintext at rest — client-side AES is roadmap); key emails via Resend at sealing; on-demand guardian time-vault unlock|
 
 **Project metrics (all dynamic — never hardcode):**
 
@@ -36,7 +36,7 @@ _This block feeds the public dashboard in Galaxy._ _Maximum 2 lines per field. N
 |---|---|
 |Capsules sealed|`SELECT COUNT(*) FROM ethernicapsule_capsules WHERE status = 'sealed'`|
 |Capsules delivered|`SELECT COUNT(*) FROM ethernicapsule_capsules WHERE status = 'opened'`|
-|Awaiting delivery|`SELECT COUNT(*) FROM ethernicapsule_capsules WHERE status = 'sealed' AND unlock_date > NOW()`|
+|Awaiting delivery|`SELECT COUNT(*) FROM ethernicapsule_capsules WHERE status = 'sealed' AND deliver_at > NOW()`|
 |Total value generated|`SELECT COUNT(*) * 9 FROM ethernicapsule_capsules WHERE status != 'pending'` (AUD)|
 
 **Conversion funnel (internal — no tracking yet):**
@@ -156,15 +156,15 @@ _Relevant for Type 1 and Type 2 only._
 **Stack:**
 
 - **Frontend:** Next.js 16 (App Router), React 19, TypeScript
-- **3D:** Three.js + React Three Fiber
+- **Capsule visual:** CSS/Framer Motion (`Capsule3D.tsx` — no Three.js; the dependency was removed July 2026 as unused)
 - **Animations:** Framer Motion
 - **Styling:** Tailwind CSS + Custom CSS Variables (`--etn-*`)
 - **Audio:** Web Audio API (`audio.ts`)
 - **Backend:** Next.js API Routes (serverless)
 - **Database:** Supabase PostgreSQL
 - **Payments:** Stripe Checkout + Webhooks
+- **Keys:** 128-bit random access keys, SHA-256 hashed at rest (NO client-side message encryption yet — roadmap)
 - **Email:** Resend API
-- **Encryption:** Client-side AES (CryptoJS), SHA-256 hashing
 - **Hosting:** Vercel
 
 **Repository:** Main Pyadra monorepo: `/src/app/exhibitions/galaxy/ethernicapsule`
@@ -173,7 +173,7 @@ _Relevant for Type 1 and Type 2 only._
 
 - Production: [pyadra.io/exhibitions/galaxy/ethernicapsule](https://pyadra.io/exhibitions/galaxy/ethernicapsule)
 - Vercel auto-deploy from `main`
-- Daily cron: `/api/cron/ethernicapsule`
+- No cron — delivery is on-demand (guardian token system, decision March 31, 2026)
 
 **Pyadra dependencies:**
 
@@ -212,50 +212,50 @@ _Shared infrastructure:_
 
 **Estimated effort for independence:** 15–25 hours **Fast path (8–10h):** Tasks 1 → 5 → 8. Rest follows.
 
-**Database schema:**
+**Database schema (canonical: `supabase/migrations/0008_full_reset_baseline.sql`):**
 
 ```sql
+CREATE TYPE capsule_status AS ENUM ('pending', 'sealed', 'previewed', 'opened');
+
 CREATE TABLE ethernicapsule_capsules (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  stripe_session_id TEXT UNIQUE NOT NULL,
-  sender_email TEXT NOT NULL,
-  recipient_email TEXT NOT NULL,
+  id UUID PRIMARY KEY,
+  created_at / updated_at TIMESTAMPTZ,          -- updated_at auto-trigger
+  stripe_session_id TEXT UNIQUE NOT NULL,        -- 'pending_<uuid>' until Stripe
+  sender_name TEXT NOT NULL,
+  sender_email TEXT NOT NULL,                    -- placeholder until webhook
+  recipient_name TEXT,
   guardian_email TEXT,
-  capsule_key_hash TEXT UNIQUE NOT NULL,
-  sender_key_hash TEXT UNIQUE NOT NULL,
-  guardian_key_hash TEXT UNIQUE,
-  message_ciphertext TEXT NOT NULL,
-  unlock_date DATE NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  opened_at TIMESTAMPTZ,
-  previewed_at TIMESTAMPTZ,
-  guardian_accessed_at TIMESTAMPTZ,
-  status TEXT DEFAULT 'sealed'
-    CHECK (status IN ('sealed', 'previewed', 'opened', 'guardian_accessed'))
+  message TEXT NOT NULL,                         -- plaintext (client-side AES = roadmap)
+  sender_key_hash TEXT NOT NULL,                 -- SHA-256 of 128-bit keys
+  capsule_key_hash TEXT NOT NULL,
+  guardian_token_hash TEXT,
+  deliver_at TIMESTAMPTZ,                        -- time-vault opening date
+  guardian_key_delivered BOOLEAN NOT NULL DEFAULT false,
+  status capsule_status DEFAULT 'pending',
+  previewed_at / opened_at TIMESTAMPTZ
 );
 ```
 
-**API routes:**
+**API routes (all rate-limited 30/min/IP by middleware):**
 
 |Route|Method|Auth|Purpose|
 |---|---|---|---|
-|`/api/ethernicapsule/checkout`|POST|Public|Create Stripe session|
-|`/api/ethernicapsule/verify`|POST|Key-based|Verify key, return ciphertext|
-|`/api/ethernicapsule/edit`|POST|Sender key|Update pending capsule|
-|`/api/ethernicapsule/guardian-access`|POST|Guardian key|Emergency unlock|
-|`/api/cron/ethernicapsule`|GET|CRON_SECRET|Daily delivery check|
+|`/api/ethernicapsule/checkout`|POST|Public|Insert `pending` capsule + create Stripe session|
+|`/api/ethernicapsule/verify`|POST|Key-based|Verify sender/capsule key → status transitions (previewed/opened)|
+|`/api/ethernicapsule/edit`|POST|Sender key|Edit capsule within a 24-hour grace period|
+|`/api/ethernicapsule/guardian-access`|POST|Guardian token|Time-vault unlock: after `deliver_at`, exchanges the token for the capsule key|
+|`/api/stats/ethernicapsule`|GET|Public|Live dashboard counts|
 
-**Security model — zero-knowledge:**
+**Security model — key-locked (honest version, July 14, 2026):**
 
-1. Message written in browser
-2. Keys generated client-side
-3. Message encrypted AES-256 with `capsuleKey`
-4. Only ciphertext sent to server
-5. Keys hashed SHA-256 before storage
-6. Server stores only hashes — never plaintext
-7. Server cannot decrypt messages
+1. Keys generated SERVER-side at checkout: 128 bits of entropy each (`ETN-CREATOR-…` / `ETN-CAPSULE-…`) — upgraded from 32 bits July 14
+2. Keys hashed SHA-256 before storage; raw keys exist only in the emails
+3. A lost key is unrecoverable — there is no reset
+4. The MESSAGE is stored in plaintext on Supabase (encrypted at rest by the provider). The operator technically can read it via the service role. The privacy policy says this honestly.
+5. Guardian time-vault: guardian holds a token; after `deliver_at` the token exchanges for the capsule key on demand — no cron
+6. Roadmap: client-side AES-GCM so the zero-knowledge claim becomes true
 
-_Key distribution:_ sender → `senderKey` / recipient → `capsuleKey` / guardian → `guardianKey`
+_Key distribution:_ sender → `senderKey` / recipient → `capsuleKey` (via sender or guardian) / guardian → `guardianToken`
 
 ---
 
@@ -264,66 +264,58 @@ _Key distribution:_ sender → `senderKey` / recipient → `capsuleKey` / guardi
 **Seal Flow:**
 
 ```
-User lands on entry page
+User lands on /compose (fields reveal progressively)
+Date picker offers tomorrow onwards, validated in the visitor's LOCAL timezone
+(a UTC-parsing bug silently blocked the seal button in negative-offset
+timezones — fixed July 14, 2026)
   ↓
-Complete darkness (3s) → 4-stage typewriter ritual (~30s)
-No skip — the ritual is the product
+All fields complete → "Strike the Metal — $9 AUD"
   ↓
-"Enter" → 3D zoom-in (2.5s) → main page
+POST /api/ethernicapsule/checkout:
+  server generates 128-bit keys + guardian token, hashes them,
+  inserts capsule (status: pending, stripe_session_id: pending_<uuid>)
+  → Stripe session
   ↓
-/compose — fields reveal progressively
-Capsule glows brighter as word count grows
+Stripe Checkout → payment → webhook (signature-verified)
   ↓
-"PREVIEW CAPSULE" → crystallize sound → /preview
+Webhook: status → sealed, sender_email recorded
+Creator email (keys) via Resend
+Guardian email: master key immediately, OR time-vault email with token
   ↓
-"SEAL CAPSULE — $9 AUD"
-Keys generated client-side → message encrypted → keys hashed
-POST /api/ethernicapsule/checkout → Stripe session
-  ↓
-Stripe Checkout → payment
-  ↓
-Webhook → DB (status: sealed) → email with keys via Resend
-  ↓
-/sealed — capsule turns green patina, breathing slows to 8s
+/sealing (ritual animation) → /sealed — green patina
 ```
 
 **Unlock Flow:**
 
 ```
-Recipient receives email on unlock_date
-Contains: capsule ID + key + link
+Keyholder opens /unlock (or the letter link from the email)
   ↓
-/unlock?id=<uuid> → enters key
-POST /api/ethernicapsule/verify → hashes key → compares DB
-If match: returns ciphertext
+POST /api/ethernicapsule/verify with the key
+Hashes key → compares DB
+  sender key on sealed capsule → status: previewed
+  capsule key → status: opened (+ opened_at)
   ↓
-Particle burst → screen fades white (2s)
-Message decrypted client-side
-Fades in: blur(30px) → 0 over 4s
-Centered, 24px serif, no UI chrome
-"Close" appears after 5s
+/letter/[id]?key=… renders the message (LetterRenderClient)
+```
+
+**Guardian Time-Vault Flow (replaces the old cron — decision March 31, 2026):**
+
+```
+At sealing, guardian receives a token by email
+(time-vault: "the seal breaks on <date>" · non-vault: master key directly)
   ↓
-DB: status = 'opened'
+On/after deliver_at → /guardian → POST /api/ethernicapsule/guardian-access
+Token hash verified + deliver_at reached → capsule key released
+guardian_key_delivered = true
+  ↓
+Guardian passes the key on / opens the letter
 ```
 
-**Cron Delivery Flow:**
+**Grace-Period Edit Flow:**
 
 ```
-Vercel Cron daily 00:00 UTC
-GET /api/cron/ethernicapsule (CRON_SECRET)
-Query: sealed capsules with unlock_date <= TODAY
-For each: send delivery email via Resend
-Status stays 'sealed' until recipient opens
-```
-
-**Guardian Emergency Flow:**
-
-```
-Guardian navigates to /guardian-access
-POST /api/ethernicapsule/guardian-access with guardianKey
-Hashes key → verifies DB → returns ciphertext
-Message decrypted client-side
-DB: status = 'guardian_accessed'
+Within 24h of sealing, the sender key authorizes POST /api/ethernicapsule/edit
+(recipient, message, guardian email editable; after 24h: permanent)
 ```
 
 ---
@@ -347,20 +339,21 @@ DB: status = 'guardian_accessed'
 - ✅ Full flow: Compose → Preview → Seal → Payment
 - ✅ Progressive field reveal in compose
 - ✅ Stripe Checkout (live mode)
-- ✅ Client-side AES + SHA-256
-- ✅ Guardian system
-- ✅ Scheduled email delivery (Resend)
-- ✅ Sender preview, recipient unlock, guardian access
-- ✅ Row Level Security on DB
-- ✅ Daily cron delivery
+- ✅ 128-bit access keys, SHA-256 hashed (upgraded from 32-bit July 14, 2026)
+- ✅ Guardian time-vault system (on-demand token — no cron)
+- ✅ Key emails at sealing (Resend)
+- ✅ Sender preview, recipient unlock, guardian access, 24h grace-period edit (a schema bug that 500'd edits was fixed July 14)
+- ✅ Row Level Security on DB, zero public policies (reset 0008)
+- ✅ Rate limiting on all API routes (30/min/IP, July 14, 2026)
+- ✅ Date validation in the visitor's local timezone (UTC bug fixed July 14)
 - ✅ Audio engine + SENSORS ACTIVE toggle
 - ✅ Mobile responsive
 
 **What's missing:**
 
+- ❌ Client-side message encryption (AES-GCM) — messages are plaintext at rest today; the page copy was corrected to match reality until this ships
 - ❌ First real paying user
 - ❌ Analytics events — no funnel tracking
-- ❌ Rate limiting on API routes
 - ❌ Internal metrics dashboard
 - ❌ Email reminder 1 week before unlock
 - ❌ User capsule dashboard
@@ -410,6 +403,10 @@ DB: status = 'guardian_accessed'
 |April 2026|SHA-256 for key hashing, not bcrypt|Encryption keys, not passwords. Faster for lookup.|
 |April 2026|Optional guardian system|Emergencies exist — death, illness, catastrophe.|
 |May 2026|No social features|Intimate, not viral. Anti-social by design.|
+|March 31, 2026|Cron delivery replaced by on-demand guardian tokens|No cron jobs to babysit; guardian unlocks after deliver_at|
+|July 14, 2026|Keys upgraded 32 → 128 bits|Unsalted SHA-256 hashes must resist offline brute-force|
+|July 14, 2026|Honest security copy — "zero-knowledge" claims removed from the page|No client-side encryption exists yet; a false claim is a legal and due-diligence liability|
+|July 14, 2026|Client-side AES-GCM added to roadmap|Make the zero-knowledge promise true, then restore the stronger copy|
 
 ---
 
@@ -497,7 +494,9 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 - **Status badge:** `Live`
 - **H1:** `EterniCapsule`
 - **Tagline (serif italic, emerald):** `Leave a message in time. It opens on the date you choose.`
-- **Intro paragraph:** `EterniCapsule is an app for saying something today that can only be read in the future — a promise, an apology, words for someone you're not ready to talk to yet. You write it, seal it and pick the date. Until that day arrives, no one can open it — not even us.`
+- **Intro paragraph:** `EterniCapsule is an app for saying something today that can only be read in the future — a promise, an apology, words for someone you're not ready to talk to yet. You write it, seal it and pick the date. Until that day arrives, only the key can open it.`
+
+> [!warning] "not even us" REMOVED (July 14, 2026) The intro used to end "no one can open it — not even us", which is false without client-side encryption. Do not restore it until AES-GCM ships.
 
 > [!note] Voice: plain first, crypto second (July 2026) The old tagline ("A cryptographic time capsule. Zero knowledge. Permanent.") tested as not understandable. Lead with what the app does for a person; the encryption proof lives in What You Get and the FAQ.
 
@@ -511,9 +510,9 @@ Section label: `What You Get` · counter `6 things`
 |---|---|
 |`The finished app`|`Frontend, backend and database — built, live and working today. Write, seal, pay, deliver, unlock: the whole journey already works.`|
 |`The brand & the design`|`The name, the logo, the gold identity and the ceremonial vault design. The look people remember is done.`|
-|`Messages no one can read`|`Each message is locked inside the sender's own browser before it travels. Not even you (or Pyadra) can open a sealed capsule. That trust is the product.`|
+|`Sealed until its day`|`A capsule opens only with its key, and the keys are never stored — only their fingerprints. A lost key is truly unrecoverable. That seal is the product.`|
 |`Payments already flowing`|`Stripe checkout is live and takes $9 the moment someone seals. No setup, no integration work.`|
-|`Email & delivery that run themselves`|`The mail service and scheduler deliver every capsule on its exact date, automatically. Nobody presses a button.`|
+|`Email & delivery that run themselves`|`Keys go out by email the moment a capsule is sealed, and time-vault capsules unlock for the guardian on the chosen date — no cron jobs, nothing to babysit.`|
 |`A safety net for emergencies`|`A guardian system lets a trusted person unlock a capsule if something happens to the sender. The hard, human edge cases are handled.`|
 
 > [!note] Rewritten July 2026 for directness Each item now names the concrete asset (app, brand/design, security, payments, email/delivery, guardian) in plain words — technological but understandable, per owner feedback.
@@ -587,8 +586,8 @@ Drawer title: `Vault Details` (rename — see note) · trigger: `Read FAQ & Orig
 |Q|A|
 |---|---|
 |`Does it actually work?`|`Yes — the complete flow is live: compose, seal, pay $9, scheduled delivery, unlock with a key. Try it yourself in the vault.`|
-|`Can Pyadra read the messages?`|`No. Messages are encrypted in your browser before they ever reach a server. We store only ciphertext and hashed keys — zero-knowledge by design.`|
-|`What exactly would I own?`|`The code, the brand, the ceremonial experience, the encryption engine and the delivery system — plus a documented roadmap to full independence. It stays hosted in Pyadra unless you negotiate otherwise.`|
+|`How is a capsule protected?`|`Every capsule opens only with its unique 128-bit key. Keys are never stored — only cryptographic hashes — so a lost key is truly unrecoverable. Messages rest on encrypted infrastructure, and full in-browser encryption is on the roadmap.`|
+|`What exactly would I own?`|`The code, the brand, the ceremonial experience, the key and delivery system — plus a documented roadmap to full independence. It stays hosted in Pyadra unless you negotiate otherwise.`|
 |`Why is there no revenue yet?`|`It launched recently and the first sale is still pending. We say it plainly because everything on Pyadra is said plainly.`|
 
 ### Founder block (drawer)
@@ -649,9 +648,9 @@ _Priorities only. One line per item._
 
 **Now (current quarter):**
 
+- [ ] Client-side message encryption (AES-GCM with the capsule key) — makes the zero-knowledge promise true, then restore the stronger page copy
 - [ ] Get the first real sale (validates the funnel end-to-end with a paying user)
 - [ ] Add basic analytics to see where users drop off before sealing
-- [ ] Fix the dashboard metrics to be real/dynamic (remove any fake numbers)
 
 **Next (following quarter):**
 
@@ -671,18 +670,19 @@ _Priorities only. One line per item._
 **Documentation:**
 
 - [[VISION]]
-- [[ARCHITECTURE]]
-- [[ROADMAP]]
-- [[DATABASE_SCHEMA]]
+- [[Company_Master]]
+- `supabase/README.md` — table ownership + schema source of truth
 
 **Code:**
 
-- `src/app/exhibitions/galaxy/ethernicapsule/page.tsx`
+- `src/app/exhibitions/galaxy/ethernicapsule/page.tsx` (dashboard)
 - `src/app/exhibitions/galaxy/ethernicapsule/compose/ComposeFormUnified.tsx`
 - `src/app/exhibitions/galaxy/ethernicapsule/Capsule3D.tsx`
-- `src/app/api/ethernicapsule/checkout/route.ts`
-- `src/app/api/cron/ethernicapsule/route.ts`
-- `src/app/exhibitions/galaxy/lib/audio.ts`
+- `src/app/exhibitions/galaxy/ethernicapsule/letter/[id]/page.tsx`
+- `src/app/api/ethernicapsule/{checkout,verify,edit,guardian-access}/route.ts`
+- `src/app/lib/ethernicapsule-email.ts`
+- `src/app/exhibitions/galaxy/ethernicapsule/lib/audio.ts`
+- `supabase/migrations/0008_full_reset_baseline.sql` (canonical schema)
 
 **Sibling projects in Galaxy:**
 
@@ -697,4 +697,6 @@ _Priorities only. One line per item._
 
 > [!note] Changelog v1.9 (June 2026) — Restored the ROADMAP section (Now/Next/Future) that had been missing, reconstructed from the project's own dispersed info (first sale + analytics now; independence separation next; audio/video tiers + white-label future).
 
-_END · ETHERNICAPSULE · v1.9_
+> [!note] Changelog v2.0 (July 14, 2026) — TRUTH RECONCILIATION against production code. Removed the false zero-knowledge/client-side-AES claims everywhere: the code has NO in-browser encryption; messages are plaintext at rest (page copy corrected the same day — intro, "Sealed until its day" card, protection FAQ, delivery card; decorative "AES-256/Encrypting payload" strings in the sealing animation replaced with honest ones). Documented the REAL schema (0008: pending status, deliver_at, guardian_token_hash, plaintext message), the real flows (on-demand guardian time-vault replaced the cron in March; grace-period edit; letter page), 128-bit keys (upgraded from 32-bit July 14), rate limiting, the local-timezone date fix and the edit-500 fix. Stack corrected (no Three.js/CryptoJS). Founder shown is Cristian Niño. Client-side AES-GCM added as the top roadmap item so the stronger copy can return honestly.
+
+_END · ETHERNICAPSULE · v2.0_

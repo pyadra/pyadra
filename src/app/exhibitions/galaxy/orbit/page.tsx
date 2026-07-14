@@ -411,6 +411,7 @@ export default function OrbitDashboard() {
   const raisedDisplay = raised !== null ? `$${raised.toLocaleString('en-AU')}` : '$…';
 
   const FAQ = [
+    { q: 'Is this real?', a: `${episodesLive} episodes are public on YouTube and the credential system processes real payments through Stripe. Watch first, decide later.` },
     ...FAQ_BASE,
     { q: 'Where does the money go?', a: `Straight into Season 2 production. The goal is $${goal.toLocaleString('en-AU')} AUD — the progress bar on this page is live, and every credential moves it.` },
   ];

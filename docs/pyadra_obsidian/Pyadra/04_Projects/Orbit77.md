@@ -1,11 +1,10 @@
-
-_Project document · Pyadra_ _Last updated: May 21, 2026_
+_Project document · Pyadra · Last updated: July 14, 2026_
 
 ---
 
 ## IDENTITY
 
-**Type:** Type 2 — External Project with Internal Product **Exhibition:** Galaxy **Status:** Active **Founders:** Pablo & Eduardo **Tagline (1 line):** Real conversations. No filters. No script. No bullshit.
+**Type (scope):** GLOBAL **Pyadra relation:** External with internal product (podcast lives on YouTube; credential system is native) **Exhibition:** Galaxy **Status:** Active · Funding S2 **Founder:** Pablo Ramírez (page shows Pablo only since July 2026; Eduardo operates Pyadra) **Tagline (1 line):** Real conversations. No filters. No script. No bullshit.
 
 ---
 
@@ -33,20 +32,24 @@ _This block feeds the public dashboard in Galaxy._ _Maximum 2 lines per field. N
 
 |What the user sees|Data source|
 |---|---|
-|Season 2 funding progress|`/api/stats/orbit-fund` → `SUM(orbit_support_credentials.amount_aud)`|
-|Total supporters|`SELECT COUNT(*) FROM orbit_supporters`|
-|Funding goal|$1,000 AUD (fixed production budget — acceptable hardcode)|
+|Season 2 funding raised|`/api/stats/orbit-fund` → `SUM(orbit_support_credentials.amount_aud WHERE payment_status='paid')`|
+|Funding goal ($10,000 AUD)|`pyadra_settings` key `orbit.funding_goal_aud` — served by `/api/stats/orbit-fund`, editable in Supabase without a deploy|
+|Episodes live (10)|`pyadra_settings` key `orbit.episodes_live` — same API, same editability|
+|Progress %|Computed on the page from raised/goal|
 
-**⚠️ Known data debt:** Episodes live count (currently 10) is hardcoded in the UI. Must become dynamic in Season 2 via an `orbit_episodes` table.
+> [!note] Data debt RESOLVED (July 14, 2026) The episodes count and the funding goal are no longer hardcoded — both live in the `pyadra_settings` table. The values in code (`CONFIG`) are fallbacks only. To publish episode 11: edit the `orbit.episodes_live` row in Supabase.
 
 **Access:**
 
 - Internal product (credential): `/exhibitions/galaxy/orbit`
-- Crew applications: `/exhibitions/galaxy/orbit/join`
+- Post-payment confirmation: `/transmission-confirmed`
+- Supporter archive: `/archive/[credential-id]` (linked from the credential email)
 - Podcast — YouTube: [@Orbit77Podcast](https://www.youtube.com/@Orbit77Podcast)
-- Podcast — Spotify: TBD
+- Podcast — Spotify: TBD (link hidden until real)
 - External store: [orbit77.shop](https://orbit77.shop/)
-- Instagram: TBD
+- Instagram: TBD (link hidden until real)
+
+> [!note] Crew applications RETIRED (July 14, 2026) The `/orbit/join` page, `/api/applications` and the `orbit_applications` table were removed by owner decision. The path to join is a conversation, not a form.
 
 ---
 
@@ -69,38 +72,30 @@ _For the founders. Does not appear on the dashboard._
 
 _How it feels, not just how it works. Required reading before touching any UI component._
 
-**The feeling in one sentence:** Accessing a restricted transmission from deep space — secure, encrypted, exclusive, and raw.
+> [!important] Design system CHANGED (July 2026) The Orbit dashboard now follows the Pyadra light museum dashboard pattern (same family as Kangaroo Cleanup): smoke-gray surface `#EDEFED`, emerald accent `#059669`, white glass panels, Design System v1 type scale. The old dark "deep space transmission" aesthetic (`#020503` / `#39FF14` neon) survives ONLY inside the drawer ("The Origin Story", dark panel, cream text `#F4EFEA`) and in the ritual copy voice. The post-payment page (`/transmission-confirmed`) and the archive (`/archive/[id]`) were restyled July 14, 2026 to this same light museum language — no more dark neon pages.
 
-**Atmosphere:** Heavy tension, brutalist transmission aesthetic. Like listening to intercepted communications from a restricted orbital station. High-contrast alert tones, stark blacks, glowing greens, golden warnings. Terminal-style interface. Everything feels secure, intentional, and permanent.
+**The feeling in one sentence:** A museum dashboard examining a living transmission — calm surface, ritual language underneath.
 
-**Color palette:**
+**Color palette (current page):**
 
 |Token|Hex|Usage|
 |---|---|---|
-|`--orbit-black`|`#020503`|Base canvas, deep void|
-|`--orbit-void`|`#050A07`|Card backgrounds|
-|`--orbit-deep`|`#0A1A0D`|Elevated surfaces|
-|`--orbit-charcoal`|`#0A120D`|Input backgrounds|
-|`--orbit-green`|`#39FF14`|PRIMARY — signal active, CTAs, pulses|
-|`--orbit-gold`|`#FFB000`|PRIMARY — Pyadra accent, tension, titles|
-|`--orbit-cream`|`#F4EFEA`|Primary text|
-|`--orbit-alert`|`#FF4444`|Critical alerts|
+|Surface|`#EDEFED`|Page background (Pyadra museum smoke)|
+|Ink|`#1A1C1A`|Primary text|
+|Emerald|`#059669` / `#047857`|PRIMARY accent — CTAs, badges, progress|
+|Muted|`#6B8070`|Labels, secondary text|
+|Drawer dark|`#0D1612`-family|Origin Story drawer only|
+|Drawer cream|`#F4EFEA`|Drawer text|
 
-**Typography:**
-
-|Role|Font|Size|Weight|Usage|
-|---|---|---|---|---|
-|Titles|Playfair Display / Cormorant|3xl–8xl|Light italic|Hero, section headings|
-|Body|Inter / Geist Sans|sm–base|Light / Regular|Descriptions, body copy|
-|System|JetBrains Mono / Source Code Pro|xs–sm|Regular / Bold|Stats, labels, terminal text|
+**Typography:** Design System v1 (Fraunces serif display · DM Sans body · IBM Plex Mono labels), dashboard density scale `T` (display 3xl/4xl · heading 16 · body 14 · small 13 · micro 11).
 
 **Key interactions:**
 
-- **Glitch transmission effect** — Hero title and Latest Episode card auto-glitch every 8 seconds, mimicking signal interference
-- **Orbital diagram** — Season 1 (inner orbit, complete, green) + Season 2 (outer orbit, partial based on funding %, gold). Animated satellite orbits Season 1.
-- **Funding progress bar** — Dynamic, real-time with animated stripe pattern
+- **Orbit sphere** — draggable interactive monolith in the middle column
+- **Funding progress** — live bar fed by `/api/stats/orbit-fund` (raised, goal, %)
+- **Lock In dialog** — contribution flow opens in a modal per layer
 
-**Animation principles:** Organic breathing over mechanical linearity. Glitch effects brief and unpredictable. Scroll reveals fade in with slight blur. Pulses use elastic easing. Movement feels like signal drift, not button clicks.
+**Animation principles:** Organic breathing over mechanical linearity. Pulses use elastic easing. Movement feels like signal drift, not button clicks.
 
 **Copy voice:** Ritual over transactional. Military terminal meets sacred archive.
 
@@ -139,23 +134,24 @@ _Type 2 — podcast lives externally (YouTube, Spotify). Credential lives native
 Key files:
 
 - `src/app/exhibitions/galaxy/orbit/page.tsx`
-- `src/app/exhibitions/galaxy/orbit/join/page.tsx`
-- `src/app/exhibitions/galaxy/orbit/components/`
-- `src/app/api/donate/route.ts`
-- `src/app/api/stats/orbit-fund/route.ts`
-- `src/app/api/applications/route.ts`
+- `src/app/transmission-confirmed/page.tsx` (post-payment, Orbit light style)
+- `src/app/archive/[id]/page.tsx` (supporter archive, Orbit light style)
+- `src/app/api/donate/route.ts` (amount validated $5–$1,000 AUD)
+- `src/app/api/stats/orbit-fund/route.ts` (raised + goal + episodes from `pyadra_settings`)
+- `src/app/api/session/route.ts` (post-payment lookup → archive link)
 - `src/app/api/stripe/webhook/route.ts` (shared — critical blocker)
+- `src/app/lib/orbit-db.ts` (ONLY entry point to orbit tables)
 - `src/app/lib/email.ts`
 
 **Deploy:** Production: [pyadra.io/exhibitions/galaxy/orbit](https://pyadra.io/exhibitions/galaxy/orbit)
 
 **Pyadra dependencies:**
 
-- Stripe — shared account with EterniCapsule and Figurines
-- Supabase — shared DB, tables: `orbit_supporters`, `orbit_support_credentials`, `orbit_applications`. Since July 2026 all access goes through the dedicated client `src/app/lib/orbit-db.ts` (`getOrbitSupabase()`); setting `ORBIT_SUPABASE_URL` + `ORBIT_SUPABASE_SERVICE_ROLE_KEY` moves Orbit to its own DB with zero code changes (see `supabase/README.md`)
+- Stripe — shared account with EterniCapsule
+- Supabase — shared DB, ONE table: `orbit_support_credentials`. All access goes through the dedicated client `src/app/lib/orbit-db.ts` (`getOrbitSupabase()`); setting `ORBIT_SUPABASE_URL` + `ORBIT_SUPABASE_SERVICE_ROLE_KEY` moves Orbit to its own DB with zero code changes (see `supabase/README.md`)
 - Resend — shared email service
 - `/api/stripe/webhook` — monolithic webhook (🔴 critical blocker)
-- Shared components: `ProjectNav`, `LiveBackground`
+- Shared components: `SiteNav`, `SiteFooter`, `MuseumAtmosphere`
 - Design tokens in `globals.css`
 
 **What independence requires:**
@@ -163,7 +159,7 @@ Key files:
 |#|Task|Effort|Priority|Blocker|
 |---|---|---|---|---|
 |1|Extract Orbit Stripe webhook from monolith|3–4h|P0|YES|
-|2|Dedicated Supabase project or extract 3 tables — ✅ code side done (dedicated client + env-var switch, July 2026); only remains creating the project and running the 3 migrations|~1h left|P1|No|
+|2|Dedicated Supabase project — ✅ code side done (dedicated client + env-var switch); only remains creating the project and running the orbit part of migration 0008|~1h left|P1|No|
 |3|Separate Resend API key|1h|P1|No|
 |4|Duplicate shared components|2–3h|P2|No|
 |5|Extract design tokens to Orbit-specific CSS|1h|P2|No|
@@ -171,19 +167,17 @@ Key files:
 
 **Estimated effort for independence:** 10–12 hours
 
-**Database tables:**
+**Database tables (single-table design since July 14, 2026):**
 
-- `orbit_supporters` — one record per supporter (email, display name, anonymity toggle)
-- `orbit_support_credentials` — one per contribution (O77-S1-XXXXXX, amount, tier)
-- `orbit_applications` — crew applications (name, email, role, message, status)
+- `orbit_support_credentials` — one row per contribution (O77-S1-XXXXXX, amount, payment status, supporter name/email/display name). The supporter's identity lives on each row; the archive page groups a supporter's credentials by `supporter_email`. (`orbit_supporters` and `orbit_applications` were removed — see migration `0008_full_reset_baseline.sql`.)
 
 **API routes:**
 
 |Route|Method|Auth|Purpose|
 |---|---|---|---|
-|`/api/donate`|POST|Public|Create Stripe Checkout session|
-|`/api/stats/orbit-fund`|GET|Public|Return total funding amount|
-|`/api/applications`|POST|Public|Submit crew application|
+|`/api/donate`|POST|Public (rate-limited)|Create Stripe Checkout session ($5–$1,000 AUD)|
+|`/api/stats/orbit-fund`|GET|Public (rate-limited)|Return raised total + goal + episodes (goal/episodes from `pyadra_settings`)|
+|`/api/session`|GET|Public (rate-limited)|Post-payment lookup: session → credential id for the archive link|
 |`/api/stripe/webhook`|POST|Stripe signature|Process payments (shared — needs split)|
 
 ---
@@ -195,47 +189,34 @@ Key files:
 ```
 Observer lands on /exhibitions/galaxy/orbit
   ↓
-Clicks "Lock In Now →"
+Picks a contribution layer → Lock In dialog opens
   ↓
-Modal opens with credential preview
+Fills: Display Name (optional), Email, anonymity toggle, optional message
+Layer sets the amount ($10 → $1,000)
   ↓
-Fills: Display Name (optional), Email, visibility toggle, optional message
-Selects tier: $10 / $20 / $50 AUD
+"Lock In — $X AUD →" → POST /api/donate → Stripe Checkout
   ↓
-"Lock In Transmission" → POST /api/donate → Stripe session
+Payment → Stripe webhook (signature-verified)
   ↓
-Stripe Checkout → payment
+Webhook upserts orbit_support_credentials (O77-S1-XXXXXX, idempotent on session id)
+Sends credential email via Resend (archive link = credential id)
   ↓
-Webhook → upserts orbit_supporters → inserts orbit_support_credentials (O77-S1-XXXXXX)
-Sends credential email via Resend
+/transmission-confirmed → credential card (Orbit light style)
   ↓
-/transmission-confirmed → credential card displayed
+"View in Archive" → /archive/[credential-id] → all of that email's paid credentials
 ```
 
-**Flow 2 — Crew Application:**
-
-```
-Observer clicks "Join Crew" → /exhibitions/galaxy/orbit/join
-  ↓
-Fills: Name, Email, Role, Portfolio link, "Why Orbit 77?" message
-  ↓
-POST /api/applications → orbit_applications (status: pending)
-  ↓
-"Application recorded. Pablo and Eduardo will review shortly."
-(Future: email notification to founders + admin dashboard)
-```
+**Flow 2 — Crew Application:** RETIRED July 14, 2026 (page, API and table removed by owner decision).
 
 **Flow 3 — Stats & Progress Tracking:**
 
 ```
 Page loads → useEffect → GET /api/stats/orbit-fund
-API: SUM(orbit_support_credentials.amount_aud)
-Returns { total: X }
+API: SUM(paid credentials) + goal + episodes from pyadra_settings
+Returns { total, goal, episodes_live }
   ↓
-Funding % = (total / 1000) * 100
-Progress bar animates 0% → funding % (Framer Motion)
-Orbital diagram: Season 2 arc draws to funding %
-Legend: "X% funded — $X / $1,000 AUD"
+Progress % = total / goal — bar + stats grid (Episodes · Raised · Goal · Progress)
+Goal and episodes are editable in Supabase without a deploy
 ```
 
 ---
@@ -244,39 +225,37 @@ Legend: "X% funded — $X / $1,000 AUD"
 
 |Product|Price|Status|Notes|
 |---|---|---|---|
-|Season 1 Credential — Signal Carrier|$10 AUD|Active|Entry tier|
-|Season 1 Credential — Archive Node|$20 AUD|Active|Recommended tier|
-|Season 1 Credential — Transmission Keeper|$50 AUD|Active|Premium tier|
+|Signal Carrier|$10 AUD|Active|Entry layer (featured "Entry" badge)|
+|Archive Node|$20 AUD|Active|+ early Season 2 access|
+|Transmission Keeper|$50 AUD|Active|+ direct updates from Pablo|
+|Journey Patron|$100–500 AUD|Active|+ S2 credits, behind-the-scenes, merch|
+|Co-Producer / Sponsor|$1,000+ AUD|Active|Brand named in the podcast + product placement|
+|Big investor|By conversation|Active|Contact form, never a checkout|
 |Official Merchandise|Variable|Active|External: [orbit77.shop](https://orbit77.shop/)|
 |Season 2 Episodes — early access|TBD|Planned Q3–Q4 2026|For Season 1 supporters|
 
-**Funding goal:** $1,000 AUD for Season 2 production (10 episodes).
+**Funding goal:** $10,000 AUD for Season 2 (owner decision July 2026; stored in `pyadra_settings` → `orbit.funding_goal_aud`).
 
 ---
 
 ## CURRENT STATE
 
-**What works:**
+**What works (verified in production July 14, 2026):**
 
 - ✅ 10 episodes live on YouTube
-- ✅ Supporter contribution flow (Stripe + Supabase + Resend)
-- ✅ Credential generation (O77-S1-XXXXXX)
-- ✅ Three contribution tiers with distinct names
-- ✅ Dynamic funding progress bar
-- ✅ Orbital diagram (Season 1 complete, Season 2 in progress)
-- ✅ Crew application system
-- ✅ Design tokens (100% consistency)
-- ✅ WCAG AAA typography (12px minimum)
-- ✅ Performance optimized (FilmGrain removed, backdrop-blur reduced)
+- ✅ Full contribution flow end-to-end (Stripe + Supabase + Resend) — all six layers, including the $1,000 Sponsor tier (a $500 amount cap bug was fixed July 14)
+- ✅ Credential generation (O77-S1-XXXXXX) + credential email
+- ✅ Six contribution layers (Signal Carrier → Big investor)
+- ✅ Supporter archive page `/archive/[credential-id]` — Orbit light style
+- ✅ Post-payment page `/transmission-confirmed` — Orbit light style
+- ✅ Dynamic funding progress + stats grid (Episodes · Raised · Goal · Progress)
+- ✅ Goal and episodes editable in Supabase (`pyadra_settings`) without deploys
+- ✅ Light museum dashboard design (Kangaroo pattern) + dark Origin Story drawer
 - ✅ Ritual copy language throughout
 
 **What's missing:**
 
-- ❌ Episodes count dynamic (currently hardcoded as 10)
-- ❌ Private supporter archive page (`/archive/[supporter_id]`)
-- ❌ Admin dashboard for crew applications (currently manual SQL)
-- ❌ Email notifications to founders on new applications
-- ❌ Spotify + Instagram links (placeholders exist)
+- ❌ Spotify + Instagram links (hidden until real)
 - ❌ Custom audio/video player (currently YouTube embeds)
 - ❌ Season 2 episode DB structure
 - ❌ Mobile experience audit
@@ -284,8 +263,7 @@ Legend: "X% funded — $X / $1,000 AUD"
 **Active blockers:**
 
 - 🔴 **Monolithic Stripe webhook** — blocks independence. P0.
-- 🟡 **Season 2 funding incomplete** — needs $1,000 AUD. Check `/api/stats/orbit-fund`.
-- 🟡 **Crew review manual** — applications in DB, no admin interface yet.
+- 🟡 **Season 2 funding at $0 real** — goal $10,000 AUD. Check `/api/stats/orbit-fund`.
 
 ---
 
@@ -402,11 +380,12 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 
 ### Identity block
 
-- **Type badge:** `Global · Podcast`
-- **Status badge:** `Season 2 funding`
+- **Nav status badge (SiteNav, live dot):** `For support`
+- **Type badge:** `Global · Podcast Archive`
+- **Status badge (identity panel):** `Funding S2`
 - **H1:** `Orbit 77`
 - **Tagline:** `Real conversations. No filters. No script. No bullshit.`
-- **Intro:** `Orbit 77 is a podcast created in Sydney that does things differently, moving through three orbits: real talks about life, art and music. 10 episodes live — built for permanence, not virality.`
+- **Intro:** `Orbit 77 is a podcast created in Sydney that does things differently, moving through three orbits: real talks about life, art and music. {episodes} episodes live — built for permanence, not virality.` (episodes is dynamic from `pyadra_settings`)
 
 > [!note] Intro rewritten July 2026 Now says plainly where it was made (Sydney) and its three pillars (life, art, music), per owner feedback.
 
@@ -425,21 +404,24 @@ Section label: `What Your Support Builds` · counter `6 goals`
 |`Events & parties`|`Live Orbit 77 nights with sponsors and brands — the conversations, in a room full of people.`|
 |`A real community`|`The Orbit 77 community, each member with their own credential, permanently in the archive.`|
 
-### Metrics (dynamic — real data)
+### Metrics — stats grid (dynamic — real data)
 
 |Label|Value (source)|Sub|
 |---|---|---|
-|`Episodes live`|`10` (move to dynamic later)|`on YouTube`|
-|`Season 2 funding`|live `/api/stats/orbit-fund`|`raised so far`|
-|`Supporters`|live `COUNT orbit_supporters`|`and counting`|
+|`Episodes`|dynamic — `pyadra_settings` → `orbit.episodes_live`|`live on YouTube`|
+|`Raised`|live `/api/stats/orbit-fund` (paid credentials only)|`Season 2 fund · live`|
+|`Goal`|dynamic — `pyadra_settings` → `orbit.funding_goal_aud` (rendered `$10k`)|`AUD · Season 2`|
+|`Progress`|computed raised/goal|`funded`|
 
-> [!warning] No fake numbers Funding and supporter counts are dynamic from the database. The "10 episodes" is a known data-debt hardcode — keep it in one editable place until an `orbit_episodes` table exists.
+> [!warning] No fake numbers All four stats are dynamic. Episodes and goal come from `pyadra_settings` (editable in Supabase, no deploy); raised comes from paid credentials only — test-mode Stripe rows must never sit in the production table.
 
 ### Contribution layers (draft v1 — provisional, refine with Pablo)
 
-Section label: `Lock In Your Frequency`
+Section label: `Contribution Layers` · chip `draft v1`
 
-**Panel intro line (above the layers):** `Pick a layer, pay by card, and your name is engraved in the archive with a permanent credential. No equity, no return — you're funding the journey.`
+**Panel intro line (above the layers):** `Pick a layer, pay by card — your name is engraved in the archive with a permanent credential. No equity, no return.`
+
+**Featured badge:** Signal Carrier carries the `Entry` chip (featured layer).
 
 |Name|Amount (AUD)|What they get (sub-line, one line)|
 |---|---|---|
@@ -454,25 +436,60 @@ Section label: `Lock In Your Frequency`
 
 ### Funding goal
 
-- **Goal figure:** `$10,000 AUD` — DECIDED by owner July 2026 (was draft $1,000). Raised so far: `$0` real — progress `0%`. The "where the money goes" FAQ reads from the same config value so it never contradicts the progress bar.
+- **Goal figure:** `$10,000 AUD` — DECIDED by owner July 2026. Stored in `pyadra_settings` → `orbit.funding_goal_aud`; the page, the progress bar and the "where does the money go" FAQ all read the same live value, so they can never contradict each other.
 
-> [!warning] Raised must show real $0 The live API (`/api/stats/orbit-fund`) sums `orbit_support_credentials`. Any test-mode Stripe rows in that table must be deleted from Supabase or the page shows fake money (it was showing $690 of test payments). The API filters `payment_status = 'paid'`.
+> [!warning] Raised must show real money only The live API (`/api/stats/orbit-fund`) sums `orbit_support_credentials` filtered to `payment_status = 'paid'`. The database was fully reset July 14, 2026 (migration 0008) — no test rows remain.
+
+### The Honest Risks (right column)
+
+Section label: `The Honest Risks`
+
+|Title|Description|
+|---|---|
+|`The audience is small`|`Early YouTube channel, supporters still being counted. You'd be backing it before the proof — that's the point, and the risk.`|
+|`Monetization isn't active yet`|`No AdSense, no Spotify revenue, no sponsors yet. Today the only revenue is credentials and merch.`|
+|`Production is real work`|`A podcast doesn't run itself. Episodes need recording, editing and publishing — actively, every season.`|
+|`Shared infrastructure`|`Stripe webhook and database are shared with Pyadra today. Independence is documented and takes 10–12 hours.`|
+|`Draft tiers`|`The goal is set — $10,000 AUD for Season 2. The tiers are v1, still being refined with Pablo; the exact perks may shift.`|
+
+### Not included
+
+Section label: `Not Included`
+
+|Item|Note|
+|---|---|
+|`Equity`|`no shares, no ownership — Pablo keeps the project.`|
+|`A return`|`this is a contribution, not an investment.`|
+|`Creative votes`|`no influence on episodes, guests or direction.`|
+
+### Lock In dialog (verbatim)
+
+|Field|String|
+|---|---|
+|Kicker (Stripe layers)|`Orbit 77 · Lock In Your Frequency`|
+|Kicker (Big investor)|`Orbit 77 · Private channel`|
+|Range note (Journey Patron)|`For ranges, the exact final amount is set at checkout.`|
+|Big-investor prompt|`Tell us the structure you're thinking.`|
+|Field label|`Display name`|
+|Submit (Stripe)|`Lock In — $X AUD →` (states: `Opening checkout…`)|
+|Submit (form)|`Hold The Signal — Send →` (states: `Sending…`)|
+|Form success|`Transmission recorded.` + `Pablo has received your note. He'll reach out personally.`|
+|Error fallback|`Something went wrong.`|
 
 ### Confirmation / ritual strings (keep the approved voice)
 
-- On contribution: `Transmission Recorded`
 - Credential format: `Archive ID: O77-S1-XXXXXX`
-- Primary CTA: `Lock In Your Frequency`
-- Secondary: `Hold The Signal`
+- Post-payment page heading: `Your signal arrived.` · kicker `Orbit 77 — Transmission recorded`
+- Post-payment buttons: `Share my credential` · `Return to Orbit 77` · `View in Archive`
 
 ### FAQ (drawer)
 
 |Q|A|
 |---|---|
-|`Is this real?`|`10 episodes are public on YouTube and the credential system processes real payments through Stripe. Watch first, decide later.`|
-|`What do I get for contributing?`|`A permanent credential, founding-member status, early Season 2 access, and founder updates. You're funding the journey — recognition, not ownership.`|
-|`Where does the money go?`|`Straight into Season 2 production. The goal and live progress are shown on this page.`|
-|`Can I own part of Orbit 77?`|`No — Orbit stays with Pablo. Contributions fund the work; they don't buy equity or a say in the content. If you want to support at a bigger level, let's talk.`|
+|`Is this real?`|`{episodes} episodes are public on YouTube and the credential system processes real payments through Stripe. Watch first, decide later.` (episodes dynamic)|
+|`What do supporters get?`|`A permanent credential engraved in the archive (O77-S1-XXXXXX), founding member status, early Season 2 access, and direct founder updates.`|
+|`Is this an investment? Do I own a piece?`|`No. You're funding the journey, not buying equity. Pablo keeps the project and creative control. Supporters get recognition, perks and a permanent credential — never ownership, never a return, never a vote on the content.`|
+|`Where does the money go?`|`Straight into Season 2 production. The goal is ${goal} AUD — the progress bar on this page is live, and every credential moves it.` (goal dynamic)|
 
 ### Founder block (drawer)
 
@@ -482,15 +499,23 @@ Section label: `Lock In Your Frequency`
 - **Quote:** `"I'm a graphic designer who likes to listen, help and build things with other people. Orbit 77 is where all of that lives — art, deep conversations, and orbiting at high frequencies."`
 - **Signature:** `Pablo Ramírez` · `Founder · Orbit 77, Sydney 2025`
 
-### Crew / join
+### Drawer shell (The Origin Story)
 
-- CTA: `Join the crew` → `/exhibitions/galaxy/orbit/join`
+|Field|String|
+|---|---|
+|Drawer trigger|`Read FAQ & Origin Story →`|
+|Drawer title|`The Origin Story`|
+|Links label|`Verify Links`|
+|FAQ label|`Quick FAQ`|
+|Photo caption chip|`Pablo · Sydney`|
+|Bottom button|`Contact the founder`|
 
 ### Secondary CTAs & labels
 
 - **Contact email:** `pyadra@pyadra.io`
-- **Links:** `YouTube` (active) · `Store` (orbit77.shop) · Spotify/Instagram only if real (no dead links)
-- **Footer:** keep existing transmission-style footer
+- **Links:** `YouTube` (active) · `orbit77.shop` · Spotify/Instagram only if real (no dead links)
+
+> [!note] Crew / join REMOVED (July 14, 2026) The `Join the crew` CTA, the `/orbit/join` page and its API no longer exist. Do not rebuild them without an owner decision.
 
 ### Strings that must never appear
 
@@ -504,22 +529,19 @@ buy now · fake supporter numbers
 
 ## ROADMAP
 
-**Now (Q2–Q3 2026):**
+**Now (Q3 2026):**
 
-- [ ] Reach $1,000 AUD funding goal for Season 2
-- [ ] Admin dashboard for crew applications
+- [ ] Reach $10,000 AUD funding goal for Season 2
 - [ ] Mobile experience audit
-- [ ] Add Spotify + Instagram links
+- [ ] Add Spotify + Instagram links (when real)
 - [ ] Begin Season 2 production (once funded)
 
 **Next (Q4 2026):**
 
-- [ ] Private supporter archive page (`/archive/[supporter_id]`)
 - [ ] Season 2 Ep 1–3 early access for Season 1 supporters
 - [ ] Season 2 credential system (O77-S2-XXXXXX)
-- [ ] Custom audio player (terminal aesthetic)
+- [ ] Custom audio player
 - [ ] Split Stripe webhook for independence
-- [ ] Episodes count dynamic (`orbit_episodes` table)
 
 **Future (no fixed date):**
 
@@ -537,24 +559,23 @@ buy now · fake supporter numbers
 **Documentation:**
 
 - [[VISION]]
-- [[ROADMAP]]
-- [[DATABASE_SCHEMA]]
-- [[ARCHITECTURE]]
+- [[Company_Master]]
+- `supabase/README.md` — table ownership + migration path to a dedicated DB
 
 **Code:**
 
 - `src/app/exhibitions/galaxy/orbit/page.tsx`
-- `src/app/exhibitions/galaxy/orbit/join/page.tsx`
+- `src/app/transmission-confirmed/page.tsx`
+- `src/app/archive/[id]/page.tsx`
 - `src/app/api/donate/route.ts`
 - `src/app/api/stats/orbit-fund/route.ts`
-- `src/app/api/applications/route.ts`
+- `src/app/api/session/route.ts`
+- `src/app/lib/orbit-db.ts`
 - `src/app/lib/email.ts`
 
 **Database migrations:**
 
-- `supabase/migrations/0000_orbit_support_credentials.sql`
-- `supabase/migrations/0001_orbit_supporters.sql`
-- `supabase/migrations/0004_orbit_applications.sql`
+- `supabase/migrations/0008_full_reset_baseline.sql` — the single source of truth (0000–0007 are history only)
 
 **External:**
 
@@ -572,4 +593,6 @@ buy now · fake supporter numbers
 
 > [!note] Changelog v1.3 (June 2026) — Reframed the deal: Orbit 77 is NOT for sale — it raises CONTRIBUTION to fund Season 2 while Pablo & Eduardo keep it. Replaced the old acquisition models (partial/full/hosted) with a draft layered contribution model (Signal Carrier → Sponsor + private big-investor door), no equity / no revenue share to protect the founders' creative voice. Added the honest $15k reality note (math doesn't work as investment; comes from sponsors / many small contributors / smaller first goal). Flagged that "contribution/crowdfunding" is a NEW Pyadra model type not yet in Company Master (draft: ~5% platform fee). All numbers are v1 to refine with Pablo. Page NOT built yet — skeleton + deal draft only.
 
-_END · ORBIT 77 · v1.3_
+> [!note] Changelog v1.4 (July 14, 2026) — Full reconciliation against production code after the July 14 overhaul. IDENTITY: template-v2 fields (GLOBAL + External with internal product), founder shown is Pablo only. DESIGN: documented the light museum dashboard (the dark transmission aesthetic now lives only in the Origin Story drawer and the ritual copy); /transmission-confirmed and /archive/[id] restyled to match. DATA: single table `orbit_support_credentials` (supporters + applications tables removed, migration 0008); archive links use the credential id and group by supporter_email. Crew form retired (page, API, table, CTA). Goal $10,000 and episodes count now DYNAMIC via `pyadra_settings` — data debt resolved. Copy deck rebuilt from the live page verbatim: nav badge `For support`, badges, stats grid (Episodes/Raised/Goal/Progress), six layers with `Entry` chip, Honest Risks, Not Included, Lock In dialog, drawer shell, post-payment strings, FAQ (4 entries, two dynamic). $1,000 tier verified working (amount-cap bug fixed). Roadmap and related links updated.
+
+_END · ORBIT 77 · v1.4_

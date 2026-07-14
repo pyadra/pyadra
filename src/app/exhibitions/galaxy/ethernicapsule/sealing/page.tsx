@@ -20,10 +20,10 @@ function SealingProcess() {
 
   const steps = [
     "Establishing secure connection...",
-    "Validating Cryptographic Toll...",
-    "Generating Sender Hash (AES-256)...",
+    "Forging access keys (128-bit)...",
+    "Hashing keys (SHA-256)...",
     "Generating Guardian Keys...",
-    "Encrypting memory payload...",
+    "Committing the seal...",
     "Sealing the Vault..."
   ];
 

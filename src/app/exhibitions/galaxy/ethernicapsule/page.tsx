@@ -39,9 +39,9 @@ const ZERO_STATS: Stats = { sealed: 0, delivered: 0, awaiting: 0, totalValueAUD:
 const WHAT_YOU_GET = [
   { title: 'The finished app', desc: 'Frontend, backend and database — built, live and working today. Write, seal, pay, deliver, unlock: the whole journey already works.' },
   { title: 'The brand & the design', desc: 'The name, the logo, the gold identity and the ceremonial vault design. The look people remember is done.' },
-  { title: 'Messages no one can read', desc: 'Each message is locked inside the sender’s own browser before it travels. Not even you (or Pyadra) can open a sealed capsule. That trust is the product.' },
+  { title: 'Sealed until its day', desc: 'A capsule opens only with its key, and the keys are never stored — only their fingerprints. A lost key is truly unrecoverable. That seal is the product.' },
   { title: 'Payments already flowing', desc: 'Stripe checkout is live and takes $9 the moment someone seals. No setup, no integration work.' },
-  { title: 'Email & delivery that run themselves', desc: 'The mail service and scheduler deliver every capsule on its exact date, automatically. Nobody presses a button.' },
+  { title: 'Email & delivery that run themselves', desc: 'Keys go out by email the moment a capsule is sealed, and time-vault capsules unlock for the guardian on the chosen date — no cron jobs, nothing to babysit.' },
   { title: 'A safety net for emergencies', desc: 'A guardian system lets a trusted person unlock a capsule if something happens to the sender. The hard, human edge cases are handled.' },
 ];
 
@@ -55,8 +55,8 @@ const RISKS = [
 
 const FAQ = [
   { q: 'Does it actually work?', a: 'Yes — the complete flow is live: compose, seal, pay $9, scheduled delivery, unlock with a key. Try it yourself in the vault.' },
-  { q: 'Can Pyadra read the messages?', a: 'No. Messages are encrypted in your browser before they ever reach a server. We store only ciphertext and hashed keys — zero-knowledge by design.' },
-  { q: 'What exactly would I own?', a: 'The code, the brand, the ceremonial experience, the encryption engine and the delivery system — plus a documented roadmap to full independence. It stays hosted in Pyadra unless you negotiate otherwise.' },
+  { q: 'How is a capsule protected?', a: 'Every capsule opens only with its unique 128-bit key. Keys are never stored — only cryptographic hashes — so a lost key is truly unrecoverable. Messages rest on encrypted infrastructure, and full in-browser encryption is on the roadmap.' },
+  { q: 'What exactly would I own?', a: 'The code, the brand, the ceremonial experience, the key and delivery system — plus a documented roadmap to full independence. It stays hosted in Pyadra unless you negotiate otherwise.' },
   { q: 'Why is there no revenue yet?', a: 'It launched recently and the first sale is still pending. We say it plainly because everything on Pyadra is said plainly.' },
 ];
 
@@ -397,7 +397,7 @@ export default function EterniCapsuleShowcase() {
                 Leave a message in time. It opens on the date you choose.
               </p>
               <p className={`${T.body} text-[#3A4A3E] leading-relaxed`}>
-                EterniCapsule is an app for saying something today that can only be read in the future — a promise, an apology, words for someone you&rsquo;re not ready to talk to yet. You write it, seal it and pick the date. Until that day arrives, no one can open it — not even us.
+                EterniCapsule is an app for saying something today that can only be read in the future — a promise, an apology, words for someone you&rsquo;re not ready to talk to yet. You write it, seal it and pick the date. Until that day arrives, only the key can open it.
               </p>
             </div>
           </div>
