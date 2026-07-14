@@ -4,7 +4,7 @@ _Project document · Pyadra · Last updated: July 14, 2026_
 
 ## IDENTITY
 
-**Type (scope):** GLOBAL **Pyadra relation:** External with internal product (podcast lives on YouTube; credential system is native) **Exhibition:** Galaxy **Status:** Active · Funding S2 **Founder:** Pablo Ramírez (page shows Pablo only since July 2026; Eduardo operates Pyadra) **Tagline (1 line):** Real conversations. No filters. No script. No bullshit.
+**Type (scope):** GLOCAL (digital podcast + physical merch/events) **Pyadra relation:** External with internal product (podcast lives on YouTube; credential system is native) **Exhibition:** Galaxy **Status:** Active · Funding S2 **Founder:** Pablo Ramírez (page shows Pablo only since July 2026; Eduardo operates Pyadra) **Tagline (1 line):** Real conversations. No filters. No script. No bullshit.
 
 ---
 

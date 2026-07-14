@@ -1,6 +1,6 @@
 ---
 
-## tags: [pyadra, master, company, core] created: 2026-06-08 version: 2.2 status: active updated: 2026-06-29
+## tags: [pyadra, master, company, core] created: 2026-06-08 version: 3.0 status: active updated: 2026-07-14
 
 # PYADRA — Company Master Document
 
@@ -222,24 +222,23 @@ PROJECT DASHBOARD
 
 EXHIBITIONS PAGE → Exhibition name → Exhibition theme in one line → Number of active projects → One button → Enter exhibition
 
-EXHIBITION PAGE (e.g. [[Galaxy]]) → Project cards with minimum information:
+EXHIBITION PAGE (e.g. [[Galaxy]], v4 July 2026) → Project spheres with exactly 5 elements each:
 
+- Type chip: `{Scope} · {Kind}` (e.g. `Glocal · Podcast`)
+- The sphere itself (the whole sphere is the link — no separate button)
 - Project name
-- Project type (Local · Global · Glocal)
-- One line — what it is
-- Valuation
-- Participation available
-- One button → Enter project dashboard
+- Subtitle + proof line (numbers must match the project doc's canonical metrics)
+- Opportunity line (e.g. `Open for support` / `Looking for a partner`)
 
 PROJECT DASHBOARD → Everything — full detail, proof, risks, participation options, due diligence process
 
-**What a project card never shows:**
+**What a project sphere never shows (decided with Galaxy v4):**
 
+- Valuation figures — value narratives live on the project page only
 - Full asset list
 - Risks
 - Deal details
 - Private information
-- More than one call to action
 
 ---
 
@@ -261,11 +260,38 @@ Think of it as the museum gift shop — the visitor experiences the exhibition a
 - Products from individual projects (those live in each project's own world)
 - Third-party products not created by Pyadra
 
-> [!important] The Pyadra Store is not part of Galaxy or any Exhibition. It does not have a project dashboard. It is a direct store — browse, buy, done.
+> [!important] The Pyadra Store is not part of Galaxy or any Exhibition. It does not have a project dashboard. It is a direct store — browse, buy, done. Its *entrance*, however, lives at the center of Galaxy: the emerald gem (hover: "The museum shop →") plus the direct URL `/store`.
+
+**Current state (July 2026):** LIVE at pyadra.io/store since June 13. Launched with two digital books in the making — "The Path of the Pawn" and "Tales from the Back Seat". Products are an editable array in code; CTAs are "Reserve your copy" (mailto) — payment infrastructure not wired yet. Copy rules apply: never "buy now".
 
 ---
 
-## 9. BUSINESS MODEL
+## 9. THE MUSEUM LAYER — PYADRA'S OWN PARALLEL PIECES
+
+_Everything Pyadra runs for itself, alongside the projects. This is the layer a new AI or collaborator most often doesn't know exists._
+
+**The Home (radically minimal — owner decision, July 2026):** symbol + PYADRA wordmark + tagline + one "Join" button. NOTHING else. Do not re-add copy without asking the owner. A 3-second curtain rises on every visit.
+
+**The Observer ticket:** every visitor to the home becomes a numbered Observer — Pyadra's quiet signature. First visit calls `/api/observer`, a row is created in `pyadra_observers`, and the visitor keeps their number forever in their browser (localStorage). Privacy by design: no IP addresses stored (removed July 14, 2026), only the browser type. The ticket UI is the admission stub at bottom-left.
+
+**The Manifesto** (`/manifesto`) and the **legal pages** (`/legal/privacy`, `/legal/terms`) — light museum pages. Privacy discloses honestly everything the code collects; Terms carry the protections of a Delaware LLC (as-is, liability cap, Delaware law, EterniCapsule best-effort clause). Rewritten July 14, 2026. Rule: any new data-collecting feature updates Privacy in the same commit.
+
+**The single inbox:** `pyadra@pyadra.io` is the ONLY real mailbox. Every mailto, every contact API, every reply-to. Never gmail, never eduardo@/orbit@.
+
+**Editable site parameters (`pyadra_settings`):** a key/JSONB table in Supabase read via `getSetting(key, fallback)`. Change a value in the Table Editor and the site follows within a minute — no deploy. Live keys: `orbit.funding_goal_aud`, `orbit.episodes_live`. New parameters = new rows, never new hardcodes.
+
+**Shared infrastructure (one of each, separated by discipline):**
+
+- **Supabase** — one project, 4 tables, one table per concern: `pyadra_observers`, `pyadra_settings`, `orbit_support_credentials`, `ethernicapsule_capsules`. Ownership map in `supabase/README.md`; migration `0008_full_reset_baseline.sql` is the single schema source of truth. Orbit accesses its table ONLY through `orbit-db.ts` (env-var switch → its own DB someday with zero code changes).
+- **Stripe** — one account; the webhook is monolithic (known blocker for project independence).
+- **Resend** — transactional email only.
+- **Vercel** — hosting + anonymous analytics; `main` auto-deploys.
+
+**Quality gates:** `npm run smoke` boots the production build and checks 22 routes/APIs — it runs before every push to main. `npm run verify` = lint + typecheck + unit tests + build + smoke. Security posture (July 14, 2026): RLS on with zero public policies, rate limiting 30 req/min/IP on all APIs, strict CSP, 128-bit capsule keys.
+
+---
+
+## 10. BUSINESS MODEL
 
 ### Phase 1 — TODAY
 
@@ -316,7 +342,7 @@ Tokens and equity for equity.
 
 ---
 
-## 10. BRAND IDENTITY
+## 11. BRAND IDENTITY
 
 **Logo:** Geometric emerald gem with internal path suggesting pawn transforming into queen. Outline only — no fills. Clean geometric strokes. Status: in finalization.
 
@@ -340,10 +366,13 @@ Tokens and equity for equity.
 
 ---
 
-**Typography:**
+**Typography — Design System v1 (July 2026, via next/font):**
 
-- **Cormorant Garamond** — serif, emotional, titles, project names
-- **JetBrains Mono** — monospace, data, labels, metrics, technical
+- **Fraunces** — serif display, titles, project names, emotional moments
+- **DM Sans** — body text
+- **IBM Plex Mono** — data, labels, metrics, technical
+
+Locked type scale `.t-d1`–`.t-d6` in `globals.css` — six sizes, never a seventh. (Cormorant Garamond / EB Garamond / JetBrains Mono survive only INSIDE project experiences that chose them, e.g. EterniCapsule's ceremonial world — never on Pyadra's own pages.)
 
 ---
 
@@ -392,7 +421,7 @@ NFT · blockchain (unless legally required)
 
 ---
 
-## 11. EXPERIENCE PHILOSOPHY
+## 12. EXPERIENCE PHILOSOPHY
 
 Pyadra sells experience first. Technology is invisible.
 
@@ -408,64 +437,57 @@ This is what differentiates Pyadra from every other platform that tries to conne
 
 ---
 
-## 12. CURRENT STATE
+## 13. CURRENT STATE (July 14, 2026)
 
-**Legal:** Pyadra LLC — registered in Delaware, United States.
+**Legal:** Pyadra LLC — registered in Delaware, United States. Privacy + Terms live and accurate (Delaware governing law, liability cap).
 
-**Active projects in [[Galaxy]]:**
+**Active projects in [[Galaxy]] — all four dashboards LIVE in production:**
 
-|Project|Type|Status|Available|
+|Project|Type|Status|Opportunity|
 |---|---|---|---|
-|[[EterniCapsule]]|Global|Built · Functional|100%|
-|[[Orbit_77]]|Glocal|Active|49%|
-|[[Figuitoon]]|Glocal|In development|100%|
-|[[Kangaroo_Cleanup]]|Local|Warm · Ready|95%|
+|[[EterniCapsule]]|Global|Built · Live · first sale pending|Open for acquisition (Operator $4k / Owner $8k / offer)|
+|[[Orbit_77]]|Glocal|Active · Funding S2 ($10k goal)|Open for support (contribution — not for sale)|
+|[[Figuitoon]]|Glocal|Built · sells via its own Shopify|Available to acquire|
+|[[Kangaroo_Cleanup]]|Local|Business paused · exhibition live|Looking for a partner ($5k–$12k + revenue share)|
 
-**Pyadra Store:** Planned · Not yet built
+**What exists and works (verified in production July 14, 2026):**
 
-**What exists and works:**
-
-- [[Galaxy]] exhibition — designed and live
-- [[EterniCapsule]] — native project, built, functional
-- [[Orbit_77]] — podcast live on YouTube and Spotify
-- [[Kangaroo_Cleanup]] — documented, dashboard in progress
-- [[Project_Standard_Template]] — defined, being validated
+- Home with Observer ticket · [[Galaxy]] v4 orbital field · all 4 project dashboards
+- Pyadra Store live (2 books, reserve-by-email)
+- Full Orbit contribution flow incl. $1,000 tier, credential emails, supporter archive
+- Full EterniCapsule flow (seal → pay → keys → guardian time-vault → unlock)
+- Clean database (reset 0008): 4 tables, per-project separation, RLS closed, editable `pyadra_settings`
+- Security hardening: rate limiting, strict CSP, 128-bit keys
+- Deploy gate: `npm run smoke` (22 checks) before every push
+- Documentation reconciled with production: Kangaroo v1.6 · Orbit v1.4 · EterniCapsule v2.0 · Galaxy v4.0 · this document v3.0
 
 **What's missing:**
 
-- First closed participation deal
+- First closed participation deal (still the #1 goal)
+- First EterniCapsule sale · client-side encryption (so the zero-knowledge promise becomes true)
 - Logo finalized
-- Color palette fully implemented in codebase
-- Project dashboards live for all projects
-- Pyadra Store built
-- External founder onboarding process
+- Store payments (currently reserve-by-email)
+- External founder onboarding process (Phase 2)
 
 > [!note] Current constraint Solo founder. Limited weekly hours. Focus on one thing at a time. Priority: close first deal with [[Kangaroo_Cleanup]].
 
 ---
 
-## 13. PRIORITIES
+## 14. PRIORITIES
 
 ### Immediate
 
-- [ ] Complete [[Kangaroo_Cleanup]] dashboard and publish in [[Galaxy]]
-- [ ] Find the right buyer or operator for [[Kangaroo_Cleanup]]
-- [ ] Close first participation deal
-- [ ] Complete [[Figuitoon]] dashboard and store
-- [ ] Separate [[EterniCapsule]] architecture — build its dashboard
-- [ ] Build [[Orbit_77]] dashboard
-- [ ] Fix [[Orbit_77]] credential date and database issue
-- [ ] Build Pyadra Store (books section)
-- [ ] Fix and update [[Galaxy]] page
-- [ ] Fix and update Exhibitions page
-- [ ] Fix and update Home page
+- [ ] Find the right buyer or operator for [[Kangaroo_Cleanup]] — close the FIRST participation deal
+- [ ] Get [[EterniCapsule]]'s first real sale
+- [ ] Reach [[Orbit_77]] Season 2 funding milestones ($10k goal)
 - [ ] Finalize logo
 
 ### Next
 
-- [ ] Implement emerald palette fully in codebase
-- [ ] Define external founder onboarding process
-- [ ] Legal review for participation deal structure
+- [ ] EterniCapsule client-side encryption (AES-GCM) — make the zero-knowledge promise true, restore the stronger copy
+- [ ] Store payments (replace reserve-by-email when the books are ready)
+- [ ] Legal review for participation deal structure (incl. the Delaware-vs-ASIC jurisdiction flag)
+- [ ] Supabase backup plan before real capsules exist (free tier ≠ years-long promises)
 
 ### Future
 
@@ -476,7 +498,7 @@ This is what differentiates Pyadra from every other platform that tries to conne
 
 ---
 
-## 14. NON-NEGOTIABLE RULES
+## 15. NON-NEGOTIABLE RULES
 
 > [!important] These rules apply to every decision, every build, every conversation. No exceptions. No workarounds.
 
@@ -492,10 +514,12 @@ This is what differentiates Pyadra from every other platform that tries to conne
 10. Risks are always shown — full transparency, always
 11. The Pyadra Store is not a project — it never appears in an Exhibition
 12. Black is not a Pyadra color — smoke gray (#EDEFED) is the main background
+13. **The page never claims what the code doesn't do.** The day a gap between a claim and reality is found, the copy is corrected that same day (learned July 14, 2026, from EterniCapsule's zero-knowledge claim). Honest copy is corrected UP when the feature ships — never the other way.
+14. **Visitor data is minimal by default.** No IP addresses, no tracking cookies, nothing collected without a purpose the Privacy page discloses. Any new data-collecting feature updates Privacy in the same commit.
 
 ---
 
-## 15. THE QUESTION THAT DEFINES EVERYTHING
+## 16. THE QUESTION THAT DEFINES EVERYTHING
 
 > Does the user feel that what they left behind matters?
 
@@ -503,7 +527,7 @@ If yes — we are on the right path.
 
 ---
 
-## 16. KEY DECISIONS LOG
+## 17. KEY DECISIONS LOG
 
 ### March 2026
 
@@ -548,13 +572,32 @@ If yes — we are on the right path.
 - COPY DECK method added to Project Standard (point 14): verbatim locked strings + single canonical source for numbers
 - Pyadra-vs-creator share split deferred to Phase 2 with legal review
 
+### July 2026
+
+- Home made radically minimal by owner decision: symbol + wordmark + tagline + Join — nothing else
+- Pyadra Store went LIVE June 13 (2 digital books, reserve-by-email); entrance = the central gem in Galaxy
+- Galaxy v4: thin orbital field — no panels/tabs/forms/valuations; one click into the project page; Galaxy is the hook, the project page is the story
+- Database full reset (migration 0008): one table per concern — pyadra_observers, pyadra_settings, orbit_support_credentials, ethernicapsule_capsules; per-project code separation (orbit-db.ts) so any project migrates with 2 env vars
+- `pyadra_settings` created: site parameters editable in Supabase without deploys (first keys: Orbit goal + episodes)
+- Observer privacy: IP storage removed; RLS closed on all tables, zero public policies
+- Orbit crew form retired (page + API + table); Figuitoon internal checkout removed — it sells via its own Shopify; its museum page is a showcase
+- Orbit is CONTRIBUTION (never "49% available") — goal $10,000 AUD, six layers $10→$1,000+, Pablo keeps the project; founders shown per page: Pablo (Orbit), Cristian (EterniCapsule), Eduardo (Kangaroo)
+- Security hardening: 128-bit capsule keys, rate limiting 30/min/IP, strict CSP
+- HONEST COPY RULE born (non-negotiable #13): EterniCapsule claimed in-browser encryption that didn't exist — copy corrected same day; client-side AES-GCM is now the top product roadmap item
+- Privacy + Terms rewritten complete and accurate (Delaware law, liability cap, best-effort capsule clause, minimal-data rule #14)
+- Deploy gate established: `npm run smoke` (22 route/API checks) before every push to main
+- Documentation reconciled with production and versioned: Kangaroo v1.6 · Orbit v1.4 · EterniCapsule v2.0 · Galaxy v4.0 · Company Master v3.0
+- Design System v1 confirmed as brand typography: Fraunces + DM Sans + IBM Plex Mono, locked scale .t-d1–.t-d6
+
 ---
+
+> [!note] Changelog v3.0 (July 14, 2026) Major state update after the production-wide cleanup: added §9 THE MUSEUM LAYER (Observer ticket, minimal home, legal pages, single inbox, pyadra_settings, shared infrastructure map, quality gates) — the parallel pieces Pyadra runs for itself. Store section updated to LIVE. Exhibition card spec aligned to Galaxy v4 (spheres, no valuations). Typography corrected to Design System v1. Current State and Priorities rewritten against verified production. Two new non-negotiables: #13 the page never claims what the code doesn't do; #14 visitor data minimal by default. July decisions logged.
 
 > [!note] Changelog v2.2 (June 2026) Captured the operating learnings from building Kangaroo Cleanup and EterniCapsule: resolved the leave-vs-stay contradiction, added valuation methods by project type, value-presentation rule, mandatory revenue-share protection, the operating principles (transaction fee, hosting, infrastructure costs), and the Copy Deck method in the Project Standard.
 
 ---
 
-## 17. RELATED DOCUMENTS
+## 18. RELATED DOCUMENTS
 
 - [[Project_Standard_Template]] — the document every project must complete
 - [[Galaxy]] — first active exhibition
@@ -565,4 +608,4 @@ If yes — we are on the right path.
 
 ---
 
-_END OF COMPANY MASTER DOCUMENT v2.2_ _Next update: when first participation deal closes_
+_END OF COMPANY MASTER DOCUMENT v3.0 · July 14, 2026_ _Next update: when the first participation deal closes_
