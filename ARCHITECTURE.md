@@ -1,574 +1,86 @@
 # Pyadra Architecture
 
-> System design, data flows, and technical decisions for the Pyadra ecosystem
-
-## Table of Contents
-
-- [Overview](#overview)
-- [System Architecture](#system-architecture)
-- [Projects](#projects)
-  - [EterniCapsule](#ethernicapsule)
-  - [Orbit 77](#orbit-77)
-  - [Figurines](#figurines)
-- [Database Schema](#database-schema)
-- [API Routes](#api-routes)
-- [Authentication & Security](#authentication--security)
-- [Payment Processing](#payment-processing)
-- [Email Delivery](#email-delivery)
-- [3D Rendering](#3d-rendering)
-- [Deployment](#deployment)
-
----
+> The technical map, current as of July 14, 2026. For business rules and copy, the source of truth is
+> [docs/pyadra_obsidian/Pyadra/01_Company/Company_Master.md](docs/pyadra_obsidian/Pyadra/01_Company/Company_Master.md);
+> for the database, [supabase/README.md](supabase/README.md); for each project, its doc in `docs/pyadra_obsidian/Pyadra/04_Projects/`.
 
 ## Overview
 
-Pyadra is a monolithic Next.js application using the App Router architecture. All projects (EterniCapsule, Orbit 77, etc.) share the same codebase, database, and infrastructure while maintaining distinct user experiences.
+Pyadra is a monolithic Next.js 16 (App Router) application. All projects share one codebase, one Supabase database, one Stripe account and one Resend account, while keeping **strict per-project boundaries in code** so any project can migrate out later.
 
-**Key Architectural Decisions:**
-- **Monolith over microservices**: Simplicity and faster iteration for a small team
-- **Server-side rendering (SSR) + Client components**: SEO-friendly pages with interactive 3D experiences
-- **Supabase for data**: Managed PostgreSQL with Row Level Security (RLS)
-- **Stripe for payments**: Industry-standard payment processing
-- **Vercel for hosting**: Serverless deployment with edge functions
+**Key decisions:**
+
+- **Monolith over microservices** — one founder, fast iteration
+- **No Three.js** — all "3D" (capsule, spheres) is CSS/Framer Motion; the dependency was removed in July 2026 as unused
+- **One table per concern** — the database was fully reset July 14, 2026 (migration `0008_full_reset_baseline.sql`, the single schema source of truth)
+- **Per-project data access** — Orbit's table is reached ONLY through `src/app/lib/orbit-db.ts`; setting `ORBIT_SUPABASE_URL` + `ORBIT_SUPABASE_SERVICE_ROLE_KEY` moves Orbit to its own database with zero code changes
+- **Editable parameters, not hardcodes** — `pyadra_settings` (key/JSONB) read via `getSetting(key, fallback)`; changing a row in Supabase updates the site without a deploy
+
+## System map
+
+```
+Browser (React + Framer Motion)
+        ↕
+Next.js 16 App Router (Vercel)
+├── Pages: home · exhibitions/galaxy · 4 project dashboards · store ·
+│          archive/[id] · transmission-confirmed · legal · manifesto
+├── middleware.ts: legacy redirects · security headers · strict CSP ·
+│                  rate limiting (30 req/min/IP on /api/*, Stripe webhook exempt)
+└── API routes
+    ├── /api/observer                 → creates the visitor's Observer number
+    ├── /api/donate                   → Orbit Stripe checkout ($5–$1,000 AUD)
+    ├── /api/session                  → post-payment lookup → archive link
+    ├── /api/stats/orbit-fund         → raised + goal + episodes (goal/episodes from pyadra_settings)
+    ├── /api/stats/ethernicapsule     → live capsule counts
+    ├── /api/ethernicapsule/checkout  → pending capsule + Stripe session (128-bit keys, hashed)
+    ├── /api/ethernicapsule/verify    → key check → previewed/opened transitions
+    ├── /api/ethernicapsule/edit      → 24h grace-period edit (sender key)
+    ├── /api/ethernicapsule/guardian-access → time-vault unlock (token, after deliver_at)
+    ├── /api/contact                  → enquiry forms → pyadra@pyadra.io (Resend)
+    ├── /api/airtasker-stats          → Kangaroo live reputation numbers
+    └── /api/stripe/webhook           → signature-verified; routes by metadata.project_id
+        ↕
+Supabase (PostgreSQL, RLS on, zero public policies)   Stripe   Resend
+```
+
+## Database (4 tables — full definitions in `supabase/migrations/0008_full_reset_baseline.sql`)
+
+| Table | Owner | Notes |
+|---|---|---|
+| `pyadra_observers` | Museum | Visitor ticket counter. No IP addresses (privacy decision July 14, 2026). |
+| `pyadra_settings` | Museum | key/JSONB site parameters. Live keys: `orbit.funding_goal_aud`, `orbit.episodes_live`. |
+| `orbit_support_credentials` | Orbit 77 | One row per contribution; carries supporter identity; archive groups by `supporter_email`. Access ONLY via `orbit-db.ts`. |
+| `ethernicapsule_capsules` | EterniCapsule | Status enum pending→sealed→previewed→opened; keys stored as SHA-256 hashes; message plaintext at rest (client-side AES is the top roadmap item — see the truth note in the project doc). |
+
+Removed in the July 2026 reset: `orbit_supporters`, `orbit_applications` (crew form retired), `figurine_orders` (Figuitoon sells only on its Shopify), `home_scans` (legacy).
+
+## Security posture (July 14, 2026)
+
+- RLS enabled on all tables, **zero public policies** — all access server-side via service role
+- Stripe webhook signature verification; amounts validated server-side
+- Rate limiting 30 req/min/IP on `/api/*` (in-memory, middleware)
+- Strict CSP (`connect-src 'self'` + Vercel Analytics only), HSTS, X-Frame-Options
+- Input sanitization on every form (`sanitizeString`) — user strings are interpolated into emails
+- EterniCapsule keys: 128 bits of entropy, hash-only storage — lost keys are unrecoverable
+- No cron jobs — EterniCapsule delivery is on-demand (guardian token after `deliver_at`)
+- Visitor data minimal: no IPs, no tracking cookies (Vercel Analytics is cookie-free)
+
+## Payments
+
+```
+Client → checkout API → Stripe Hosted Checkout → payment
+      → /api/stripe/webhook (signature-verified, idempotent upserts)
+      → DB update + Resend emails → confirmation page
+```
+
+One monolithic webhook routes by `metadata.project_id` (`orbit-77`, `ethernicapsule`). This is the known blocker for project independence — splitting it is each project's P0 independence task.
+
+## Deployment & quality gates
+
+- Vercel, `main` auto-deploys. Domain: www.pyadra.io (apex redirects to www).
+- **Before every push:** `npm run smoke` — boots the production build on a scratch port and checks 22 routes/APIs (pages render, old URLs redirect, APIs degrade gracefully without env keys). `npm run verify` = lint + typecheck + vitest + build + smoke.
+- Env vars: `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY` (+ optional `ORBIT_SUPABASE_*` for Orbit's future dedicated DB).
 
 ---
 
-## System Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                         Browser                              │
-│  ┌────────────┐  ┌──────────────┐  ┌──────────────────┐   │
-│  │   React    │  │   Three.js   │  │  Framer Motion   │   │
-│  │ Components │  │  3D Scenes   │  │   Animations     │   │
-│  └────────────┘  └──────────────┘  └──────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
-                           ↕ HTTP/WS
-┌─────────────────────────────────────────────────────────────┐
-│                   Next.js 16 (App Router)                    │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │  Pages & Layouts (SSR + Client Components)             │ │
-│  ├────────────────────────────────────────────────────────┤ │
-│  │  API Routes                                             │ │
-│  │  • /api/ethernicapsule/* → Capsule operations          │ │
-│  │  • /api/stripe/webhook → Payment confirmation          │ │
-│  │  • /api/figurines/* → Figuitoon orders                 │ │
-│  │  • /api/stats/* → Live project stats                   │ │
-│  └────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-                           ↕
-┌──────────────────┐  ┌──────────────────┐  ┌──────────────┐
-│    Supabase      │  │     Stripe       │  │    Resend    │
-│   PostgreSQL     │  │  Payment Gateway │  │  Email API   │
-└──────────────────┘  └──────────────────┘  └──────────────┘
-```
-
----
-
-## Projects
-
-> **Note**: Pyadra has 4 projects in the Galaxy exhibition: EterniCapsule, Orbit 77, Figurines (all active), and EBOK (in development, target Q3 2026).
-
-### EterniCapsule
-
-**Purpose**: Time-locked digital message vault. Users write a message, pay $9 AUD, and have it delivered to recipients at a future date.
-
-**User Flow:**
-```
-1. User visits /exhibitions/galaxy/ethernicapsule
-2. User composes message → /exhibitions/galaxy/ethernicapsule/compose
-3. User previews → /exhibitions/galaxy/ethernicapsule/preview
-4. User clicks "Seal" → Creates Stripe checkout session
-5. Payment completes → Webhook updates DB to "sealed"
-6. User receives keys via email
-7. Cron job checks daily for delivery dates
-8. When date arrives → Email sent to recipients
-```
-
-**Key Files:**
-- [`src/app/exhibitions/galaxy/ethernicapsule/compose/ComposeFormUnified.tsx`](src/app/exhibitions/galaxy/ethernicapsule/compose/ComposeFormUnified.tsx) - Message composition
-- [`src/app/api/ethernicapsule/checkout/route.ts`](src/app/api/ethernicapsule/checkout/route.ts) - Stripe session creation
-- [`src/app/api/stripe/webhook/route.ts`](src/app/api/stripe/webhook/route.ts) - Payment confirmation
-- [`src/app/lib/ethernicapsule-email.ts`](src/app/lib/ethernicapsule-email.ts) - Email templates
-
-**Data Flow:**
-```
-Compose → Pending (DB) → Stripe Checkout → Webhook → Sealed (DB) → Cron → Delivered (Email)
-```
-
-**Security:**
-- Messages are hashed with SHA-256 keys
-- Keys are generated client-side and stored in metadata
-- Service role bypasses RLS for trusted backend writes
-
----
-
-### Orbit 77
-
-**Purpose**: Podcast platform with supporter funding model. Supporters receive credentials and archive access.
-
-**User Flow:**
-```
-1. User visits /exhibitions/galaxy/orbit
-2. User clicks "Join the Transmission"
-3. User enters name + email + donation amount
-4. Stripe checkout
-5. Webhook confirms payment → Creates supporter record
-6. Email sent with credential code
-7. User accesses /archive/[id] with supporter ID
-```
-
-**Key Files:**
-- [`src/app/exhibitions/galaxy/orbit/page.tsx`](src/app/exhibitions/galaxy/orbit/page.tsx) - Landing page
-- [`src/app/exhibitions/galaxy/orbit/join/page.tsx`](src/app/exhibitions/galaxy/orbit/join/page.tsx) - Donation form
-- [`src/app/api/donate/route.ts`](src/app/api/donate/route.ts) - Stripe session creation
-- [`src/app/lib/email.ts`](src/app/lib/email.ts) - Credential email
-- [`src/app/archive/[id]/page.tsx`](src/app/archive/[id]/page.tsx) - Supporter archive
-
-**Data Flow:**
-```
-Join → Stripe Checkout → Webhook → Supporter Record (DB) → Email → Archive Access
-```
-
----
-
-### Figurines
-
-**Purpose**: The first physical bridge to Pyadra. Users commission a custom 3D printed, hand-painted replica of themselves derived from three photographs. The "Signal" tier links this physical figurine back to their Pyadra Archive via a magnetic QR code.
-
-**User Flow:**
-```
-1. User visits /exhibitions/galaxy/figurines (Cinematic 3D WebGL Neural Scene)
-2. User selects Tier ($150 or $200) → /api/figurines/checkout
-3. Checkout Session Created (DB check triggers "TABLE MISSING" boundary if uninitialized)
-4. Payment completes → Webhook updates DB to "paid"
-5. User redirected to /exhibitions/galaxy/figurines/forge
-6. User uploads 3 photos (Front, Left, Right) + Shipping Address
-7. Data buffered directly to Supabase Storage ('figurines_sculpts' bucket)
-8. Email Sent: Customer receives "Forging" receipt, Founder receives Image Links
-9. Order moves to "forging" state
-```
-
-**Key Files:**
-- `src/app/exhibitions/galaxy/figurines/page.tsx` - 3D Landing Page
-- `src/app/exhibitions/galaxy/figurines/components/FigurineCanvas.tsx` - WebGL R3F Doll simulation
-- `src/app/exhibitions/galaxy/figurines/forge/page.tsx` - 3-Photo Upload Form
-- `src/app/api/figurines/checkout/route.ts` - Stripe Session Initialization
-- `src/app/api/figurines/upload/route.ts` - Supabase Storage buffered upload + Email trigger
-- `src/app/lib/figurines-email.ts` - Resend notification logic
-
-**Data Flow:**
-```
-Landing → Checkout → Webhook (Paid) → Forge (Upload) → Storage + DB (Forging) → Emails
-```
-
----
-
-### EBOK
-
-**Purpose**: Physical book publication platform. Users write stories/essays/reflections and have them printed as permanent physical books.
-
-**Status**: Phase 1 project, in development. Target launch Q3 2026.
-
-**Planned User Flow:**
-```
-1. User visits /exhibitions/galaxy/ebook (currently placeholder)
-2. User composes manuscript → /exhibitions/galaxy/ebook/compose
-3. User designs cover and selects format (A5/A6/pocket)
-4. User previews 3D book mockup
-5. User orders (quantity 1-50) → Stripe checkout
-6. Payment completes → Webhook updates DB
-7. Manuscript sent to printing partner
-8. Book shipped to customer (2-3 weeks)
-```
-
-**Planned Implementation:**
-- **Frontend**: Rich text editor (TipTap), 3D book preview (Three.js), cover upload
-- **Backend**: `/api/ebook/checkout`, `/api/ebook/preview` (PDF generation)
-- **Database**: `ebook_orders` table (see schema section)
-- **Printing**: Partner integration (Australian printer, TBD)
-
-**Pricing (Draft):**
-- A5 (up to 100 pages): $35 AUD
-- A6 (up to 80 pages): $25 AUD
-- Pocket (up to 60 pages): $20 AUD
-
----
-
-## Database Schema
-
-**Tables:**
-
-### `observers`
-```sql
-CREATE TABLE observers (
-  id SERIAL PRIMARY KEY,
-  created_at TIMESTAMP DEFAULT NOW()
-);
-```
-Tracks anonymous visitors. Used for "Observer #0001" identity system.
-
-### `orbit_supporters`
-```sql
-CREATE TABLE orbit_supporters (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  created_at TIMESTAMP DEFAULT NOW(),
-  stripe_customer_id TEXT,
-  stripe_session_id TEXT NOT NULL UNIQUE,
-  supporter_name TEXT NOT NULL,
-  supporter_email TEXT NOT NULL,
-  amount_aud INTEGER NOT NULL,
-  season_label TEXT NOT NULL,
-  credential_code TEXT NOT NULL UNIQUE
-);
-```
-
-### `ethernicapsule_capsules`
-```sql
-CREATE TABLE ethernicapsule_capsules (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  created_at TIMESTAMP DEFAULT NOW(),
-  status TEXT NOT NULL CHECK (status IN ('pending', 'sealed', 'delivered', 'cancelled')),
-  stripe_session_id TEXT NOT NULL,
-  sender_name TEXT NOT NULL,
-  sender_email TEXT NOT NULL,
-  recipient_name TEXT,
-  guardian_email TEXT,
-  deliver_at TIMESTAMP,
-  message TEXT NOT NULL,
-  sender_key_hash TEXT NOT NULL,
-  capsule_key_hash TEXT NOT NULL,
-  delivered_at TIMESTAMP
-);
-```
-
-**Indexes:**
-- `stripe_session_id` (for webhook lookups)
-- `status` (for cron queries)
-- `deliver_at` (for cron queries)
-
----
-
-## API Routes
-
-### Core Routes
-
-| Route | Method | Purpose | Auth |
-|-------|--------|---------|------|
-| `/api/observer` | GET | Create observer ID | Public |
-| `/api/session` | POST | Verify Stripe session | Public |
-
-### EterniCapsule Routes
-
-| Route | Method | Purpose | Auth |
-|-------|--------|---------|------|
-| `/api/ethernicapsule/checkout` | POST | Create Stripe checkout | Public |
-| `/api/ethernicapsule/verify` | POST | Verify capsule key | Public |
-| `/api/ethernicapsule/edit` | POST | Update pending capsule | Key-based |
-| `/api/ethernicapsule/guardian-access` | POST | Guardian unlock | Token-based |
-
-### Orbit 77 Routes
-
-| Route | Method | Purpose | Auth |
-|-------|--------|---------|------|
-| `/api/donate` | POST | Create donation checkout | Public |
-| `/api/stats/orbit-fund` | GET | Funding progress | Public |
-
-### Figurines Routes
-
-| Route | Method | Purpose | Auth |
-|-------|--------|---------|------|
-| `/api/figurines/checkout` | POST | Create Stripe checkout | Public |
-| `/api/figurines/upload` | POST | Buffer photos to Supabase Storage | Public (requires valid session_id) |
-
-### Webhook Routes
-
-| Route | Method | Purpose | Auth |
-|-------|--------|---------|------|
-| `/api/stripe/webhook` | POST | Stripe event handler | Webhook signature |
-
----
-
-## Authentication & Security
-
-**Approach**: No traditional user authentication. Security through:
-
-1. **Cryptographic Keys** (EterniCapsule)
-   - Keys generated client-side
-   - SHA-256 hashed before storage
-   - Keys required for edit/view operations
-
-2. **Stripe Webhook Signatures**
-   - All webhook events verified with `stripe.webhooks.constructEvent`
-   - Invalid signatures rejected
-
-3. **Row Level Security (RLS)**
-   - Supabase RLS policies on all tables
-   - Service role key bypasses RLS for trusted operations
-
-4. **Input Sanitization**
-   - XSS protection via `sanitizeString()` utility
-   - HTML tags stripped from user input
-   - Email validation
-
-5. **Rate Limiting**
-   - Vercel edge functions have built-in rate limits
-   - Additional limits via middleware (future)
-
----
-
-## Payment Processing
-
-**Flow:**
-
-```
-Client → Create Checkout Session → Stripe Hosted Checkout → Payment → Webhook → DB Update → Email
-```
-
-**Implementation:**
-
-1. **Checkout Session Creation**
-   - Client calls `/api/[project]/checkout`
-   - Server creates Stripe session with metadata
-   - Client redirected to Stripe Checkout
-
-2. **Webhook Handling**
-   - Stripe sends `checkout.session.completed` event
-   - Webhook verifies signature
-   - Extracts metadata (project_id, capsule_id, etc.)
-   - Updates database accordingly
-   - Sends confirmation email
-
-3. **Idempotency**
-   - All webhook handlers check for existing records
-   - Duplicate events are safely ignored
-
-**Error Handling:**
-- Failed payments return user to `/[project]?cancelled=true`
-- Webhook failures are logged to console
-- Database transactions prevent partial updates
-
----
-
-## Email Delivery
-
-**Provider**: Resend (transactional email API)
-
-**Email Types:**
-
-1. **Orbit 77 Credential Email**
-   - Sent after successful donation
-   - Contains credential code + archive link
-   - Template: [`src/app/lib/email.ts`](src/app/lib/email.ts)
-
-2. **EterniCapsule Sealing Confirmation**
-   - Sent after payment
-   - Contains sender key + capsule key
-   - Template: [`src/app/lib/ethernicapsule-email.ts`](src/app/lib/ethernicapsule-email.ts)
-
-3. **EterniCapsule Delivery Email**
-   - Sent on delivery date
-   - Contains message + unlock link
-   - Template: [`src/app/lib/ethernicapsule-email.ts`](src/app/lib/ethernicapsule-email.ts)
-
-4. **Figurines Transactional Emails**
-   - Customer: Order confirmation receipt
-   - Founder: Action required internally (contains geometry URLs and Shipping Address)
-   - Template: [`src/app/lib/figurines-email.ts`](src/app/lib/figurines-email.ts)
-
-**Features:**
-- Dark mode + light mode HTML templates
-- Mobile-responsive
-- Branded headers/footers
-
----
-
-## 3D Rendering
-
-**Stack**: Three.js + React Three Fiber (R3F) + Drei
-
-**Scenes:**
-
-Three.js lives only inside project experiences — Pyadra navigation pages
-(home, exhibitions, Galaxy) are pure CSS + Framer Motion by design.
-
-1. **EterniCapsule 3D Monolith** ([`src/app/exhibitions/galaxy/ethernicapsule/Capsule3D.tsx`](src/app/exhibitions/galaxy/ethernicapsule/Capsule3D.tsx))
-   - Animated monolith with breathing effect
-   - State-based rendering (unsealed vs sealed)
-
-2. **Figuitoon Canvas** ([`src/app/exhibitions/galaxy/figurines/components/FigurineCanvas.tsx`](src/app/exhibitions/galaxy/figurines/components/FigurineCanvas.tsx))
-   - Interactive figurine preview
-
-**Optimization:**
-- Dynamic imports with `ssr: false`
-- Error boundaries for graceful degradation
-- Mobile fallbacks where appropriate
-
-**Common Pitfalls Solved:**
-- Custom raycaster for lantern (not R3F's shared one)
-- SpotLight target must be added to scene
-- Clipping planes via `material.clippingPlanes`
-
----
-
-## Deployment
-
-**Platform**: Vercel
-
-**Build Process:**
-```bash
-npm install
-npm run build  # Next.js production build
-```
-
-**Environment Variables** (required in Vercel dashboard):
-- `STRIPE_SECRET_KEY`
-- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
-- `STRIPE_WEBHOOK_SECRET`
-- `NEXT_PUBLIC_APP_URL`
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `RESEND_API_KEY`
-
-**Cron Jobs**:
-- Configured via [Vercel Cron](https://vercel.com/docs/cron-jobs)
-- `/api/cron/ethernicapsule` runs daily at 00:00 UTC
-- Protected by `CRON_SECRET` header
-
-**Database Migrations**:
-- Managed via Supabase dashboard or CLI
-- Stored in [`supabase/migrations/`](supabase/migrations/)
-
-**Monitoring**:
-- Vercel Analytics (page views, performance)
-- Stripe Dashboard (payments)
-- Supabase Logs (database queries)
-
----
-
-## Performance Considerations
-
-1. **Bundle Size**
-   - Three.js is ~600KB (unavoidable for 3D)
-   - Dynamic imports reduce initial load
-   - Tree-shaking enabled
-
-2. **SSR + Client Hydration**
-   - Static pages cached at edge
-   - Client components hydrate progressively
-
-3. **Database Queries**
-   - Indexed columns for fast lookups
-   - Select only required fields
-   - Connection pooling via Supabase
-
-4. **Image Optimization**
-   - Next.js Image component (automatic optimization)
-   - WebP format with fallbacks
-
----
-
-## Future Evolution
-
-### Phase 1: Experiencia (Current - 2026)
-**Architecture:** Monolithic Next.js app with direct project sales
-
-**Current state:**
-- 4 projects in Galaxy exhibition
-- Stripe for payments
-- Supabase for data storage
-- Direct user → project interaction
-
-**Immediate improvements:**
-- [ ] Add Sentry for error tracking
-- [ ] Implement Redis for caching
-- [ ] Add Lighthouse CI to test performance
-- [ ] Generate Supabase types from schema
-- [ ] Add E2E tests with Playwright
-- [ ] Implement rate limiting middleware
-- [ ] Add webhooks for real-time updates
-
----
-
-### Phase 2: Ecosistema (2027)
-**Architecture:** Multi-tenant platform with creator onboarding and project acquisition marketplace
-
-**Core Concept:**
-External creators submit projects to Jungle and City exhibitions. Participants can acquire complete ownership (100%) or fractional stakes (e.g., 90%, 70%, 40%) in these projects. Original creators retain perpetual participation and receive ongoing royalties from all future revenue, regardless of ownership transfers.
-
-**Acquisition Model Example:**
-1. Creator A submits a project to Jungle exhibition
-2. Pyadra curates and approves the project
-3. Participant B acquires 90% ownership for $X
-4. Creator A retains 10% ownership + perpetual revenue royalties
-5. Project generates revenue → Both B (90%) and A (10% + royalties) benefit
-6. If B sells to Participant C later → Creator A still receives royalties
-
-**Pyadra Revenue Model (TBD):**
-- **Acquisition transaction fee:** % of sale price when project ownership transfers
-- **Ecosystem retention fee:** Potential ongoing % (e.g., 5% of monthly revenue) if project remains in Pyadra infrastructure
-- **Details:** To be finalized before Phase 2 launch - fee structure, percentages, and payment frequency are under strategic review
-
-**Required additions:**
-- **Creator API** - External projects can integrate
-- **Project Marketplace** - Acquire full projects or fractional stakes
-- **Royalty Engine** - Automatic distribution to original creators (perpetual)
-- **Multi-signature Contracts** - Shared ownership agreements
-- **Stake Transfer System** - Secondary market for project ownership
-
-**New tables:**
-```sql
-CREATE TABLE creators (
-  id UUID PRIMARY KEY,
-  name TEXT NOT NULL,
-  verified BOOLEAN DEFAULT FALSE
-);
-
-CREATE TABLE ecosystem_projects (
-  id UUID PRIMARY KEY,
-  creator_id UUID REFERENCES creators(id),
-  exhibition_id TEXT, -- 'jungle' | 'city'
-  status TEXT, -- 'pending' | 'approved' | 'live'
-  acquisition_model TEXT -- 'full' | 'fractional'
-);
-
-CREATE TABLE project_stakes (
-  id UUID PRIMARY KEY,
-  project_id UUID REFERENCES ecosystem_projects(id),
-  owner_id UUID, -- Observer or Creator
-  percentage DECIMAL,
-  acquired_at TIMESTAMP
-);
-
-CREATE TABLE pyadra_fees (
-  id UUID PRIMARY KEY,
-  project_id UUID REFERENCES ecosystem_projects(id),
-  fee_type TEXT, -- 'acquisition' | 'retention' | 'transaction'
-  percentage DECIMAL,
-  amount_collected INTEGER, -- in cents
-  collected_at TIMESTAMP,
-  metadata JSONB -- Transaction details, payment info
-);
-```
-
----
-
-### Phase 3: Economía (2028+)
-**Architecture:** Tokenized ecosystem with on-chain governance
-
-**Required additions:**
-- **Blockchain Integration** - Smart contracts for token
-- **Credits System** - Internal currency (bridge to token)
-- **Wallet Connect** - MetaMask, Rainbow, etc.
-- **Governance Module** - Token-based voting
-- **Staking System** - Rewards for long-term participants
-
-**New infrastructure:**
-- Solana/Ethereum smart contracts
-- Token bridge service
-- On-chain event listeners
-- Voting snapshot system
-
----
-
-**Last Updated**: May 2026
+_Last reconciled with production: July 14, 2026._

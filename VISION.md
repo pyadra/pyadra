@@ -95,18 +95,19 @@ Every interaction should feel **intentional**. Buttons aren't just buttons - the
 
 ### 2. Mystery Over Explanation
 
-Don't explain everything upfront. Let users discover. No giant hero section saying "Pyadra is a platform that helps you..." 
+Don't explain everything upfront. Let users discover. No giant hero section saying "Pyadra is a platform that helps you..."
 
-Instead: "6 SIGNALS HIDDEN" and let them figure it out.
+Instead: a symbol, a wordmark, one tagline, one door — and let them walk in.
 
 ### 3. Beauty as Standard
 
-If it's not beautiful, it doesn't ship. This isn't subjective - there are clear aesthetic rules:
-- Dark backgrounds (`#030304`, `#02040A`)
-- Gold/amber accents (`#FFB000`)
-- Serif for emotional weight (Cormorant, Playfair)
-- Mono for system/data (Source Code Pro, JetBrains Mono)
-- Sans for readability (Inter, Geist Sans)
+If it's not beautiful, it doesn't ship. This isn't subjective - there are clear aesthetic rules (Design System v1, July 2026):
+- Light museum surface (`#EDEFED` smoke gray) on every Pyadra page — dark backgrounds belong only *inside* project experiences that choose them
+- Emerald accents (`#059669` — Colombian emerald)
+- Serif for emotional weight (Fraunces)
+- Sans for readability (DM Sans)
+- Mono for system/data (IBM Plex Mono)
+- Locked type scale `.t-d1`–`.t-d6` — six sizes, never a seventh
 - Animations are **organic** (breathing, floating) not mechanical (linear slides)
 
 ### 4. Performance Is Part of Beauty
@@ -121,182 +122,46 @@ Pyadra doesn't care about going viral. It cares about **lasting**. A message sea
 
 ## How Pyadra Actually Works (Today)
 
-> This section describes the real user experience as of April 2026. If you enter pyadra.io right now, this is what happens.
+> This section describes the real user experience as of July 14, 2026. If you enter pyadra.io right now, this is what happens.
 
 ### The Journey: Visitor → Observer → Explorer
 
 **1. Entrance: Home Page (`/`)**
 
-You arrive at a dark field with scattered particles. No hero section. No "Sign up" button. Just this:
+Three seconds of black — the curtain rises. Then a radically minimal room: the symbol, the PYADRA wordmark, the tagline, one "Join" button. Nothing else.
 
-```
-"6 SIGNALS HIDDEN"
-"Send pulses to scan the field"
-```
+Quietly, you become a numbered **Observer** — an admission ticket appears at the bottom-left (`Observer № #0042 · Admitted`). It isn't a username you chose; it's your permanent number in the archive, kept by your own browser. No IP stored, no tracking.
 
-You're immediately assigned an **Observer ID** (#0001, #0002, etc.) - visible in the top-left corner. This isn't a username you chose. It's your permanent identity in the archive.
+**2. Exhibitions Hall (`/exhibitions`)**
 
-You tap/click to send "pulses" that ripple across the field, revealing hidden signals. When you find all 6, the particles collapse and form the word **"PYADRA"**.
+Three exhibitions: **Galaxy** (active — 4 live projects), **Jungle** and **City** (forming).
 
-**You just completed your initiation.**
+**3. Inside Galaxy (`/exhibitions/galaxy`)**
 
-**2. Signature Engraving**
+An orbital field: four floating, magnetic spheres around a central emerald gem. Each sphere carries five lines — type, name, subtitle, proof, opportunity. One click goes straight into the project. The gem is the door to the museum shop (`/store`).
 
-The screen shows your unique **Observation Signature**:
+- **Orbit 77** — podcast, `Open for support`
+- **EterniCapsule** — digital vault, `Open for acquisition`
+- **Figuitoon** — custom 3D figurines, `Available to acquire`
+- **Kangaroo Cleanup** — Sydney cleanup business, `Looking for a partner`
 
-```
-#0001-0048-42-040626-180626
-```
+**4. Individual Projects**
 
-This signature is permanent. It records:
-- Your Observer ID
-- Time you took to complete
-- Number of pulses sent
-- Exact timestamp
+Each is a full dashboard (light museum style) with proof, honest risks, deal options and a founder with a face:
 
-It's engraved in the archive. Below, you see global stats:
-- "47 observers registered"
-- "1,234 pulses sent today"
+- **EterniCapsule** (`…/ethernicapsule`) — write a message, pick its opening date, pay $9 AUD, receive 128-bit keys by email. Time-vault capsules unlock for a guardian on the chosen day. Sale: Operator $4k / Owner $8k / offer.
+- **Orbit 77** (`…/orbit`) — 10 episodes live; Season 2 funding ($10,000 AUD goal, live progress). Six contribution layers $10–$1,000+; supporters get a permanent credential (O77-S1-XXXXXX) and an archive page.
+- **Figuitoon** (`…/figurines`) — showcase + project sale ($11,500 launch price); figurines sell on its own Shopify.
+- **Kangaroo Cleanup** (`…/kangaroo-cleanup`) — real business handover, $5k–$12k + revenue share, verifiable 5.0 reputation.
 
-Then a single button appears: **"▸ DISCOVER ◂"**
-
-**3. Exhibitions Hall: Exhibitions Page (`/exhibitions`)**
-
-When you click "DISCOVER", you see three exhibitions:
-- **Galaxy** - Active Now (4 projects)
-- **Jungle** - Opening 2026/2027 (locked)
-- **City** - Opening 2027+ (locked)
-
-**4. Inside Galaxy: Project Grid (`/exhibitions/galaxy`)**
-
-When you enter Galaxy, you see a 2x2 grid displaying four projects. Each quadrant emanates light from its artifact in a cosmic void:
-
-- **Orbit 77** - Green glowing planet with orbital ring (podcast + funding)
-- **EterniCapsule** - Amber capsule floating in darkness (time-locked messages)
-- **Figurines** - Rotating crystalline hexagon (physical figurines)
-- **EBOK** - Book spine with pages (coming Q3 2026)
-
-Clicking any quadrant navigates to that project's page.
-
-**5. Individual Projects**
-
-Each project is a complete experience:
-
-**EterniCapsule (`/exhibitions/galaxy/ethernicapsule`):**
-- 4-act stepper flow: Recipient → Message → Timing → Seal
-- Write a message, choose when it unlocks
-- Pay $9 AUD to seal it cryptographically
-- Email delivered at future date with audio crystallization
-
-**Orbit 77 (`/exhibitions/galaxy/orbit`):**
-- Podcast + collective funding experience
-- 10 episodes available
-- Transparent funding progress ($1000 AUD goal)
-- Supporters get credentials
-
-**Figurines (`/exhibitions/galaxy/figurines`):**
-- Upload 3 photos (front, left, right angles)
-- Commission 3D-printed physical figurine ($150-200 AUD)
-- Hand-painted, shipped worldwide
-- Optional magnetic QR signal linking to digital archive
-
-### Navigation Structure
-
-```
-pyadra.io/
-│
-├─ / (home)
-│  └─ Signal game → Become Observer → Get signature
-│
-├─ /exhibitions
-│  └─ Exhibition selector → Choose Galaxy/Jungle/City
-│     │
-│     └─ /exhibitions/galaxy
-│        └─ 3D cosmic scene → Choose node
-│           │
-│           ├─ /exhibitions/galaxy/ethernicapsule
-│           │  └─ Time-locked message vault
-│           │
-│           ├─ /exhibitions/galaxy/orbit
-│           │  └─ Podcast + funding
-│           │
-│           └─ /exhibitions/galaxy/figurines
-│              └─ 3D project forging
-│
-├─ /manifesto
-├─ /legal/privacy
-├─ /legal/terms
-└─ /contact
-```
-
-### Persistent Elements
-
-**Top Bar** (visible on all pages):
-- Left: `OBSERVER #0001` - Your ID
-- Right: `SENSORS ACTIVE/MUTED` - Audio toggle
-
-**Bottom Nav** (transparent, minimal):
-- Manifesto | Privacy | Terms | Contact
-
-**Observer ID** persists across the entire site via localStorage. You're not logging in - you're already part of the archive from the moment you complete the home page experience.
-
-### What You Can Actually Do Today
-
-**As an Observer:**
-- ✅ Complete signal detection game (find 6 hidden signals)
-- ✅ Get permanent observation signature
-- ✅ Navigate Galaxy project grid
-- ✅ Read manifesto/legal pages
-
-**In EterniCapsule:**
-- ✅ Write time-locked messages
-- ✅ Pay $9 AUD to seal
-- ✅ Add multiple guardians
-- ✅ Set unlock date/guardian keys
-- ✅ Recipients get email delivery
-- ✅ View sealed capsules
-
-**In Orbit 77:**
-- ✅ Listen to 10 episodes
-- ✅ See funding progress
-- ✅ Contribute to fund
-- ✅ Get supporter credentials
-
-**In Figurines:**
-- ✅ Upload 3 photos (front, left, right angles)
-- ✅ Commission figurine via Stripe checkout ($150-200 AUD)
-- ✅ 3D printing and hand-painting process
-- ✅ Worldwide shipping
-- 🚧 Digital QR signal integration (optional enhancement)
-
-### What's NOT Built Yet
-
-- ❌ Observer profiles (view your history)
-- ❌ Signature verification page
-- ❌ Sound design (ambient drones)
-- ❌ MVP2 (Jungle exhibition)
-- ❌ MVP3 (City exhibition)
-- ❌ Mobile apps
-- ❌ API for creators
+**5. The Museum Shop (`/store`)** — Pyadra's own books and editions, reserve-by-email today.
 
 ### Technical Reality Check
 
-**Live**: pyadra.io (production on Vercel)  
-**Database**: Supabase PostgreSQL  
-**Payments**: Stripe (live mode)  
-**Email**: Resend (transactional)  
-**3D**: Three.js + React Three Fiber  
-**Animations**: Framer Motion  
-
-**Performance**: 
-- Home page: ~2s load, 60fps animations (currently being optimized)
-- Projects page: 3D scene loads in ~3s, smooth 60fps after initial load
-- EterniCapsule: Fast (no 3D on most pages)
-
-**Scale**: 
-- Currently handling <100 concurrent users
-- Database optimized for 10K+ observers
-- Stripe handles payment volume automatically
+**Live**: pyadra.io (production on Vercel, `main` auto-deploys behind a 22-check smoke gate)
+**Database**: Supabase PostgreSQL — 4 tables, one per concern, RLS closed (see `supabase/README.md`)
+**Payments**: Stripe (live mode, signature-verified webhook) · **Email**: Resend · **Animations**: Framer Motion (no Three.js — the capsule and spheres are CSS/Motion)
+**Editable without deploys**: `pyadra_settings` (goals, counts)
 
 ---
 
@@ -304,10 +169,9 @@ pyadra.io/
 
 ### Stack Choices (Why These?)
 
-**Next.js 16 + React 19**: Because we need SSR for SEO + client interactivity for 3D experiences  
+**Next.js 16 + React 19**: Because we need SSR for SEO + client interactivity for rich experiences  
 **Supabase PostgreSQL**: Managed database with Row Level Security. Not trendy, but reliable.  
-**Three.js + React Three Fiber**: 3D scenes are core to the experience, not decoration  
-**Framer Motion**: Best animation library for organic, physics-based motion  
+**Framer Motion + CSS**: All the "3D" (the capsule, the spheres) is pure CSS/Motion — Three.js was removed in July 2026 as unused weight. Depth comes from craft, not from WebGL.  
 **Stripe**: Industry standard payments. No crypto (yet).  
 **Vercel**: Serverless deployment, edge functions, zero DevOps overhead  
 
@@ -353,27 +217,26 @@ Pyadra evolves through **three distinct phases**:
 
 **What it is:** Pyadra operates as a **digital museum** where projects are permanent, ritualistic, and built to last. Observers participate in experiences and purchase products within Galaxy exhibition.
 
-**Current status (May 2026):**
-- ✅ Live in production at pyadra.io
+**Current status (July 14, 2026):**
+- ✅ Live in production at pyadra.io — all four project dashboards, the store, and the museum layer
 - ✅ Payment processing active (Stripe live mode)
-- ✅ ~50+ observers registered
-- ✅ Legal entity established (US bank account)
+- ✅ Legal entity established (Pyadra LLC, Delaware) + accurate Privacy/Terms
+- ✅ Documentation fully reconciled with production (see `docs/pyadra_obsidian/` — Company_Master v3.0 is the operational source of truth)
 
-**Active projects:**
-- Orbit 77 (podcast + supporter funding)
-- EterniCapsule (time-locked messages)
-- Figurines (physical figurines from photos)
-- EBOK (physical book publication) - In development, target Q3 2026
+**Active projects (Galaxy):**
+- Orbit 77 (podcast + supporter funding — contribution, not for sale)
+- EterniCapsule (time-locked messages — for acquisition)
+- Figuitoon (custom 3D figurines — sells on its own Shopify; project for sale)
+- Kangaroo Cleanup (Sydney cleanup business — handover deal)
 
-**Business model:** Direct product sales (capsules, figurines, donations) - *See FAQ for pricing*
+**Business model:** product sales + participation deals (see [[Company_Master]] §10 for the full model: 1–5% permanent stake, transaction fee, valuation methods)
 
-**Q2-Q4 2026 priorities:**
-- Optimize home page animations (60fps target)
-- Stabilize Galaxy exhibition experience
-- Build initial Observer community (target: 500 observers)
-- Validate product-market fit for each project
+**Q3 2026 priorities:**
+- Close the FIRST participation deal (Kangaroo Cleanup)
+- First EterniCapsule sale · Orbit Season 2 funding milestones
+- EterniCapsule client-side encryption (make the zero-knowledge promise true)
 
-**Goal:** Prove we can build beautiful, permanent digital experiences people pay for.
+**Goal:** Prove we can build beautiful, permanent digital experiences people pay for — and close the first deal.
 
 ---
 
@@ -482,10 +345,10 @@ Pyadra doesn't measure success in typical ways. Here's what matters:
 
 ### Before Writing Code
 
-1. Read this document
-2. Read `/docs/HOME_EXPERIENCE.md` or relevant project node doc
-3. Understand the aesthetic standard (see `/docs/ETERNICAPSULE_NODE.md` section)
-4. Check `/ARCHITECTURE.md` for technical context
+1. Read this document (the philosophy)
+2. Read `docs/pyadra_obsidian/Pyadra/01_Company/Company_Master.md` — the operational source of truth (rules, model, museum layer)
+3. Read the project's own doc in `docs/pyadra_obsidian/Pyadra/04_Projects/` — its COPY DECK is the verbatim source for every visible string
+4. Check `/ARCHITECTURE.md` for the technical map and `supabase/README.md` for the database
 
 ### When Building
 
@@ -519,10 +382,10 @@ Pyadra uses specific terminology intentionally. Here's what each term means:
 ### Core Terms
 
 **Observer** (PRIMARY)
-- Who: Anyone who enters Pyadra and completes the home page signal game
-- Identity: Assigned unique ID (#0001, #0002, etc.)
+- Who: Anyone who visits the Pyadra home — every visitor receives a numbered admission ticket
+- Identity: Assigned unique number (#0001, #0002, etc.) — Pyadra's quiet signature
 - Context: Phase 1 identity - experiencing the museum
-- Technical: Stored in localStorage (device-specific)
+- Technical: Row in `pyadra_observers` + kept in the visitor's localStorage. No IP stored.
 
 **Participant** (PHASE 2+)
 - Who: Observers who engage deeper - acquire projects, support creators, become stakeholders
@@ -565,13 +428,13 @@ Pyadra uses specific terminology intentionally. Here's what each term means:
 A: People who want digital experiences that feel permanent, intentional, beautiful. People tired of infinite scroll and engagement bait.
 
 **Q: How do you make money?**  
-A: Direct sales - EterniCapsule ($9 AUD per capsule), Figurines ($150-200 AUD), Orbit 77 supporter funding. Future projects in Jungle/City exhibitions. No ads, ever.
+A: Product sales (EterniCapsule $9 AUD per capsule, Figuitoon $49 AUD per figurine on Shopify, Orbit 77 supporter contributions) plus participation deals — when a project deal closes, Pyadra keeps a small permanent stake and a transaction fee (see Company_Master). No ads, ever.
 
 **Q: Why "Observer" instead of "User"?**  
 A: Because you're not consuming a product. You're a builder - someone who creates, contributes, and helps others. What you build here becomes part of something that lasts. Language shapes experience.
 
-**Q: Can I skip the home page signal game?**  
-A: No. It's an initiation. Everyone becomes an Observer the same way.
+**Q: Do I have to do anything to become an Observer?**  
+A: No. Walking in is the initiation — every visitor to the home receives their numbered ticket automatically, and keeps that number forever.
 
 **Q: Will there be a mobile app?**  
 A: Maybe, but the web experience is the primary platform. PWA might make sense.
@@ -601,5 +464,5 @@ It rejects the idea that everything online must be viral, fast, and optimized fo
 
 ---
 
-Last updated: May 7, 2026  
+Last updated: July 14, 2026 (reconciled with production; operational truth lives in `docs/pyadra_obsidian/Pyadra/01_Company/Company_Master.md`)  
 Next review: Before Phase 2 planning (Q4 2026)

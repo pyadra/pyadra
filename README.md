@@ -1,205 +1,88 @@
 # Pyadra
 
-> **Lo que dejas importa.**  
+> **Lo que dejas importa.**
 > *(What you leave behind matters.)*
 
-Pyadra is not a product. It's a home for what lasts - where you build projects that matter, help people who create, and leave work that endures.
+Pyadra is a digital museum where real projects live, can be experienced today, and can be taken further — supported, partnered on, or acquired. Built by a solo founder; Pyadra LLC, Delaware.
 
-**For builders, not consumers.** People who want to help people. People who believe what they create should last.
+**📖 New here?** Read in this order:
 
-**📖 New here?** Read **[VISION.md](VISION.md)** first to understand what Pyadra is and where it's going.
+1. **[VISION.md](VISION.md)** — the philosophy (why Pyadra exists)
+2. **[docs/pyadra_obsidian/Pyadra/01_Company/Company_Master.md](docs/pyadra_obsidian/Pyadra/01_Company/Company_Master.md)** — ⭐ the operational source of truth (rules, business model, the museum layer)
+3. The project doc in `docs/pyadra_obsidian/Pyadra/04_Projects/` for whichever project you're touching — its **COPY DECK** is the verbatim source of every visible string
 
-## 🌟 Live Projects
+## 🌟 Live (pyadra.io)
 
-### [Orbit 77](https://pyadra.io/exhibitions/galaxy/orbit)
-A podcast and media platform exploring liminal spaces and hidden knowledge. **Season 1 complete** (10 episodes). **Season 2 funding active** with transparent progress tracking ($1000 AUD goal). Supporters receive permanent digital credentials (O77-S1-XXXXXX format) and founding member status. Features orbital diagram visualization showing real-time funding progress.
-
-### [EterniCapsule](https://pyadra.io/exhibitions/galaxy/ethernicapsule)
-Time-locked digital message vaults. Write a letter, seal it cryptographically, and have it delivered to recipients at a future date. Each capsule costs $9 AUD and is permanently preserved. Features include:
-- Cryptographic sealing ceremony
-- Multiple guardians support
-- Grace period for edits
-- 3D monolith visualization
-- Email delivery with audio crystallization (432Hz)
-
-### [Figurines](https://pyadra.io/exhibitions/galaxy/figurines)
-Physical 3D-printed figurines from your photos. Upload three angles (front, left, right), commission your figurine ($150-200 AUD), and receive a tangible physical artifact. Hand-painted with optional magnetic QR signal linking back to your Pyadra archive.
-
-## 🚧 In Development
-
-### [EBOK](https://pyadra.io/exhibitions/galaxy/ebook)
-Physical book publication platform. Write your stories, essays, or reflections and have them printed as permanent books. Target launch: Q3 2026.
+| | | |
+|---|---|---|
+| [Galaxy](https://pyadra.io/exhibitions/galaxy) | The orbital field — 4 live projects | |
+| [Orbit 77](https://pyadra.io/exhibitions/galaxy/orbit) | Podcast · Season 2 funding ($10k goal, live progress) | Open for support |
+| [EterniCapsule](https://pyadra.io/exhibitions/galaxy/ethernicapsule) | Time-locked messages · $9 AUD per capsule | Open for acquisition |
+| [Figuitoon](https://pyadra.io/exhibitions/galaxy/figurines) | Custom 3D figurines (sells via its own Shopify) | Available to acquire |
+| [Kangaroo Cleanup](https://pyadra.io/exhibitions/galaxy/kangaroo-cleanup) | Sydney cleanup business handover | Looking for a partner |
+| [Store](https://pyadra.io/store) | The museum shop — Pyadra's own books | |
 
 ## 🛠 Tech Stack
 
 - **Framework**: Next.js 16 (App Router) + React 19 + TypeScript
-- **3D/Graphics**: Three.js, React Three Fiber (R3F), Drei
-- **Animation**: Framer Motion
-- **Database**: Supabase (PostgreSQL)
-- **Payments**: Stripe
-- **Email**: Resend
-- **Styling**: Tailwind CSS v4
-- **Audio**: 432Hz frequency tuning
+- **Animation**: Framer Motion (+ pure CSS — no Three.js)
+- **Database**: Supabase PostgreSQL (4 tables, RLS closed — see [supabase/README.md](supabase/README.md))
+- **Payments**: Stripe (signature-verified webhook)
+- **Email**: Resend (single inbox: pyadra@pyadra.io)
+- **Styling**: Tailwind CSS v4 · Design System v1 (Fraunces + DM Sans + IBM Plex Mono, `#EDEFED` + emerald `#059669`)
+- **Hosting**: Vercel (`main` auto-deploys)
 
 ## 🚀 Getting Started
 
-### Prerequisites
-
-- Node.js 20+
-- npm or pnpm
-- Supabase account
-- Stripe account (for payments)
-- Resend account (for emails)
-
-### Installation
-
-1. Clone the repository
 ```bash
-git clone https://github.com/your-username/pyadra.git
-cd pyadra
-```
-
-2. Install dependencies
-```bash
+git clone https://github.com/pyadra/pyadra.git && cd pyadra
 npm install
+cp .env.example .env.local   # fill in Stripe / Supabase / Resend keys
+npm run dev                   # http://localhost:3000
 ```
 
-3. Configure environment variables
-```bash
-cp .env.example .env.local
-```
+Database schema: run `supabase/migrations/0008_full_reset_baseline.sql` in the Supabase SQL Editor (it is the single schema source of truth; 0000–0007 are history only).
 
-Edit `.env.local` with your credentials:
-- Stripe keys from [dashboard.stripe.com](https://dashboard.stripe.com/apikeys)
-- Supabase URL and service key from [app.supabase.com](https://app.supabase.com)
-- Resend API key from [resend.com](https://resend.com/api-keys)
+To test payments + emails locally: `stripe listen --forward-to localhost:3000/api/stripe/webhook` and use the printed `whsec_` as `STRIPE_WEBHOOK_SECRET`.
 
-4. Setup database
-```bash
-# Run Supabase migrations
-npx supabase db push
-```
+## 📜 Scripts
 
-5. Run development server
-```bash
-npm run dev
-```
+- `npm run dev` / `build` / `start` — the usual
+- `npm test` — unit tests (vitest)
+- `npm run smoke` — boots the production build and checks 22 routes/APIs. **Run before every push to `main`** (it auto-deploys).
+- `npm run verify` — lint + typecheck + tests + build + smoke (the full pre-deploy gate)
 
-Open [http://localhost:3000](http://localhost:3000) to see the result.
-
-## 📜 Available Scripts
-
-- `npm run dev` — Start development server
-- `npm run build` — Build for production
-- `npm run start` — Start production server
-- `npm run lint` — Run ESLint
-
-## 📁 Project Structure
+## 📁 Structure
 
 ```
-pyadra/
-├── src/
-│   ├── app/                          # Next.js App Router
-│   │   ├── api/                     # API routes (Stripe, email, cron)
-│   │   ├── exhibitions/             # Exhibition system
-│   │   │   ├── page.tsx            # Exhibition selector
-│   │   │   └── galaxy/             # Galaxy exhibition (MVP1)
-│   │   │       ├── page.tsx        # 3D navigation scene
-│   │   │       ├── ethernicapsule/ # Time-locked messages
-│   │   │       ├── orbit/          # Orbit 77 podcast
-│   │   │       └── figurines/      # Physical figurines
-│   │   ├── lib/                     # Utilities (db, email, validation)
-│   │   └── page.tsx                 # Homepage (Observer initiation)
-│   └── middleware.ts                # Request middleware + redirects
-├── public/                           # Static assets
-├── supabase/
-│   └── migrations/                  # Database migrations
-├── docs/                             # Documentation
-│   ├── HOME_EXPERIENCE.md           # Home page system
-│   ├── ETERNICAPSULE_NODE.md        # EterniCapsule context
-│   ├── ORBIT_NODE.md                # Orbit 77 context
-│   ├── FIGURINES_NODE.md            # Figurines context
-│   └── URL_MIGRATION.md             # Recent URL structure changes
-├── VISION.md                         # ⭐ Start here - Core philosophy
-├── ARCHITECTURE.md                   # System design
-└── package.json
+src/app/
+├── page.tsx                      # Home — minimal room + Observer ticket
+├── exhibitions/galaxy/           # Galaxy + the 4 project dashboards
+├── store/                        # The museum shop
+├── archive/[id]/                 # Orbit supporter archive
+├── transmission-confirmed/       # Orbit post-payment
+├── legal/{privacy,terms}/        # Accurate + Delaware law
+├── api/                          # donate, session, stats, observer,
+│                                 # contact, ethernicapsule/*, stripe/webhook
+└── lib/                          # db.ts, orbit-db.ts, settings.ts, email, validation
+supabase/                         # README (table ownership) + migrations
+docs/pyadra_obsidian/             # ⭐ Canonical documentation (Company_Master + project docs)
+scripts/smoke.mjs                 # Deploy smoke suite
 ```
 
-## 🎨 Design Philosophy
+## 📏 The rules that bite (short version — full list in Company_Master §15)
 
-Pyadra projects follow an **intentional UX** approach:
-- Actions feel meaningful: "seal", "send", "open"
-- Audio tuned to 432Hz (natural harmonic frequency)
-- Every interaction matters
-- Dark, minimal aesthetic with gold accents (#FFB000)
-- Typography: Cormorant Garamond (serif), system sans-serif
-- Color palette: Deep blacks, warm beiges, warm gold
+- The page **never claims what the code doesn't do** — copy is corrected the same day a gap is found
+- Every visible string comes from the project doc's **COPY DECK**, verbatim — never improvised in code
+- No hardcoded numbers — live data, or a `pyadra_settings` row (editable in Supabase without deploys)
+- No e-commerce language ("buy now", "add to cart", …)
+- Visitor data is minimal: no IPs, no tracking cookies; any new data flow updates `/legal/privacy` in the same commit
+- Black is not a Pyadra color — smoke gray `#EDEFED` is the surface; dark lives only inside project experiences
 
-## 🔐 Security
+## 📄 License & Contact
 
-- All sensitive operations use Supabase Service Role Key (backend-only)
-- Stripe webhooks verify signatures
-- XSS protection in user-generated content
-- Row-level security (RLS) in Supabase
-
-## 🧪 Testing
-
-Run the test suite:
-```bash
-npm run test
-```
-
-Run tests in watch mode:
-```bash
-npm run test:watch
-```
-
-## 📚 Documentation
-
-### Core Documents
-- **[VISION.md](./VISION.md)** — ⭐ **START HERE** - What Pyadra is, why it exists, where it's going
-- [ARCHITECTURE.md](./ARCHITECTURE.md) — System design and data flows
-- [docs/HOME_EXPERIENCE.md](./docs/HOME_EXPERIENCE.md) — Observer initiation system
-
-### Project Nodes
-- [docs/ETERNICAPSULE_NODE.md](./docs/ETERNICAPSULE_NODE.md) — EterniCapsule context for AI agents
-- [docs/ORBIT_NODE.md](./docs/ORBIT_NODE.md) — Orbit 77 context for AI agents
-- [docs/FIGURINES_NODE.md](./docs/FIGURINES_NODE.md) — Figurines context for AI agents
-
-### Recent Changes
-- [docs/URL_MIGRATION.md](./docs/URL_MIGRATION.md) — April 2026 URL structure migration
-
-## 🌍 Deployment
-
-Pyadra is designed to be deployed on [Vercel](https://vercel.com):
-
-1. Connect your repository to Vercel
-2. Configure environment variables in Vercel dashboard
-3. Deploy
-
-### Environment Variables Required:
-- `STRIPE_SECRET_KEY`
-- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
-- `STRIPE_WEBHOOK_SECRET`
-- `NEXT_PUBLIC_APP_URL`
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `RESEND_API_KEY`
-
-## 🤝 Contributing
-
-We welcome contributions that align with Pyadra's philosophy. Please read [CONTRIBUTING.md](./CONTRIBUTING.md) before submitting pull requests.
-
-## 📄 License
-
-Proprietary — All rights reserved.
-
-## 📞 Contact
-
-- **Email**: [pyadra@pyadra.io](mailto:pyadra@pyadra.io)
-- **Website**: [pyadra.io](https://pyadra.io)
+Proprietary — All rights reserved. · [pyadra@pyadra.io](mailto:pyadra@pyadra.io) · [pyadra.io](https://pyadra.io)
 
 ---
 
-***Lo que dejas importa.***  
-*Built with intention. Preserved with care. Experienced with reverence.*
+***Lo que dejas importa.***
