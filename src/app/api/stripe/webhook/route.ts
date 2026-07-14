@@ -46,10 +46,10 @@ export async function POST(req: Request) {
       const metadata = session.metadata || {};
       if (metadata.project_id === "orbit-77") {
          try {
-           const { getSupabase } = await import('@/app/lib/db');
+           const { getOrbitSupabase } = await import('@/app/lib/orbit-db');
            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-           const supabase = getSupabase() as any;
-           
+           const supabase = getOrbitSupabase() as any;
+
            // Generate a unique collectible code deterministically from Stripe session
            // to guarantee perfectly matching UI and email without race conditions
            const suffix = session.id.replace(/[^A-Z0-9]/gi, "").toUpperCase().slice(-6);
@@ -62,37 +62,18 @@ export async function POST(req: Request) {
            const supporterEmail = metadata.supporter_email || session.customer_details?.email || '';
            
            let emailSent = false;
-           let supporterId: string | null = null;
-           
-           // If we have a DB connection, persist identity and credential
+           let credentialId: string | null = null;
+
+           // If we have a DB connection, persist the credential
+           // (Idempotent via ON CONFLICT on the Stripe session id)
            if (supabase) {
-             // 1. Resolve or Create persistent supporter identity using UPSERT
-             if (supporterEmail) {
-               const { data: upsertedSupporter, error: supporterError } = await supabase
-                 .from('orbit_supporters')
-                 .upsert(
-                   { email: supporterEmail, display_name: displayName },
-                   { onConflict: 'email' }
-                 )
-                 .select('id')
-                 .single();
-
-               if (upsertedSupporter) {
-                 supporterId = upsertedSupporter.id;
-               } else if (supporterError) {
-                 throw new Error(`DB Error (Supporter Upsert): ${supporterError.message}`);
-               }
-             }
-
-             // 2. Insert the credential attached to the supporter (Idempotent via ON CONFLICT)
-             const { error: dbError } = await supabase
+             const { data: upsertedCredential, error: dbError } = await supabase
                .from('orbit_support_credentials')
                .upsert(
                  {
                    stripe_checkout_session_id: session.id,
                    stripe_payment_intent_id: session.payment_intent as string,
                    payment_status: 'paid',
-                   supporter_id: supporterId,
                    supporter_name: supporterName,
                    supporter_email: supporterEmail,
                    display_name: displayName,
@@ -106,11 +87,14 @@ export async function POST(req: Request) {
                    paid_at: new Date().toISOString()
                  },
                  { onConflict: 'stripe_checkout_session_id' }
-               );
-               
-               if (dbError) {
-                 throw new Error(`DB Error (Credential Upsert): ${dbError.message}`);
-               }
+               )
+               .select('id')
+               .single();
+
+             if (dbError) {
+               throw new Error(`DB Error (Credential Upsert): ${dbError.message}`);
+             }
+             credentialId = upsertedCredential?.id ?? null;
            }
            
            // Trigger Email
@@ -125,7 +109,7 @@ export async function POST(req: Request) {
              emailSent = await sendCredentialEmail({
                 to: supporterEmail,
                 supporterName: displayName,
-                supporterId,
+                supporterId: credentialId,
                 amountAud,
                 credentialCode,
                 seasonLabel: metadata.season_label || 'Season 1',
@@ -221,37 +205,6 @@ export async function POST(req: Request) {
            console.error("Failed to process EterniCapsule sealing:", e);
            const errorMessage = e instanceof Error ? e.message : String(e);
            return NextResponse.json({ error: "EterniCapsule processing failed", details: errorMessage }, { status: 500 });
-         }
-      } else if (metadata.project_id === "figurines") {
-         try {
-           const { getSupabase } = await import('@/app/lib/db');
-           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-           const supabase = getSupabase() as any;
-           if (!supabase) throw new Error("Missing DB connection in webhook");
-
-           const orderId = metadata.order_id;
-           const customerEmail = session.customer_details?.email || "pending@checkout";
-           
-           if (!orderId) throw new Error("Missing metadata order_id for figurines processing");
-
-           // 1. Update DB to paid
-           const { error: updateError } = await supabase
-             .from("figurine_orders")
-             .update({ 
-               status: "paid", 
-               customer_email: customerEmail 
-             })
-             .eq("id", orderId);
-             
-           if (updateError) throw new Error(`DB Error (Figurines Update): ${updateError.message}`);
-
-           // Note: We do NOT send emails here. The customer still needs to upload photos.
-           // Emails will be fired from the /forge step once photos and address are provided.
-
-         } catch(e) {
-           console.error("Failed to process Figurines order webhook:", e);
-           const errorMessage = e instanceof Error ? e.message : String(e);
-           return NextResponse.json({ error: "Figurines processing failed", details: errorMessage }, { status: 500 });
          }
       }
     }

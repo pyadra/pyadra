@@ -11,16 +11,14 @@ export async function GET() {
   }
 
   try {
-    // Get IP and user agent for tracking
+    // Privacy: we deliberately do NOT store the visitor's IP address.
     const headersList = await headers();
-    const ip = headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || 'unknown';
     const userAgent = headersList.get('user-agent') || 'unknown';
 
     // Create new observer
     const { data, error } = await supabase
-      .from('observers')
+      .from('pyadra_observers')
       .insert({
-        ip_address: ip,
         user_agent: userAgent,
       })
       .select('id')

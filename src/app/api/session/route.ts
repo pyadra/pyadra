@@ -32,20 +32,20 @@ export async function GET(req: Request) {
   try {
     const session = await stripe.checkout.sessions.retrieve(session_id);
     
-    // Attempt to lookup the supporter ID from the webhook creation
+    // Lookup the credential created by the webhook — its id is the archive link id
     let supporter_id = null;
     try {
-      const { getSupabase } = await import('@/app/lib/db');
+      const { getOrbitSupabase } = await import('@/app/lib/orbit-db');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const supabase = getSupabase() as any;
+      const supabase = getOrbitSupabase() as any;
       if (supabase) {
         const { data } = await supabase
           .from('orbit_support_credentials')
-          .select('supporter_id')
+          .select('id')
           .eq('stripe_checkout_session_id', session_id)
           .single();
-        if (data && data.supporter_id) {
-          supporter_id = data.supporter_id;
+        if (data && data.id) {
+          supporter_id = data.id;
         }
       } else {
         console.warn("Session API Warn: Supabase could not be initialized for ID lookup.");

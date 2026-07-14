@@ -5,6 +5,7 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 interface EmailPayload {
   to: string;
   supporterName: string;
+  /** Credential id — the archive page groups all of the supporter's credentials from it */
   supporterId?: string | null;
   amountAud: number;
   credentialCode: string;

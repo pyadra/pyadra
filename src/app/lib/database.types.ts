@@ -13,39 +13,57 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      orbit_supporters: {
+      orbit_support_credentials: {
         Row: {
           id: string
           created_at: string
-          stripe_customer_id: string | null
-          stripe_session_id: string
-          supporter_name: string
+          stripe_checkout_session_id: string | null
+          stripe_payment_intent_id: string | null
+          payment_status: string
+          supporter_name: string | null
           supporter_email: string
+          display_name: string
+          is_anonymous: boolean
           amount_aud: number
-          season_label: string
+          currency: string
+          support_message: string | null
           credential_code: string
+          season_label: string | null
+          project_slug: string
         }
         Insert: {
           id?: string
           created_at?: string
-          stripe_customer_id?: string | null
-          stripe_session_id: string
-          supporter_name: string
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          payment_status?: string
+          supporter_name?: string | null
           supporter_email: string
+          display_name: string
+          is_anonymous?: boolean
           amount_aud: number
-          season_label: string
+          currency?: string
+          support_message?: string | null
           credential_code: string
+          season_label?: string | null
+          project_slug?: string
         }
         Update: {
           id?: string
           created_at?: string
-          stripe_customer_id?: string | null
-          stripe_session_id?: string
-          supporter_name?: string
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          payment_status?: string
+          supporter_name?: string | null
           supporter_email?: string
+          display_name?: string
+          is_anonymous?: boolean
           amount_aud?: number
-          season_label?: string
+          currency?: string
+          support_message?: string | null
           credential_code?: string
+          season_label?: string | null
+          project_slug?: string
         }
       }
       ethernicapsule_capsules: {
@@ -95,18 +113,44 @@ export interface Database {
           delivered_at?: string | null
         }
       }
-      observers: {
+      pyadra_observers: {
         Row: {
           id: number
           created_at: string
+          user_agent: string | null
+          first_visit: string
         }
         Insert: {
           id?: number
           created_at?: string
+          user_agent?: string | null
+          first_visit?: string
         }
         Update: {
           id?: number
           created_at?: string
+          user_agent?: string | null
+          first_visit?: string
+        }
+      }
+      pyadra_settings: {
+        Row: {
+          key: string
+          value: Json
+          description: string | null
+          updated_at: string
+        }
+        Insert: {
+          key: string
+          value: Json
+          description?: string | null
+          updated_at?: string
+        }
+        Update: {
+          key?: string
+          value?: Json
+          description?: string | null
+          updated_at?: string
         }
       }
     }

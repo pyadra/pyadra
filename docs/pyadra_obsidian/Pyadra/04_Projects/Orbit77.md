@@ -152,7 +152,7 @@ Key files:
 **Pyadra dependencies:**
 
 - Stripe — shared account with EterniCapsule and Figurines
-- Supabase — shared DB, tables: `orbit_supporters`, `orbit_support_credentials`, `orbit_applications`
+- Supabase — shared DB, tables: `orbit_supporters`, `orbit_support_credentials`, `orbit_applications`. Since July 2026 all access goes through the dedicated client `src/app/lib/orbit-db.ts` (`getOrbitSupabase()`); setting `ORBIT_SUPABASE_URL` + `ORBIT_SUPABASE_SERVICE_ROLE_KEY` moves Orbit to its own DB with zero code changes (see `supabase/README.md`)
 - Resend — shared email service
 - `/api/stripe/webhook` — monolithic webhook (🔴 critical blocker)
 - Shared components: `ProjectNav`, `LiveBackground`
@@ -163,7 +163,7 @@ Key files:
 |#|Task|Effort|Priority|Blocker|
 |---|---|---|---|---|
 |1|Extract Orbit Stripe webhook from monolith|3–4h|P0|YES|
-|2|Dedicated Supabase project or extract 3 tables|3–4h|P1|No|
+|2|Dedicated Supabase project or extract 3 tables — ✅ code side done (dedicated client + env-var switch, July 2026); only remains creating the project and running the 3 migrations|~1h left|P1|No|
 |3|Separate Resend API key|1h|P1|No|
 |4|Duplicate shared components|2–3h|P2|No|
 |5|Extract design tokens to Orbit-specific CSS|1h|P2|No|

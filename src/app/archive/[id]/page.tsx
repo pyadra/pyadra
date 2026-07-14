@@ -1,4 +1,4 @@
-import { getSupabase } from "@/app/lib/db";
+import { getOrbitSupabase } from "@/app/lib/orbit-db";
 import Link from "next/link";
 import { Metadata } from "next";
 
@@ -9,6 +9,16 @@ export const metadata: Metadata = {
   title: "Supporter Archive — Orbit 77",
   description: "Your permanent transmission archive for Orbit 77.",
 };
+
+/* Matches the Orbit 77 page design system: light museum surface,
+   emerald accent, serif italic display + mono labels. */
+const T = {
+  display: 'text-3xl lg:text-4xl',
+  heading: 'text-base',
+  body: 'text-sm',
+  small: 'text-[13px]',
+  micro: 'text-[11px]',
+} as const;
 
 interface ArchiveProps {
   params: Promise<{
@@ -24,26 +34,26 @@ function isValidUUID(str: string): boolean {
 // Clean, on-brand error state — never crashes, always communicates
 function InvalidAccessScreen({ reason }: { reason: string }) {
   return (
-    <main className="min-h-screen bg-[#020503] text-[#F4EFEA] font-sans flex flex-col items-center justify-center p-8">
+    <main className="min-h-screen bg-[#EDEFED] text-[#1A1C1A] font-sans flex flex-col items-center justify-center p-8">
       <div className="w-full max-w-md text-center">
-        <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-[#FF4444]/70 mb-6 flex items-center justify-center gap-2">
-          <span className="w-1.5 h-1.5 bg-[#FF4444] rounded-full inline-block animate-pulse" />
-          Archive Access Failed
+        <p className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#B45309] mb-6 flex items-center justify-center gap-2`}>
+          <span className="w-1.5 h-1.5 bg-[#B45309] rounded-full inline-block animate-pulse" />
+          Archive access failed
         </p>
-        <h1 className="text-3xl font-serif italic font-light text-white mb-4">Signal Not Found</h1>
-        <p className="text-sm text-[#AEFFA1]/50 leading-relaxed font-light mb-10">{reason}</p>
+        <h1 className={`${T.display} font-serif italic font-light mb-4`}>Signal not found</h1>
+        <p className={`${T.body} text-[#6B8070] leading-relaxed font-light mb-10`}>{reason}</p>
         <div className="flex flex-col gap-3">
           <Link
             href="/exhibitions/galaxy/orbit"
-            className="inline-block border border-[#39FF14]/30 text-[#39FF14] font-mono text-[10px] uppercase tracking-widest px-6 py-3 rounded-lg hover:bg-[#39FF14]/10 transition-colors"
+            className={`inline-block rounded-full bg-[#059669] text-white font-mono ${T.micro} uppercase tracking-[0.18em] font-bold px-6 py-3 hover:bg-[#047857] transition-colors`}
           >
             Return to Orbit 77
           </Link>
           <a
             href="mailto:pyadra@pyadra.io"
-            className="inline-block text-[#AEFFA1]/40 font-mono text-[10px] uppercase tracking-widest hover:text-[#AEFFA1]/70 transition-colors"
+            className={`inline-block font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070] hover:text-[#1A1C1A] transition-colors`}
           >
-            Contact Support →
+            Contact support →
           </a>
         </div>
       </div>
@@ -61,21 +71,22 @@ export default async function ArchivePage({ params }: ArchiveProps) {
 
   // Guard: if Supabase is not initialized (missing env vars), fail clearly
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabase = getSupabase() as any;
+  const supabase = getOrbitSupabase() as any;
   if (!supabase) {
-    console.error("[Archive] Supabase client could not be initialized. Check SUPABASE_SERVICE_ROLE_KEY env var.");
+    console.error("[Archive] Orbit Supabase client could not be initialized. Check SUPABASE_SERVICE_ROLE_KEY / ORBIT_SUPABASE_SERVICE_ROLE_KEY env vars.");
     return <InvalidAccessScreen reason="The archive system is temporarily offline. Please try again in a few minutes." />;
   }
 
-  // 1. Fetch Supporter Identity
+  // 1. Fetch the credential this archive link points at — it carries the
+  //    supporter's identity (email + display name) directly.
   const { data: supporter, error: supporterError } = await supabase
-    .from("orbit_supporters")
-    .select("id, display_name, created_at")
+    .from("orbit_support_credentials")
+    .select("id, display_name, supporter_email, created_at")
     .eq("id", id)
     .single();
 
   if (supporterError) {
-    console.error("[Archive] Supporter lookup failed:", supporterError);
+    console.error("[Archive] Credential lookup failed:", supporterError);
     return (
       <InvalidAccessScreen reason="We couldn't find your supporter record. If you just completed your payment, please wait a few minutes and try again." />
     );
@@ -87,11 +98,11 @@ export default async function ArchivePage({ params }: ArchiveProps) {
     );
   }
 
-  // 2. Fetch all paid credentials attached to this supporter
+  // 2. Fetch all paid credentials belonging to the same supporter (same email)
   const { data: credentials, error: credError } = await supabase
     .from("orbit_support_credentials")
     .select("id, credential_code, season_label, amount_aud, created_at")
-    .eq("supporter_id", supporter.id)
+    .eq("supporter_email", supporter.supporter_email)
     .eq("payment_status", "paid")
     .order("created_at", { ascending: false });
 
@@ -103,60 +114,58 @@ export default async function ArchivePage({ params }: ArchiveProps) {
   const activeCount = credList.length;
 
   return (
-    <main className="min-h-screen bg-[#020503] text-[#AEFFA1] font-sans selection:bg-[#39FF14]/20 selection:text-[#39FF14] relative overflow-hidden flex flex-col">
-      {/* Background ambient lighting */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#39FF14] opacity-[0.03] blur-[150px] mix-blend-screen rounded-full" />
-      </div>
+    <main className="min-h-screen bg-[#EDEFED] text-[#1A1C1A] font-sans antialiased selection:bg-[#059669] selection:text-white relative overflow-hidden flex flex-col">
+      {/* Soft museum light */}
+      <div className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_50%_0%,rgba(5,150,105,0.06)_0%,transparent_55%)]" />
 
       {/* Navigator */}
       <nav className="relative z-50 w-full p-8 md:p-12 flex justify-between items-start">
         <Link
           href="/"
-          className="text-[10px] uppercase font-sans font-light tracking-[0.3em] text-[#AEFFA1]/70 hover:text-[#39FF14] transition-colors duration-500"
+          className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070] hover:text-[#059669] transition-colors duration-300`}
         >
-          [ Return to Main ]
+          [ Return to main ]
         </Link>
-        <span className="text-[10px] uppercase font-mono tracking-widest text-[#39FF14]/50 border border-[#39FF14]/20 px-3 py-1 rounded-sm">
+        <span className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#059669] border border-[#059669]/25 bg-white/40 px-3 py-1 rounded-full`}>
           System: Secure
         </span>
       </nav>
 
       {/* Identity Header */}
-      <div className="w-full max-w-4xl mx-auto px-6 relative z-10 pt-10 pb-16">
-        <div className="flex flex-col gap-6 md:flex-row md:items-end justify-between border-b border-[#39FF14]/10 pb-10">
+      <div className="w-full max-w-4xl mx-auto px-6 relative z-10 pt-6 pb-16">
+        <div className="flex flex-col gap-6 md:flex-row md:items-end justify-between border-b border-[#1A1C1A]/10 pb-10">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#39FF14]/60 mb-3 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-[#39FF14] rounded-full inline-block animate-pulse shadow-[0_0_10px_#39FF14]" />
-              Supporter Identity
+            <p className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#059669] mb-3 flex items-center gap-2 font-bold`}>
+              <span className="w-1.5 h-1.5 bg-[#059669] rounded-full inline-block animate-pulse" />
+              Supporter identity
             </p>
-            <h1 className="text-4xl md:text-5xl font-serif italic font-light text-white mb-2 tracking-tight">
+            <h1 className="text-4xl md:text-5xl font-serif italic font-light text-[#1A1C1A] mb-2 tracking-tight">
               {supporter.display_name}
             </h1>
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-white/40">
-              Identity Node: {supporter.id.split("-")[0].toUpperCase()}
+            <p className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070]`}>
+              Identity node: {supporter.id.split("-")[0].toUpperCase()}
             </p>
           </div>
           <div className="md:text-right">
-            <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#39FF14]/40 mb-1">Total Transmissions</p>
-            <p className="font-mono text-2xl font-light text-[#39FF14]">
+            <p className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070] mb-1`}>Total transmissions</p>
+            <p className="font-mono text-2xl font-light text-[#059669]">
               {activeCount < 10 ? `0${activeCount}` : activeCount}
             </p>
           </div>
         </div>
 
         {/* Credentials Archive List */}
-        <div className="mt-16">
-          <h2 className="text-[10px] font-mono uppercase tracking-[0.4em] text-white/30 mb-8 border-b border-white/5 pb-4">
-            Permanent Archive Record
+        <div className="mt-14">
+          <h2 className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070] mb-8 border-b border-[#1A1C1A]/5 pb-4`}>
+            Permanent archive record
           </h2>
 
           {activeCount === 0 ? (
-            <div className="text-center py-20 border border-white/5 bg-white/[0.02] rounded-xl">
-              <p className="font-mono text-xs uppercase tracking-[0.2em] text-white/30 mb-2">
+            <div className="text-center py-20 rounded-[32px] bg-white/50 border border-white/40">
+              <p className={`font-mono ${T.small} uppercase tracking-[0.18em] text-[#6B8070] mb-2`}>
                 No transmissions found yet.
               </p>
-              <p className="font-mono text-[10px] text-white/20">
+              <p className={`font-mono ${T.micro} text-[#6B8070]/60`}>
                 If you just completed a payment, your credential will appear here shortly.
               </p>
             </div>
@@ -170,37 +179,37 @@ export default async function ArchivePage({ params }: ArchiveProps) {
                 return (
                   <div
                     key={cred.id}
-                    className="group relative bg-[#050A07] border border-[#39FF14]/10 rounded-2xl p-6 transition-all duration-500 hover:border-[#39FF14]/40 hover:bg-[#070F0A] hover:shadow-[0_0_30px_rgba(57,255,20,0.05)]"
+                    className="group relative rounded-[32px] bg-white/60 border border-white/40 p-6 transition-all duration-300 hover:shadow-[0_20px_50px_rgba(10,18,14,0.10)] hover:border-[#059669]/25"
                   >
                     <div className="flex justify-between items-start mb-6">
                       <div>
-                        <p className="text-[8px] font-mono tracking-[0.3em] uppercase text-[#39FF14]/50 mb-1">
-                          Credential Code
+                        <p className={`font-mono text-[9px] tracking-[0.18em] uppercase text-[#6B8070] mb-1`}>
+                          Credential code
                         </p>
-                        <p className="font-mono text-sm md:text-base font-bold tracking-widest text-[#39FF14]">
+                        <p className={`font-mono ${T.body} md:${T.heading} font-bold tracking-widest text-[#059669]`}>
                           {cred.credential_code}
                         </p>
                       </div>
                       <div className="text-right">
-                        <span className="inline-block px-2 py-1 bg-white/5 rounded border border-white/10 text-[9px] font-mono uppercase tracking-widest text-white/60">
+                        <span className={`inline-block px-2.5 py-1 bg-[#EDEFED] rounded-full border border-[#1A1C1A]/10 font-mono text-[10px] uppercase tracking-[0.18em] text-[#6B8070]`}>
                           {cred.season_label}
                         </span>
                       </div>
                     </div>
 
-                    <h3 className="text-2xl font-serif italic text-white mb-1">Orbit 77</h3>
-                    <p className="text-[10px] font-mono tracking-[0.2em] uppercase text-[#AEFFA1]/40 mb-8 block">
-                      Project Node
+                    <h3 className="text-2xl font-serif italic font-light text-[#1A1C1A] mb-1">Orbit 77</h3>
+                    <p className={`font-mono ${T.micro} tracking-[0.18em] uppercase text-[#6B8070] mb-8 block`}>
+                      Project node
                     </p>
 
-                    <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-4">
+                    <div className="grid grid-cols-2 gap-4 border-t border-[#1A1C1A]/10 pt-4">
                       <div>
-                        <p className="text-[8px] font-mono tracking-[0.2em] uppercase text-white/30 mb-1">Status</p>
-                        <p className="font-mono text-xs uppercase tracking-[0.1em] text-[#39FF14]/80">Verified</p>
+                        <p className={`font-mono text-[9px] tracking-[0.18em] uppercase text-[#6B8070] mb-1`}>Status</p>
+                        <p className={`font-mono ${T.micro} uppercase tracking-[0.1em] text-[#059669] font-bold`}>Verified</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-[8px] font-mono tracking-[0.2em] uppercase text-white/30 mb-1">Timestamp</p>
-                        <p className="font-mono text-xs text-white/60">{formattedDate}</p>
+                        <p className={`font-mono text-[9px] tracking-[0.18em] uppercase text-[#6B8070] mb-1`}>Timestamp</p>
+                        <p className={`font-mono ${T.micro} text-[#6B8070]`}>{formattedDate}</p>
                       </div>
                     </div>
                   </div>

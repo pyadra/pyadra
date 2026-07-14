@@ -28,7 +28,18 @@ export default function ComposeFormUnified() {
 
   // Field completion status
   const isRecipientComplete = formData.recipient_name.trim().length > 0;
-  const isDateComplete = formData.deliver_at !== '' && new Date(formData.deliver_at) > new Date();
+  // Parse the yyyy-mm-dd string as LOCAL date parts. `new Date('yyyy-mm-dd')`
+  // is UTC midnight, which in negative-offset timezones makes today (and even
+  // tomorrow, in the evening) read as "past" and silently blocks the flow.
+  const isDateComplete = (() => {
+    if (formData.deliver_at === '') return false;
+    const [y, m, d] = formData.deliver_at.split('-').map(Number);
+    if (!y || !m || !d) return false;
+    const picked = new Date(y, m - 1, d);
+    const todayMidnight = new Date();
+    todayMidnight.setHours(0, 0, 0, 0);
+    return picked > todayMidnight; // tomorrow onwards
+  })();
   const isSignatureComplete = formData.sender_name.trim().length > 0;
   const isGuardianComplete = formData.guardian_email.trim().length > 0 && formData.guardian_email.includes('@');
   const isMessageComplete = formData.message.trim().length > 10;
@@ -40,6 +51,13 @@ export default function ComposeFormUnified() {
   const completionFields = [isRecipientComplete, isDateComplete, isSignatureComplete, isGuardianComplete, isMessageComplete];
   const completionRatio = completionFields.filter(Boolean).length / completionFields.length;
   const capsuleGlow = Math.max(glow, completionRatio);
+
+  // Earliest openable date: tomorrow, in the visitor's local timezone
+  const minDeliverDate = (() => {
+    const t = new Date();
+    t.setDate(t.getDate() + 1);
+    return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+  })();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -209,7 +227,7 @@ export default function ComposeFormUnified() {
                     name="deliver_at"
                     value={formData.deliver_at}
                     onChange={handleChange}
-                    min={new Date().toISOString().split('T')[0]}
+                    min={minDeliverDate}
                     className="w-full bg-transparent border-none text-[var(--etn-cream)] text-base font-mono focus:outline-none [color-scheme:dark]"
                   />
                   <p className="text-[var(--etn-ash)]/40 text-xs mt-1 leading-normal">

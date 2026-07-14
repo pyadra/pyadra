@@ -16,13 +16,10 @@ import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
 
 /* =========== EDITABLE CONFIG — DRAFT v1 — REFINE WITH PABLO ========== */
 const CONFIG = {
-  // Season 2 funding goal in AUD — $10,000, decided by owner July 2026.
+  // Fallbacks only — the live values come from the pyadra_settings table
+  // via /api/stats/orbit-fund (keys: orbit.funding_goal_aud,
+  // orbit.episodes_live). Edit them in Supabase, no deploy needed.
   FUNDING_GOAL_AUD: 10_000,
-
-  /**
-   * Episodes live. HARDCODED — data debt.
-   * Becomes dynamic in Season 2 via an `orbit_episodes` table.
-   */
   EPISODES_LIVE: 10,
 
   CONTACT_EMAIL: 'pyadra@pyadra.io',
@@ -86,7 +83,6 @@ const NOT_INCLUDED = [
 ];
 
 const FAQ_BASE = [
-  { q: 'Is this real?', a: `${CONFIG.EPISODES_LIVE} episodes are public on YouTube and the credential system processes real payments through Stripe. Watch first, decide later.` },
   { q: 'What do supporters get?', a: 'A permanent credential engraved in the archive (O77-S1-XXXXXX), founding member status, early Season 2 access, and direct founder updates.' },
   { q: 'Is this an investment? Do I own a piece?', a: 'No. You’re funding the journey, not buying equity. Pablo keeps the project and creative control. Supporters get recognition, perks and a permanent credential — never ownership, never a return, never a vote on the content.' },
 ];
@@ -383,6 +379,8 @@ function LockInDialog({
 
 export default function OrbitDashboard() {
   const [raised, setRaised] = useState<number | null>(null);
+  const [goal, setGoal] = useState<number>(CONFIG.FUNDING_GOAL_AUD);
+  const [episodesLive, setEpisodesLive] = useState<number>(CONFIG.EPISODES_LIVE);
   const [showDrawer, setShowDrawer] = useState(false);
   const [dialog, setDialog] = useState<{ open: boolean; layer: Layer | null }>({ open: false, layer: null });
 
@@ -397,9 +395,11 @@ export default function OrbitDashboard() {
         if (!r.ok) throw new Error(`orbit-fund responded ${r.status}`);
         return r.json();
       })
-      .then((data: { total?: number } | null) => {
+      .then((data: { total?: number; goal?: number; episodes_live?: number } | null) => {
         if (cancelled || !data) return;
         if (typeof data.total === 'number') setRaised(data.total);
+        if (typeof data.goal === 'number') setGoal(data.goal);
+        if (typeof data.episodes_live === 'number') setEpisodesLive(data.episodes_live);
       })
       .catch((err) => {
         console.warn('[orbit] funding stats fetch failed', err);
@@ -407,7 +407,6 @@ export default function OrbitDashboard() {
     return () => { cancelled = true; };
   }, []);
 
-  const goal = CONFIG.FUNDING_GOAL_AUD;
   const pct = raised !== null ? Math.min((raised / goal) * 100, 100) : 0;
   const raisedDisplay = raised !== null ? `$${raised.toLocaleString('en-AU')}` : '$…';
 
@@ -463,7 +462,7 @@ export default function OrbitDashboard() {
               Real conversations. No filters. No script. No bullshit.
             </p>
             <p className={`${T.body} text-[#3A4A3E] leading-relaxed`}>
-              Orbit 77 is a podcast created in Sydney that does things differently, moving through three orbits: real talks about life, art and music. {CONFIG.EPISODES_LIVE} episodes live — built for permanence, not virality.
+              Orbit 77 is a podcast created in Sydney that does things differently, moving through three orbits: real talks about life, art and music. {episodesLive} episodes live — built for permanence, not virality.
             </p>
           </div>
 
@@ -542,7 +541,7 @@ export default function OrbitDashboard() {
           {/* Stats — Block A (live) */}
           <div className="grid grid-cols-4 gap-2 shrink-0">
             {[
-              { label: 'Episodes', value: String(CONFIG.EPISODES_LIVE), desc: 'live on YouTube' },
+              { label: 'Episodes', value: String(episodesLive), desc: 'live on YouTube' },
               { label: 'Raised', value: raisedDisplay, desc: 'Season 2 fund · live' },
               { label: 'Goal', value: `$${(goal / 1000).toFixed(goal % 1000 === 0 ? 0 : 1)}k`, desc: 'AUD · Season 2' },
               { label: 'Progress', value: `${Math.round(pct)}%`, desc: 'funded' },
@@ -751,12 +750,6 @@ export default function OrbitDashboard() {
                 >
                   Contact the founder
                 </button>
-                <Link
-                  href="/exhibitions/galaxy/orbit/join"
-                  className={`block text-center font-mono ${T.micro} text-white/50 hover:text-[#F4EFEA] transition-colors uppercase tracking-[0.18em]`}
-                >
-                  Or join the crew →
-                </Link>
                 <span className={`block text-center font-mono ${T.micro} text-white/40`}>
                   {CONFIG.CONTACT_EMAIL}
                 </span>

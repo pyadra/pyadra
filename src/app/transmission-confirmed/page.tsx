@@ -7,6 +7,16 @@ import { motion } from "framer-motion";
 
 export const dynamic = "force-dynamic";
 
+/* Matches the Orbit 77 page design system: light museum surface,
+   emerald accent, serif italic display + mono labels. */
+const T = {
+  display: 'text-3xl lg:text-4xl',
+  heading: 'text-base',
+  body: 'text-sm',
+  small: 'text-[13px]',
+  micro: 'text-[11px]',
+} as const;
+
 function ConfirmationInner() {
   const params = useSearchParams();
   const session_id = params.get("session_id");
@@ -66,27 +76,21 @@ function ConfirmationInner() {
   };
 
   return (
-    <main className="min-h-screen relative overflow-hidden bg-[#020503] text-[var(--orbit-cream)] flex flex-col items-center justify-center font-sans px-4 py-16">
+    <main className="min-h-screen bg-[#EDEFED] text-[#1A1C1A] antialiased selection:bg-[#059669] selection:text-white flex flex-col items-center justify-center font-sans px-4 py-16 relative overflow-hidden">
 
-      {/* Background Radial Glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(57,255,20,0.06)_0%,#020503_70%)] pointer-events-none" />
-      <motion.div
-        animate={{ opacity: [0.04, 0.1, 0.04] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vh] rounded-full blur-[120px] pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(57,255,20,0.15) 0%, transparent 70%)" }}
-      />
+      {/* Soft museum light */}
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_20%,rgba(5,150,105,0.06)_0%,transparent_60%)]" />
 
       {/* Status label */}
       <motion.div
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="relative z-10 flex items-center gap-3 mb-10"
+        className="relative z-10 flex items-center gap-2.5 mb-8"
       >
-        <span className="w-2 h-2 rounded-full bg-[var(--orbit-green)] animate-ping shadow-[0_0_10px_rgba(57,255,20,0.8)]" />
-        <span className="text-xs md:text-sm font-mono tracking-wide uppercase text-[var(--orbit-green)] font-bold">
-          Orbit 77 — System Active
+        <span className="w-1.5 h-1.5 rounded-full bg-[#059669] animate-pulse" />
+        <span className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#059669] font-bold`}>
+          Orbit 77 — Transmission recorded
         </span>
       </motion.div>
 
@@ -95,17 +99,17 @@ function ConfirmationInner() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.2 }}
-        className="relative z-10 text-4xl md:text-5xl lg:text-7xl font-serif italic font-light text-center mb-5 drop-shadow-[0_0_30px_rgba(57,255,20,0.15)]"
+        className={`relative z-10 ${T.display} font-serif italic font-light text-center mb-4`}
       >
-        Transmission Recorded.
+        Your signal arrived.
       </motion.h1>
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 0.5 }}
-        className="relative z-10 text-xs md:text-sm font-light font-sans text-[#AEFFA1]/70 text-center mb-14 max-w-md leading-relaxed"
+        className={`relative z-10 ${T.body} font-light text-[#6B8070] text-center mb-12 max-w-md leading-relaxed`}
       >
-        Your signal arrived. The support has been permanently recorded in the Orbit 77 Archive.
+        The support has been permanently recorded in the Orbit 77 Archive.
       </motion.p>
 
       {/* DIGITAL SUPPORT CARD */}
@@ -115,51 +119,45 @@ function ConfirmationInner() {
         transition={{ duration: 1.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
         className="relative z-10 w-full max-w-lg"
       >
-        {/* Card outer glow */}
-        <div className="absolute -inset-[1px] rounded-3xl bg-gradient-to-br from-[var(--orbit-green)]/40 via-transparent to-[var(--orbit-green)]/10 blur-[3px] pointer-events-none" />
+        <div className="relative rounded-[32px] bg-white/60 border border-white/40 shadow-[0_20px_60px_rgba(10,18,14,0.10)] p-8 md:p-12 overflow-hidden">
 
-        {/* Card body */}
-        <div className="relative bg-gradient-to-br from-[#0A1A0D] to-[#050A07] border border-[var(--orbit-green)]/30 rounded-3xl p-8 md:p-12 shadow-[0_30px_80px_rgba(0,0,0,0.8)] overflow-hidden">
-
-          {/* Card background texture */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--orbit-green)]/10 rounded-full blur-[80px] pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-40 h-40 bg-[var(--orbit-green)]/5 rounded-full blur-[60px] pointer-events-none" />
+          {/* Card ambient accent */}
+          <div className="absolute top-0 right-0 w-56 h-56 bg-[#059669]/5 rounded-full blur-[70px] pointer-events-none" />
 
           {/* Card top bar */}
-          <div className="flex justify-between items-start mb-12 relative z-10">
+          <div className="flex justify-between items-start mb-10 relative z-10">
             <div>
-              <p className="text-xs font-mono tracking-wide uppercase text-[var(--orbit-green)]/60 mb-1 font-bold">Orbit 77</p>
-              <p className="text-sm font-mono tracking-wide uppercase text-[#AEFFA1]/40">Season 1 — 2026</p>
+              <p className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#059669] font-bold mb-1`}>Orbit 77</p>
+              <p className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070]`}>Season 1 — 2026</p>
             </div>
-            <div className="w-10 h-10 rounded-full border border-[var(--orbit-green)]/30 flex items-center justify-center shadow-[0_0_15px_rgba(57,255,20,0.2)]">
-              <span className="w-2.5 h-2.5 rounded-full bg-[var(--orbit-green)] shadow-[0_0_10px_rgba(57,255,20,0.8)]" />
+            <div className="w-10 h-10 rounded-full border border-[#059669]/25 flex items-center justify-center">
+              <span className="w-2 h-2 rounded-full bg-[#059669]" />
             </div>
           </div>
 
           {/* Supporter name */}
           <div className="mb-10 relative z-10">
-            <p className="text-xs font-mono tracking-wide uppercase text-[#AEFFA1]/50 mb-3">Display Name</p>
-            <h2 className="text-3xl md:text-4xl font-serif italic text-[var(--orbit-cream)] drop-shadow-[0_0_15px_rgba(57,255,20,0.1)]">
+            <p className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070] mb-3`}>Display Name</p>
+            <h2 className="text-3xl md:text-4xl font-serif italic font-light text-[#1A1C1A]">
               {supporterName}
             </h2>
           </div>
 
           {/* Card footer row */}
-          <div className="flex justify-between items-end border-t border-[var(--orbit-green)]/10 pt-8 relative z-10">
+          <div className="flex justify-between items-end border-t border-[#1A1C1A]/10 pt-7 relative z-10">
             <div>
-              <p className="text-xs font-mono tracking-wide uppercase text-[#AEFFA1]/50 mb-2">Role</p>
-              <p className="text-[12px] font-mono text-[var(--orbit-green)] tracking-widest font-bold">Orbit 77 Supporter</p>
+              <p className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070] mb-2`}>Role</p>
+              <p className={`font-mono ${T.small} text-[#059669] tracking-widest font-bold`}>Orbit 77 Supporter</p>
             </div>
             <div className="text-right">
-              <p className="text-[10px] font-mono tracking-wide uppercase text-[#AEFFA1]/40 mb-1">Your permanent archive number</p>
-              <p className="text-xs font-mono tracking-widest uppercase text-[var(--orbit-green)] mb-2 font-bold">Archive ID</p>
-              <p className="text-sm md:text-base font-mono text-[#060B08] bg-[var(--orbit-green)] px-4 py-1.5 rounded-sm inline-block tracking-widest font-bold shadow-[0_0_10px_rgba(57,255,20,0.3)]">{supporterNumber}</p>
+              <p className={`font-mono ${T.micro} uppercase tracking-[0.18em] text-[#6B8070] mb-2`}>Archive ID</p>
+              <p className={`font-mono ${T.body} text-white bg-[#059669] px-4 py-1.5 rounded-md inline-block tracking-widest font-bold`}>{supporterNumber}</p>
             </div>
           </div>
 
           {/* Date */}
           <div className="mt-6 relative z-10 text-right">
-            <p className="text-xs font-mono tracking-wide text-[#AEFFA1]/30 uppercase">{dateStr}</p>
+            <p className={`font-mono ${T.micro} tracking-[0.18em] text-[#6B8070]/60 uppercase`}>{dateStr}</p>
           </div>
         </div>
       </motion.div>
@@ -169,7 +167,7 @@ function ConfirmationInner() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 1.5 }}
-        className="relative z-10 mt-14 text-xs md:text-sm font-light font-sans italic text-[#AEFFA1]/50 text-center max-w-sm leading-relaxed"
+        className={`relative z-10 mt-12 ${T.small} font-light italic text-[#6B8070] text-center max-w-sm leading-relaxed`}
       >
         &ldquo;The content exists. The distribution doesn&apos;t — yet. That&apos;s the only thing standing between Orbit 77 and scale.&rdquo;
       </motion.p>
@@ -179,35 +177,38 @@ function ConfirmationInner() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 1.8 }}
-        className="relative z-10 flex flex-wrap gap-4 justify-center mt-12 max-w-2xl px-4"
+        className="relative z-10 flex flex-wrap gap-3 justify-center mt-10 max-w-2xl px-4"
       >
-        <button onClick={handleShare} className="w-full sm:w-auto px-8 py-4 rounded-full text-sm uppercase tracking-wide font-bold transition-all border border-[var(--orbit-green)] text-[#060B08] bg-[var(--orbit-green)] hover:shadow-[0_0_30px_rgba(57,255,20,0.5)]">
-          Share My Credential
+        <button
+          onClick={handleShare}
+          className={`w-full sm:w-auto px-8 py-3.5 rounded-full font-mono ${T.small} uppercase tracking-[0.18em] font-bold transition-all bg-[#059669] text-white hover:bg-[#047857] shadow-[0_6px_18px_rgba(5,150,105,0.25)]`}
+        >
+          Share my credential
         </button>
         <Link href="/exhibitions/galaxy/orbit" className="w-full sm:w-auto">
-          <button className="w-full px-8 py-4 rounded-full text-sm uppercase tracking-wide font-bold transition-all border border-white/10 hover:border-white/30 text-[#AEFFA1]/70 hover:text-white bg-black/30">
+          <button className={`w-full px-8 py-3.5 rounded-full font-mono ${T.small} uppercase tracking-[0.18em] font-bold transition-all border border-[#1A1C1A]/15 text-[#6B8070] hover:text-[#1A1C1A] hover:border-[#1A1C1A]/30 bg-white/40`}>
             Return to Orbit 77
           </button>
         </Link>
-        <div className="w-full sm:w-auto relative group">
+        <div className="w-full sm:w-auto relative">
           {supporterId ? (
             <Link href={`/archive/${supporterId}`} className="block w-full">
-              <button className="w-full px-8 py-4 rounded-full text-sm uppercase tracking-wide font-bold transition-all border border-[var(--orbit-green)]/50 text-[var(--orbit-green)] bg-black/50 hover:bg-[var(--orbit-green)]/10 shadow-[0_0_15px_rgba(57,255,20,0.1)] hover:shadow-[0_0_20px_rgba(57,255,20,0.2)]">
+              <button className={`w-full px-8 py-3.5 rounded-full font-mono ${T.small} uppercase tracking-[0.18em] font-bold transition-all border border-[#059669]/40 text-[#059669] bg-white/40 hover:bg-[#059669]/10`}>
                 View in Archive
               </button>
             </Link>
           ) : (
             <>
-              <button disabled className="w-full px-8 py-4 rounded-full text-sm uppercase tracking-wide font-bold transition-all border border-white/5 text-white/20 bg-transparent cursor-not-allowed">
+              <button disabled className={`w-full px-8 py-3.5 rounded-full font-mono ${T.small} uppercase tracking-[0.18em] font-bold border border-[#1A1C1A]/10 text-[#1A1C1A]/25 bg-transparent cursor-not-allowed`}>
                 View in Archive
               </button>
-              <span className="absolute -top-3 right-1/2 translate-x-1/2 bg-[#020503] border border-white/10 px-2 py-0.5 text-[10px] font-mono tracking-widest uppercase text-white/30 rounded-full">Syncing...</span>
+              <span className={`absolute -top-3 right-1/2 translate-x-1/2 bg-[#EDEFED] border border-[#1A1C1A]/10 px-2 py-0.5 font-mono text-[10px] tracking-widest uppercase text-[#6B8070] rounded-full`}>Syncing…</span>
             </>
           )}
         </div>
       </motion.div>
 
-      <p className="relative z-10 text-[10px] font-mono tracking-wide text-[#AEFFA1]/20 mt-10 uppercase">
+      <p className={`relative z-10 font-mono text-[10px] tracking-[0.18em] text-[#6B8070]/50 mt-10 uppercase`}>
         Secured via Stripe. One-time payment. No subscription.
       </p>
     </main>
@@ -216,7 +217,7 @@ function ConfirmationInner() {
 
 export default function TransmissionConfirmed() {
   return (
-    <Suspense fallback={<main className="min-h-screen bg-[#020503] flex items-center justify-center p-8 text-[var(--orbit-green)] font-mono text-sm uppercase tracking-widest animate-pulse">Confirming support...</main>}>
+    <Suspense fallback={<main className="min-h-screen bg-[#EDEFED] flex items-center justify-center p-8 text-[#059669] font-mono text-sm uppercase tracking-widest animate-pulse">Confirming support…</main>}>
       <ConfirmationInner />
     </Suspense>
   );

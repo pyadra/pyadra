@@ -19,7 +19,8 @@ export async function POST(req: Request) {
   try {
     const { amount, intent, project_id, supporter_name, supporter_email, is_anonymous, support_message } = await req.json();
     // ---- Validation ----
-    if (!validateAmount(amount)) {
+    // $5 minimum; $1,000 covers the Co-Producer/Sponsor tier (amounts in cents)
+    if (!validateAmount(amount, 500, 100_000)) {
       return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
     }
     const safeName = sanitizeString(supporter_name);
