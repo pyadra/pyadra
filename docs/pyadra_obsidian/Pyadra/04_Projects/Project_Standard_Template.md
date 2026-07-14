@@ -1,8 +1,14 @@
 # {{PROJECT NAME}}
 
-_Project document · Pyadra_ _Last updated: {{date}}_
+_Project document · Pyadra · Last updated: {{date}}_
 
-> [!note] Template v2 (June 2026) Updated to match what the projects actually use: added the COPY DECK section, switched the primary type to LOCAL/GLOBAL/GLOCAL (with Pyadra-relation as a secondary field), refreshed the participation models with the learned principles (lower upfront ↔ higher share, valuation methods, revenue-share protection, leave-anytime). Kept the ROADMAP section — it is required, not optional.
+> [!note] Template v3 (July 14, 2026) Updated after the full reconciliation of all four project docs against production (Kangaroo v1.6, Orbit v1.4, EterniCapsule v2.0, Figuitoon v1.2). New in v3: the copy deck now MUST cover every surface (nav badge, dialogs, drawers, post-payment pages — see the deck note), the FOUNDER BLOCK is a required deck section, the truth rule is explicit (the doc and page never claim what the code doesn't do — [[Company_Master]] non-negotiable #13), editable numbers point to `pyadra_settings`, and the reconciliation ritual is defined (version bump + dated changelog + "last reconciled" stamp).
+
+> [!important] The truth hierarchy (learned July 2026, the hard way)
+>
+> 1. **The code/page in production** is the truth for every visible string and behavior.
+> 2. **This document** is the truth for everything the page doesn't show (deals, due diligence, history, private valuations).
+> 3. When they disagree: reconcile the SAME DAY — usually the doc updates to the page; if the page claims something the code doesn't do, the PAGE copy is corrected immediately (EterniCapsule's false zero-knowledge claim is the cautionary tale).
 
 ---
 
@@ -37,6 +43,8 @@ _This block feeds the public dashboard in Galaxy._ _Maximum 2 lines per field. N
 |||
 |||
 |||
+
+> [!note] Editable numbers → `pyadra_settings` If a number must change over time without a deploy (a goal, a count, a toggle), it lives as a row in the `pyadra_settings` table and is read with `getSetting(key, fallback)`. Never a new hardcode. Worked example: `orbit.funding_goal_aud`, `orbit.episodes_live`.
 
 **Access:**
 
@@ -282,6 +290,8 @@ _The single source of truth for every visible string on the project's page. Clau
 
 > [!important] Why this exists This is what stops the page and the document from drifting apart. The page copies from here; it never improvises copy in code. See [[Company_Master]] Project Standard point 14.
 
+> [!important] The deck covers EVERY surface (v3 rule — learned reconciling all four projects) The deck is not just the main page sections. It must include, verbatim: the **SiteNav status badge** (e.g. `For sale`, `For support`), every **dialog** (contact/checkout modals — kicker, heading, intro, field labels, button states, success and error strings), the **drawer shell** (title, trigger, labels, founder block), any **playful micro-strings** (e.g. Kangaroo's `grab me ✦`), and **post-flow pages** (confirmation/archive pages) if the project has them. Strings with dynamic values are written with placeholders: `{episodes} episodes are public…`.
+
 > [!note] Numbers rule Every NUMBER (price, metrics, counts) has ONE canonical source — the metrics in WHAT THE USER SEES and the PRODUCTS AND PRICING table (or the canonical METRICS table above, for sale-stage projects). The copy deck and prose point to those; a figure is never updated in two places and left to contradict itself.
 
 ### Identity block
@@ -304,6 +314,27 @@ _List each visible block (assets/what-you-get, metrics, CTAs, deal/participation
 
 - **Button:** ``
 - **Sub-line:** ``
+
+### Founder block (drawer) — required
+
+_Every project page shows a human. Photo (landscape 4:3), caption chip, quote, signature._
+
+- **Founder:** `` <!-- the person shown on the page (may differ from the builder — e.g. Pablo on Orbit, Cristian on EterniCapsule, Charina on Figuitoon) -->
+- **Photo:** `public/images/{project}/{name}_founder.jpg` · chip `` <!-- e.g. `Pablo · Sydney` -->
+- **Quote (serif italic):** ``
+- **Signature:** `` · `` <!-- name · role, place/year -->
+
+### Dialog (verbatim) — required if the page has any modal
+
+|Field|String|
+|---|---|
+|Kicker|``|
+|Heading|``|
+|Intro|``|
+|Field labels|``|
+|Submit (+ states)|``|
+|Success|``|
+|Error fallback|``|
 
 ### Strings that must never appear
 
@@ -342,6 +373,17 @@ _Priorities only. One line per item. No wishlist — only what's actually planne
 ## **Code:**
 
 ## **Sibling projects:**
+
+---
+
+## RECONCILIATION RITUAL (v3 — required)
+
+_How this document stays true. Every project doc follows it._
+
+1. Whenever the page changes meaningfully, this doc is reconciled in the same session (ideally the same commit).
+2. On reconciliation: bump the version at the END line, add a dated `Changelog vX.Y` note describing what changed and why, and update the copy-deck stamp: _"last reconciled against `page.tsx`, {{date}}"_.
+3. Numbers in Galaxy's sphere copy (proof lines) must be updated when this doc's canonical metrics change — same commit.
+4. Never let a claim survive that the code doesn't keep ([[Company_Master]] non-negotiable #13).
 
 ---
 

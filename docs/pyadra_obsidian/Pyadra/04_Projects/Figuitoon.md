@@ -1,6 +1,6 @@
 ---
 
-## tags: [pyadra, project, figuitoon, galaxy, glocal] created: 2026-06-29 version: 1.0 status: active type: GLOCAL exhibition: Galaxy
+## tags: [pyadra, project, figuitoon, galaxy, glocal] created: 2026-06-29 version: 1.2 status: active type: GLOCAL exhibition: Galaxy updated: 2026-07-14
 
 # Figuitoon
 
@@ -115,6 +115,8 @@ The project combines AI, 3D modeling, Shopify and 3D printing into a working pip
 - **Instagram & TikTok** — initial digital presence
 
 > [!note] Pipeline status The route works end-to-end (photo → stylized face → 3D file → print → assembly → figurine), but each step still needs optimization for time, cost and quality.
+
+> [!important] Shopify is the ONLY sales channel (decision July 14, 2026) Pyadra once had an internal Figuitoon purchase flow (forge/upload/sealed pages, `/api/figurines`, a `figurine_orders` table and a Stripe webhook branch). It was never linked from anywhere and was removed entirely in the July 14 cleanup — code and table (migration 0008). Figuitoon takes orders exclusively on its Shopify store (`figuitoon.com`); the Pyadra page is a showcase + project-sale dashboard that links out via "Make mine →". Do not rebuild an internal checkout without an owner decision.
 
 ---
 
@@ -253,8 +255,9 @@ Everything else (more categories, accessories, premium versions) is secondary. T
 
 ### Identity block
 
+- **Nav status badge (SiteNav, live dot):** `For sale`
 - **Type badge:** `Local production · Global store`
-- **Status badge:** `Prototype · Pre-launch`
+- **Status badge (identity panel):** `Prototype · Pre-launch`
 - **H1:** `Figuitoon`
 - **Tagline (serif italic):** `Your face. Your team. Your figurine.`
 - **Intro:** `Figuitoon turns one photo into a mini you — a 3D-printed figurine in your favourite team's colors, your sport or your profession. Made for gifts, keepsakes and collectors.`
@@ -319,10 +322,35 @@ Section label: `The Honest Risks`
 - **Quote (serif italic):** `"I'm from the Philippines and helping people is just who I am. Figuitoon caught me because I love new things — innovating, creating something people haven't seen before."`
 - **Signature:** `Charina Oan` · `Founder · Figuitoon, 2026`
 
+### FAQ (drawer)
+
+|Q|A|
+|---|---|
+|`Does it really work end-to-end?`|`Yes — the pipeline runs from photo to physical figurine. The Shopify store is live for orders. The first paying customer is still pending; everything else has been tested.`|
+|`Why $11,500 and not $15,000?`|`The project is valued at $15,000 AUD — brand, store, styles, printer, pipeline and know-how. $11,500 is the launch price while Figuitoon is new to the museum.`|
+|`What exactly is for sale on this page?`|`The whole project — brand, Shopify store, the 3D printer, files, pipeline and know-how. Buying a figurine is a separate thing (the Make mine button).`|
+|`Why $49 per figurine?`|`It is a launch / validation price set before the true per-figurine cost is fully measured. It may change once production costs and waste are properly calculated.`|
+
+### Acquisition dialog (verbatim)
+
+|Field|String|
+|---|---|
+|Kicker|`Figuitoon · Acquisition enquiry`|
+|Heading|`Talk about Figuitoon.` (Make-an-offer variant: `Tell us your structure.`)|
+|Intro|`Leave your details below. Charina handles negotiations directly and personally.`|
+|Field labels|`Name` · `Email` · `Your offer` (offer variant) · `Short note`|
+|Error fallback|`Something went wrong.`|
+
+### Drawer shell
+
+- **Drawer trigger:** `Read FAQ & The Full Story →`
+- **Founder photo chip:** `Charina · Philippines`
+- **Store button (in drawer):** links to `CONFIG.SHOPIFY_URL`
+
 ### Secondary CTAs & labels
 
-- **Product CTA:** `Make mine →` (to the Shopify product / upload)
-- **Project CTA:** `Talk about Figuitoon` (handover/acquisition conversation)
+- **Product CTA:** `Make mine →` → `https://www.figuitoon.com` (Shopify — the ONLY purchase path)
+- **Project CTA:** deal cards open the acquisition dialog
 - **Contact email:** `pyadra@pyadra.io`
 - **Social:** `Instagram` → `https://www.instagram.com/figuitoon` (button in drawer next to the store button) · `TikTok` (TBD)
 
@@ -374,4 +402,6 @@ _Priorities only. One line per item._
 
 > [!note] Changelog v1.1 (June 2026) — Added the ROADMAP section (Now/Next/Future) reconstructed from Eduardo's priorities: cost + first sales now; production optimization + ops manual next; new categories + accessories + Charina handover future.
 
-_END · FIGUITOON · v1.1 · Pyadra 2026
+> [!note] Changelog v1.2 (July 14, 2026) — Reconciled against the live page (the "no page built yet" flag from v1.0 is obsolete — the dashboard is live at /exhibitions/galaxy/figurines). Copy deck completed with the strings that existed on the page but not in the deck: nav badge `For sale`, the 4-entry FAQ, the acquisition dialog, and the drawer shell. Recorded the July 14 decision: the never-used internal purchase flow (forge/upload/sealed, /api/figurines, figurine_orders table, webhook branch) was deleted — Shopify (figuitoon.com) is the ONLY sales channel; do not rebuild an internal checkout without an owner decision.
+
+_END · FIGUITOON · v1.2 · Pyadra 2026
