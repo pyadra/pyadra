@@ -9,7 +9,7 @@ by flipping env vars — no code changes.
 | Project | Tables | Client (only entry point) |
 |---|---|---|
 | **Orbit 77** (independent, migratable) | `orbit_support_credentials` (one row per contribution; archive groups by `supporter_email`) | `src/app/lib/orbit-db.ts` → `getOrbitSupabase()` |
-| **EterniCapsule** (museum) | `ethernicapsule_capsules` | `src/app/lib/db.ts` → `getSupabase()` |
+| **EterniCapsule** (external — standalone repo/deploy since Sept 2026, still this same Supabase project) | `ethernicapsule_capsules` | Its own `db.ts` → `getSupabase()`, in the `eternicapsule` repo — **not** this repo's `src/app/lib/db.ts`. No Pyadra code reads/writes this table anymore; `src/app/lib/database.types.ts` still lists its shape for reference only. |
 | **Pyadra (the museum itself)** | `pyadra_observers` (home ticket counter), `pyadra_settings` (editable site parameters — read via `src/app/lib/settings.ts` → `getSetting()`) | `src/app/lib/db.ts` → `getSupabase()` |
 
 Removed July 2026: `home_scans` (legacy home scan game), `orbit_applications`

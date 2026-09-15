@@ -1,6 +1,6 @@
 ---
 
-## tags: [pyadra, master, company, core] created: 2026-06-08 version: 3.0 status: active updated: 2026-07-14
+## tags: [pyadra, master, company, core] created: 2026-06-08 version: 3.1 status: active updated: 2026-09-15
 
 # PYADRA — Company Master Document
 
@@ -282,12 +282,12 @@ _Everything Pyadra runs for itself, alongside the projects. This is the layer a 
 
 **Shared infrastructure (one of each, separated by discipline):**
 
-- **Supabase** — one project, 4 tables, one table per concern: `pyadra_observers`, `pyadra_settings`, `orbit_support_credentials`, `ethernicapsule_capsules`. Ownership map in `supabase/README.md`; migration `0008_full_reset_baseline.sql` is the single schema source of truth. Orbit accesses its table ONLY through `orbit-db.ts` (env-var switch → its own DB someday with zero code changes).
-- **Stripe** — one account; the webhook is monolithic (known blocker for project independence).
-- **Resend** — transactional email only.
+- **Supabase** — one project, 4 tables, one table per concern: `pyadra_observers`, `pyadra_settings`, `orbit_support_credentials`, `ethernicapsule_capsules`. Ownership map in `supabase/README.md`; migration `0008_full_reset_baseline.sql` is the single schema source of truth. Orbit accesses its table ONLY through `orbit-db.ts` (env-var switch → its own DB someday with zero code changes). `ethernicapsule_capsules` is still in this same project, but as of September 15, 2026 it's read/written by the standalone `eternicapsule.com` app, not by Pyadra code.
+- **Stripe** — one account; the webhook is monolithic for the projects still inside Pyadra (`orbit-77` — known blocker for Orbit's independence). EterniCapsule split off its own webhook endpoint September 15, 2026, the first project to clear this blocker.
+- **Resend** — transactional email only. EterniCapsule's standalone app reuses this same account/API key rather than a separate one.
 - **Vercel** — hosting + anonymous analytics; `main` auto-deploys.
 
-**Quality gates:** `npm run smoke` boots the production build and checks 22 routes/APIs — it runs before every push to main. `npm run verify` = lint + typecheck + unit tests + build + smoke. Security posture (July 14, 2026): RLS on with zero public policies, rate limiting 30 req/min/IP on all APIs, strict CSP, 128-bit capsule keys.
+**Quality gates:** `npm run smoke` boots the production build and checks 19 routes/APIs — it runs before every push to main. `npm run verify` = lint + typecheck + unit tests + build + smoke. Security posture (July 14, 2026): RLS on with zero public policies, rate limiting 30 req/min/IP on all APIs, strict CSP, 128-bit capsule keys.
 
 ---
 
@@ -458,8 +458,9 @@ This is what differentiates Pyadra from every other platform that tries to conne
 - Full EterniCapsule flow (seal → pay → keys → guardian time-vault → unlock)
 - Clean database (reset 0008): 4 tables, per-project separation, RLS closed, editable `pyadra_settings`
 - Security hardening: rate limiting, strict CSP, 128-bit keys
-- Deploy gate: `npm run smoke` (22 checks) before every push
-- Documentation reconciled with production: Kangaroo v1.6 · Orbit v1.4 · EterniCapsule v2.0 · Galaxy v4.0 · this document v3.0
+- Deploy gate: `npm run smoke` (19 checks) before every push
+- Documentation reconciled with production: Kangaroo v1.6 · Orbit v1.4 · EterniCapsule v2.1 · Galaxy v4.0 · this document v3.0
+- EterniCapsule split into its own deployment at eternicapsule.com (September 15, 2026) — Pyadra now hosts only its sale/showcase page; see [[EterniCapsule]] → ARCHITECTURE
 
 **What's missing:**
 
@@ -589,7 +590,15 @@ If yes — we are on the right path.
 - Documentation reconciled with production and versioned: Kangaroo v1.6 · Orbit v1.4 · EterniCapsule v2.0 · Galaxy v4.0 · Company Master v3.0
 - Design System v1 confirmed as brand typography: Fraunces + DM Sans + IBM Plex Mono, locked scale .t-d1–.t-d6
 
+### September 2026
+
+- EterniCapsule became the first project to clear the independence blocker: split into its own repo and deploy at eternicapsule.com, own Vercel project, own Stripe webhook endpoint (own `project_id`, no longer matched by Pyadra's webhook)
+- Supabase and Resend stayed deliberately shared for EterniCapsule (one table, one working email account — not worth splitting yet); both reachable via the new repo's own env vars for a no-code-change move later, same pattern Orbit's `orbit-db.ts` already uses
+- Pyadra retired EterniCapsule's app routes and pages, keeping only the sale/showcase dashboard, which now links out to eternicapsule.com and reads its stats cross-origin; `scripts/smoke.mjs` trimmed from 22 to 19 checks
+
 ---
+
+> [!note] Changelog v3.1 (September 15, 2026) EterniCapsule split into its own repo/deploy at eternicapsule.com — the first project to clear the "monolithic Stripe webhook" independence blocker described in §9. Updated the shared-infrastructure map (Supabase/Stripe/Resend rows), the CURRENT STATE snapshot (smoke check count 22→19, doc versions), and logged the September decisions. Business terms (the "hosted" participation pricing for EterniCapsule) were flagged for an owner decision in the project doc, not changed here.
 
 > [!note] Changelog v3.0 (July 14, 2026) Major state update after the production-wide cleanup: added §9 THE MUSEUM LAYER (Observer ticket, minimal home, legal pages, single inbox, pyadra_settings, shared infrastructure map, quality gates) — the parallel pieces Pyadra runs for itself. Store section updated to LIVE. Exhibition card spec aligned to Galaxy v4 (spheres, no valuations). Typography corrected to Design System v1. Current State and Priorities rewritten against verified production. Two new non-negotiables: #13 the page never claims what the code doesn't do; #14 visitor data minimal by default. July decisions logged.
 

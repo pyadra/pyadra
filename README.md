@@ -63,7 +63,9 @@ src/app/
 ├── transmission-confirmed/       # Orbit post-payment
 ├── legal/{privacy,terms}/        # Accurate + Delaware law
 ├── api/                          # donate, session, stats, observer,
-│                                 # contact, ethernicapsule/*, stripe/webhook
+│                                 # contact, stripe/webhook
+│                                 # (EterniCapsule's own API now lives in its
+│                                 #  standalone repo — eternicapsule.com)
 └── lib/                          # db.ts, orbit-db.ts, settings.ts, email, validation
 supabase/                         # README (table ownership) + migrations
 docs/pyadra_obsidian/             # ⭐ Canonical documentation (Company_Master + project docs)

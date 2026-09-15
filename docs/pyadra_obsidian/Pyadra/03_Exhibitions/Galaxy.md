@@ -1,6 +1,6 @@
 # Galaxy
 
-_Exhibition document · Pyadra · Last updated: July 14, 2026 — v4.0_
+_Exhibition document · Pyadra · Last updated: September 15, 2026 — v4.1_
 
 ---
 
@@ -117,7 +117,7 @@ _Verbatim source for every visible string in Galaxy. If code and this deck disag
 |Project|Type chip|Subtitle|Proof line|Opportunity line|Logo|
 |---|---|---|---|---|---|
 |`Orbit 77`|`Glocal · Podcast`|`Podcast · real conversations`|`10 episodes live · Season 2 in the works`|`Open for support`|`/orbit-logo.png`|
-|`EterniCapsule`|`Global · Digital vault`|`Encrypted time capsules`|`Built & live · Global product · Hosted on Pyadra`|`Open for acquisition`|inline gold capsule mark (TODO: real logo asset)|
+|`EterniCapsule`|`Global · Digital vault`|`Encrypted time capsules`|`Built & live · Global product · Independently deployed (eternicapsule.com)`|`Open for acquisition`|inline gold capsule mark (TODO: real logo asset)|
 |`Figuitoon`|`Glocal · Physical product`|`Custom 3D figurines`|`Prototype built · Shopify store · Printer included`|`Available to acquire`|`/figuitoon-logo.png`|
 |`Kangaroo Cleanup`|`Local · Cleanup business`|`Local cleanup business`|`Sydney-based · 500+ jobs done · 5.0 reputation`|`Looking for a partner`|`/images/kangaroo/kangaroo_logo.png`|
 
@@ -182,4 +182,6 @@ The page is fully static today — the four projects live in the `PROJECTS` arra
 
 > [!note] Changelog v4.0 (July 14, 2026) — Full rewrite against the production page. The v3.2 document described a UI that no longer exists (side detail panel with Experience/Acquire tabs, in-panel express-interest form, per-sphere valuations, gris-ratón acquire palette, and an "Ebooks" project). Current reality: Galaxy is a thin orbital field — 4 spheres (Kangaroo Cleanup replaced Ebooks), one click straight into each project's page, central gem → museum shop, no panels or forms. Kept and sharpened the conceptual core (what Galaxy is, why it exists, tone, never-do list); moved all deal mechanics to each project's canonical doc; added the v4 copy deck verbatim from `page.tsx`. Contact email corrected (the old doc still said eduardo@pyadra.io — the only real inbox is pyadra@pyadra.io).
 
-_END · GALAXY · v4.0 · July 14, 2026_
+> [!note] Changelog v4.1 (September 15, 2026) — EterniCapsule's proof line corrected: "Hosted on Pyadra" → "Independently deployed (eternicapsule.com)", now that it split into its own repo/deploy. Model/deal wording in the opportunity table unchanged — see [[EterniCapsule]] for the owner-decision flag on whether the "hosted deal" pricing logic still applies.
+
+_END · GALAXY · v4.1 · September 15, 2026_

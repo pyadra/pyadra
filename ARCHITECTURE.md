@@ -1,6 +1,6 @@
 # Pyadra Architecture
 
-> The technical map, current as of July 14, 2026. For business rules and copy, the source of truth is
+> The technical map, current as of September 15, 2026. For business rules and copy, the source of truth is
 > [docs/pyadra_obsidian/Pyadra/01_Company/Company_Master.md](docs/pyadra_obsidian/Pyadra/01_Company/Company_Master.md);
 > for the database, [supabase/README.md](supabase/README.md); for each project, its doc in `docs/pyadra_obsidian/Pyadra/04_Projects/`.
 
@@ -31,17 +31,14 @@ Next.js 16 App Router (Vercel)
     ├── /api/donate                   → Orbit Stripe checkout ($5–$1,000 AUD)
     ├── /api/session                  → post-payment lookup → archive link
     ├── /api/stats/orbit-fund         → raised + goal + episodes (goal/episodes from pyadra_settings)
-    ├── /api/stats/ethernicapsule     → live capsule counts
-    ├── /api/ethernicapsule/checkout  → pending capsule + Stripe session (128-bit keys, hashed)
-    ├── /api/ethernicapsule/verify    → key check → previewed/opened transitions
-    ├── /api/ethernicapsule/edit      → 24h grace-period edit (sender key)
-    ├── /api/ethernicapsule/guardian-access → time-vault unlock (token, after deliver_at)
     ├── /api/contact                  → enquiry forms → pyadra@pyadra.io (Resend)
     ├── /api/airtasker-stats          → Kangaroo live reputation numbers
     └── /api/stripe/webhook           → signature-verified; routes by metadata.project_id
         ↕
 Supabase (PostgreSQL, RLS on, zero public policies)   Stripe   Resend
 ```
+
+> EterniCapsule's API routes and app pages moved out of this monolith on September 15, 2026 — the full product now runs as its own deployment at [eternicapsule.com](https://eternicapsule.com) (own repo, own Vercel project, own Stripe webhook). Pyadra keeps only the sale/showcase page at `/exhibitions/galaxy/ethernicapsule`. See `docs/pyadra_obsidian/Pyadra/04_Projects/EterniCapsule.md` → ARCHITECTURE for the full split.
 
 ## Database (4 tables — full definitions in `supabase/migrations/0008_full_reset_baseline.sql`)
 
@@ -50,7 +47,7 @@ Supabase (PostgreSQL, RLS on, zero public policies)   Stripe   Resend
 | `pyadra_observers` | Museum | Visitor ticket counter. No IP addresses (privacy decision July 14, 2026). |
 | `pyadra_settings` | Museum | key/JSONB site parameters. Live keys: `orbit.funding_goal_aud`, `orbit.episodes_live`. |
 | `orbit_support_credentials` | Orbit 77 | One row per contribution; carries supporter identity; archive groups by `supporter_email`. Access ONLY via `orbit-db.ts`. |
-| `ethernicapsule_capsules` | EterniCapsule | Status enum pending→sealed→previewed→opened; keys stored as SHA-256 hashes; message plaintext at rest (client-side AES is the top roadmap item — see the truth note in the project doc). |
+| `ethernicapsule_capsules` | EterniCapsule (external — written by the standalone eternicapsule.com app, not by Pyadra code, since September 15, 2026) | Status enum pending→sealed→previewed→opened; keys stored as SHA-256 hashes; message plaintext at rest (client-side AES is the top roadmap item — see the truth note in the project doc). |
 
 Removed in the July 2026 reset: `orbit_supporters`, `orbit_applications` (crew form retired), `figurine_orders` (Figuitoon sells only on its Shopify), `home_scans` (legacy).
 
@@ -61,7 +58,7 @@ Removed in the July 2026 reset: `orbit_supporters`, `orbit_applications` (crew f
 - Rate limiting 30 req/min/IP on `/api/*` (in-memory, middleware)
 - Strict CSP (`connect-src 'self'` + Vercel Analytics only), HSTS, X-Frame-Options
 - Input sanitization on every form (`sanitizeString`) — user strings are interpolated into emails
-- EterniCapsule keys: 128 bits of entropy, hash-only storage — lost keys are unrecoverable
+- EterniCapsule keys: 128 bits of entropy, hash-only storage — lost keys are unrecoverable (now enforced by the standalone eternicapsule.com app, not Pyadra)
 - No cron jobs — EterniCapsule delivery is on-demand (guardian token after `deliver_at`)
 - Visitor data minimal: no IPs, no tracking cookies (Vercel Analytics is cookie-free)
 
@@ -73,12 +70,12 @@ Client → checkout API → Stripe Hosted Checkout → payment
       → DB update + Resend emails → confirmation page
 ```
 
-One monolithic webhook routes by `metadata.project_id` (`orbit-77`, `ethernicapsule`). This is the known blocker for project independence — splitting it is each project's P0 independence task.
+One monolithic webhook routes by `metadata.project_id` (currently just `orbit-77` — this is the known blocker for Orbit's project independence, same P0 task EterniCapsule already completed). EterniCapsule split off its own `/api/stripe/webhook` endpoint on `eternicapsule.com` September 15, 2026 — Pyadra's webhook no longer has a branch for it.
 
 ## Deployment & quality gates
 
 - Vercel, `main` auto-deploys. Domain: www.pyadra.io (apex redirects to www).
-- **Before every push:** `npm run smoke` — boots the production build on a scratch port and checks 22 routes/APIs (pages render, old URLs redirect, APIs degrade gracefully without env keys). `npm run verify` = lint + typecheck + vitest + build + smoke.
+- **Before every push:** `npm run smoke` — boots the production build on a scratch port and checks 19 routes/APIs (pages render, old URLs redirect, APIs degrade gracefully without env keys). `npm run verify` = lint + typecheck + vitest + build + smoke.
 - Env vars: `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY` (+ optional `ORBIT_SUPABASE_*` for Orbit's future dedicated DB).
 
 ---

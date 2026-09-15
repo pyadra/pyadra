@@ -48,7 +48,7 @@ const WHAT_YOU_GET = [
 const RISKS = [
   { title: 'No one has bought one yet', desc: 'The app is finished and working, but the first paying customer hasn’t arrived. You’d be buying a finished product, not a proven market.' },
   { title: 'We can’t see where visitors give up', desc: 'There are no analytics installed, so we don’t know why people leave without sealing a capsule. Installing them and finding out is the new owner’s first job.' },
-  { title: 'It runs on Pyadra’s servers today', desc: 'Hosting, database and payments all live on Pyadra’s accounts. Moving everything to your own is a documented job (~20 hours), done on close if you take it independent.' },
+  { title: 'It still shares a database and payment account with Pyadra', desc: 'The app itself runs independently on its own domain and hosting, but the database and Stripe account are still shared with Pyadra. Moving those to your own is a smaller, well-documented job.' },
   { title: 'It’s slow on purpose', desc: 'Sealing takes a deliberate 30-second ritual. That’s what makes it feel important — but it also means it will never be a fast, impulse-buy product.' },
   { title: '$9 is a small ticket', desc: 'Payment fees take about 6% of each $9 capsule. Real income needs volume — or the planned $25 audio and $49 video capsules.' },
 ];
