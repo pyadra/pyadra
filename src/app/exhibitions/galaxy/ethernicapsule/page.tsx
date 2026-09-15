@@ -16,7 +16,7 @@ import Capsule3D from './Capsule3D';
 /* ------------------------------------------------------------------ */
 
 const CONTACT_EMAIL = 'pyadra@pyadra.io';
-const EXPERIENCE_URL = '/exhibitions/galaxy/ethernicapsule/experience';
+const EXPERIENCE_URL = 'https://eternicapsule.com';
 const SPRING = { type: 'spring' as const, stiffness: 150, damping: 20 };
 
 // Type scale — Design System v1 roles, dashboard density.
@@ -320,9 +320,9 @@ export default function EterniCapsuleShowcase() {
   // Live capsule metrics. Resolves to honest zeroes on any failure — never invented activity.
   useEffect(() => {
     let cancelled = false;
-    fetch('/api/stats/ethernicapsule')
+    fetch('https://eternicapsule.com/api/stats')
       .then((r) => {
-        if (!r.ok) throw new Error(`stats/ethernicapsule responded ${r.status}`);
+        if (!r.ok) throw new Error(`eternicapsule stats responded ${r.status}`);
         return r.json();
       })
       .then((data: Partial<Stats> | null) => {

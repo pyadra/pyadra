@@ -19,8 +19,7 @@ const CHECKS = [
   ['/exhibitions', [200]],
   ['/exhibitions/galaxy', [200]],
   ['/exhibitions/galaxy/orbit', [200], 'Orbit 77'],
-  ['/exhibitions/galaxy/ethernicapsule', [200]],
-  ['/exhibitions/galaxy/ethernicapsule/compose', [200]],
+  ['/exhibitions/galaxy/ethernicapsule', [200]], // showcase only now — app lives at eternicapsule.com
   ['/exhibitions/galaxy/figurines', [200]],
   ['/exhibitions/galaxy/kangaroo-cleanup', [200]],
   ['/store', [200]],
@@ -35,10 +34,8 @@ const CHECKS = [
   // APIs — must answer, never crash
   ['/api/observer', [200]],
   ['/api/stats/orbit-fund', [200], 'total'],
-  ['/api/stats/ethernicapsule', [200]],
   ['/api/donate', [200]], // GET health check
   ['/api/session?session_id=', [400]], // validates input
-  ['/api/ethernicapsule/verify', [400, 405]], // GET not allowed / no body
 ];
 
 function waitForServer(retries = 40) {
