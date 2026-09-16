@@ -35,7 +35,39 @@ function Field({
   );
 }
 
-export default function BringIdeaDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+/** Copy overrides so other pages can reuse the dialog for their own ask.
+    Defaults reproduce the nav's "Bring your idea" exactly. */
+export type DialogCopy = {
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  messageLabel?: string;
+  messagePlaceholder?: string;
+  submitLabel?: string;
+  /** recorded on the email so replies know which door was used */
+  model?: string;
+};
+
+export default function BringIdeaDialog({
+  open,
+  onClose,
+  copy,
+}: {
+  open: boolean;
+  onClose: () => void;
+  copy?: DialogCopy;
+}) {
+  const c = {
+    eyebrow: 'Pyadra · Bring your idea',
+    title: 'Show us what you’re building.',
+    intro:
+      'Have a project or an idea that belongs in a Pyadra exhibition? Tell us about it — it goes straight to the museum’s inbox.',
+    messageLabel: 'Your idea',
+    messagePlaceholder: 'What is it, and why should it live in the museum?',
+    submitLabel: 'Send your idea',
+    model: 'Bring your idea',
+    ...copy,
+  };
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -64,7 +96,7 @@ export default function BringIdeaDialog({ open, onClose }: { open: boolean; onCl
         body: JSON.stringify({
           type: 'bring-your-idea',
           project: 'Pyadra',
-          model: 'Bring your idea',
+          model: c.model,
           name: name.trim(),
           email: email.trim(),
           message: message.trim(),
@@ -121,21 +153,21 @@ export default function BringIdeaDialog({ open, onClose }: { open: boolean; onCl
             ) : (
               <form onSubmit={submit} className="p-6 md:p-8">
                 <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-[#059669] mb-2">
-                  Pyadra · Bring your idea
+                  {c.eyebrow}
                 </div>
                 <h3 className="font-serif text-2xl font-light italic leading-tight mb-2">
-                  Show us what you&rsquo;re building.
+                  {c.title}
                 </h3>
                 <p className="text-sm text-[#3A4A3E] leading-relaxed mb-5">
-                  Have a project or an idea that belongs in a Pyadra exhibition? Tell us about it — it goes straight to the museum&rsquo;s inbox.
+                  {c.intro}
                 </p>
 
                 <div className="space-y-4">
                   <Field label="Name" value={name} onChange={setName} required autoFocus />
                   <Field label="Email" type="email" value={email} onChange={setEmail} required />
                   <Field
-                    label="Your idea"
-                    placeholder="What is it, and why should it live in the museum?"
+                    label={c.messageLabel}
+                    placeholder={c.messagePlaceholder}
                     value={message}
                     onChange={setMessage}
                     textarea
@@ -154,7 +186,7 @@ export default function BringIdeaDialog({ open, onClose }: { open: boolean; onCl
                   disabled={status === 'sending' || !name.trim() || !email.trim() || !message.trim()}
                   className="mt-6 w-full rounded-full bg-[#059669] text-white py-3.5 font-mono text-[13px] font-semibold shadow-md shadow-[#059669]/15 disabled:opacity-50 uppercase tracking-[0.18em]"
                 >
-                  {status === 'sending' ? 'Sending…' : 'Send your idea'}
+                  {status === 'sending' ? 'Sending…' : c.submitLabel}
                 </button>
               </form>
             )}

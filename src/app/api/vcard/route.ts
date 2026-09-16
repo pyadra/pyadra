@@ -20,6 +20,7 @@ const LINES = [
   'TITLE:Founder',
   'EMAIL;TYPE=INTERNET,WORK:pyadra@pyadra.io',
   `URL:${SITE}/eduardo`,
+  'URL:https://www.linkedin.com/in/eduardo-diaz-41a44559/',
   `PHOTO;VALUE=URI;TYPE=JPEG:${SITE}/images/eduardo/eduardo.jpg`,
   'NOTE:Pyadra — where projects and ideas find the people who make them real.',
   'END:VCARD',
