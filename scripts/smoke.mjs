@@ -23,6 +23,8 @@ const CHECKS = [
   ['/exhibitions/galaxy/figurines', [200]],
   ['/exhibitions/galaxy/kangaroo-cleanup', [200]],
   ['/store', [200]],
+  ['/eduardo', [200], 'Eduardo'],
+  ['/api/vcard', [200], 'BEGIN:VCARD'],
   ['/manifesto', [200]],
   ['/legal/privacy', [200], 'Privacy'],
   ['/legal/terms', [200], 'Terms'],
