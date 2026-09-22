@@ -36,6 +36,10 @@ const SPRING = { type: 'spring' as const, stiffness: 130, damping: 18, mass: 0.9
    (1000×1000 or larger). Until it exists the frame renders empty, on
    purpose — an unhung plaque, not a broken image.                    */
 const PORTRAIT = '/images/eduardo/eduardo.jpg';
+/* The circular frame shows the middle ~56% of a tall photo. Centring it
+   strands the face near the rim, so pull the window up. Re-tune (or drop
+   to '50% 50%') whenever the portrait is replaced. */
+const PORTRAIT_POSITION = '50% 34%';
 const LINKEDIN = 'https://www.linkedin.com/in/eduardo-diaz-41a44559/';
 const INSTAGRAM = 'https://instagram.com/alfonsodcarretero';
 const EMAIL = 'pyadra@pyadra.io';
@@ -43,10 +47,13 @@ const EMAIL = 'pyadra@pyadra.io';
 const STATEMENT =
   'I build projects that can live without me, and then look for the people who carry them further.';
 
-/* 58 words. The most prolific multi-project founder alive uses 50–60,
-   and Eduardo is standing right there while you read it. */
-const BIO =
-  'I arrived in Australia with a suitcase and not much English. The first years were night shifts — driving strangers home until sunrise, cleaning houses during the day. So I started building: a cleaning business, a podcast, a 3D printing studio, software. I build because I kept meeting people with something real in them and nowhere to put it.';
+/* Half the road, half the person. A founder card that only lists ventures
+   reads like a CV; whoever scans this just met him. Kept short — he is
+   standing right there while you read it. */
+const BIO = [
+  'I arrived in Australia with a suitcase and not much English. The first years were night shifts — driving strangers home until sunrise. Then I started building: a cleaning business, a podcast, 3D printing, software.',
+  'Away from the work I’m simple. Sport, food from anywhere I haven’t tried yet, and people who make me laugh. I build for the same reason I like all of that — none of it is any good alone.',
+];
 
 type Logo = { kind: 'image'; src: string } | { kind: 'capsule' } | { kind: 'pending' };
 type Status = 'live' | 'for-sale' | 'paused' | 'soon';
@@ -215,6 +222,7 @@ function Portrait({ className }: { className?: string }) {
           height={720}
           priority
           onError={() => setBroken(true)}
+          style={{ objectPosition: PORTRAIT_POSITION }}
           className="w-full h-full object-cover"
         />
       ) : (
@@ -321,6 +329,8 @@ export default function FoundersRoom() {
     fetch('/api/observer')
       .then((r) => r.json())
       .then((data) => {
+        // Same rule as the home: no id, no invented number.
+        if (typeof data?.id !== 'number') return;
         const formatted = `#${String(data.id).padStart(4, '0')}`;
         window.localStorage.setItem('pyadra_observer_id', formatted);
         window.localStorage.setItem('pyadra_observer_num', String(data.id));
@@ -436,9 +446,15 @@ export default function FoundersRoom() {
             className="panel-lift rounded-3xl bg-white/70 backdrop-blur-md ring-1 ring-black/5 shadow-sm p-6 md:p-7"
           >
             <h2 className="font-mono text-[13px] font-bold uppercase tracking-[0.18em] text-[#6B8070] mb-3.5">
-              How I got here
+              The short version
             </h2>
-            <p className="t-d5 text-[#3A4A3E] leading-relaxed">{BIO}</p>
+            <div className="flex flex-col gap-3">
+              {BIO.map((para, i) => (
+                <p key={i} className="t-d5 text-[#3A4A3E] leading-relaxed">
+                  {para}
+                </p>
+              ))}
+            </div>
             <Link
               href="/"
               className="cta-glow mt-6 inline-flex items-center justify-center rounded-full bg-[#1A1C1A] text-white px-6 py-2.5 t-d5 font-semibold hover:bg-[#059669] transition-colors"
