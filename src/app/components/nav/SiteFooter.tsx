@@ -22,6 +22,7 @@ import { useEffect, useState } from 'react';
 /** Institutional destinations. Same weight, same style. */
 const LINKS: { label: string; href: string; external?: boolean }[] = [
   { label: 'Manifesto', href: '/manifesto' },
+  { label: 'The team',  href: '/team' },
   { label: 'Contact',   href: 'mailto:pyadra@pyadra.io',        external: true },
   { label: 'Instagram', href: 'https://instagram.com/pyadra.io', external: true },
   { label: 'Terms',     href: '/legal/terms' },
