@@ -91,7 +91,7 @@ export const PEOPLE: Person[] = [
     email: 'cristian@pyadra.io',
     linkedin: null,
     instagram: 'https://instagram.com/christian_c_ruiz',
-    photo: null,
+    photo: '/images/team/cris.jpg',
     photoPosition: '50% 50%',
     statement: 'It is always better to keep going than to give up.',
     bio: [
