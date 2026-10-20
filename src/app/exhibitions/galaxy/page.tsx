@@ -19,7 +19,7 @@ import SiteFooter from '@/app/components/nav/SiteFooter';
 const ENTER = 0.75; // template.tsx dissolve ~1.5s — choreography starts after
 const SPRING = { type: 'spring' as const, stiffness: 130, damping: 18, mass: 0.9 };
 
-type LogoRef = { kind: 'image'; src: string } | { kind: 'inline-capsule' };
+type LogoRef = { kind: 'image'; src: string } | { kind: 'inline-capsule' } | { kind: 'pending' };
 
 type Project = {
   id: string;
@@ -30,12 +30,19 @@ type Project = {
   subtitle: string;
   proof: string;
   opportunity: string;
-  enter_url: string;
+  /** null until the project has a page — the sphere shows, it just isn't a door yet. */
+  enter_url: string | null;
   sphereClass: string;
   glow: string;
+  /** Column placement in the 6-col desktop grid: rows of 3 · 2 · 2 around the gem. */
+  slot: string;
   position: string;
 };
 
+/* Seven spheres, one field. The desktop grid is six columns and each sphere
+   spans two, which gives rows of 3 · 2 · 2: the middle row leaves the two
+   centre columns empty, and the gem (absolutely centred) sits in that gap.
+   The bottom pair is offset by one column so it reads centred under the gem. */
 const PROJECTS: Project[] = [
   {
     id: 'orbit',
@@ -49,7 +56,8 @@ const PROJECTS: Project[] = [
     enter_url: '/exhibitions/galaxy/orbit',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#F2FBF5,#CDEBD9,#A3CFB6)] shadow-[-10px_10px_20px_rgba(0,0,0,0.12)]',
     glow: 'bg-[#A3CFB6]',
-    position: 'md:-translate-x-6 md:-translate-y-6 lg:-translate-x-8 lg:-translate-y-8',
+    slot: 'md:col-start-1',
+    position: 'md:-translate-x-4 md:-translate-y-5 lg:-translate-x-6 lg:-translate-y-7',
   },
   {
     id: 'ethernicapsule',
@@ -65,7 +73,8 @@ const PROJECTS: Project[] = [
     enter_url: '/exhibitions/galaxy/ethernicapsule',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FDF6EA,#EBD8B9,#D3B58C)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
     glow: 'bg-[#E4C99F]',
-    position: 'md:translate-x-6 md:-translate-y-6 lg:translate-x-8 lg:-translate-y-8',
+    slot: 'md:col-start-3',
+    position: 'md:-translate-y-8 lg:-translate-y-10',
   },
   {
     id: 'figuitoon',
@@ -79,7 +88,8 @@ const PROJECTS: Project[] = [
     enter_url: '/exhibitions/galaxy/figurines',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFFFFF,#FFFFFF,#F2F2F2)] shadow-[-10px_10px_20px_rgba(0,0,0,0.12)]',
     glow: 'bg-white',
-    position: 'md:-translate-x-6 md:translate-y-6 lg:-translate-x-8 lg:translate-y-8',
+    slot: 'md:col-start-5',
+    position: 'md:translate-x-4 md:-translate-y-5 lg:translate-x-6 lg:-translate-y-7',
   },
   {
     id: 'kangaroo-cleanup',
@@ -93,7 +103,66 @@ const PROJECTS: Project[] = [
     enter_url: '/exhibitions/galaxy/kangaroo-cleanup',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFFEF9,#F3EFE2,#DCD5C2)] shadow-[-10px_10px_20px_rgba(0,0,0,0.12)]',
     glow: 'bg-[#EDE8D8]',
-    position: 'md:translate-x-6 md:translate-y-6 lg:translate-x-8 lg:translate-y-8',
+    slot: 'md:col-start-1',
+    position: 'md:-translate-x-5 lg:-translate-x-7',
+  },
+  /* ------------------------------------------------------------------ */
+  /*  The three new projects.                                            */
+  /*                                                                     */
+  /*  ⚠ TODO (owner) — each one still needs three true strings and a     */
+  /*  door, taken from its own live site, before this page is deployed:  */
+  /*    · subtitle    what it is, one line                               */
+  /*    · proof       what anyone can verify today                       */
+  /*    · opportunity acquire / operate / support / partner              */
+  /*    · enter_url   its Pyadra page, or its own site                   */
+  /*  Until then the spheres show with provisional copy and no link —    */
+  /*  never a claim the code can't keep (Company_Master #13).            */
+  /* ------------------------------------------------------------------ */
+  {
+    id: 'byndi',
+    name: 'Byndi',
+    type: 'Global',
+    kind: 'Mobile app',
+    logo: { kind: 'pending' },
+    // The in-app tagline, verified in the Byndi repo.
+    subtitle: 'Understand her cycle. Care for the relationship.',
+    proof: 'Built & in testing',
+    opportunity: 'Opening soon',
+    enter_url: null,
+    sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFF6F8,#F4DAE2,#DFB3C3)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
+    glow: 'bg-[#EFC7D3]',
+    slot: 'md:col-start-5',
+    position: 'md:translate-x-5 lg:translate-x-7',
+  },
+  {
+    id: 'momentos-inolvidables',
+    name: 'Momentos Inolvidables',
+    type: 'Glocal',
+    kind: 'Custom songs',
+    logo: { kind: 'pending' },
+    subtitle: 'Songs made for one moment',
+    proof: 'Details to confirm',
+    opportunity: 'Opening soon',
+    enter_url: null,
+    sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FAF8FF,#E4DCF7,#C5B8E8)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
+    glow: 'bg-[#D6CBF0]',
+    slot: 'md:col-start-2',
+    position: 'md:-translate-x-2 md:translate-y-5 lg:translate-y-7',
+  },
+  {
+    id: 'gym',
+    name: 'Gym routines',
+    type: 'Global',
+    kind: 'Fitness app',
+    logo: { kind: 'pending' },
+    subtitle: 'Training routines, guided',
+    proof: 'Details to confirm',
+    opportunity: 'Opening soon',
+    enter_url: null,
+    sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#F6FBFF,#D9E8F4,#B4CADE)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
+    glow: 'bg-[#CBDDEB]',
+    slot: 'md:col-start-4',
+    position: 'md:translate-x-2 md:translate-y-5 lg:translate-y-7',
   },
 ];
 
@@ -121,7 +190,7 @@ function LogoSlot({ project }: { project: Project }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center">
       <div className="absolute w-16 h-16 md:w-18 md:h-18 lg:w-22 lg:h-22 rounded-full bg-white/20 blur-sm" />
-      {project.logo.kind === 'image' ? (
+      {project.logo.kind === 'image' && (
         <Image
           src={project.logo.src}
           alt={project.name}
@@ -130,39 +199,61 @@ function LogoSlot({ project }: { project: Project }) {
           className="relative w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 object-contain opacity-70 pointer-events-none select-none"
           draggable={false}
         />
-      ) : (
+      )}
+      {project.logo.kind === 'inline-capsule' && (
         <div className="relative w-10 h-14 md:w-11 md:h-16 lg:w-12 lg:h-18 opacity-80 pointer-events-none">
           <CapsuleMark />
         </div>
+      )}
+      {/* No logo asset yet — the dashed ring the team index already uses for
+          a project whose mark hasn't been made. */}
+      {project.logo.kind === 'pending' && (
+        <span className="relative w-10 h-10 md:w-11 md:h-11 lg:w-12 lg:h-12 rounded-full border border-dashed border-[#1A1C1A]/25 pointer-events-none" />
       )}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20 rounded-full pointer-events-none" />
     </div>
   );
 }
 
-function MagneticSphere({ children, href }: { children: React.ReactNode; href: string }) {
-  const ref = useRef<HTMLAnchorElement>(null);
+/** The sphere follows the cursor. With no href it still breathes and tilts —
+ *  it just isn't a door, so it never promises a page that doesn't exist. */
+function MagneticSphere({ children, href }: { children: React.ReactNode; href: string | null }) {
+  const ref = useRef<HTMLElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const mouseX = useSpring(x, { damping: 15, stiffness: 150, mass: 0.1 });
   const mouseY = useSpring(y, { damping: 15, stiffness: 150, mass: 0.1 });
 
-  const onMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const onMove = (e: React.MouseEvent<HTMLElement>) => {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     x.set((e.clientX - (rect.left + rect.width / 2)) / 4);
     y.set((e.clientY - (rect.top + rect.height / 2)) / 4);
   };
 
+  const shared = {
+    onMouseMove: onMove,
+    onMouseLeave: () => { x.set(0); y.set(0); },
+    style: { x: mouseX, y: mouseY },
+    className:
+      'relative flex flex-col items-center justify-center group rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] ' +
+      (href ? 'cursor-pointer' : 'cursor-default'),
+  };
+
+  if (!href) {
+    return (
+      <motion.div ref={ref as React.Ref<HTMLDivElement>} {...shared}>
+        {children}
+      </motion.div>
+    );
+  }
+
   return (
     <motion.a
-      ref={ref}
+      ref={ref as React.Ref<HTMLAnchorElement>}
       href={href}
-      onMouseMove={onMove}
-      onMouseLeave={() => { x.set(0); y.set(0); }}
       whileTap={{ scale: 0.97 }}
-      style={{ x: mouseX, y: mouseY }}
-      className="relative flex flex-col items-center justify-center cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] rounded-3xl"
+      {...shared}
     >
       {children}
     </motion.a>
@@ -232,13 +323,13 @@ export default function GalaxyExhibition() {
           { label: 'Exhibitions', href: '/exhibitions' },
           { label: 'Galaxy' },
         ]}
-        status={{ label: '4 live projects', live: true }}
+        status={{ label: '7 projects', live: true }}
       />
 
       {/* ============ HEADLINE ============ */}
-      <div className="relative z-10 text-center px-6 pt-24 md:pt-28">
-        <h1 className="text-3xl md:text-5xl font-bold tracking-[-0.03em] leading-[1.05]">
-          {['Four projects.', 'Already alive.'].map((line, i) => (
+      <div className="relative z-10 text-center px-6 pt-24 md:pt-24">
+        <h1 className="text-3xl md:text-4xl font-bold tracking-[-0.03em] leading-[1.05]">
+          {['Seven projects.', 'Already alive.'].map((line, i) => (
             <span key={line} className="block overflow-hidden">
               <motion.span
                 className="block"
@@ -314,15 +405,17 @@ export default function GalaxyExhibition() {
             </Link>
           </motion.div>
 
-          {/* the four spheres */}
-          <div className="grid grid-cols-2 gap-4 md:gap-8 lg:gap-12 p-4 md:p-6 lg:p-8">
+          {/* the seven spheres — 2 per row on phones, rows of 3 · 2 · 2 from md up */}
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-5 md:gap-4 lg:gap-6 p-2 md:p-4">
             {PROJECTS.map((project, index) => (
               <Fragment key={project.id}>
               <motion.div
                 initial={{ opacity: 0, scale: 0.7, y: 30 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ delay: ENTER + 0.5 + index * 0.12, type: 'spring', stiffness: 120, damping: 16 }}
-                className={`transform ${project.position} transition-transform duration-500`}
+                transition={{ delay: ENTER + 0.5 + index * 0.1, type: 'spring', stiffness: 120, damping: 16 }}
+                /* An odd count leaves the last sphere alone on the phone row,
+                   so it takes the full width and centres itself. */
+                className={`${index === PROJECTS.length - 1 ? 'col-span-2' : ''} md:col-span-2 ${project.slot} transform ${project.position} transition-transform duration-500`}
               >
                 <MagneticSphere href={project.enter_url}>
                   {/* type chip */}
@@ -348,7 +441,7 @@ export default function GalaxyExhibition() {
                       className={`absolute inset-0 rounded-full blur-xl ${project.glow}`}
                     />
                     <div
-                      className={`relative w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full ${project.sphereClass} transition-transform duration-500 group-hover:scale-105 group-hover:shadow-2xl overflow-hidden`}
+                      className={`relative w-24 h-24 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full ${project.sphereClass} transition-transform duration-500 group-hover:scale-105 group-hover:shadow-2xl overflow-hidden`}
                     >
                       <LogoSlot project={project} />
                       <motion.div
@@ -360,7 +453,7 @@ export default function GalaxyExhibition() {
                   </motion.div>
 
                   {/* 4-line copy per sphere */}
-                  <h3 className="text-lg md:text-2xl font-bold tracking-[-0.02em] text-center mb-1 transition-colors duration-300 group-hover:text-[#059669]">
+                  <h3 className="text-lg md:text-xl font-bold tracking-[-0.02em] text-center mb-1 transition-colors duration-300 group-hover:text-[#059669]">
                     {project.name}
                   </h3>
                   <div className="text-[12px] md:text-[13px] font-semibold text-[#3A4A3E] text-center leading-snug">

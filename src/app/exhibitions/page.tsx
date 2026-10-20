@@ -35,7 +35,7 @@ const ROOMS: Room[] = [
   {
     name: 'Galaxy',
     theme: 'Built projects, ready for their next chapter',
-    detail: '4 active projects',
+    detail: '7 active projects',
     href: '/exhibitions/galaxy',
     open: true,
     orb: 'bg-[radial-gradient(circle_at_30%_30%,#10B981,#059669,#047857)]',
