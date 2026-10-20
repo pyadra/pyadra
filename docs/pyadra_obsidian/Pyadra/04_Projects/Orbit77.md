@@ -1,10 +1,16 @@
-_Project document · Pyadra · Last updated: July 14, 2026_
+# Orbit 77
+
+_Project document · Pyadra · Last updated: September 22, 2026 — v1.6_
 
 ---
 
 ## IDENTITY
 
 **Type (scope):** GLOCAL (digital podcast + physical merch/events) **Pyadra relation:** External with internal product (podcast lives on YouTube; credential system is native) **Exhibition:** Galaxy **Status:** Active · Funding S2 **Founder:** Pablo Ramírez (page shows Pablo only since July 2026; Eduardo operates Pyadra) **Tagline (1 line):** Real conversations. No filters. No script. No bullshit.
+
+> [!note] Both identity questions resolved by the owner (September 22, 2026)
+> - **Type: GLOCAL.** Orbit's page badge said `Global · Podcast Archive`; it was corrected to `Glocal · Podcast Archive` the same day (pending a deploy). Galaxy's `Glocal · Podcast` chip was already right. Ignore the "GLOBAL" in the v1.4 changelog below.
+> - **The project stays with Pablo.** Where this doc still reads "Pablo & Eduardo keep it", Pablo is the one who keeps it. What Pyadra or Eduardo receive, if anything, is part of the open revenue question in [[Company_Master]] §10.
 
 ---
 
@@ -18,14 +24,14 @@ _This block feeds the public dashboard in Galaxy._ _Maximum 2 lines per field. N
 
 **What they receive by participating:**
 
-> A permanent digital credential (O77-S1-XXXXXX) engraved in the archive. Founding member status, early access to Season 2, and direct updates from Pablo & Eduardo.
+> A permanent digital credential (O77-S1-XXXXXX) engraved in the archive. Founding member status, early access to Season 2, and direct founder updates.
 
 **Main product:**
 
 |Field|Public-facing text|Technical reference|
 |---|---|---|
-|Product name|Season 1 Supporter Credential|Digital credential + founding member access|
-|Price|$10 / $20 / $50 AUD|Three tiers — Signal Carrier / Archive Node / Transmission Keeper|
+|Product name|Season 1 Supporter Credential|Digital credential + founding member access (Stripe line item: `Orbit 77 — Season Credential`)|
+|Price|$10 / $20 / $50 / $100–500 / $1,000+ AUD, or a private conversation|Six contribution layers — see PRODUCTS AND PRICING (the first three were the original tiers)|
 |What's included|Permanent Archive ID, founding member status, early Season 2 access, direct founder updates|`orbit_support_credentials` table, unique code O77-S1-XXXXXX, email delivery via Resend|
 
 **Project metrics (all dynamic — never hardcode):**
@@ -36,6 +42,8 @@ _This block feeds the public dashboard in Galaxy._ _Maximum 2 lines per field. N
 |Funding goal ($10,000 AUD)|`pyadra_settings` key `orbit.funding_goal_aud` — served by `/api/stats/orbit-fund`, editable in Supabase without a deploy|
 |Episodes live (10)|`pyadra_settings` key `orbit.episodes_live` — same API, same editability|
 |Progress %|Computed on the page from raised/goal|
+
+**Observed value (Deployed, read-only check September 19, 2026):** `/api/stats/orbit-fund` returned `{"total":10,"goal":10000,"episodes_live":10}` — $10 AUD in paid credentials since the July 14 reset. The owner believes this was his own test payment (September 22, 2026; not certain). Until confirmed, treat real support as $0. ⚠ If it was a test, the row should be deleted from `orbit_support_credentials` so the public progress bar only counts real supporters — a data change, not done by the audit.
 
 > [!note] Data debt RESOLVED (July 14, 2026) The episodes count and the funding goal are no longer hardcoded — both live in the `pyadra_settings` table. The values in code (`CONFIG`) are fallbacks only. To publish episode 11: edit the `orbit.episodes_live` row in Supabase.
 
@@ -147,7 +155,7 @@ Key files:
 
 **Pyadra dependencies:**
 
-- Stripe — shared account with EterniCapsule
+- Stripe — Pyadra's account (EterniCapsule uses the same account with its own webhook endpoint)
 - Supabase — shared DB, ONE table: `orbit_support_credentials`. All access goes through the dedicated client `src/app/lib/orbit-db.ts` (`getOrbitSupabase()`); setting `ORBIT_SUPABASE_URL` + `ORBIT_SUPABASE_SERVICE_ROLE_KEY` moves Orbit to its own DB with zero code changes (see `supabase/README.md`)
 - Resend — shared email service
 - `/api/stripe/webhook` — monolithic webhook (🔴 critical blocker)
@@ -263,7 +271,7 @@ Goal and episodes are editable in Supabase without a deploy
 **Active blockers:**
 
 - 🔴 **Monolithic Stripe webhook** — blocks independence. P0.
-- 🟡 **Season 2 funding at $0 real** — goal $10,000 AUD. Check `/api/stats/orbit-fund`.
+- 🟡 **Season 2 funding: effectively $0** of the $10,000 AUD goal — the live API showed $10 on September 19, 2026, most likely the owner's own test payment. Check `/api/stats/orbit-fund`.
 
 ---
 
@@ -279,7 +287,7 @@ Goal and episodes are editable in Supabase without a deploy
 
 - Revenue split if Orbit 77 is partially acquired — what % do Pablo & Eduardo retain?
 - Season 2 tiered early access (supporters get Ep 1–3 one week early)?
-- Is $1,000 AUD realistic for 10 episodes or should the goal be higher?
+- ~~Is $1,000 AUD realistic for 10 episodes or should the goal be higher?~~ Resolved July 2026: goal set to $10,000 AUD (owner decision).
 - Physical Orbit Store — when does this become a real planning item?
 
 **Product:**
@@ -319,20 +327,22 @@ No — for casual observers. If you only watch on YouTube, you don't feel perman
 
 _For potential buyers and participants. Answers: what can they get involved in, how, and what do they receive._
 
-**Maturity level:** MVP — first users confirmed (credential system operational, supporters exist).
+**Maturity level:** MVP — credential system operational. _(The July doc said "first users confirmed, supporters exist"; the July 14 reset wiped all earlier rows as test data, and on September 19, 2026 the live total was $10 AUD with the payer unverified.)_
 
 **What a participant or buyer acquires:**
 
+> [!note] Orbit is not for sale (see below). This table describes what the project consists of — it is not an offer.
+
 |Category|Assets included|
 |---|---|
-|Technical|Source code (Next.js 16, React 19), Supabase schema + migrations (3 tables), Stripe integration (live), Resend email system, credential generation system, funding stats API, crew application system, orbital diagram visualization, Vercel deployment config|
+|Technical|Source code (Next.js 16, React 19), Supabase schema (1 table: `orbit_support_credentials`, in migration 0008), Stripe integration (live), Resend email system, credential generation system, funding stats API, orbital diagram visualization, Vercel deployment config _(the crew application system was retired July 14, 2026)_|
 |Brand|Orbit 77 name, visual identity (palette, typography, design tokens), ritual copy voice and guidelines, orbital concept and aesthetic, orbit77.shop domain|
-|Product|Operational credential system, three contribution tiers, crew application flow, dynamic funding tracker, 10 episodes of Season 1 content (YouTube)|
+|Product|Operational credential system, six contribution layers, dynamic funding tracker, 10 episodes of Season 1 content (YouTube)|
 |Operational|Deployment guide, architecture docs, DB schema, independence roadmap (10–12h to fully separate from Pyadra)|
 
 **Participation model — CONTRIBUTION, not sale (initial draft v1 · iterate with Pablo)**
 
-> [!important] Orbit 77 is NOT being sold — it raises support It is the active creative work of Pablo & Eduardo, who keep it. The goal is to fund Season 2, not hand the project over. So the model is layered CONTRIBUTION (crowdfunding-style), not acquisition. People give to be part of the journey and get recognition/perks — NOT equity, NOT revenue share, NOT a vote on the creative direction. This protects the founders' voice (the whole point of Orbit 77) while raising money. This whole section is a v1 starting point to refine with Pablo — numbers are provisional.
+> [!important] Orbit 77 is NOT being sold — it raises support It is the active creative work of Pablo & Eduardo, who keep it. _(⚠ The live page, since July 2026, says "Pablo keeps the project" — see IDENTITY.)_ The goal is to fund Season 2, not hand the project over. So the model is layered CONTRIBUTION (crowdfunding-style), not acquisition. People give to be part of the journey and get recognition/perks — NOT equity, NOT revenue share, NOT a vote on the creative direction. This protects the founders' voice (the whole point of Orbit 77) while raising money. This whole section is a v1 starting point to refine with Pablo — numbers are provisional.
 
 **The contribution layers (draft):**
 
@@ -355,8 +365,8 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 
 |Revenue stream|Current state|Potential|
 |---|---|---|
-|Supporter credentials ($10–50 AUD)|Active — supporters confirmed|Funds part of a season|
-|Journey Patron / Sponsor tiers|Draft — not built|The realistic path to bigger sums|
+|Supporter credentials ($10–50 AUD)|Active — $10 AUD raised in total as of September 19, 2026 (live API; payer unverified)|Funds part of a season|
+|Journey Patron / Sponsor tiers|Live on the page since July 2026 (draft v1 amounts); no contribution at these tiers on record|The realistic path to bigger sums|
 |Merchandise (orbit77.shop)|Active — external store|Variable — the planned core monetization (clothing)|
 |Season 2 content monetization|Planned — YouTube AdSense|Proportional to audience growth (needs marketing)|
 |Physical Orbit Store (Season 3 vision)|Conceptual — Pablo's vision|Clothing people paint in-store, live sessions, studio|
@@ -364,24 +374,24 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 **Open deal questions to resolve with Pablo:**
 
 - [ ] Real minimum cost of Season 2 (Bali version vs a leaner version)
-- [ ] Is the first goal $15k, or a smaller proof-of-traction goal first?
+- [x] Is the first goal $15k, or a smaller proof-of-traction goal first? — Resolved July 2026: $10,000 AUD (owner decision)
 - [ ] Exact Journey Patron / Sponsor amounts and perks
 - [ ] Confirm Pyadra's cut for a contribution model (the ~5% draft above)
-- [ ] Split between Pablo & Eduardo of whatever the founders retain
+- [ ] What Pyadra/Eduardo receive, if anything — the project itself stays with Pablo (owner, September 22, 2026)
 - [ ] Legal review (raising money from the public may have regulatory implications)
 
 ---
 
 ## COPY DECK — LOCKED STRINGS
 
-> [!important] How to use this section Single source of truth for every visible string on the Orbit 77 dashboard. Claude Code copies verbatim — never paraphrase, invent, or "improve". For any NUMBER (tiers, funding goal, supporters, episodes), the metrics in WHAT THE USER SEES are canonical; update those first. This deck reflects the CONTRIBUTION model (no equity, no "own a piece" — that old framing is removed). Draft amounts are provisional (refine with Pablo).
+> [!important] How to use this section Verbatim record of every visible string on the Orbit 77 dashboard, post-payment page and archive. New copy is written here first; Claude Code copies verbatim — never paraphrase, invent, or "improve". If this deck and the live page disagree, the deck is updated to the live string the same day, and a false live string is flagged ⚠ and fixed in code ([[Company_Master]] §6). Last reconciled against the code on September 19, 2026. For any NUMBER (tiers, funding goal, supporters, episodes), the metrics in WHAT THE USER SEES are canonical; update those first. This deck reflects the CONTRIBUTION model (no equity, no "own a piece" — that old framing is removed). Draft amounts are provisional (refine with Pablo).
 
 > [!warning] Orbit is a CONTRIBUTION page, not a sale Remove all "own / 49% / acquire / equity" language. People contribute to fund Season 2 and get recognition/perks — never ownership, revenue share, or creative control. The founders keep Orbit 77.
 
 ### Identity block
 
 - **Nav status badge (SiteNav, live dot):** `For support`
-- **Type badge:** `Global · Podcast Archive`
+- **Type badge:** `Glocal · Podcast Archive` (corrected from `Global · …` on September 22, 2026 — see IDENTITY)
 - **Status badge (identity panel):** `Funding S2`
 - **H1:** `Orbit 77`
 - **Tagline:** `Real conversations. No filters. No script. No bullshit.`
@@ -454,7 +464,7 @@ Section label: `The Honest Risks`
 
 ### Not included
 
-Section label: `Not Included`
+Sub-label (inside The Honest Risks panel): `What you don't get` _(live string; earlier deck versions said "Not Included")_
 
 |Item|Note|
 |---|---|
@@ -558,8 +568,8 @@ buy now · fake supporter numbers
 
 **Documentation:**
 
-- [[VISION]]
 - [[Company_Master]]
+- `VISION.md`, `ARCHITECTURE.md` (repo root)
 - `supabase/README.md` — table ownership + migration path to a dedicated DB
 
 **Code:**
@@ -575,7 +585,7 @@ buy now · fake supporter numbers
 
 **Database migrations:**
 
-- `supabase/migrations/0008_full_reset_baseline.sql` — the single source of truth (0000–0007 are history only)
+- `supabase/migrations/0008_full_reset_baseline.sql` — the single source of truth (0000–0006 are history only; there is no 0007)
 
 **External:**
 
@@ -586,8 +596,9 @@ buy now · fake supporter numbers
 
 **Sibling projects in Galaxy:**
 
-- [[ETHERNICAPSULE]] — Time-locked cryptographic messages
+- [[EterniCapsule]] — Time-locked messages (product at eternicapsule.com)
 - [[Figuitoon]] — Physical figurines from photos
+- [[Kangaroo_Cleanup]] — Sydney cleanup business handover
 
 ---
 
@@ -595,4 +606,8 @@ buy now · fake supporter numbers
 
 > [!note] Changelog v1.4 (July 14, 2026) — Full reconciliation against production code after the July 14 overhaul. IDENTITY: template-v2 fields (GLOBAL + External with internal product), founder shown is Pablo only. DESIGN: documented the light museum dashboard (the dark transmission aesthetic now lives only in the Origin Story drawer and the ritual copy); /transmission-confirmed and /archive/[id] restyled to match. DATA: single table `orbit_support_credentials` (supporters + applications tables removed, migration 0008); archive links use the credential id and group by supporter_email. Crew form retired (page, API, table, CTA). Goal $10,000 and episodes count now DYNAMIC via `pyadra_settings` — data debt resolved. Copy deck rebuilt from the live page verbatim: nav badge `For support`, badges, stats grid (Episodes/Raised/Goal/Progress), six layers with `Entry` chip, Honest Risks, Not Included, Lock In dialog, drawer shell, post-payment strings, FAQ (4 entries, two dynamic). $1,000 tier verified working (amount-cap bug fixed). Roadmap and related links updated.
 
-_END · ORBIT 77 · v1.4_
+> [!note] Changelog v1.5 (September 19, 2026) — Documentation audit. Recorded the live funding total ($10 AUD on September 19, payer unverified) in place of "$0 real" and "supporters confirmed". Flagged two open identity questions: type (doc GLOCAL / Galaxy `Glocal · Podcast` / page `Global · Podcast Archive` / v1.4 changelog "GLOBAL") and ownership (page "Pablo keeps the project" vs doc "Pablo & Eduardo"). Brought the older sections in line with the six live layers (main product table, asset table, revenue streams) and removed the retired crew system and the "3 tables" from the asset list. Marked the $1,000/$15k goal questions as resolved by the July $10,000 decision. Copy deck: `What you don't get` label, type-badge warning, reconciliation rule aligned with [[Company_Master]] §6. Fixed links (`[[ETHERNICAPSULE]]`, `[[VISION]]`) and the migration range. No amounts or perks changed.
+
+> [!note] Changelog v1.6 (September 22, 2026) — Owner decisions: Orbit is GLOCAL (page badge corrected to `Glocal · Podcast Archive`, pending deploy) and the project stays with Pablo. The $10 in the fund is most likely the owner's own test payment, so real support is treated as $0 and the row is flagged for deletion. The Pablo/Eduardo split question now points to the open revenue-attribution question in [[Company_Master]] §10.
+
+_END · ORBIT 77 · v1.6_

@@ -30,10 +30,11 @@ assignees: ''
 
 <!-- Which project would this feature apply to? -->
 
-- [ ] EterniCapsule
+- [ ] Pyadra pages (home, exhibitions, Galaxy, store, manifesto, founder's room)
 - [ ] Orbit 77
-- [ ] Projects Hub
-- [ ] General Platform
+- [ ] EterniCapsule (showcase page — the product itself lives in `pyadra/eternicapsule`)
+- [ ] Figuitoon
+- [ ] Kangaroo Cleanup
 - [ ] Other: _____
 
 ## Additional Context

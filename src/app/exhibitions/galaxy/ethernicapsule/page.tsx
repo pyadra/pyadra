@@ -452,7 +452,7 @@ export default function EterniCapsuleShowcase() {
               <span
                 className={`mt-4 font-mono ${T.micro} uppercase tracking-[0.22em] text-[#C4B5A8] opacity-70 group-hover:opacity-100 group-hover:text-[#D4AF6E] transition-opacity`}
               >
-                $9 AUD per capsule · client-side sealed
+                $9 AUD per capsule · key-locked
               </span>
             </Link>
           </div>

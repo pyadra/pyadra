@@ -22,7 +22,7 @@ export default function Privacy() {
         <h1 className="font-serif font-semibold text-4xl md:text-5xl tracking-tight mb-3">
           Privacy
         </h1>
-        <p className="t-d5 text-[#6B8070] mb-12">Effective July 2026</p>
+        <p className="t-d5 text-[#6B8070] mb-12">Effective September 2026</p>
 
         <div className="space-y-8 t-d4 text-[#3A4A3E] leading-relaxed">
           <p>
@@ -52,28 +52,42 @@ export default function Privacy() {
             <strong className="font-semibold text-[#047857]">
               3. EterniCapsule.
             </strong>{" "}
-            When you seal a capsule we store your name and email, the
-            recipient&rsquo;s name, the guardian&rsquo;s email if you name one, the
-            opening date, and the message itself. The access keys are stored
-            only as cryptographic hashes — we cannot recover them for you. The
-            message text is stored on our database provider&rsquo;s encrypted
-            infrastructure; treat a capsule as private, not as unreadable by
-            the operator. If you provide a guardian&rsquo;s email, you confirm you
-            have their permission to share it.
+            EterniCapsule now runs on its own site, eternicapsule.com, which we
+            also operate. Capsules are written there, not here. When you seal
+            one we store your name and email, the recipient&rsquo;s name, the
+            guardian&rsquo;s email if you name one, the opening date, and the
+            message itself. The access keys are stored only as cryptographic
+            hashes — we cannot recover them for you. The message text is stored
+            on our database provider&rsquo;s encrypted infrastructure; treat a
+            capsule as private, not as unreadable by the operator. If you
+            provide a guardian&rsquo;s email, you confirm you have their
+            permission to share it.
           </p>
 
           <p>
             <strong className="font-semibold text-[#047857]">
-              4. The observer ticket.
+              4. Messages you send us.
             </strong>{" "}
-            Your visit to the home page is counted with a sequential number
-            stored in your own browser. We keep the browser type of the visit.
-            We do not store your IP address.
+            When you use a contact form on this site — an enquiry about a
+            project, &ldquo;Bring your idea&rdquo;, or a message from the founder&rsquo;s
+            page — we receive the name, email, message and, on the Kangaroo
+            Cleanup form, the optional phone number you type. It is sent to our
+            inbox by email so we can reply to you; we do not store it in our
+            database and we do not use it for marketing lists.
           </p>
 
           <p>
             <strong className="font-semibold text-[#047857]">
-              5. Analytics &amp; cookies.
+              5. The observer ticket.
+            </strong>{" "}
+            Your first visit to the home page, or to the founder&rsquo;s page, is
+            counted with a sequential number stored in your own browser. We keep
+            the browser type of the visit. We do not store your IP address.
+          </p>
+
+          <p>
+            <strong className="font-semibold text-[#047857]">
+              6. Analytics &amp; cookies.
             </strong>{" "}
             We use Vercel Analytics, which is anonymized and cookie-free. We do
             not use tracking cookies or advertising trackers.
@@ -81,7 +95,7 @@ export default function Privacy() {
 
           <p>
             <strong className="font-semibold text-[#047857]">
-              6. Who processes data for us.
+              7. Who processes data for us.
             </strong>{" "}
             Stripe (payments), Supabase (database), Resend (transactional
             email) and Vercel (hosting and analytics). We never sell or rent
@@ -90,7 +104,7 @@ export default function Privacy() {
 
           <p>
             <strong className="font-semibold text-[#047857]">
-              7. Your choices.
+              8. Your choices.
             </strong>{" "}
             To ask what we hold about you, correct it, or delete it, write to{" "}
             <a
@@ -104,13 +118,13 @@ export default function Privacy() {
           </p>
 
           <p>
-            <strong className="font-semibold text-[#047857]">8. Age.</strong>{" "}
+            <strong className="font-semibold text-[#047857]">9. Age.</strong>{" "}
             Pyadra is not directed at children under 13 and we do not knowingly
             collect their data.
           </p>
 
           <p>
-            <strong className="font-semibold text-[#047857]">9. Changes.</strong>{" "}
+            <strong className="font-semibold text-[#047857]">10. Changes.</strong>{" "}
             If what we collect changes, this page changes first. The effective
             date above tells you when it was last revised.
           </p>

@@ -5,9 +5,11 @@ import { headers } from 'next/headers';
 export async function GET() {
   const supabase = getSupabase();
 
+  // No database, no number. A made-up id would be stored by the browser as if
+  // it were permanent, and two visitors could end up with the same one —
+  // an invented Observer number is worse than none (Company_Master #13).
   if (!supabase) {
-    // Fallback to in-memory if DB not available
-    return NextResponse.json({ id: Math.floor(Math.random() * 100) + 1 });
+    return NextResponse.json({ id: null });
   }
 
   try {
@@ -26,12 +28,12 @@ export async function GET() {
 
     if (error) {
       console.error('Error creating observer:', error);
-      return NextResponse.json({ id: Math.floor(Math.random() * 100) + 1 });
+      return NextResponse.json({ id: null });
     }
 
     return NextResponse.json({ id: data.id });
   } catch (err) {
     console.error('Observer creation failed:', err);
-    return NextResponse.json({ id: Math.floor(Math.random() * 100) + 1 });
+    return NextResponse.json({ id: null });
   }
 }

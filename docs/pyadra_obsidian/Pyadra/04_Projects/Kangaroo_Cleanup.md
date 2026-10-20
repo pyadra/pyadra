@@ -1,4 +1,6 @@
-_Project document · Pyadra · Last updated: July 2026_
+# Kangaroo Cleanup
+
+_Project document · Pyadra · Last updated: September 19, 2026 — v1.7_
 
 ---
 ## IDENTITY
@@ -63,7 +65,7 @@ _Project document · Pyadra · Last updated: July 2026_
 
 **In its own world:** Kangaroo Cleanup has its own visual identity — name, logo, colors, typography, business card, uniform concept. Tone: friendly, practical, Australian, environmentally responsible.
 
-**Inside Pyadra:** When exhibited in [[Galaxy]], Pyadra's design system applies — smoke gray background (#EDEFED), system typography (Cormorant Garamond + JetBrains Mono), emerald as the main accent. The dark background does not apply to Pyadra pages. The project's content and voice keep their original identity.
+**Inside Pyadra:** When exhibited in [[Galaxy]], Pyadra's design system applies — smoke gray background (#EDEFED), Design System v1 typography (Fraunces display · DM Sans body · IBM Plex Mono labels), emerald as the main accent, plus a ~10% touch of Kangaroo's own blue-purple (`#7C6FE0` / `#5B50CE`) on the location badge, asset checkmarks and the grab-me chip. The dark background does not apply to Pyadra pages. The project's content and voice keep their original identity. _(Until v1.7 this line still named Cormorant Garamond + JetBrains Mono, which the page stopped using in July 2026 — see changelog v1.5.)_
 
 **What the page must communicate before the visitor scrolls:** This business existed. It had customers. It has assets. It is ready to continue.
 
@@ -87,7 +89,7 @@ _Project document · Pyadra · Last updated: July 2026_
 
 ## METRICS AND NUMBERS
 
-> [!important] Canonical source of numbers This table is the single source of truth for every number in this project. If any figure changes, update it HERE FIRST, then propagate to the copy deck (Section 14) and anywhere it appears in prose. Other sections may repeat these numbers for context, but this table wins in any conflict. Never edit a number in the copy deck or in prose without updating this table.
+> [!important] Canonical source of numbers This table is the single source of truth for every number in this project. If any figure changes, update it HERE FIRST, then propagate to the copy deck (COPY DECK, 14.x), to Galaxy's sphere proof line and to the `/eduardo` project row, and anywhere it appears in prose. Other sections may repeat these numbers for context, but this table wins in any conflict. Never edit a number in the copy deck or in prose without updating this table.
 
 > [!note] Disclaimer All figures are approximate and based on founder records unless marked as publicly verifiable. Revenue figures must be verified during due diligence.
 
@@ -106,6 +108,8 @@ _Project document · Pyadra · Last updated: July 2026_
 |Revenue trajectory|Grew every year|Founder records|Private · Due diligence|
 |Initial investment|AUD $7,000+|Founder records|Private · Due diligence|
 
+> [!warning] "✅ Today" needs a manual re-check (September 19, 2026) The page reads the Airtasker task and review counts through `/api/airtasker-stats`, which scrapes the public profile and falls back to stored values (248 / 213) when it can't parse them. On September 19 it answered `source: "partial"` — at least one of the two numbers came from the fallback, not from Airtasker. A direct fetch of the profile was inconclusive (the page renders in the browser). Before quoting these as "verifiable today", open the profile in a browser and confirm.
+
 > [!note] Revenue presentation The page presents revenue split by fiscal year (FY2025 ~$30k, FY2024 ~$23k) to show the upward trajectory. The total across the lifetime of the business is approximately AUD $53k. All figures are founder-recorded and confirmed in due diligence under a signed agreement.
 
 **Publicly verifiable links:**
@@ -114,7 +118,7 @@ _Project document · Pyadra · Last updated: July 2026_
 - Instagram: `instagram.com/kangaroocleanup`
 - Website: `kangaroocleanup.com.au`
 
-**Private valuation reference (internal — not shown on page):** ~AUD $15,000 — $20,000 (≈1x SDE; see valuation context note at end of document). **Preferred deal:** Grow Together — AUD $5,000 upfront + 8% revenue share + 1–5% permanent Pyadra stake (see Section 10). The page communicates value through the rebuild-cost narrative, not a headline figure.
+**Private valuation reference (internal — not shown on page):** ~AUD $15,000 — $20,000 (≈1x SDE; see valuation context note at end of document). **Preferred deal:** Grow Together — AUD $5,000 upfront + 8% revenue share + 1–5% permanent Pyadra stake (see PARTICIPATION OPTIONS). The page communicates value through the rebuild-cost narrative, not a headline figure.
 
 ---
 
@@ -452,7 +456,7 @@ _Real evidence that the business existed and operated._
 - [ ] Organize financial evidence for due diligence
 - [ ] Confirm domain, email, and social media transferability
 - [ ] Consult legal advisor on deal structure
-- [ ] Publish dashboard in [[Galaxy]]
+- [x] Publish dashboard in [[Galaxy]] — done: built June 23, 2026 (commit `fd4c519`); live on production (checked September 19, 2026)
 - [ ] Identify channel to reach the right buyer (Airtasker, Gumtree, Facebook Groups Sydney, Australian entrepreneur communities)
 - [ ] First serious conversation with potential buyer
 - [ ] Close first deal
@@ -549,9 +553,9 @@ _A buyer can verify the reputation before making any inquiry — without contact
 
 ## COPY DECK — LOCKED STRINGS
 
-> [!important] How to use this section This is the single source of truth for every visible string on the Kangaroo Cleanup page. Claude Code and any builder must copy these strings **verbatim**. Do not paraphrase, rewrite, invent, or "improve" them. If a string is needed that is not in this deck, it must be added here first and approved — never improvised in code. If the code and this deck ever disagree, this deck wins (last reconciled against `page.tsx`, July 14 2026 — verified verbatim match).
+> [!important] How to use this section This is the verbatim record of every visible string on the Kangaroo Cleanup page. Claude Code and any builder must copy these strings **verbatim**. Do not paraphrase, rewrite, invent, or "improve" them. If a string is needed that is not in this deck, it must be added here first and approved — never improvised in code. If this deck and the live page disagree, the deck is updated to the live string the same day, and a false live string is flagged ⚠ and fixed in code ([[Company_Master]] §6). Last reconciled against `page.tsx` on September 19, 2026 (automated check: every deck string is on the page; the two that aren't literal are built from dynamic values — the Airtasker count in 14.3 and the error text in 14.10).
 
-> [!note] Numbers come from Section 05 This deck is the source of truth for _wording_. For any _number_ (jobs, reviews, rating, revenue), Section 05 (Metrics) is the canonical source. If a number changes, update Section 05 first, then update the matching string here. The two must always agree.
+> [!note] Numbers come from METRICS AND NUMBERS This deck is the source of truth for _wording_. For any _number_ (jobs, reviews, rating, revenue), the METRICS AND NUMBERS table is the canonical source. If a number changes, update that table first, then update the matching string here. The two must always agree.
 
 ---
 
@@ -598,7 +602,7 @@ Widget header: `Public proof · verify it yourself`
 
 Context line below the widget:
 
-> `248 verifiable on Airtasker — the rest came by direct referral.`
+> `{tasks} verifiable on Airtasker — the rest came by direct referral.` — `{tasks}` comes from `/api/airtasker-stats` (fallback `248`)
 
 > [!note] Why two job numbers The 248 is the publicly verifiable floor (anyone can check it on Airtasker today). The 500+ is the real total — over time, repeat customers called direct instead of going through Airtasker, so the platform number understates the business. Showing both turns a potential question ("why did they leave Airtasker?") into a strength (the business outgrew the platform). The 500+ is founder-recorded; have partial proof (WhatsApp history, job records) ready for serious buyers.
 
@@ -710,7 +714,7 @@ _The dialog opened by every deal button and CTA. `{model}` is the deal/CTA name 
 |Submit button|`Send Request` (sending state: `Sending…`)|
 |Success heading|`Got it.`|
 |Success body|`Eduardo has received your contact request. He will reach out to you within 24 hours.`|
-|Error fallback|`Something went wrong. Email pyadra@pyadra.io instead.`|
+|Error fallback|`Something went wrong. Email pyadra@pyadra.io instead.` (the first sentence is replaced by the server's error message when there is one)|
 
 ---
 
@@ -768,4 +772,6 @@ generic Flippa / Gumtree marketplace phrasing
 
 > [!important] Valuation context (for internal reference — not shown on page) Market reality for this business: it is owner-operated, has no recurring contracts, and is currently inactive — all of which pull the valuation multiple to the low end. Australian small service businesses like this value at roughly 1x SDE (seller's discretionary earnings). With ~$15–25k/yr clear earnings, the defensible private valuation is around **$15–20k AUD**. The deal prices ($5k–$12k upfront + revenue share) sit at or below that on the upfront, by design — lower entry attracts more operators, and the revenue share is where the founder recovers long-term value. KEY RISK: the revenue share depends on the buyer self-reporting and paying voluntarily once the founder is no longer in the business. This must be protected in the written agreement (reporting clause, verification right, default terms) per [[Company_Master]]'s legal-review rule. Do not close on a handshake.
 
-_END · Kangaroo Cleanup · v1.6 · Pyadra 2026_
+> [!note] Changelog v1.7 (September 19, 2026) — Documentation audit. Automated check: the copy deck still matches the page. EXPERIENCE & DESIGN corrected to Design System v1 (the Cormorant/JetBrains line was left over from before July) with the Kangaroo accent colours. Added a warning that the Airtasker numbers need a manual re-check: the stats API answered `partial` on September 19. Deck 14.3 and 14.10 now show which parts are dynamic. "Publish dashboard in Galaxy" marked done (built June 23, 2026; live). Section-number references replaced with section names; the number-sync rule now includes Galaxy and `/eduardo`. Reconciliation rule aligned with [[Company_Master]] §6. No figures or deal terms changed.
+
+_END · Kangaroo Cleanup · v1.7 · Pyadra 2026_

@@ -66,7 +66,7 @@ export function middleware(request: NextRequest) {
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set(
     'Content-Security-Policy',
-    `default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://va.vercel-scripts.com https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https://images.unsplash.com https://cdn.pixabay.com https://files.stripe.com https://img.youtube.com https://i.ytimg.com; font-src 'self' data:; connect-src 'self' blob: data: https://va.vercel-scripts.com; frame-src 'self' https://js.stripe.com https://www.youtube.com;`
+    `default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://va.vercel-scripts.com https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https://images.unsplash.com https://cdn.pixabay.com https://files.stripe.com https://img.youtube.com https://i.ytimg.com; font-src 'self' data:; connect-src 'self' blob: data: https://va.vercel-scripts.com https://eternicapsule.com; frame-src 'self' https://js.stripe.com https://www.youtube.com;`
   );
 
   // 2. Set CORS Headers for API routes

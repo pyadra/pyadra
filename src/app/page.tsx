@@ -297,6 +297,9 @@ export default function PyadraHome() {
     fetch('/api/observer')
       .then((r) => r.json())
       .then((data) => {
+        // No id means the archive couldn't record the visit — show no ticket
+        // rather than a number that isn't real.
+        if (typeof data?.id !== 'number') return;
         const formatted = `#${String(data.id).padStart(4, '0')}`;
         window.localStorage.setItem('pyadra_observer_id', formatted);
         window.localStorage.setItem('pyadra_observer_num', String(data.id));

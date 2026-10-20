@@ -60,7 +60,7 @@ const PROJECTS: Project[] = [
        gold capsule mark as a stand-in. Replace with a real logo when available. */
     logo: { kind: 'inline-capsule' },
     subtitle: 'Encrypted time capsules',
-    proof: 'Built & live · Global product · Hosted on Pyadra',
+    proof: 'Built & live · Global product · Independently deployed (eternicapsule.com)',
     opportunity: 'Open for acquisition',
     enter_url: '/exhibitions/galaxy/ethernicapsule',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FDF6EA,#EBD8B9,#D3B58C)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',

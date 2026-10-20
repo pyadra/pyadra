@@ -1,12 +1,14 @@
 # Galaxy
 
-_Exhibition document · Pyadra · Last updated: September 15, 2026 — v4.1_
+_Exhibition document · Pyadra · Last updated: September 22, 2026 — v4.3_
 
 ---
 
 ## IDENTITY
 
-**Type:** Exhibition **Status:** Active — 4 live projects **URL:** pyadra.io/exhibitions/galaxy **Tagline (on page):** Four projects. Already alive. **Theme:** Memory, time, permanence
+**Type:** Exhibition **Status:** Active — 4 live projects **URL:** pyadra.io/exhibitions/galaxy **Tagline (on page):** Four projects. Already alive. **Theme (as shown on the Exhibitions page):** `Built projects, ready for their next chapter` _(earlier docs said "Memory, time, permanence"; that line is not on any page)_
+
+> [!note] Where Galaxy sits in the business (September 2026) Pyadra creates, develops and collaborates to turn ideas into real projects, then looks for the people who will acquire, operate, support, work on or carry them forward ([[Company_Master]] §1). Galaxy is the room where the finished projects are shown to those people. The museum framing is the experience, not the business definition.
 
 ---
 
@@ -57,7 +59,7 @@ Galaxy no longer carries deal mechanics — each project's page and document is 
 |Project|Opportunity line (on sphere)|Model|Canonical doc|
 |---|---|---|---|
 |Orbit 77|`Open for support`|Contribution layers $10–$1,000+ (no equity — Pablo keeps it)|[[Orbit77]]|
-|EterniCapsule|`Open for acquisition`|Hosted deals: Operator $4k / Owner $8k / Make an offer|[[EterniCapsule]]|
+|EterniCapsule|`Open for acquisition`|Hosted deals: Operator $4k / Owner $8k / Make an offer (the "hosted" framing is under owner review since the product moved to its own deployment)|[[EterniCapsule]]|
 |Figuitoon|`Available to acquire`|Sale conversation; product sells via its own Shopify|[[Figuitoon]]|
 |Kangaroo Cleanup|`Looking for a partner`|Handover deals $5k–$12k + revenue share|[[Kangaroo_Cleanup]]|
 
@@ -103,7 +105,7 @@ SiteFooter
 
 ## COPY DECK — LOCKED STRINGS (v4 page)
 
-_Verbatim source for every visible string in Galaxy. If code and this deck disagree, the deck wins (last reconciled against `page.tsx`, July 14, 2026)._
+_Verbatim record of every visible string in Galaxy. New copy is written here first; if this deck and the live page disagree, the deck is updated to the live string the same day, and a false live string is flagged ⚠ and fixed in code ([[Company_Master]] §6). Last reconciled against `page.tsx` on September 19, 2026._
 
 ### Headline block
 
@@ -121,7 +123,9 @@ _Verbatim source for every visible string in Galaxy. If code and this deck disag
 |`Figuitoon`|`Glocal · Physical product`|`Custom 3D figurines`|`Prototype built · Shopify store · Printer included`|`Available to acquire`|`/figuitoon-logo.png`|
 |`Kangaroo Cleanup`|`Local · Cleanup business`|`Local cleanup business`|`Sydney-based · 500+ jobs done · 5.0 reputation`|`Looking for a partner`|`/images/kangaroo/kangaroo_logo.png`|
 
-> [!warning] Proof lines carry numbers The `10 episodes` and `500+ jobs · 5.0` figures must match each project's canonical metrics ([[Orbit77]] §metrics, [[Kangaroo_Cleanup]] §05). If a number changes there, update the sphere's proof line in the same commit.
+> [!note] EterniCapsule proof line — fixed September 22, 2026 `Hosted on Pyadra` stopped being accurate when the product moved to its own deployment (eternicapsule.com, August 26, 2026; Pyadra's copy retired September 15). The v4.1 changelog below recorded the replacement, but it had only been made in this doc — `page.tsx` kept the old line until September 22, when the code was finally changed. Note the product still uses accounts Pyadra controls, which is why the owner is reviewing what "hosted" means in the deal options ([[EterniCapsule]]). Pending a deploy.
+
+> [!warning] Proof lines carry numbers The `10 episodes` and `500+ jobs · 5.0` figures must match each project's canonical metrics ([[Orbit77]] metrics, [[Kangaroo_Cleanup]] METRICS AND NUMBERS). They are hardcoded in two places — this page and the project rows of the founder's room (`src/app/eduardo/page.tsx`). If a number changes, update both in the same commit.
 
 > [!note] EterniCapsule subtitle says "Encrypted time capsules" Acceptable as shorthand for the key-locked seal, but see the truth correction in [[EterniCapsule]] — no in-browser encryption exists yet. When client-side AES ships this subtitle becomes fully literal.
 
@@ -172,16 +176,22 @@ The page is fully static today — the four projects live in the `PROJECTS` arra
 
 ## RELATED LINKS
 
-**Documentation:** [[Company_Master]] · [[VISION]] · [[Orbit77]] · [[EterniCapsule]] · [[Figuitoon]] · [[Kangaroo_Cleanup]]
+**Documentation:** [[Company_Master]] · `VISION.md` (repo root) · [[Orbit77]] · [[EterniCapsule]] · [[Figuitoon]] · [[Kangaroo_Cleanup]]
 
-**Code:** `src/app/exhibitions/galaxy/page.tsx` · `src/app/components/ui/GreenDust.tsx` · `src/app/components/nav/SiteNav.tsx`
+**Code:** `src/app/exhibitions/galaxy/page.tsx` · `src/app/exhibitions/page.tsx` (the Exhibitions hall) · `src/app/components/ui/GreenDust.tsx` · `src/app/components/nav/SiteNav.tsx`
 
 **Live URLs:** pyadra.io/exhibitions · pyadra.io/exhibitions/galaxy
+
+**Other entrance to the same projects:** the founder's room `/eduardo` lists the four Galaxy projects with their own one-line summaries and links ([[Company_Master]] §7 flags this against the "projects only inside their exhibition" rule).
 
 ---
 
 > [!note] Changelog v4.0 (July 14, 2026) — Full rewrite against the production page. The v3.2 document described a UI that no longer exists (side detail panel with Experience/Acquire tabs, in-panel express-interest form, per-sphere valuations, gris-ratón acquire palette, and an "Ebooks" project). Current reality: Galaxy is a thin orbital field — 4 spheres (Kangaroo Cleanup replaced Ebooks), one click straight into each project's page, central gem → museum shop, no panels or forms. Kept and sharpened the conceptual core (what Galaxy is, why it exists, tone, never-do list); moved all deal mechanics to each project's canonical doc; added the v4 copy deck verbatim from `page.tsx`. Contact email corrected (the old doc still said eduardo@pyadra.io — the only real inbox is pyadra@pyadra.io).
 
-> [!note] Changelog v4.1 (September 15, 2026) — EterniCapsule's proof line corrected: "Hosted on Pyadra" → "Independently deployed (eternicapsule.com)", now that it split into its own repo/deploy. Model/deal wording in the opportunity table unchanged — see [[EterniCapsule]] for the owner-decision flag on whether the "hosted deal" pricing logic still applies.
+> [!note] Changelog v4.1 (September 15, 2026) — EterniCapsule's proof line corrected: "Hosted on Pyadra" → "Independently deployed (eternicapsule.com)", now that it split into its own repo/deploy. _(⚠ Added September 19: this change was made in the doc only, never in `page.tsx` — see v4.2.)_ Model/deal wording in the opportunity table unchanged — see [[EterniCapsule]] for the owner-decision flag on whether the "hosted deal" pricing logic still applies.
 
-_END · GALAXY · v4.1 · September 15, 2026_
+> [!note] Changelog v4.2 (September 19, 2026) — Documentation audit. Corrected the EterniCapsule proof line in the copy deck back to what is actually live (`Hosted on Pyadra`), flagged it ⚠ as outdated, and recorded that the v4.1 "correction" was never made in code — the proposed replacement is kept as a proposal. Theme updated to the live Exhibitions-page line (`Built projects, ready for their next chapter`). Copy-deck rule aligned with [[Company_Master]] §6. Added the `/eduardo` hardcoded proof lines to the sync rule, and the note on Galaxy's place in the business definition. Replaced the out-of-vault `[[VISION]]` link with a path.
+
+> [!note] Changelog v4.3 (September 22, 2026) — The EterniCapsule proof line was corrected in `page.tsx` (`Hosted on Pyadra` → `Independently deployed (eternicapsule.com)`), so the deck and the page agree again; pending a deploy. Orbit's type is confirmed GLOCAL by the owner, matching the `Glocal · Podcast` chip on this page.
+
+_END · GALAXY · v4.3 · September 22, 2026_

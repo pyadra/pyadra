@@ -2,13 +2,13 @@
 
 _Project document · Pyadra · Last updated: {{date}}_
 
-> [!note] Template v3 (July 14, 2026) Updated after the full reconciliation of all four project docs against production (Kangaroo v1.6, Orbit v1.4, EterniCapsule v2.0, Figuitoon v1.2). New in v3: the copy deck now MUST cover every surface (nav badge, dialogs, drawers, post-payment pages — see the deck note), the FOUNDER BLOCK is a required deck section, the truth rule is explicit (the doc and page never claim what the code doesn't do — [[Company_Master]] non-negotiable #13), editable numbers point to `pyadra_settings`, and the reconciliation ritual is defined (version bump + dated changelog + "last reconciled" stamp).
+> [!note] Template v4 (September 19, 2026) New in v4: status claims carry evidence labels (Implemented / Deployed / Verified in real use / Owner decision / Plan / Open proposal / Unverified — [[Company_Master]] §0); the truth hierarchy is defined once, in [[Company_Master]] §6, and summarized below; the "Type 1 / Type 2" wording is gone; the number-sync rule includes the founder's room. v3 (July 14, 2026) made the copy deck cover every surface, required the FOUNDER BLOCK, made the truth rule explicit (non-negotiable #13), pointed editable numbers to `pyadra_settings`, and defined the reconciliation ritual.
 
-> [!important] The truth hierarchy (learned July 2026, the hard way)
+> [!important] The truth hierarchy (summary of [[Company_Master]] §6)
 >
-> 1. **The code/page in production** is the truth for every visible string and behavior.
-> 2. **This document** is the truth for everything the page doesn't show (deals, due diligence, history, private valuations).
-> 3. When they disagree: reconcile the SAME DAY — usually the doc updates to the page; if the page claims something the code doesn't do, the PAGE copy is corrected immediately (EterniCapsule's false zero-knowledge claim is the cautionary tale).
+> 1. **Authoring:** new or changed copy is written in this document's COPY DECK first, then built — never improvised in code.
+> 2. **Record:** the live page is the record of what visitors see. If deck and page disagree, the deck is updated to the live string the SAME DAY. If the live string is false, the deck records it, marks it ⚠, and the PAGE is corrected in code (EterniCapsule's false zero-knowledge claim is the cautionary tale).
+> 3. **This document** is the source for everything the page doesn't show (deals, due diligence, history, private valuations) — each claim labelled with its evidence.
 
 ---
 
@@ -88,7 +88,7 @@ _How it feels, not just how it works. Required reading before touching any UI co
 |---|---|---|---|---|
 ||||||
 
-## **Key interactions:**
+**Key interactions:**
 
 **Animation principles:**
 
@@ -97,15 +97,15 @@ _How it feels, not just how it works. Required reading before touching any UI co
 - ✅
 - ❌
 
-## **Design rules (project-specific):**
+**Design rules (project-specific):**
 
-## **What it must never feel like:**
+**What it must never feel like:**
 
 ---
 
 ## ARCHITECTURE
 
-_Relevant for Type 1 and Type 2 only._
+_For projects with their own software or infrastructure (skip for purely physical businesses — write "N/A" and why)._
 
 **Can it operate independently from Pyadra?**
 
@@ -129,7 +129,7 @@ _Relevant for Type 1 and Type 2 only._
 
 ## FLOWS
 
-_Type 1 and Type 2 only. Document every user journey that touches payment, data, or delivery._ _Format: step → step → step. One flow per block._
+_For projects with software. Document every user journey that touches payment, data, or delivery._ _Format: step → step → step. One flow per block._
 
 **[Flow name]:**
 
@@ -153,21 +153,23 @@ Step 3
 
 ## CURRENT STATE
 
-## **What works:**
+_Label every item with its evidence ([[Company_Master]] §0) and date the check. Code proves an implementation — not sales, ownership, agreements or deployment._
 
-## **What's missing:**
+**What works:**
 
-## **Active blockers:**
+**What's missing:**
+
+**Active blockers:**
 
 ---
 
 ## OPEN QUESTIONS
 
-## **Technical:**
+**Technical:**
 
-## **Business:**
+**Business:**
 
-## **Product:**
+**Product:**
 
 ---
 
@@ -206,7 +208,7 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 |Product||
 |Operational||
 
-**Participation models:** _Match the model to the project. Lower upfront ↔ higher permanent share. The project can always leave Pyadra; staying hosted is a negotiated option, not a lock-in. Infrastructure costs are always the operator's. See [[Company_Master]]._
+**Participation models:** _Say which of the ways in apply — acquire, operate, support, work on, carry forward ([[Company_Master]] §3). Match the model to the project. Lower upfront ↔ higher permanent share. The project can always leave Pyadra; staying hosted is a negotiated option, not a lock-in. Infrastructure costs are always the operator's. See [[Company_Master]]._
 
 |Model|Description|Investment range|Status|
 |---|---|---|---|
@@ -286,7 +288,7 @@ _Checklist of legal, business, financial and operational items to verify before 
 
 ## COPY DECK — LOCKED STRINGS
 
-_The single source of truth for every visible string on the project's page. Claude Code and any builder copy these strings VERBATIM — never paraphrase, invent, or "improve" them. If a string is needed that isn't here, add it here first, then build it. If code and this deck ever disagree, this deck wins._
+_The verbatim record of every visible string on the project's page. Claude Code and any builder copy these strings VERBATIM — never paraphrase, invent, or "improve" them. If a string is needed that isn't here, add it here first, then build it. If this deck and the live page disagree, update the deck to the live string the same day; if the live string is false, mark it ⚠ and fix the page in code ([[Company_Master]] §6). Stamp: "last reconciled against `page.tsx`, {{date}}"._
 
 > [!important] Why this exists This is what stops the page and the document from drifting apart. The page copies from here; it never improvises copy in code. See [[Company_Master]] Project Standard point 14.
 
@@ -366,25 +368,25 @@ _Priorities only. One line per item. No wishlist — only what's actually planne
 
 **Documentation:**
 
-- [[VISION]]
-- [[ARCHITECTURE]]
-- [[ROADMAP]]
+- [[Company_Master]]
+- `VISION.md`, `ARCHITECTURE.md` (repo root — outside this vault)
 
-## **Code:**
+**Code:**
 
-## **Sibling projects:**
+**Sibling projects:**
 
 ---
 
-## RECONCILIATION RITUAL (v3 — required)
+## RECONCILIATION RITUAL (required)
 
 _How this document stays true. Every project doc follows it._
 
 1. Whenever the page changes meaningfully, this doc is reconciled in the same session (ideally the same commit).
 2. On reconciliation: bump the version at the END line, add a dated `Changelog vX.Y` note describing what changed and why, and update the copy-deck stamp: _"last reconciled against `page.tsx`, {{date}}"_.
-3. Numbers in Galaxy's sphere copy (proof lines) must be updated when this doc's canonical metrics change — same commit.
+3. Numbers in Galaxy's sphere copy (proof lines) **and** in the founder's room project rows (`src/app/eduardo/page.tsx`) must be updated when this doc's canonical metrics change — same commit.
 4. Never let a claim survive that the code doesn't keep ([[Company_Master]] non-negotiable #13).
+5. A changelog records what was actually done. If a change was made only in the doc and not in code, say so.
 
 ---
 
-_END · {{PROJECT NAME}} · v{{version}}_
+_END · {{PROJECT NAME}} · v{{version}}_ · _Template v4 · September 19, 2026_

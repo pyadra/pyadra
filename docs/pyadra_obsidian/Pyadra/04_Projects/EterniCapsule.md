@@ -1,4 +1,6 @@
-_Project document · Pyadra · Last updated: September 15, 2026_
+# EterniCapsule
+
+_Project document · Pyadra · Last updated: September 22, 2026 — v2.3_
 
 > [!warning] TRUTH CORRECTION (July 14, 2026) — read before quoting security claims The product is NOT zero-knowledge today. There is NO client-side encryption in the code: messages are stored in plaintext on Supabase's encrypted infrastructure. What IS true: capsule access requires a unique 128-bit key, keys are stored only as SHA-256 hashes (a lost key is genuinely unrecoverable), and the operator uses the service role server-side only. The public page copy was corrected the same day to stop claiming "encrypted in your browser / not even us can read it" — a false claim is a legal and due-diligence liability. Client-side AES is on the roadmap; when it ships, restore the stronger copy.
 
@@ -6,7 +8,7 @@ _Project document · Pyadra · Last updated: September 15, 2026_
 
 ## IDENTITY
 
-**Type (scope):** GLOBAL **Pyadra relation:** Native on Pyadra **Exhibition:** Galaxy **Status:** Active (in production since April 2026) **Founder / Creator:** Cristian Niño (page, since July 2026; built by Eduardo Díaz) **Tagline (1 line):** Sealed until its day. Key-locked. Permanent.
+**Type (scope):** GLOBAL **Pyadra relation:** Exhibited external — built by Pyadra; the product runs as its own deployment at eternicapsule.com (own repo and Vercel project since August 26, 2026). It was Native on Pyadra until Pyadra retired its copy on September 15, 2026. **Exhibition:** Galaxy **Status:** Active — product live at eternicapsule.com (Deployed, checked September 19, 2026); in production since April 2026 **Founder / Creator:** Cristian Niño (shown on the page since July 2026; built by Eduardo Díaz — the terms of the handover to Cristian are not documented) **Tagline (1 line):** Sealed until its day. Key-locked. Permanent.
 
 ---
 
@@ -39,6 +41,9 @@ _This block feeds the public dashboard in Galaxy._ _Maximum 2 lines per field. N
 |Awaiting delivery|`SELECT COUNT(*) FROM ethernicapsule_capsules WHERE status = 'sealed' AND deliver_at > NOW()`|
 |Total value generated|`SELECT COUNT(*) * 9 FROM ethernicapsule_capsules WHERE status != 'pending'` (AUD)|
 
+> [!warning] The live counts were broken until September 22, 2026 — and the fix is not deployed yet
+> These counts are served by `eternicapsule.com/api/stats` (eternicapsule repo). Three separate faults meant the widget could only ever show zeros: the endpoint filtered "awaiting" on `unlock_date`, a column that does not exist (the schema column is `deliver_at`), so the query errored and every count fell back to 0; pyadra.io's CSP blocked the browser request; and the endpoint only allowed the origin `https://pyadra.io` while the site is served from `https://www.pyadra.io`. All three were fixed in code on September 22 (the CSP here, the column and the origins in the eternicapsule repo). **Until the eternicapsule repo is deployed, the zeros mean nothing** — they are not evidence of zero sales. Any earlier reading of "0 sealed" should be discarded.
+
 **Conversion funnel (internal — no tracking yet):**
 
 ```
@@ -48,7 +53,7 @@ Landing → Entry Complete → Compose → Preview → Payment → Sealed
 
 **Access:**
 
-- Internal product, external project (since September 2026 — see ARCHITECTURE): showcase on Pyadra — [pyadra.io/exhibitions/galaxy/ethernicapsule](https://pyadra.io/exhibitions/galaxy/ethernicapsule) — links out to the live product at [eternicapsule.com](https://eternicapsule.com)
+- Exhibited external: showcase on Pyadra — [pyadra.io/exhibitions/galaxy/ethernicapsule](https://pyadra.io/exhibitions/galaxy/ethernicapsule) — links out to the live product at [eternicapsule.com](https://eternicapsule.com)
 
 ---
 
@@ -58,7 +63,7 @@ _For the founder. Does not appear on the dashboard._
 
 **Problem it solves:** There are words, thoughts, confessions, and truths that cannot be said today — too early, too fragile, too dangerous. People need a place where these words can exist without being judged, read, or altered until the right moment arrives. EterniCapsule creates permanence in a world where everything is editable, deletable, and ephemeral.
 
-**Why it exists on Pyadra:** EterniCapsule perfectly embodies Pyadra's philosophy: "What you leave behind matters." Every capsule is an act of intention — a ritual, not a casual click. It is beauty (the breathing 3D monolith, the ceremonial animations), mystery (the threshold entry, the encryption users don't understand but trust), and absolute permanence. Once sealed, the capsule cannot be modified — not even by us.
+**Why it exists on Pyadra:** EterniCapsule perfectly embodies Pyadra's philosophy: "What you leave behind matters." Every capsule is an act of intention — a ritual, not a casual click. It is beauty (the breathing 3D monolith, the ceremonial animations), mystery (the threshold entry, the key-locked seal users don't need to understand to trust), and absolute permanence. Once sealed, the capsule cannot be modified — not even by us.
 
 **Who it speaks to:**
 
@@ -149,9 +154,9 @@ _How it feels, not just how it works. Required reading before touching any UI co
 
 ## ARCHITECTURE
 
-_Relevant for Type 1 and Type 2 only._
+_For projects with their own software or infrastructure._
 
-**Can it operate independently from Pyadra?** Yes — done September 2026. The product (compose → checkout → seal → guardian → unlock) now runs as its own deployment at `eternicapsule.com`, with its own repo, Vercel project, and Stripe webhook endpoint. Only the sale/showcase dashboard (`page.tsx`) stays inside Pyadra — see "What independence required" below for what moved and what's still shared.
+**Can it operate independently from Pyadra?** Yes, as a deployment. The standalone repo was created and deployed on August 26, 2026 (per that repo's history); Pyadra retired its in-monolith copy on September 15, 2026. The product (compose → checkout → seal → guardian → unlock) runs at `eternicapsule.com`, with its own repo, Vercel project, and Stripe webhook endpoint — but still on accounts Pyadra controls (same Vercel team, Supabase project, Stripe account and Resend account). Only the sale/showcase dashboard (`page.tsx`) stays inside Pyadra — see "What independence required" below for what moved and what's still shared.
 
 **Stack:**
 
@@ -189,7 +194,7 @@ _Code that was duplicated into the standalone repo (no longer shared — editing
 - Supabase — same project, same table: `ethernicapsule_capsules` (kept that name on purpose, not renamed, to avoid touching live data during the split)
 - Stripe — same account, but **no longer the same webhook.** `eternicapsule.com/api/stripe/webhook` is its own registered endpoint (own `STRIPE_WEBHOOK_SECRET`); Pyadra's `/api/stripe/webhook` had its EterniCapsule branch removed entirely
 - Resend — same account/API key, reused rather than a new signup (see `EMAIL_FROM` above for the portability hook)
-- Vercel — **NOT shared.** Separate project (`eternicapsule`), separate deploy, separate domain
+- Vercel — separate project (`eternicapsule`), separate deploy, separate domain, **inside the same Vercel team** as the `pyadra` project (checked in both repos' local Vercel config, September 19, 2026)
 
 **What independence required (done September 2026):**
 
@@ -202,7 +207,7 @@ _Code that was duplicated into the standalone repo (no longer shared — editing
 |5|Independent Vercel deployment + domain|✅ Done — `eternicapsule.com`|
 |6|DB: migrate to own instance or isolated credentials|❌ Not done — deliberately still the shared Supabase project (see note below)|
 |7|EterniCapsule-specific `.env`|✅ Done|
-|8|End-to-end test of independent deployment|✅ Done — verified live with a real sealed capsule|
+|8|End-to-end test of independent deployment|✅ Reported done on September 15, 2026 ("verified live with a real sealed capsule") — not re-verified in the September 19 audit|
 
 > [!note] Why the database stayed shared (owner decision, September 2026) Task 6 was deliberately skipped: one table (`ethernicapsule_capsules`) wasn't worth spinning up a second Supabase project for at this stage. The new repo connects to the same Supabase instance via its own env vars — same portability hook as Orbit's `orbit-db.ts` pattern (see `supabase/README.md`), so it can still move to its own instance later with zero code changes.
 
@@ -238,9 +243,9 @@ CREATE TABLE ethernicapsule_capsules (
 |`/api/verify`|POST|Key-based|Verify sender/capsule key → status transitions (previewed/opened)|
 |`/api/edit`|POST|Sender key|Edit capsule within a 24-hour grace period|
 |`/api/guardian-access`|POST|Guardian token|Time-vault unlock: after `deliver_at`, exchanges the token for the capsule key|
-|`/api/stats`|GET|Public (CORS-open to `pyadra.io`)|Live counts — read by both eternicapsule.com and the Pyadra showcase|
+|`/api/stats`|GET|Public (CORS allows `https://www.pyadra.io` and `https://pyadra.io` since September 22, 2026)|Live counts, read by the Pyadra showcase — see the warning under "Project metrics"|
 
-> [!warning] Rate limiting did not carry over (September 2026) Pyadra's 30/min/IP middleware (added July 14, 2026) protected these routes while they lived in this repo. The standalone `eternicapsule` repo does not yet have its own rate limiting — same class of gap the July 14 fix closed here. Worth porting before real traffic arrives.
+> [!note] Rate limiting: lost in the split, restored September 22, 2026 Pyadra's 30/min/IP middleware (July 14, 2026) protected these routes while they lived in that repo and was not ported at the split. A `src/middleware.ts` with the same limit (Stripe webhook exempt) now exists in the eternicapsule repo, uncommitted and undeployed.
 
 **Security model — key-locked (honest version, July 14, 2026):**
 
@@ -322,7 +327,7 @@ Within 24h of sealing, the sender key authorizes POST /api/ethernicapsule/edit
 
 |Product|Price|Status|Notes|
 |---|---|---|---|
-|Capsule Sealing|$9 AUD|Active|Encryption, storage, scheduled delivery, guardian system, access keys|
+|Capsule Sealing|$9 AUD|Active (on eternicapsule.com)|Key-locked seal (128-bit keys, stored as hashes), storage, on-demand guardian delivery — no client-side encryption yet|
 |Capsule Unlock|Free|Active|Recipients open with their key|
 |Guardian Access|Free|Active|Emergency unlock with guardian key|
 
@@ -330,7 +335,7 @@ Within 24h of sealing, the sender key authorizes POST /api/ethernicapsule/edit
 
 ## CURRENT STATE
 
-**What works:**
+**What works** _(Implemented; last verified end-to-end July 14, 2026 inside Pyadra, and reported working after the split on September 15. The September 19 audit confirmed only that eternicapsule.com and its stats API respond — the flows were not re-run.)_:
 
 - ✅ Entry ritual — 4-stage typewriter, darkness, no skip
 - ✅ 3D Capsule — breathing, sealed/unsealed states, spotlight cursor
@@ -350,22 +355,24 @@ Within 24h of sealing, the sender key authorizes POST /api/ethernicapsule/edit
 **What's missing:**
 
 - ❌ Client-side message encryption (AES-GCM) — messages are plaintext at rest today; the page copy was corrected to match reality until this ships
-- ❌ Rate limiting on the API routes — had it in Pyadra (30/min/IP, July 14, 2026), did not carry over to the standalone repo (September 2026 split) — regression, not a new gap
-- ❌ First real paying user
+- ✅ Rate limiting on the API routes — was lost in the split; re-added to the standalone repo on September 22, 2026 (30/min/IP, Stripe webhook exempt). Pending a deploy of that repo.
+- ❌ First real paying user — not evidenced (and the stats endpoint can't currently prove it either way)
+- ❌ Working live metrics — the stats endpoint queries a non-existent column, and the Pyadra showcase is blocked from reading it (CSP + CORS origin) — see the warning under "Project metrics"
 - ❌ Analytics events — no funnel tracking
 - ❌ Internal metrics dashboard
 - ❌ Email reminder 1 week before unlock
 - ❌ User capsule dashboard
-- ❌ Bundle optimization — Three.js ~600KB
 - ❌ E2E tests (Playwright)
 - ❌ Loading, error, empty state designs
 - ❌ Keyboard navigation + ARIA labels
 - ❌ Audio crystallization spec
 
+_Removed from this list in v2.2: "Bundle optimization — Three.js ~600KB" (Three.js was removed in July 2026)._
+
 **Active blockers:**
 
-- 🟡 **Audio crystallization** — referenced in VISION.md, no spec. Decision needed.
-- 🟡 **Rate limiting gap on the standalone repo** — see "What's missing" above. Not urgent (no real traffic yet), but should close before the site is promoted.
+- 🟡 **Audio crystallization** — an old idea with no spec (older versions of VISION.md mentioned it; the current one doesn't). Decision needed.
+- 🟡 **The eternicapsule repo has unreleased fixes** — rate limiting, the stats column and the CORS origins were fixed on September 22, 2026 but that repo has not been deployed since.
 
 _Resolved: the monolithic Stripe webhook that used to block independence — split September 2026, see ARCHITECTURE._
 
@@ -432,18 +439,20 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 
 |Category|Assets included|
 |---|---|
-|Technical|Full source code (Next.js 16, React 19, TypeScript), Supabase schema + migrations, Stripe integration (live), Resend email system, client-side AES encryption engine, cron delivery system, guardian access system, Vercel deployment config|
+|Technical|Full source code (Next.js 16, React 19, TypeScript), Supabase schema + migrations, Stripe integration (live), Resend email system, 128-bit key system stored as SHA-256 hashes, on-demand guardian delivery (no cron), guardian access system, Vercel deployment config|
 |Brand|EterniCapsule name, visual identity (palette, typography, CSS variables), ceremonial UX concept, copywriting voice and guidelines, 3D capsule design and animations, audio engine|
-|Product|Operational MVP — full seal → deliver → unlock flow, guardian system, zero-knowledge architecture, mobile-responsive interface|
+|Product|Operational MVP — full seal → deliver → unlock flow, guardian system, key-locked capsules (not zero-knowledge: messages are plaintext at rest until client-side AES ships), mobile-responsive interface|
 |Operational|Deployment guide, architecture docs, DB schema, API documentation, README in the standalone repo — independence is already done (see ARCHITECTURE); what remains optional is moving the still-shared Supabase project and Stripe account to the buyer's own|
 
 > [!warning] Owner decision needed (September 2026) — this table predates independence The pricing and "Where it lives" column below were written when staying HOSTED in Pyadra was the default and independence was future/on-close work (15–25h). That work is now already done — the product runs on its own domain, repo and Vercel project regardless of whether it's sold. The deal logic below (lower upfront = higher permanent Pyadra share, justified partly by hosting convenience) may need a fresh look now that "hosted vs. independent" is no longer a lever the sale creates — it already happened. Not changed here; flagging for the founder rather than inventing new numbers.
+>
+> Detail added September 19, 2026: the standalone app still runs on accounts Pyadra controls — its Vercel project sits in the same Vercel team as Pyadra's, and it uses Pyadra's Supabase project, Stripe account and Resend account. So "hosted" could still mean "runs on Pyadra-controlled infrastructure", even though it is no longer inside the Pyadra app. **The owner needs to decide which meaning the deal cards, the footnote and the FAQ answer should use.**
 
 **Participation models:** _Both acquisition options are HOSTED — the project stays inside Pyadra. The operator pays infrastructure costs (hosting, email, database) separately in both. The only variables are upfront price and Pyadra's permanent share per capsule._
 
 |Option|Upfront|Pyadra retains per capsule|Operator keeps (of net)|Where it lives|Status|
 |---|---|---|---|---|---|
-|User|$9 AUD per capsule|—|—|Pyadra|Active|
+|User|$9 AUD per capsule|—|—|eternicapsule.com|Active|
 |**Option 1 — Operator**|$4,000 AUD|15%|85%|Hosted in Pyadra|Available|
 |**Option 2 — Owner**|$8,000 AUD|5%|95%|Hosted in Pyadra|Available|
 |**Option 3 — Make an offer**|Negotiable|Negotiable|Negotiable|Negotiable (incl. taking it independent)|By conversation|
@@ -463,8 +472,8 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 |Revenue stream|Current state|Potential|
 |---|---|---|
 |Capsule sealing ($9 AUD)|Active — no sales yet|At 200 capsules/month, operator nets ~$1,435 AUD/month after Stripe & a 15% Pyadra share|
-|Audio capsules — Tier 2|Not built — concept in VISION.md|$25 AUD per capsule|
-|Video capsules — Tier 3|Not built — concept in VISION.md|$49 AUD per capsule|
+|Audio capsules — Tier 2|Not built — concept (see ROADMAP)|$25 AUD per capsule|
+|Video capsules — Tier 3|Not built — concept (see ROADMAP)|$49 AUD per capsule|
 |White-label licensing|Not built|License system to memorial services, therapists, legal firms|
 
 > [!note] Ticket-size reality A $9 capsule is a small ticket — Stripe alone takes ~$0.56 (6%) per sale. The model only produces meaningful recurring income at volume, or via the higher-ticket audio/video tiers. A buyer should understand they are buying a built, unproven product with upside, not a cash-flowing business.
@@ -488,9 +497,11 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 
 ## COPY DECK — LOCKED STRINGS
 
-> [!important] How to use this section This is the single source of truth for every visible string on the EterniCapsule **dashboard page** (`page.tsx` — the project-sale page, NOT the /experience app). Claude Code must copy these strings verbatim — do not paraphrase, invent, or "improve". If a string is needed that is not here, add it here first. For any NUMBER, the metrics in "What the user sees before entering" and the participation tables above are canonical — update those first, then the string here.
+> [!important] How to use this section This deck records every visible string on the EterniCapsule **showcase page** on Pyadra (`src/app/exhibitions/galaxy/ethernicapsule/page.tsx` — the project-sale page, NOT the product at eternicapsule.com). New copy is written here first and copied verbatim — do not paraphrase, invent, or "improve". If the deck and the live page disagree, the deck is updated to the live string the same day; a false live string is flagged ⚠ and fixed in code ([[Company_Master]] §6). For any NUMBER, the metrics in "What the user sees before entering" and the participation tables above are canonical — update those first, then the string here. Last reconciled against `page.tsx` on September 19, 2026.
 
-> [!warning] Two pages, do not confuse them This deck is for the **dashboard** (sells the project). The **/experience** route is the live product app where users actually seal capsules — that has its own ceremonial copy (see Experience & Design section) and is NOT covered here. The dashboard's "ENTER THE VAULT" button is a live demo link into the product — a selling point, not the product page itself.
+> [!warning] Two products, do not confuse them This deck is for the **showcase** (sells the project). The live product at **eternicapsule.com** (its own repo) is where users actually seal capsules — it has its own ceremonial copy (see Experience & Design section) and is NOT covered here. The showcase's interactive monolith links out to eternicapsule.com — a live demo, a selling point, not the product page itself.
+
+- **Nav status badge (SiteNav, live dot):** `For sale`
 
 ---
 
@@ -536,17 +547,19 @@ Section label: `What You Get` · counter `6 things`
 |`Awaiting Delivery`|live count (currently `0`)|`in safe storage`|
 |`Total Value`|live count × $9 (currently `$0`)|`AUD generated`|
 
-Data sources (from project doc): sealed = `COUNT status='sealed'`; delivered = `COUNT status='opened'`; awaiting = `COUNT status='sealed' AND unlock_date > NOW()`; total value = `COUNT × 9`.
+Data sources (from project doc): sealed = `COUNT status='sealed'`; delivered = `COUNT status='opened'`; awaiting = `COUNT status='sealed' AND deliver_at > NOW()`; total value = `COUNT × 9`. _(Earlier versions of this line said `unlock_date`, the same wrong column the endpoint used; both fixed September 22, 2026 — see the warning under "Project metrics".)_
 
 ### Main CTA — REMOVED (was redundant)
 
-> [!important] Do NOT add a big "ENTER THE VAULT" button The old code had a large "ENTER THE VAULT →" button below the monolith that linked to /experience. Remove it. Access to try the live product is ALREADY on the central monolith/logo (it's clickable / interactive). Repeating it as a big CTA is redundant and, on a project-SALE page, wrongly pushes attention to the product instead of the deal. Keep the monolith interactive as the way to try the product; the sub-line `$9 AUD per capsule · client-side sealed` can stay as a small caption near the monolith if useful, but no large duplicate button.
+> [!important] Do NOT add a big "ENTER THE VAULT" button The old code had a large "ENTER THE VAULT →" button below the monolith that linked to /experience (now eternicapsule.com). Remove it. Access to try the live product is ALREADY on the central monolith/logo (it's clickable / interactive). Repeating it as a big CTA is redundant and, on a project-SALE page, wrongly pushes attention to the product instead of the deal. Keep the monolith interactive as the way to try the product; no large duplicate button.
+
+- **Monolith caption:** `$9 AUD per capsule · key-locked` — corrected on September 22, 2026 (pending a deploy). It used to read `client-side sealed`, which was untrue: keys are generated server-side at checkout and messages are stored in plaintext (see the TRUTH CORRECTION at the top). The June deck allowed that wording and the July 14 truth pass missed it. "Key-locked" is the project's own honest vocabulary (it is in the tagline); change it if you prefer other words.
 
 ### Participation panel (the deal)
 
 Section label: `Participation Models`
 
-- **Value anchor (left):** label `What it cost to build` · figure `$12,000 AUD` · sub-line `~150 hours of senior dev + design. This is the build cost — not the price.`
+- **Value anchor (left):** label `What it cost to build` · figure `$12,000 AUD` · sub-line `~150h of senior dev + design — not the price.` _(live string; earlier deck versions had a longer sub-line that never shipped in this form)_
 - **Availability (right):** label `Availability` · figure `100% Available`
 
 > [!important] $12,000 is NOT the asking price (July 2026) The figure was being read as "the buyer pays $12,000". The label and sub-line must make explicit that this is what building it cost, and that the deals below start lower.
@@ -563,7 +576,7 @@ Acquisition options (deal cards — open the request-info form on click):
 |`Owner — hosted`|`$8k up front · Pyadra keeps 5% per capsule`|—|`$8,000`|
 |`Make an offer`|`Different structure? Let's talk.`|`Including taking the full architecture to your own servers.`|`Let's talk`|
 
-**Panel footnote:** `"Hosted" = the app keeps running on Pyadra's servers; you cover its running costs (hosting, email, database, payment fees). Prefer your own servers? Make an offer.`
+**Panel footnote:** `"Hosted" = the app keeps running on Pyadra's servers; you cover its running costs (hosting, email, database, payment fees). Prefer your own servers? Make an offer.` ⚠ Accuracy depends on the owner's decision about what "hosted" means now (see the owner-decision flag under ASSET VALUE).
 
 > [!warning] One-screen budget (July 2026) The page is single-screen on desktop; the Participation panel must stay ≤ ~455px tall or it crushes The Honest Risks panel below it. That's why "hosted" is explained once in the footnote (not repeated per deal card) and only "Make an offer" carries a description line. Don't add more lines to this panel without re-checking the risks panel is still visible at 1440×810.
 
@@ -579,7 +592,7 @@ Section label: `The Honest Risks`
 |---|---|
 |`No one has bought one yet`|`The app is finished and working, but the first paying customer hasn't arrived. You'd be buying a finished product, not a proven market.`|
 |`We can't see where visitors give up`|`There are no analytics installed, so we don't know why people leave without sealing a capsule. Installing them and finding out is the new owner's first job.`|
-|`It still shares a database and payment account with Pyadra`|`The app itself runs independently (its own domain, repo and hosting), but the Supabase project and Stripe account are still shared with Pyadra. Moving those to your own is a smaller, well-documented job — mainly relevant if you want full financial and data separation.`|
+|`It still shares a database and payment account with Pyadra`|`The app itself runs independently on its own domain and hosting, but the database and Stripe account are still shared with Pyadra. Moving those to your own is a smaller, well-documented job.`|
 |`It's slow on purpose`|`Sealing takes a deliberate 30-second ritual. That's what makes it feel important — but it also means it will never be a fast, impulse-buy product.`|
 |`$9 is a small ticket`|`Payment fees take about 6% of each $9 capsule. Real income needs volume — or the planned $25 audio and $49 video capsules.`|
 
@@ -587,13 +600,13 @@ Section label: `The Honest Risks`
 
 ### FAQ (drawer)
 
-Drawer title: `Vault Details` (rename — see note) · trigger: `Read FAQ & Origin Story →`
+Drawer title: `The Origin Story` (live; an earlier deck proposed renaming it "Vault Details" — never shipped) · trigger: `Read FAQ & Origin Story →`
 
 |Q|A|
 |---|---|
 |`Does it actually work?`|`Yes — the complete flow is live: compose, seal, pay $9, scheduled delivery, unlock with a key. Try it yourself in the vault.`|
 |`How is a capsule protected?`|`Every capsule opens only with its unique 128-bit key. Keys are never stored — only cryptographic hashes — so a lost key is truly unrecoverable. Messages rest on encrypted infrastructure, and full in-browser encryption is on the roadmap.`|
-|`What exactly would I own?`|`The code, the brand, the ceremonial experience, the key and delivery system — plus a documented roadmap to full independence. It stays hosted in Pyadra unless you negotiate otherwise.`|
+|`What exactly would I own?`|`The code, the brand, the ceremonial experience, the key and delivery system — plus a documented roadmap to full independence. It stays hosted in Pyadra unless you negotiate otherwise.` ⚠ Written before the split: "a roadmap to full independence" is now mostly done, and "hosted in Pyadra" depends on the owner decision under ASSET VALUE.|
 |`Why is there no revenue yet?`|`It launched recently and the first sale is still pending. We say it plainly because everything on Pyadra is said plainly.`|
 
 ### Founder block (drawer)
@@ -608,8 +621,7 @@ Drawer title: `Vault Details` (rename — see note) · trigger: `Read FAQ & Orig
 
 - **Drawer contact button:** `Contact the founder`
 - **Contact email (everywhere):** `pyadra@pyadra.io`
-- **Footer:** `© 2026 Pyadra · We document. We verify. You decide.`
-- **Footer links:** `Home` · `Galaxy`
+- **Footer:** the shared Pyadra `SiteFooter` (`© 2026 Pyadra` · Observer № · Manifesto · Contact · Instagram · Terms · Privacy). _The old project footer (`We document. We verify. You decide.` · `Home` · `Galaxy`) no longer exists; the shared footer deliberately drops that line._
 
 ### Strings that must never appear (per Experience & Design copy voice)
 
@@ -621,30 +633,11 @@ fake metrics / invented sales numbers
 
 ---
 
-**Now (Q2 2026 — May / June):**
-
-- [ ] First real paying user
-- [ ] Analytics events to track funnel drop-off
-- [ ] Rate limiting on all API routes
-- [ ] Extract Stripe webhook (independence — P0)
-- [ ] Internal metrics dashboard
-
-**Next (Q3 2026 — July / September):**
-
-- [ ] Email reminder 1 week before unlock
-- [ ] A/B test entry ritual (skip for returning users)
-- [ ] User capsule dashboard — "My Capsules"
-- [ ] E2E tests with Playwright
-- [ ] Bundle optimization (Three.js code splitting)
-- [ ] Define audio crystallization spec
-
-**Future (no fixed date):**
-
-- [ ] Audio capsules — Tier 2 (voice recording + transcription)
-- [ ] Video capsules — Tier 3 (cinematic AI-generated farewell)
-- [ ] White-label licensing model
-- [ ] Independence architecture complete → ready for Phase 2 acquisition
-- [ ] Multi-language support (English + Spanish)
+> [!note] History — the earlier Q2/Q3 2026 roadmap (superseded)
+> An older roadmap block sat here without a heading until v2.2. It is kept only as history; the ROADMAP section below is the current one.
+> - **Done since:** Stripe webhook extracted (September 2026); rate limiting added (July 14) — but lost again at the split (see CURRENT STATE); Three.js removed (July 2026), so "bundle optimization (Three.js code splitting)" no longer applies.
+> - **Still open, tracked in CURRENT STATE → What's missing:** first paying user, analytics events, internal metrics dashboard, 1-week reminder email, "My Capsules" dashboard, Playwright E2E tests, audio crystallization spec.
+> - **Ideas it listed that are not in the current roadmap:** A/B test of the entry ritual (skip for returning users), multi-language support (English + Spanish). Audio (Tier 2), video (Tier 3) and white-label are in the current roadmap.
 
 ---
 
@@ -676,9 +669,10 @@ _Priorities only. One line per item._
 
 **Documentation:**
 
-- [[VISION]]
 - [[Company_Master]]
+- `VISION.md`, `ARCHITECTURE.md` (repo root) — philosophy; technical map and known issues
 - `supabase/README.md` — table ownership + schema source of truth
+- `README.md` in the eternicapsule repo — the product's own technical doc
 
 **Code — in Pyadra (showcase only):**
 
@@ -687,7 +681,7 @@ _Priorities only. One line per item._
 - `src/app/exhibitions/galaxy/ethernicapsule/Capsule3D.tsx`
 - `supabase/migrations/0008_full_reset_baseline.sql` (canonical schema — table still lives in this same Supabase project)
 
-**Code — in the standalone `eternicapsule` repo (the actual product, since September 2026):**
+**Code — in the standalone `eternicapsule` repo (`github.com/pyadra/eternicapsule`, the actual product, since August 26, 2026):**
 
 - `src/app/page.tsx` (was `.../experience/page.tsx`)
 - `src/app/compose/ComposeFormUnified.tsx`
@@ -699,8 +693,9 @@ _Priorities only. One line per item._
 
 **Sibling projects in Galaxy:**
 
-- [[ORBIT77]] — Podcast + supporter funding
+- [[Orbit77]] — Podcast + supporter funding
 - [[Figuitoon]] — Physical figurines from photos
+- [[Kangaroo_Cleanup]] — Sydney cleanup business handover
 
 ---
 
@@ -714,4 +709,8 @@ _Priorities only. One line per item._
 
 > [!note] Changelog v2.1 (September 15, 2026) — INDEPENDENCE SHIPPED. The product split into its own repo and deploy at eternicapsule.com: own Vercel project, own Stripe webhook endpoint (`project_id: "eternicapsule"`, no longer matched by Pyadra's webhook), its own `.env`, its shared code (`db.ts`, `validation.ts`, email lib, `LiveBackground`, `audio.ts`, `--etn-*` CSS) copied rather than imported. Supabase and the Resend account stayed deliberately shared (one table, one existing working account — not worth splitting yet; both reachable via the new repo's own env vars for a no-code-change move later). Pyadra keeps only the sale/showcase dashboard, which now links out to eternicapsule.com and reads its `/api/stats` cross-origin (CORS-open to pyadra.io) instead of hosting the API itself. Updated: ARCHITECTURE (independence status, repo/deploy split, dependency list, API route table, rate-limiting gap flagged), FLOWS (path-prefix note), ASSET VALUE (corrected "done on close" → already done; flagged the hosted-deal pricing logic for an owner decision, without inventing new numbers; corrected the "runs on Pyadra's servers" risk card — on both this doc AND the live page, since it was now a false public claim), DECISIONS LOG, RELATED LINKS (split into Pyadra-code vs. eternicapsule-repo-code). Old `/api/ethernicapsule/*` routes and app pages deleted from Pyadra; `scripts/smoke.mjs` trimmed to match.
 
-_END · ETHERNICAPSULE · v2.1_
+> [!note] Changelog v2.2 (September 19, 2026) — Documentation audit against both repos and production. Dates corrected: the standalone repo was created and deployed August 26, 2026; Pyadra retired its copy September 15. Pyadra relation updated to "Exhibited external — built by Pyadra". Vercel is a separate project in the **same** team (not "NOT shared"). Recorded the stats defects (non-existent `unlock_date` column, CSP block on pyadra.io, CORS origin `pyadra.io` vs `www.pyadra.io`) — the zeros are not evidence of zero sales. Flagged the live caption `client-side sealed` as inaccurate. Removed claims that contradicted the July truth correction from ASSET VALUE and PRODUCTS (client-side AES engine, cron delivery, zero-knowledge architecture, "encryption" in the product notes). Copy deck reconciled with the live page: nav badge `For sale`, value sub-line, risk card, drawer title `The Origin Story`, shared footer; flagged the "hosted" footnote and FAQ answer pending the owner decision (which now also covers the shared Vercel team). The unlabelled June roadmap block was turned into a history note. Fixed links (`[[ORBIT77]]`, `[[VISION]]`). No prices or deal terms changed.
+
+> [!note] Changelog v2.3 (September 22, 2026) — The defects the audit found were fixed in code: the showcase caption now says `key-locked` instead of the untrue `client-side sealed`; Pyadra's CSP allows eternicapsule.com; and in the eternicapsule repo the stats query uses `deliver_at`, the CORS list accepts both the apex and `www` origins, and rate limiting is back. Nothing is deployed yet — the eternicapsule fixes need that repo deployed before the live counts mean anything. The "hosted" question for the deal options is still with the owner.
+
+_END · ETERNICAPSULE · v2.3_

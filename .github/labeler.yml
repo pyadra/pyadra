@@ -1,17 +1,33 @@
 # Automatically label PRs based on changed files
 
 'ethernicapsule':
-  - 'src/app/ethernicapsule/**/*'
-  - 'src/app/api/ethernicapsule/**/*'
+  - 'src/app/exhibitions/galaxy/ethernicapsule/**/*'
 
 'orbit-77':
   - 'src/app/exhibitions/galaxy/orbit/**/*'
   - 'src/app/api/donate/**/*'
+  - 'src/app/api/session/**/*'
+  - 'src/app/api/stats/orbit-fund/**/*'
+  - 'src/app/archive/**/*'
+  - 'src/app/transmission-confirmed/**/*'
+  - 'src/app/lib/orbit-db.ts'
 
-'3d-scenes':
-  - 'src/app/components/Scene.tsx'
-  - 'src/app/projects/components/**/*'
-  - 'src/app/ethernicapsule/Capsule3D.tsx'
+'figuitoon':
+  - 'src/app/exhibitions/galaxy/figurines/**/*'
+
+'kangaroo-cleanup':
+  - 'src/app/exhibitions/galaxy/kangaroo-cleanup/**/*'
+  - 'src/app/api/airtasker-stats/**/*'
+
+'museum-layer':
+  - 'src/app/page.tsx'
+  - 'src/app/exhibitions/page.tsx'
+  - 'src/app/exhibitions/galaxy/page.tsx'
+  - 'src/app/store/**/*'
+  - 'src/app/eduardo/**/*'
+  - 'src/app/manifesto/**/*'
+  - 'src/app/legal/**/*'
+  - 'src/app/components/**/*'
 
 'api':
   - 'src/app/api/**/*'
@@ -30,6 +46,7 @@
   - '**/*.test.tsx'
   - 'vitest.config.ts'
   - 'vitest.setup.ts'
+  - 'scripts/smoke.mjs'
 
 'dependencies':
   - 'package.json'
@@ -40,3 +57,4 @@
   - '*.config.ts'
   - 'tsconfig.json'
   - '.github/**/*'
+  - 'src/middleware.ts'

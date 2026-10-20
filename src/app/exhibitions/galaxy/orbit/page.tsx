@@ -450,7 +450,7 @@ export default function OrbitDashboard() {
           <div className="panel-lift rounded-3xl bg-white/70 backdrop-blur-sm p-6 ring-1 ring-black/5 shadow-sm">
             <div className="flex items-center gap-2 mb-3">
               <span className={`rounded-full bg-black/5 text-[#3A4A3E] px-2.5 py-1 ${T.micro} font-mono tracking-[0.18em] uppercase`}>
-                Global · Podcast Archive
+                Glocal · Podcast Archive
               </span>
               <span className={`rounded-full bg-[#059669]/10 text-[#047857] px-2.5 py-1 ${T.micro} font-mono font-semibold uppercase tracking-[0.18em]`}>
                 Funding S2

@@ -1,14 +1,22 @@
 ---
-
-## tags: [pyadra, project, figuitoon, galaxy, glocal] created: 2026-06-29 version: 1.2 status: active type: GLOCAL exhibition: Galaxy updated: 2026-07-14
+tags: [pyadra, project, figuitoon, galaxy, glocal]
+created: 2026-06-29
+version: 1.3
+status: active
+type: GLOCAL
+exhibition: Galaxy
+updated: 2026-09-19
+---
 
 # Figuitoon
 
 ## IDENTITY
 
-**Name:** Figuitoon **Type:** GLOCAL (global product · local production & delivery) **Exhibition:** [[Galaxy]] **Status:** Functional prototype — pre-sale validation **Founder / builder:** Eduardo Díaz **Future owner / CEO:** Charina Loja (takes ownership once the project is running) **Page label:** Project Handover / Product Store
+**Name:** Figuitoon **Type:** GLOCAL (global product · local production & delivery) **Pyadra relation:** Exhibited external — sells only on its own Shopify (figuitoon.com); Pyadra shows its project-sale page **Exhibition:** [[Galaxy]] **Status:** Functional prototype — pre-sale validation **Founder / builder:** Eduardo Díaz **Founder shown on the page:** Charina Oan (surname confirmed by the owner in July 2026; versions before v1.3 of this section said "Loja") **Page label:** Project Handover / Product Store
 
-> [!note] Galaxy zone Galaxy is "60% investment showcase, 40% product store." Figuitoon uses both: a light/product zone (the Shopify store, buy a figurine) and a dark/handover zone (acquire or operate the project). It replaces no prior project — it's a native Galaxy product.
+> [!warning] ⚠ Open — sale path and printer ownership (owner) The live page (July 2026 owner decision) sells the whole project for $11,500, "printer included", and says Charina handles the negotiations. Earlier sections of this doc say the printer was bought by Charina, that it "cannot be sold out from under her", and that Charina is the planned future CEO/owner — while INTERNAL DESCRIPTION calls it "Eduardo's Bambu printer". Which is current: a direct sale to an outside buyer including the printer, a handover to Charina, or both? Who owns the printer? Not resolved in any document.
+
+> [!note] History — Galaxy "zones" (obsolete) Until Galaxy v4 (July 2026), Galaxy was described as "60% investment showcase, 40% product store", with light product zones and dark handover zones. Galaxy no longer has zones; Figuitoon's Pyadra page is a light project-sale dashboard and the figurine store is its Shopify.
 
 ---
 
@@ -53,7 +61,7 @@ The first commercial idea is to use the product as a physical conversation objec
 
 **Operation & handover (Charina):**
 
-Figuitoon is associated with **Charina Loja**. She bought the 3D printer and is the person who could stay running the project. The vision: Eduardo sets up the system and leaves it working, then steps back from daily operation. Charina maintains and grows Figuitoon, with Eduardo's support when needed, and becomes CEO/owner once it's running.
+Figuitoon is associated with **Charina Oan**. She bought the 3D printer and is the person who could stay running the project. The vision: Eduardo sets up the system and leaves it working, then steps back from daily operation. Charina maintains and grows Figuitoon, with Eduardo's support when needed, and becomes CEO/owner once it's running.
 
 > [!important] Document everything for the handover Because the project is meant to run without depending on Eduardo's memory, the operations manual is essential: the full pipeline, print settings, color rules, assembly steps, supplier/filament info, and the bad-photo policy. The handover only works if it's written down.
 
@@ -247,11 +255,11 @@ Everything else (more categories, accessories, premium versions) is secondary. T
 |New categories|Renders only (football)|Rugby, NBA, professions, pets, eSports, custom|
 |Gift / personalized market|Concept|Personalized gifts as a use case|
 
-> [!note] World Cup 2026 angle The football editions target the Latin diaspora around the FIFA World Cup 2026 — a time-bound traffic opportunity. SEO and launch timing should ride that window.
+> [!note] World Cup 2026 angle The football editions target the Latin diaspora around the FIFA World Cup 2026 — a time-bound traffic opportunity. SEO and launch timing should ride that window. _(Update September 19, 2026: the tournament was scheduled for June–July 2026, so that window has passed. Whether Figuitoon made use of it is not recorded.)_
 
 ## COPY DECK — LOCKED STRINGS
 
-> [!important] How to use this section Single source of truth for every visible string on the Figuitoon page. Claude Code copies verbatim — no paraphrasing, no inventing. For any NUMBER, the metrics in "WHAT THE USER SEES" and "PRODUCTS AND PRICING" are canonical; update those first. NOTE: this deck is a v1 draft — Figuitoon has no page built yet, and the sale path depends on the Charina decision (handover vs external sale).
+> [!important] How to use this section Verbatim record of every visible string on the Figuitoon page (`src/app/exhibitions/galaxy/figurines/page.tsx`, live since July 2026). New copy is written here first; Claude Code copies verbatim — no paraphrasing, no inventing. If this deck and the live page disagree, the deck is updated to the live string the same day, and a false live string is flagged ⚠ and fixed in code ([[Company_Master]] §6). For any NUMBER, the metrics in "WHAT THE USER SEES" and "PRODUCTS AND PRICING" are canonical; update those first. Last reconciled against the code on September 19, 2026. The sale path still depends on the open Charina/printer question in IDENTITY.
 
 ### Identity block
 
@@ -309,7 +317,7 @@ Section label: `The Honest Risks`
 ### Acquisition panel (updated July 2026 — direct sale, launch price)
 
 - **Value anchor:** label `Project value` · figure `$15,000 AUD` · sub-line `brand, store, pipeline, printer, files, know-how`
-- **Launch price line:** `Launch price — the full project for $11,500 AUD instead of $15,000.`
+- **Launch price line:** `Launch price — the full project for $11,500 instead of $15,000. The buyer takes everything, printer included. Final terms set in writing.` _(live string; earlier deck versions had a shorter line)_
 - **Availability:** `By conversation`
 - **Deal cards:** `Take it all` (featured, `$11,500`, sub `Everything included — store, brand, printer, files, styles, know-how.`) · `Make an offer` (`Let's talk`, sub `Different structure? Let's talk.`)
 
@@ -404,4 +412,6 @@ _Priorities only. One line per item._
 
 > [!note] Changelog v1.2 (July 14, 2026) — Reconciled against the live page (the "no page built yet" flag from v1.0 is obsolete — the dashboard is live at /exhibitions/galaxy/figurines). Copy deck completed with the strings that existed on the page but not in the deck: nav badge `For sale`, the 4-entry FAQ, the acquisition dialog, and the drawer shell. Recorded the July 14 decision: the never-used internal purchase flow (forge/upload/sealed, /api/figurines, figurine_orders table, webhook branch) was deleted — Shopify (figuitoon.com) is the ONLY sales channel; do not rebuild an internal checkout without an owner decision.
 
-_END · FIGUITOON · v1.2 · Pyadra 2026
+> [!note] Changelog v1.3 (September 19, 2026) — Documentation audit. Fixed the broken frontmatter. IDENTITY now uses the owner-confirmed surname (Oan), adds the Pyadra relation (exhibited external, Shopify-only), and flags the unresolved sale path / printer ownership (direct sale "printer included" on the live page vs "the printer is Charina's" and "handover to Charina" in this doc). The obsolete Galaxy "zones" note became a history note. Copy deck: removed the stale "no page built yet" note, recorded the live launch-price line, aligned the reconciliation rule with [[Company_Master]] §6. Noted that the World Cup 2026 window has passed. Sales and the Shopify store were not re-checked in this audit. No prices changed.
+
+_END · FIGUITOON · v1.3 · Pyadra 2026_
