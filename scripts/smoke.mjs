@@ -59,8 +59,12 @@ function waitForServer(retries = 40) {
   });
 }
 
+// Its own process group: `npx` forwards nothing, so killing the npx process
+// leaves the real server alive — its open pipes then keep this script from
+// ever exiting. We signal the whole group instead.
 const server = spawn('npx', ['next', 'start', '-p', String(PORT)], {
   stdio: ['ignore', 'pipe', 'pipe'],
+  detached: true,
 });
 let serverLog = '';
 server.stdout.on('data', (d) => (serverLog += d));
@@ -96,7 +100,11 @@ try {
   failures++;
   console.error(`Smoke aborted: ${err.message}\n--- server log ---\n${serverLog.slice(-2000)}`);
 } finally {
-  server.kill('SIGTERM');
+  try {
+    process.kill(-server.pid, 'SIGTERM');
+  } catch {
+    server.kill('SIGTERM'); // group already gone
+  }
 }
 
 if (failures > 0) {
@@ -104,3 +112,4 @@ if (failures > 0) {
   process.exit(1);
 }
 console.log(`\nSMOKE PASSED — ${CHECKS.length} checks green. Safe to deploy.`);
+process.exit(0); // don't wait on the server's pipes
