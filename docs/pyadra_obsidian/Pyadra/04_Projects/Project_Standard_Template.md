@@ -383,7 +383,7 @@ _How this document stays true. Every project doc follows it._
 
 1. Whenever the page changes meaningfully, this doc is reconciled in the same session (ideally the same commit).
 2. On reconciliation: bump the version at the END line, add a dated `Changelog vX.Y` note describing what changed and why, and update the copy-deck stamp: _"last reconciled against `page.tsx`, {{date}}"_.
-3. Numbers in Galaxy's sphere copy (proof lines) **and** in the founder's room project rows (`src/app/eduardo/page.tsx`) must be updated when this doc's canonical metrics change — same commit.
+3. Numbers in Galaxy's sphere copy (proof lines, in Galaxy's `PROJECTS` array) must be updated when this doc's canonical metrics change — same commit. (The founder's room moved to `/team` and no longer lists per-project numbers, so Galaxy is the only hardcoded copy.)
 4. Never let a claim survive that the code doesn't keep ([[Company_Master]] non-negotiable #13).
 5. A changelog records what was actually done. If a change was made only in the doc and not in code, say so.
 

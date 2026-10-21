@@ -123,11 +123,11 @@ _Verbatim record of every visible string in Galaxy. New copy is written here fir
 |`Figuitoon`|`Glocal · Physical product`|`Custom 3D figurines`|`Prototype built · Shopify store · Printer included`|`Available to acquire`|`/figuitoon-logo.png`|
 |`Kangaroo Cleanup`|`Local · Cleanup business`|`Local cleanup business`|`Sydney-based · 500+ jobs done · 5.0 reputation`|`Looking for a partner`|`/images/kangaroo/kangaroo_logo.png`|
 
-> [!note] EterniCapsule proof line — fixed September 22, 2026 `Hosted on Pyadra` stopped being accurate when the product moved to its own deployment (eternicapsule.com, August 26, 2026; Pyadra's copy retired September 15). The v4.1 changelog below recorded the replacement, but it had only been made in this doc — `page.tsx` kept the old line until September 22, when the code was finally changed. Note the product still uses accounts Pyadra controls, which is why the owner is reviewing what "hosted" means in the deal options ([[EterniCapsule]]). Pending a deploy.
+> [!note] EterniCapsule proof line — fixed September 22, 2026 `Hosted on Pyadra` stopped being accurate when the product moved to its own deployment (eternicapsule.com, August 26, 2026; Pyadra's copy retired September 15). The v4.1 changelog below recorded the replacement, but it had only been made in this doc — `page.tsx` kept the old line until September 22, when the code was finally changed. Note the product still uses accounts Pyadra controls, which is why the owner is reviewing what "hosted" means in the deal options ([[EterniCapsule]]). Now deployed — live on `main` since September 22, 2026.
 
-> [!warning] Proof lines carry numbers The `10 episodes` and `500+ jobs · 5.0` figures must match each project's canonical metrics ([[Orbit77]] metrics, [[Kangaroo_Cleanup]] METRICS AND NUMBERS). They are hardcoded in two places — this page and the project rows of the founder's room (`src/app/eduardo/page.tsx`). If a number changes, update both in the same commit.
+> [!warning] Proof lines carry numbers The `10 episodes` and `500+ jobs · 5.0` figures must match each project's canonical metrics ([[Orbit77]] metrics, [[Kangaroo_Cleanup]] METRICS AND NUMBERS). They are hardcoded in this page's `PROJECTS` array — now the only place, since the founder's room moved to `/team` and no longer lists per-project numbers (`/eduardo` is a permanent redirect to `/team`). If a number changes, update this page in the same commit.
 
-> [!note] EterniCapsule subtitle says "Encrypted time capsules" Acceptable as shorthand for the key-locked seal, but see the truth correction in [[EterniCapsule]] — no in-browser encryption exists yet. When client-side AES ships this subtitle becomes fully literal.
+> [!note] EterniCapsule subtitle says "Encrypted time capsules" Acceptable as shorthand for the key-locked seal, but see the truth correction in [[EterniCapsule]] — no in-browser encryption exists yet. When client-side AES ships this subtitle becomes fully literal. Re-checked and kept as an accepted owner decision (October 21, 2026): the shorthand stays as-is, to become literal with EterniCapsule v2.
 
 ### Shop entrance
 
@@ -194,4 +194,6 @@ The page is fully static today — the four projects live in the `PROJECTS` arra
 
 > [!note] Changelog v4.3 (September 22, 2026) — The EterniCapsule proof line was corrected in `page.tsx` (`Hosted on Pyadra` → `Independently deployed (eternicapsule.com)`), so the deck and the page agree again; pending a deploy. Orbit's type is confirmed GLOCAL by the owner, matching the `Glocal · Podcast` chip on this page.
 
-_END · GALAXY · v4.3 · September 22, 2026_
+> [!note] Changelog v4.4 (October 21, 2026) — Documentation audit. The v4.3 corrections (EterniCapsule proof line, Orbit's GLOCAL chip) are confirmed live on `main`, so the "pending a deploy" note is resolved. The number-sync rule was corrected: the founder's room moved to `/team` (`/eduardo` now redirects there) and no longer lists per-project numbers, so Galaxy's `PROJECTS` array is the only hardcoded copy. The "Encrypted time capsules" shorthand was re-checked and kept as an accepted owner decision, to become literal with EterniCapsule v2. No copy-deck strings or numbers changed.
+
+_END · GALAXY · v4.4 · October 21, 2026_

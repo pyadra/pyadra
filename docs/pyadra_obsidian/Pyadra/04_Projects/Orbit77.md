@@ -610,4 +610,6 @@ buy now · fake supporter numbers
 
 > [!note] Changelog v1.6 (September 22, 2026) — Owner decisions: Orbit is GLOCAL (page badge corrected to `Glocal · Podcast Archive`, pending deploy) and the project stays with Pablo. The $10 in the fund is most likely the owner's own test payment, so real support is treated as $0 and the row is flagged for deletion. The Pablo/Eduardo split question now points to the open revenue-attribution question in [[Company_Master]] §10.
 
-_END · ORBIT 77 · v1.6_
+> [!note] Changelog v1.7 (October 21, 2026) — The September 22 page badge correction (`Glocal · Podcast Archive`) is confirmed live on `main`, so the "pending deploy" note is resolved. No amounts, perks or copy changed.
+
+_END · ORBIT 77 · v1.7_

@@ -55,9 +55,11 @@ From Company_Master §15. These are not style preferences:
   in code. If the deck and the live page disagree, the deck is updated to the
   live string the same day — unless the live string is false, and then the
   page is fixed instead.
-- **One canonical number.** A figure lives in one place. Proof lines are
-  duplicated in Galaxy's `PROJECTS` array and in `/team`'s rows — if a number
-  changes, both move in the same commit, with the project document.
+- **One canonical number.** A figure lives in one place. The Galaxy sphere
+  proof lines live in Galaxy's `PROJECTS` array — the only hardcoded copy,
+  since the founder's room moved to `/team` and no longer lists per-project
+  numbers. If a number changes, update it there in the same commit, with the
+  project document.
 - Numbers that change without a deploy belong in the `pyadra_settings` table,
   read with `getSetting(key, fallback)`.
 - `pyadra@pyadra.io` is the only real inbox. Never a personal address.

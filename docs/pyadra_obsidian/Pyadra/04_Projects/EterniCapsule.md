@@ -713,4 +713,6 @@ _Priorities only. One line per item._
 
 > [!note] Changelog v2.3 (September 22, 2026) — The defects the audit found were fixed in code: the showcase caption now says `key-locked` instead of the untrue `client-side sealed`; Pyadra's CSP allows eternicapsule.com; and in the eternicapsule repo the stats query uses `deliver_at`, the CORS list accepts both the apex and `www` origins, and rate limiting is back. Nothing is deployed yet — the eternicapsule fixes need that repo deployed before the live counts mean anything. The "hosted" question for the deal options is still with the owner.
 
-_END · ETERNICAPSULE · v2.3_
+> [!note] Changelog v2.4 (October 21, 2026) — The Pyadra-side September corrections are confirmed live on `main`: the showcase caption reads `key-locked` and the CSP allows eternicapsule.com. The fixes inside the separate eternicapsule repo (stats query, CORS, rate limiting) live outside this repo and were not re-verified here. The "Encrypted time capsules" shorthand on the Galaxy sphere was re-checked and kept as an accepted owner decision, to become literal with EterniCapsule v2 (client-side AES). The "hosted" deal question is still with the owner. No prices or deal terms changed.
+
+_END · ETERNICAPSULE · v2.4_

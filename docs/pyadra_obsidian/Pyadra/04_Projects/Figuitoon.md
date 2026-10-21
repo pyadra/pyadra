@@ -14,7 +14,7 @@ updated: 2026-09-19
 
 **Name:** Figuitoon **Type:** GLOCAL (global product · local production & delivery) **Pyadra relation:** Exhibited external — sells only on its own Shopify (figuitoon.com); Pyadra shows its project-sale page **Exhibition:** [[Galaxy]] **Status:** Functional prototype — pre-sale validation **Founder / builder:** Eduardo Díaz **Founder shown on the page:** Charina Oan (surname confirmed by the owner in July 2026; versions before v1.3 of this section said "Loja") **Page label:** Project Handover / Product Store
 
-> [!warning] ⚠ Open — sale path and printer ownership (owner) The live page (July 2026 owner decision) sells the whole project for $11,500, "printer included", and says Charina handles the negotiations. Earlier sections of this doc say the printer was bought by Charina, that it "cannot be sold out from under her", and that Charina is the planned future CEO/owner — while INTERNAL DESCRIPTION calls it "Eduardo's Bambu printer". Which is current: a direct sale to an outside buyer including the printer, a handover to Charina, or both? Who owns the printer? Not resolved in any document.
+> [!warning] ⚠ Open — sale path and printer ownership (owner) The live page (July 2026 owner decision) sells the whole project for $11,500, "printer included", and says Charina handles the negotiations. Earlier sections of this doc say the printer was bought by Charina, that it "cannot be sold out from under her", and that Charina is the planned future CEO/owner — while INTERNAL DESCRIPTION calls it "Eduardo's Bambu printer". Which is current: a direct sale to an outside buyer including the printer, a handover to Charina, or both? Who owns the printer? **Owner decision (October 21, 2026):** the printer is a priced option in the negotiation — included only if the buyer takes the higher-price deal; at a lower price it stays out. Whether Charina releases her printer, and her future role, are part of that same negotiation and still to be defined with her.
 
 > [!note] History — Galaxy "zones" (obsolete) Until Galaxy v4 (July 2026), Galaxy was described as "60% investment showcase, 40% product store", with light product zones and dark handover zones. Galaxy no longer has zones; Figuitoon's Pyadra page is a light project-sale dashboard and the figurine store is its Shopify.
 
@@ -214,6 +214,7 @@ The project combines AI, 3D modeling, Shopify and 3D printing into a working pip
 - IP rule: no real crests/logos — color-and-pattern + Figuitoon isotype only
 - Launch price $49 AUD as validation price
 - Charina owns the printer; she becomes CEO/owner once the project is running; Eduardo builds and sets it up, then steps back from daily operation
+- Printer is a priced option in any sale (owner decision, October 21, 2026): included at the higher-price deal, excluded at the lower — subject to Charina releasing it and her role being defined with her
 - First commercial idea: figurines as physical conversation objects (Uber car as a moving display with a QR code)
 
 ---
@@ -414,4 +415,6 @@ _Priorities only. One line per item._
 
 > [!note] Changelog v1.3 (September 19, 2026) — Documentation audit. Fixed the broken frontmatter. IDENTITY now uses the owner-confirmed surname (Oan), adds the Pyadra relation (exhibited external, Shopify-only), and flags the unresolved sale path / printer ownership (direct sale "printer included" on the live page vs "the printer is Charina's" and "handover to Charina" in this doc). The obsolete Galaxy "zones" note became a history note. Copy deck: removed the stale "no page built yet" note, recorded the live launch-price line, aligned the reconciliation rule with [[Company_Master]] §6. Noted that the World Cup 2026 window has passed. Sales and the Shopify store were not re-checked in this audit. No prices changed.
 
-_END · FIGUITOON · v1.3 · Pyadra 2026_
+> [!note] Changelog v1.4 (October 21, 2026) — Owner decision on the open printer question: the 3D printer is a priced option in any sale — included only at the higher-price deal, excluded at the lower price — with Charina's release of the printer and her future role still to be defined with her. Recorded in IDENTITY and DECISIONS LOG; the earlier printer-ownership flags are kept as the standing context. No prices or copy-deck strings changed.
+
+_END · FIGUITOON · v1.4 · Pyadra 2026_
