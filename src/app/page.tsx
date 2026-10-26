@@ -30,7 +30,9 @@ import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
 /*  landing in Galaxy with its way in lit (useZoomDoor).               */
 /* ------------------------------------------------------------------ */
 
-const CURTAIN_MS = 2000;         // every visit — the full ceremony
+const CURTAIN_MS = 2000;         // the full ceremony — first visit of a session
+const CURTAIN_AGAIN_MS = 350;    // coming back within the session: a breath, not a wait
+const GALAXY = '/exhibitions/galaxy';
 const SPRING = { type: 'spring' as const, stiffness: 130, damping: 18, mass: 0.9 };
 
 /* Fixed spark orbit params — no Math.random() (SSR/hydration safe). */
@@ -101,14 +103,14 @@ function HeroSymbol({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }) {
   const height = Math.round((SYMBOL_SIZE * 232) / 240);
 
   useEffect(() => {
-    router.prefetch('/exhibitions');
+    router.prefetch(GALAXY);
   }, [router]);
 
   // click → they meet (the shrink), then the door opens
   const enter = () => {
     if (met) return;
     setMet(true);
-    setTimeout(() => zoomTo(symbolRef.current, '/exhibitions'), reduced ? 150 : 650);
+    setTimeout(() => zoomTo(symbolRef.current, GALAXY), reduced ? 150 : 650);
   };
 
   return (
@@ -116,7 +118,7 @@ function HeroSymbol({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }) {
       <motion.button
         type="button"
         onClick={enter}
-        aria-label="Pyadra symbol — enter the exhibitions"
+        aria-label="Pyadra symbol — enter Galaxy"
         className="cursor-pointer bg-transparent border-0 p-0 block"
         style={{ lineHeight: 0 }}
         whileHover={reduced ? undefined : { scale: 1.04 }}
@@ -339,9 +341,15 @@ export default function PyadraHome() {
       .catch(() => {});
   }, []);
 
-  // the curtain rises — three seconds of black, every visit
+  // the curtain rises — the full two seconds on the first visit of a
+  // session, a breath when the visitor comes back to the threshold
   useEffect(() => {
-    const wait = reduced ? 250 : CURTAIN_MS;
+    let seen = false;
+    try {
+      seen = window.sessionStorage.getItem('pyadra_curtain') === '1';
+      window.sessionStorage.setItem('pyadra_curtain', '1');
+    } catch {}
+    const wait = reduced ? 250 : seen ? CURTAIN_AGAIN_MS : CURTAIN_MS;
     const t = setTimeout(() => setCurtainUp(true), wait);
     return () => clearTimeout(t);
   }, [reduced]);
@@ -450,10 +458,10 @@ export default function PyadraHome() {
               transition={{ delay: 1.0, ...SPRING }}
             >
               <Link
-                href="/exhibitions"
+                href={GALAXY}
                 onClick={(e) => {
                   e.preventDefault();
-                  zoomTo(e.currentTarget, '/exhibitions');
+                  zoomTo(e.currentTarget, GALAXY);
                 }}
                 className="cta-glow group relative block rounded-full bg-[#1A1C1A] text-white px-12 py-4 t-d5 font-semibold shadow-lg shadow-[#1A1C1A]/20 overflow-hidden"
               >

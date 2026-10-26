@@ -71,25 +71,32 @@ Galaxy no longer carries deal mechanics — each project's page and document is 
 
 > [!warning] Built on branch `feat/galaxy-orbit-instrument`, local only (October 26, 2026). Everything below describes that branch, not the live page — the v4 section after this one is still what pyadra.io serves.
 
-**The idea (owner-approved, October 26, 2026):** the position of a sphere stops being decoration and becomes information. One canvas with four zoom levels instead of separate pages.
+**The idea (owner-approved, October 26, 2026):** the position of a sphere stops being decoration and becomes information.
 
-| Zoom | Where | What the visitor gets |
+**Second pass (owner review, October 27, 2026).** The first build fit 9 full cards on a 1,574px page (a MacBook shows 820): the orbit never fit on screen, 52 strings competed at once, and the "zooms" were page changes with a blank beat between them. The second pass rebuilt it around one idea per glance:
+
+| Layer | Where | What the visitor gets |
 |---|---|---|
-| 0 — the museum | `/exhibitions` | Galaxy lit in the middle, its projects as unnamed lights circling the orb; Jungle and City further off, as landscape. Entering zooms into Galaxy. |
-| 1 — the orbit | `/exhibitions/galaxy` | **Angle = how you come in** (Acquire · Operate · Support · Build · Forming). **Ring = how ready it is** (inner = ready, outer = forming). Filter chips light one sector; hovering a sphere lights its sector's name. |
-| 2 — the lot | same page, `?lot=<id>` | The sphere grows into its card: chip, opportunity, name, subtitle, how you come in, where it stands, proof. |
-| 3 — the dossier | the project's page | "Open the dossier →" zooms into the existing project dashboard. |
+| The way in | `/` | The symbol and **Join** zoom straight into Galaxy (one step fewer). Each tagline word is a door: `DISCOVER` → `/exhibitions`, `CONNECT` → Operate lit, `BUILD` → Build, `BUY` → Acquire (`?way=`). The 2s curtain plays on the first visit of a session; coming back, it's a breath (350ms). |
+| The orbit | `/exhibitions/galaxy` | One screen, no scroll on desktop — the canvas fits the viewport. Each lot is **a sphere and a name** (dot = ready / ring = forming). **Angle = how you come in**, **ring = how ready**. Hover previews the subtitle and opportunity. The sector names are the filters. An empty sector keeps an **Open seat** → "Bring your idea". |
+| The lot | same page, `?lot=<id>` | A real camera move: the canvas flies to the sphere, the rest dims, a panel opens beside it — chip, opportunity, name, subtitle, how you come in, where it stands, proof, what happens next. ← → walk the orbit; Esc or the field steps back. Primary action: **Open the dossier** (or **Ask about …** when there's no room yet); secondary: **Ask Pyadra about it** (the contact dialog, tagged with the project). |
+| The dossier | the project's page | Zooms into the existing dashboard. |
 
-The Home is the way in: the symbol and **Join** zoom into Zoom 0, and each word of the tagline is a door — `DISCOVER` → the museum, `CONNECT` → Galaxy with Operate lit, `BUILD` → Build, `BUY` → Acquire (`?way=`).
+Phones and tablets read the same orbit as a list grouped by sector; the lot opens as a bottom sheet. `/exhibitions` stays as the museum overview (Galaxy lit, Jungle and City as landscape) and is reached from the nav and `DISCOVER`.
 
 **One data file.** `src/app/exhibitions/galaxy/lots.ts` holds one row per project — the "WHAT THE USER SEES BEFORE ENTERING" block plus `wayIn` and `stage`. `orbit.ts` computes every position from those two fields (sectors sized by how many lots they hold; spacing even along the ring, measured in card sizes). **Adding a project is adding a row.** Tested in `__tests__/orbit.test.ts`.
 
 **Projects on the branch (owner, October 26, 2026):** EterniCapsule, Figuitoon (acquire · ready), Kangaroo Cleanup (operate · ready), Orbit 77 (support · ready), Byndi (ready — live on Android, App Store next), Momentos Inolvidables, Gym routines, We Made It (ready), BackMate (forming).
 
 **Before this can ship — owner decisions:**
-- The **way in** of Byndi, Momentos Inolvidables, Gym routines and We Made It. Until set they sit in a sector labelled `Way in to confirm`, which disappears once it's empty.
+- The **way in** of Byndi, Momentos Inolvidables, Gym routines and We Made It. Until set they sit in a sector labelled `To confirm`, which disappears once it's empty.
 - Their **copy** (subtitle, proof, opportunity), from each one's Project Standard doc, and their **destination** (Pyadra page or own URL). We Made It has no details yet; BackMate exists in no doc.
-- Two rule changes this version makes and §7 of [[Company_Master]] must record if accepted: a sphere click now **opens its card** instead of going straight to the dashboard, and `/exhibitions` shows the open room's projects as **unnamed lights** (still no project names outside their exhibition).
+- Rule changes this version makes, which §7 of [[Company_Master]] must record if accepted:
+  - On the orbit a sphere shows **its name only**; the five elements move to the hover preview and the lot panel.
+  - A sphere click **opens its panel** instead of going straight to the dashboard.
+  - The Home's doors go **straight to Galaxy**; `/exhibitions` is no longer a required step.
+  - `/exhibitions` shows the open room's projects as **unnamed lights** (still no project names outside their exhibition).
+  - The curtain plays in full **once per session**, not on every visit.
 - The copy deck below, `/team`'s `soon-*` rows and the metadata update with it, in the same commit.
 
 ---

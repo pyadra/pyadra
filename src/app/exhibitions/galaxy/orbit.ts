@@ -8,20 +8,21 @@ import { SECTORS, type Lot, type Stage, type WayIn } from './lots';
 /*                                                                     */
 /*  Sectors are sized by how many lots they hold, so a crowded way in  */
 /*  gets a wider slice instead of stacking spheres. An empty sector    */
-/*  keeps a thin slice — the door exists, nobody is behind it yet —    */
+/*  keeps one seat's slice — the door exists, nobody is behind it yet — */
 /*  except `pending`, which only shows while something is in it.      */
 /* ------------------------------------------------------------------ */
 
 /** Ring radii as a fraction of the field's half-width / half-height. */
-export const RING: Record<Stage, number> = { ready: 0.76, forming: 1 };
+export const RING: Record<Stage, number> = { ready: 0.74, forming: 1 };
 
-/** Width / height of the field the spheres are placed in (page.tsx). */
-export const FIELD = { w: 980, h: 920 };
+/** Width / height of the field the spheres are placed in — a landscape
+ *  canvas sized to fit one screen (page.tsx, the orbit stage). */
+export const FIELD = { w: 1000, h: 600 };
 
-/** The footprint of one sphere with its copy (page.tsx, SphereCard). */
-const CARD = { w: 210, h: 235 };
+/** The footprint of one node — sphere and name — in field units. */
+const CARD = { w: 140, h: 110 };
 
-const EMPTY_WEIGHT = 0.5;
+const EMPTY_WEIGHT = 1;
 
 export type Arc = { key: WayIn; label: string; start: number; end: number };
 export type Placed = { lot: Lot; angle: number; x: number; y: number };

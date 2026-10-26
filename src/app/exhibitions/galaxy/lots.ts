@@ -44,7 +44,7 @@ export const SECTORS: { key: WayIn; label: string }[] = [
   { key: 'support', label: 'Support' },
   { key: 'build', label: 'Build' },
   { key: 'forming', label: 'Forming' },
-  { key: 'pending', label: 'Way in to confirm' },
+  { key: 'pending', label: 'To confirm' },
 ];
 
 export const LOTS: Lot[] = [
@@ -121,7 +121,7 @@ export const LOTS: Lot[] = [
   /*    · proof       what anyone can verify today                       */
   /*    · opportunity the line under the name                            */
   /*    · enter_url   its Pyadra page, or its own site                   */
-  /*  Until then they sit in the "Way in to confirm" sector with no      */
+  /*  Until then they sit in the "To confirm" sector with no      */
   /*  link — never a claim the code can't keep (Company_Master #13).     */
   /* ------------------------------------------------------------------ */
   {
