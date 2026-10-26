@@ -85,7 +85,13 @@ npm run verify      # tsc + vitest + next build + smoke. No lint in it.
 (EterniCapsule's proof line, "key-locked", Orbit as Glocal, Observer numbers no
 longer invented, the privacy page) plus the reconciled documentation.
 
-**In progress — Galaxy with seven projects.** The field grows from four spheres
+**In progress — Galaxy v5, the orbit as an instrument** (branch
+`feat/galaxy-orbit-instrument`, local, October 26, 2026). Supersedes the 3 · 2 · 2
+grid below: one canvas with four zooms from the Home to the dossier, positions
+computed from `galaxy/lots.ts`. What it is and what blocks it: the v5 section of
+`03_Exhibitions/Galaxy.md`.
+
+**Earlier — Galaxy with seven projects.** The field grows from four spheres
 to seven: rows of 3 · 2 · 2 on desktop, the gem keeping the empty centre of the
 middle row; two per row on phones with the seventh centred. Built and
 typechecked, not committed. It is blocked on content, not on code: Byndi,

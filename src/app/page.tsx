@@ -12,8 +12,9 @@ import {
 } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SiteNav from '@/app/components/nav/SiteNav';
+import { useZoomDoor } from '@/app/components/ui/useZoomDoor';
 import SiteFooter from '@/app/components/nav/SiteFooter';
 import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
 
@@ -23,6 +24,10 @@ import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
 /*  The Pyadra symbol IS the home. It assembles, breathes, and can be  */
 /*  met (click → gem and body encounter). The words orbit around it,   */
 /*  not the other way around. One door leads to the exhibition.        */
+/*                                                                     */
+/*  The canvas starts here: the symbol and Join zoom into the museum   */
+/*  (Zoom 0), and each word of the tagline is a door of its own,       */
+/*  landing in Galaxy with its way in lit (useZoomDoor).               */
 /* ------------------------------------------------------------------ */
 
 const CURTAIN_MS = 2000;         // every visit — the full ceremony
@@ -78,9 +83,21 @@ const STROKE = '#059669';
 const SW = 11;
 const SYMBOL_SIZE = 260;
 
-function HeroSymbol({ reduced }: { reduced: boolean }) {
+type ZoomTo = (from: Element | null, href: string) => void;
+
+/* The tagline's four verbs are the four ways in. Discover is the whole
+   museum; the other three land in Galaxy with their sector lit. */
+const VERBS: { word: string; href: string }[] = [
+  { word: 'Discover', href: '/exhibitions' },
+  { word: 'Connect', href: '/exhibitions/galaxy?way=operate' },
+  { word: 'Build', href: '/exhibitions/galaxy?way=build' },
+  { word: 'Buy', href: '/exhibitions/galaxy?way=acquire' },
+];
+
+function HeroSymbol({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }) {
   const router = useRouter();
   const [met, setMet] = useState(false);
+  const symbolRef = useRef<SVGSVGElement>(null);
   const height = Math.round((SYMBOL_SIZE * 232) / 240);
 
   useEffect(() => {
@@ -91,7 +108,7 @@ function HeroSymbol({ reduced }: { reduced: boolean }) {
   const enter = () => {
     if (met) return;
     setMet(true);
-    setTimeout(() => router.push('/exhibitions'), reduced ? 150 : 950);
+    setTimeout(() => zoomTo(symbolRef.current, '/exhibitions'), reduced ? 150 : 650);
   };
 
   return (
@@ -107,6 +124,7 @@ function HeroSymbol({ reduced }: { reduced: boolean }) {
         transition={{ type: 'spring', stiffness: 300, damping: 18 }}
       >
         <svg
+          ref={symbolRef}
           width={SYMBOL_SIZE}
           height={height}
           viewBox="0 0 240 232"
@@ -191,26 +209,37 @@ function HeroSymbol({ reduced }: { reduced: boolean }) {
         PYADRA
       </motion.div>
 
-      {/* Tagline */}
-      <motion.div
+      {/* Tagline — each verb is a door */}
+      <motion.nav
+        aria-label="Ways in"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: reduced ? 0 : 1.45 }}
-        className="font-mono uppercase text-center text-[#6B8070]"
+        className="font-mono uppercase text-center text-[#6B8070] flex flex-wrap justify-center"
         style={{
           fontSize: 'clamp(9px, 3.4vw, 19px)',
           letterSpacing: '0.3em',
           marginTop: 'clamp(12px, 5vw, 21px)',
+          columnGap: '0.6em',
         }}
       >
-        DISCOVER. CONNECT. BUILD. BUY.
-      </motion.div>
+        {VERBS.map((v) => (
+          <button
+            key={v.word}
+            type="button"
+            onClick={(e) => zoomTo(e.currentTarget, v.href)}
+            className="uppercase bg-transparent border-0 p-0 cursor-pointer text-inherit tracking-[inherit] underline-offset-[6px] decoration-[#059669]/50 hover:text-[#047857] hover:underline focus:outline-none focus-visible:text-[#047857] focus-visible:underline transition-colors"
+          >
+            {v.word}.
+          </button>
+        ))}
+      </motion.nav>
     </div>
   );
 }
 
 /* The logo showcase: halos + orbiting sparks + interactive symbol. */
-function LogoShowcase({ reduced }: { reduced: boolean }) {
+function LogoShowcase({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }) {
   return (
     <div className="relative flex flex-col items-center justify-center py-4">
       {/* Halo 1 — wide, slow breath */}
@@ -237,7 +266,7 @@ function LogoShowcase({ reduced }: { reduced: boolean }) {
       ))}
 
       {/* THE SYMBOL — click always works. */}
-      <HeroSymbol reduced={reduced} />
+      <HeroSymbol reduced={reduced} zoomTo={zoomTo} />
     </div>
   );
 }
@@ -284,6 +313,7 @@ export default function PyadraHome() {
   const [curtainUp, setCurtainUp] = useState(false);
   const [observerId, setObserverId] = useState<string | null>(null);
   const reduced = useReducedMotion() ?? false;
+  const { zoomTo, overlay, zoomProps } = useZoomDoor();
 
   // Every visitor becomes a numbered Observer — Pyadra's quiet signature.
   // Returning visitors read their stored id; first-timers get registered,
@@ -330,7 +360,8 @@ export default function PyadraHome() {
   };
 
   return (
-    <div className="bg-[#EDEFED] text-[#1A1C1A] overflow-x-clip antialiased selection:bg-[#059669] selection:text-white">
+    <>
+    <motion.div {...zoomProps} className="bg-[#EDEFED] text-[#1A1C1A] overflow-x-clip antialiased selection:bg-[#059669] selection:text-white">
 
       {/* ============ THE CURTAIN — 3 seconds of black ============ */}
       <AnimatePresence>
@@ -408,7 +439,7 @@ export default function PyadraHome() {
               plays as black slides away. Symbol + PYADRA + tagline.
               Nothing else competes with it. */}
           <div className="relative w-full flex items-center justify-center min-h-[380px]">
-            {curtainUp && <LogoShowcase reduced={reduced} />}
+            {curtainUp && <LogoShowcase reduced={reduced} zoomTo={zoomTo} />}
           </div>
 
           {/* THE ONE DOOR */}
@@ -420,6 +451,10 @@ export default function PyadraHome() {
             >
               <Link
                 href="/exhibitions"
+                onClick={(e) => {
+                  e.preventDefault();
+                  zoomTo(e.currentTarget, '/exhibitions');
+                }}
                 className="cta-glow group relative block rounded-full bg-[#1A1C1A] text-white px-12 py-4 t-d5 font-semibold shadow-lg shadow-[#1A1C1A]/20 overflow-hidden"
               >
                 {/* emerald bloom seeps in from below on hover */}
@@ -436,6 +471,8 @@ export default function PyadraHome() {
       </section>
 
       <SiteFooter />
-    </div>
+    </motion.div>
+    {overlay}
+    </>
   );
 }
