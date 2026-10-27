@@ -96,6 +96,9 @@ computed from `galaxy/lots.ts`. What it is and what blocks it: the v5 section of
 Mono uppercase, the rest in DM Sans) and the palette names in `globals.css`
 (`text-ink`, `text-ink-soft`, `text-ink-mute`, `bg-paper`, `text-accent`,
 `text-accent-deep`). Don't write a new `text-[Npx]` or a raw museum hex.
+Motion the same way: curves and springs from `components/ui/motion.ts`;
+surfaces that answer the pointer use `.py-spot` / `.py-sheen` / `.py-glass`
+(globals.css). Background motion is CSS only — never JS-animated particles.
 
 **Earlier — Galaxy with seven projects.** The field grows from four spheres
 to seven: rows of 3 · 2 · 2 on desktop, the gem keeping the empty centre of the

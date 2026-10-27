@@ -18,6 +18,10 @@ import { TYPE } from '@/app/components/ui/type';
 import { INTENTS, galaxyHref, setIntent, type Intent } from '@/app/components/guide/intent';
 import SiteFooter from '@/app/components/nav/SiteFooter';
 import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
+import RevealText from '@/app/components/ui/RevealText';
+import { trackPointer } from '@/app/components/ui/pointer';
+import { EASE } from '@/app/components/ui/motion';
+import { LOTS } from '@/app/exhibitions/galaxy/lots';
 
 /* ------------------------------------------------------------------ */
 /*  PYADRA — HOME · The Threshold                                      */
@@ -36,43 +40,53 @@ const CURTAIN_AGAIN_MS = 350;    // coming back within the session: a breath, no
 const GALAXY = '/exhibitions/galaxy';
 const SPRING = { type: 'spring' as const, stiffness: 130, damping: 18, mass: 0.9 };
 
-/* Fixed spark orbit params — no Math.random() (SSR/hydration safe). */
-const SPARKS: { radius: number; speed: number; phase: number; size: number; opacity: number }[] = [
-  { radius: 175, speed: 0.15,  phase: 0.0, size: 6, opacity: 0.55 },
-  { radius: 200, speed: -0.10, phase: 1.5, size: 4, opacity: 0.45 },
-  { radius: 158, speed: 0.13,  phase: 3.1, size: 5, opacity: 0.50 },
-  { radius: 215, speed: -0.08, phase: 4.7, size: 4, opacity: 0.40 },
-  { radius: 166, speed: 0.19,  phase: 2.4, size: 3, opacity: 0.60 },
-  { radius: 190, speed: -0.14, phase: 5.6, size: 3, opacity: 0.35 },
-];
+/* The projects, already in orbit around the symbol — one small sphere per
+   lot, in its own colour, so the Home shows what Galaxy holds before the
+   visitor walks in. Counted from lots.ts: a new project joins the orbit
+   here too. Fixed params, no Math.random() (SSR/hydration safe). */
+const ORBS = LOTS.map((lot, i) => ({
+  id: lot.id,
+  glow: lot.glow,
+  radius: [190, 236, 172, 258, 214, 182, 246, 200, 226][i % 9],
+  speed: (i % 2 ? -1 : 1) * [0.11, 0.08, 0.13, 0.07, 0.1, 0.12, 0.09, 0.14, 0.085][i % 9],
+  phase: Math.round(((i * 2 * Math.PI) / LOTS.length) * 1000) / 1000,
+  size: [20, 14, 18, 13, 16, 20, 14, 17, 13][i % 9],
+}));
 
-/* One spark, endlessly orbiting the symbol. */
-function OrbitingSpark({
+/* One project, endlessly orbiting the symbol — it passes in front of the
+   symbol on the near side of its ellipse and behind it on the far side. */
+function OrbitingOrb({
   radius,
   speed,
   phase,
   size,
-  opacity,
+  glow,
   reduced,
 }: {
   radius: number;
   speed: number;
   phase: number;
   size: number;
-  opacity: number;
+  glow: string;
   reduced: boolean;
 }) {
   const time = useTime();
   const v = reduced ? 0 : speed;
-  const x = useTransform(time, (t) => Math.cos(phase + (t / 1000) * v) * radius);
-  const y = useTransform(time, (t) => Math.sin(phase + (t / 1000) * v) * radius * 0.6);
+  const angle = useTransform(time, (t) => phase + (t / 1000) * v);
+  const x = useTransform(angle, (a) => Math.cos(a) * radius);
+  const y = useTransform(angle, (a) => Math.sin(a) * radius * 0.36);
+  // nearer (lower on the ellipse) reads bigger and brighter
+  const scale = useTransform(angle, (a) => 0.8 + 0.3 * ((Math.sin(a) + 1) / 2));
+  const zIndex = useTransform(angle, (a) => (Math.sin(a) > 0 ? 20 : 0));
 
   return (
     <motion.div
       aria-hidden
-      style={{ x, y, width: size, height: size, opacity }}
-      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#059669] shadow-[0_0_10px_rgba(5,150,105,0.7)] pointer-events-none"
-    />
+      style={{ x, y, scale, zIndex, width: size, height: size }}
+      className={`absolute left-1/2 top-[32%] -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none shadow-[-2px_3px_6px_rgba(26,28,26,0.18)] ${glow}`}
+    >
+      <span className="py-glass" />
+    </motion.div>
   );
 }
 
@@ -240,14 +254,13 @@ function IntentChooser({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }
   };
   return (
     <div className="w-full">
-      <motion.p
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: reduced ? 0 : 1.65, ...SPRING }}
+      <RevealText
+        as="p"
+        text="Real projects, already built — looking for the people who will take them further."
         className={`${TYPE.title} max-w-xl mx-auto`}
-      >
-        Real projects, already built — looking for the people who will take them further.
-      </motion.p>
+        delay={1.5}
+        stagger={0.035}
+      />
       <motion.p
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -267,32 +280,48 @@ function IntentChooser({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }
       </motion.p>
 
       <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2 md:gap-2.5 text-left">
-        {INTENTS.map((it, i) => (
-          <motion.button
-            key={it.key}
-            type="button"
-            onClick={(e) => choose(it.key, e.currentTarget)}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: reduced ? 0 : 2.0 + i * 0.07, type: 'spring', stiffness: 150, damping: 18 }}
-            whileHover={reduced ? undefined : { y: -4 }}
-            whileTap={{ scale: 0.97 }}
-            className={`group relative flex md:flex-col items-center md:items-start gap-3 md:gap-0 text-left rounded-2xl px-4 py-3 md:p-4 cursor-pointer ring-1 transition-[background-color,box-shadow] duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-              it.key === 'look'
-                ? 'bg-transparent ring-ink/10 hover:bg-white/60'
-                : 'bg-white/70 backdrop-blur-sm ring-ink/6 shadow-sm hover:bg-white hover:shadow-xl hover:shadow-accent/10 hover:ring-accent/30'
-            }`}
-          >
-            <svg viewBox="0 0 24 24" className="w-5 h-5 shrink-0 text-ink-mute group-hover:text-accent transition-colors" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" aria-hidden>
-              {INTENT_MARK[it.key]}
-            </svg>
-            <span className="min-w-0 flex-1 md:mt-3">
-              <span className="block font-sans text-sm font-semibold text-ink">{it.title}</span>
-              <span className="block font-sans text-[13px] leading-snug text-ink-mute">{it.line}</span>
-            </span>
-            <span aria-hidden className="md:absolute md:top-4 md:right-4 text-accent opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">→</span>
-          </motion.button>
-        ))}
+        {INTENTS.map((it, i) => {
+          // what waits behind this door, counted from the lots
+          const n = it.way ? LOTS.filter((l) => l.wayIn === it.way).length : LOTS.length;
+          const waiting = n === 0 ? 'An open seat' : `${n} project${n === 1 ? '' : 's'}`;
+          return (
+            <motion.button
+              key={it.key}
+              type="button"
+              onClick={(e) => choose(it.key, e.currentTarget)}
+              onPointerMove={trackPointer}
+              initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ delay: reduced ? 0 : 2.0 + i * 0.07, duration: 0.7, ease: EASE.out }}
+              whileHover={reduced ? undefined : { y: -4 }}
+              whileTap={{ scale: 0.97 }}
+              className={`py-spot group relative flex md:flex-col items-center md:items-start gap-3 md:gap-0 text-left rounded-2xl px-4 py-3 md:p-4 cursor-pointer ring-1 transition-[background-color,box-shadow] duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                it.key === 'look'
+                  ? 'bg-transparent ring-ink/10 hover:bg-white/60'
+                  : 'bg-white/70 backdrop-blur-sm ring-ink/6 shadow-sm hover:bg-white hover:shadow-[0_22px_40px_-18px_rgba(4,120,87,0.35)]'
+              }`}
+            >
+              <span className="flex w-9 h-9 shrink-0 items-center justify-center rounded-xl bg-paper text-ink-mute transition-[background-color,color,transform] duration-300 group-hover:bg-accent group-hover:text-white group-hover:-rotate-6">
+                <svg viewBox="0 0 24 24" className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" aria-hidden>
+                  {INTENT_MARK[it.key]}
+                </svg>
+              </span>
+              <span className="min-w-0 flex-1 md:mt-3.5">
+                <span className="block font-sans text-sm font-semibold text-ink">{it.title}</span>
+                <span className="block font-sans text-[13px] leading-snug text-ink-mute">{it.line}</span>
+                <span className="mt-2.5 hidden md:flex items-center gap-1.5 font-mono font-bold text-[11px] uppercase tracking-[0.14em] text-accent-deep/80">
+                  <span aria-hidden className={`w-1.5 h-1.5 rounded-full ${n ? 'bg-accent' : 'border border-accent'}`} />
+                  {waiting}
+                </span>
+              </span>
+              {/* phones: what waits behind the door, where desktop shows the arrow */}
+              <span className="md:hidden shrink-0 font-mono font-bold text-[11px] uppercase tracking-[0.14em] text-accent-deep/80">
+                {n || 'Open'}
+              </span>
+              <span aria-hidden className="hidden md:block md:absolute md:top-4 md:right-4 text-accent opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">→</span>
+            </motion.button>
+          );
+        })}
       </div>
     </div>
   );
@@ -320,9 +349,19 @@ function LogoShowcase({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo })
         style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.22), transparent 60%)', filter: 'blur(12px)' }}
       />
 
-      {/* Orbiting sparks — atmosphere, not projects */}
-      {SPARKS.map((s, i) => (
-        <OrbitingSpark key={i} {...s} reduced={reduced} />
+      {/* the projects, in orbit — Galaxy, seen from the threshold */}
+      {ORBS.map(({ id, ...o }, i) => (
+        <motion.div
+          key={id}
+          aria-hidden
+          // phones get a tighter orbit, so the projects stay on screen
+          className="absolute inset-0 pointer-events-none origin-[50%_32%] scale-[0.62] sm:scale-[0.8] md:scale-100"
+          initial={reduced ? false : { opacity: 0, scale: 0.6 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, ease: EASE.out, delay: reduced ? 0 : 1.1 + i * 0.08 }}
+        >
+          <OrbitingOrb {...o} reduced={reduced} />
+        </motion.div>
       ))}
 
       {/* THE SYMBOL — click always works. */}

@@ -50,7 +50,15 @@ export function useZoomDoor() {
         <motion.div
           aria-hidden
           className="fixed z-[90] rounded-full pointer-events-none"
-          style={{ left: door.x - door.r, top: door.y - door.r, width: door.r * 2, height: door.r * 2, background: door.color }}
+          style={{
+            left: door.x - door.r,
+            top: door.y - door.r,
+            width: door.r * 2,
+            height: door.r * 2,
+            // the next room's colour, with a breath of emerald at its heart —
+            // the door glows a little as it opens
+            background: `radial-gradient(circle, rgba(5,150,105,0.10) 0%, ${door.color} 38%)`,
+          }}
           initial={{ scale: 0.02, opacity: 0.6 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: GROW_MS / 1000, ease: [0.76, 0, 0.24, 1] }}
@@ -62,7 +70,7 @@ export function useZoomDoor() {
   // the page root sits at the top of the document, so the origin is the
   // click point in page coordinates
   const zoomProps = {
-    animate: door ? { scale: 2.4, opacity: 0 } : { scale: 1, opacity: 1 },
+    animate: door ? { scale: 2.4, opacity: 0, filter: 'blur(8px)' } : { scale: 1, opacity: 1 },
     transition: { duration: GROW_MS / 1000, ease: [0.76, 0, 0.24, 1] as const },
     style: door ? { transformOrigin: `${door.x}px ${door.y + door.scrollY}px` } : undefined,
   };

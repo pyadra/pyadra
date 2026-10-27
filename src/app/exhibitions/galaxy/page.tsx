@@ -1,14 +1,28 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import {
+  AnimatePresence,
+  animate,
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+  type MotionValue,
+} from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import GreenDust from '../../components/ui/GreenDust';
+import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
 import SiteNav from '@/app/components/nav/SiteNav';
 import SiteFooter from '@/app/components/nav/SiteFooter';
 import { useZoomDoor } from '@/app/components/ui/useZoomDoor';
 import { TYPE } from '@/app/components/ui/type';
+import { EASE, SPRING } from '@/app/components/ui/motion';
+import { trackPointer } from '@/app/components/ui/pointer';
+import RevealText from '@/app/components/ui/RevealText';
+import Magnetic from '@/app/components/ui/Magnetic';
 import BringIdeaDialog, { type DialogCopy } from '@/app/components/nav/BringIdeaDialog';
 import Guide from '@/app/components/guide/Guide';
 import { INTENTS, useIntent, type Intent } from '@/app/components/guide/intent';
@@ -62,7 +76,7 @@ const names = (lots: Lot[]) =>
 
 /** What the guide says on the orbit — counted from the lots, so it can
  *  never fall behind the data. */
-function narrate({ way, intent, hovered, focus }: { way: WayIn | null; intent: Intent | null; hovered: Lot | null; focus: Lot | null }): string {
+function narrate({ way, intent, hovered, focus, phone }: { way: WayIn | null; intent: Intent | null; hovered: Lot | null; focus: Lot | null; phone: boolean }): string {
   if (focus) {
     switch (focus.wayIn) {
       case 'acquire': return `${focus.name} can be bought whole. If it's for you, the dossier is your next step.`;
@@ -88,6 +102,7 @@ function narrate({ way, intent, hovered, focus }: { way: WayIn | null; intent: I
     case 'forming': return `${names(lit)} ${lit.length === 1 ? 'is' : 'are'} still forming — close enough to follow.`;
     case 'pending': return `${names(lit)} haven't set how you come in yet. Ask Pyadra about any of them.`;
   }
+  if (phone) return `This is Galaxy: ${say(LOTS.length).toLowerCase()} real projects, grouped by how you can come in. Tap one to meet it.`;
   if (intent === 'look') return `${say(LOTS.length)} real projects. The direction tells you how to come in; the closer to the centre, the readier it is.`;
   return `This is Galaxy: ${say(LOTS.length).toLowerCase()} real projects. Pick a direction to light it, or hover a sphere to meet it.`;
 }
@@ -134,25 +149,35 @@ function LogoSlot({ lot }: { lot: Lot }) {
           <CapsuleMark />
         </div>
       )}
-      {/* No logo asset yet — the dashed ring the team index already uses for
-          a project whose mark hasn't been made. */}
+      {/* No logo asset yet — the project's initials, set in the museum's
+          serif like a monogram, until its mark is made. */}
       {lot.logo.kind === 'pending' && (
-        <span className="relative w-[40%] h-[40%] rounded-full border border-dashed border-[#1A1C1A]/25 pointer-events-none" />
+        <span className="relative font-serif font-semibold text-[34cqw] leading-none tracking-[-0.02em] text-ink/45 pointer-events-none select-none">
+          {initials(lot.name)}
+        </span>
       )}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/15 rounded-full pointer-events-none" />
     </div>
   );
 }
 
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? '')
+    .join('');
+
+/** A sphere: the brand colour, the mark, and the room's light on it. */
 function Sphere({ lot, className }: { lot: Lot; className: string }) {
   return (
-    <div className={`relative rounded-full overflow-hidden ${lot.sphereClass} ${className}`}>
+    <div className={`relative rounded-full overflow-hidden [container-type:inline-size] ${lot.sphereClass} ${className}`}>
       <LogoSlot lot={lot} />
       <motion.div
         animate={{ rotate: 360 }}
         transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-        className="absolute inset-0 opacity-30 bg-[conic-gradient(from_0deg,transparent_0deg,transparent_180deg,rgba(255,255,255,0.25)_270deg,transparent_360deg)]"
+        className="absolute inset-0 opacity-40 bg-[conic-gradient(from_0deg,transparent_0deg,transparent_180deg,rgba(255,255,255,0.35)_270deg,transparent_360deg)]"
       />
+      <span aria-hidden className="py-glass" />
     </div>
   );
 }
@@ -180,38 +205,90 @@ function OrbitNode({
   onHover: (on: boolean) => void;
 }) {
   const below = y < 62; // previews open away from the canvas edge
+  const reduced = useReducedMotion() ?? false;
+  const float = 5 + (index % 4) * 0.7;
+
+  // the sphere leans toward the hand that's over it
+  const px = useMotionValue(0);
+  const py = useMotionValue(0);
+  const sx = useSpring(px, SPRING.snap);
+  const sy = useSpring(py, SPRING.snap);
+  const lean = (e: React.PointerEvent<HTMLElement>) => {
+    if (reduced || e.pointerType !== 'mouse') return;
+    const r = e.currentTarget.getBoundingClientRect();
+    px.set(((e.clientX - r.left) / r.width - 0.5) * 10);
+    py.set(((e.clientY - r.top) / r.height - 0.5) * 10);
+  };
+
   return (
-    <div
-      className="absolute -translate-x-1/2 -translate-y-1/2 z-10 hover:z-30 focus-within:z-30"
-      style={{ left: `${x}%`, top: `${y}%` }}
+    // every lot leaves the centre and travels out along its own angle
+    // to its place — the orbit assembling itself
+    <motion.div
+      className="pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 z-10 hover:z-30 focus-within:z-30"
+      initial={reduced ? false : { left: '50%', top: '50%' }}
+      animate={{ left: `${x}%`, top: `${y}%` }}
+      transition={{ ...SPRING.glide, delay: 0.35 + index * 0.06 }}
     >
       <motion.button
         type="button"
         onClick={onOpen}
         onMouseEnter={() => onHover(true)}
-        onMouseLeave={() => onHover(false)}
+        onMouseLeave={() => {
+          onHover(false);
+          px.set(0);
+          py.set(0);
+        }}
+        onPointerMove={lean}
         onFocus={() => onHover(true)}
         onBlur={() => onHover(false)}
         aria-label={`${lot.name} — ${lot.opportunity}`}
-        initial={{ opacity: 0, scale: 0.6 }}
-        animate={{ opacity: state === 'dim' ? 0.22 : 1, scale: 1 }}
-        transition={{ opacity: { duration: 0.4 }, scale: { delay: 0.15 + index * 0.03, type: 'spring', stiffness: 150, damping: 16 } }}
+        initial={reduced ? false : { opacity: 0, scale: 0.3 }}
+        animate={{
+          opacity: state === 'dim' ? 0.28 : 1,
+          scale: 1,
+          filter: state === 'dim' ? 'blur(1.5px) saturate(0.6)' : 'blur(0px) saturate(1)',
+        }}
+        transition={{
+          opacity: { duration: 0.45 },
+          filter: { duration: 0.45 },
+          scale: { ...SPRING.glide, delay: 0.35 + index * 0.06 },
+        }}
         className="group relative flex flex-col items-center bg-transparent border-0 p-0 cursor-pointer rounded-2xl focus:outline-none"
       >
         <motion.span
           className="relative block w-[clamp(44px,6.2cqw,82px)] aspect-square"
-          animate={{ y: [0, -5, 0] }}
-          transition={{ duration: 5 + (index % 4) * 0.7, repeat: Infinity, ease: 'easeInOut', delay: index * 0.6 }}
+          animate={reduced ? undefined : { y: [0, -6, 0] }}
+          transition={{ duration: float, repeat: Infinity, ease: 'easeInOut', delay: index * 0.6 }}
         >
-          <span className={`absolute inset-0 rounded-full blur-xl opacity-40 ${lot.glow}`} />
-          <Sphere
-            lot={lot}
-            className={`w-full h-full shadow-[-8px_8px_18px_rgba(0,0,0,0.12)] transition-transform duration-500 ease-out group-hover:scale-110 group-focus-visible:scale-110 ${
-              state === 'active' ? 'ring-2 ring-[#059669] ring-offset-4 ring-offset-[#EDEFED] scale-110' : ''
-            }`}
-          />
+          {/* its colour, spilling onto the floor around it */}
+          <span className={`absolute -inset-2 rounded-full blur-2xl opacity-50 transition-opacity duration-500 group-hover:opacity-90 ${lot.glow}`} />
+          {/* the chosen one keeps a slow pulse */}
+          {state === 'active' && !reduced && (
+            <motion.span
+              aria-hidden
+              className="absolute inset-0 rounded-full ring-2 ring-accent"
+              initial={{ scale: 1, opacity: 0.7 }}
+              animate={{ scale: 1.7, opacity: 0 }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+            />
+          )}
+          <motion.span className="block w-full h-full" style={{ x: sx, y: sy }}>
+            <Sphere
+              lot={lot}
+              className={`w-full h-full shadow-[-10px_14px_24px_rgba(26,28,26,0.16)] transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.14] group-hover:shadow-[-14px_22px_34px_rgba(26,28,26,0.2)] group-focus-visible:scale-[1.14] ${
+                state === 'active' ? 'ring-2 ring-accent ring-offset-4 ring-offset-paper scale-[1.14]' : ''
+              }`}
+            />
+          </motion.span>
         </motion.span>
-        <span className="mt-2.5 inline-flex items-center gap-1.5 whitespace-nowrap font-sans text-[13px] font-semibold text-ink transition-colors group-hover:text-accent-deep group-focus-visible:text-accent-deep">
+        {/* the contact shadow — it breathes with the float */}
+        <motion.span
+          aria-hidden
+          className="mt-1 block w-[clamp(30px,4.2cqw,56px)] h-[5px] rounded-[50%] bg-ink/25 blur-[4px]"
+          animate={reduced ? undefined : { scaleX: [1, 0.78, 1], opacity: [0.55, 0.3, 0.55] }}
+          transition={{ duration: float, repeat: Infinity, ease: 'easeInOut', delay: index * 0.6 }}
+        />
+        <span className="mt-1.5 inline-flex items-center gap-1.5 whitespace-nowrap font-sans text-[13px] font-semibold text-ink transition-colors group-hover:text-accent-deep group-focus-visible:text-accent-deep">
           <StageDot lot={lot} />
           {lot.name}
         </span>
@@ -219,18 +296,24 @@ function OrbitNode({
         {/* preview — the hook: what it is, why look, what it costs */}
         {state !== 'active' && (
           <span
-            className={`pointer-events-none absolute left-1/2 -translate-x-1/2 ${below ? 'top-full mt-2' : 'bottom-full mb-2'} w-[290px] rounded-2xl bg-white/95 backdrop-blur-md p-4 text-left shadow-xl shadow-ink/10 ring-1 ring-ink/5 opacity-0 translate-y-1 scale-[0.98] transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 group-focus-visible:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:scale-100`}
+            className={`pointer-events-none absolute left-1/2 -translate-x-1/2 ${below ? 'top-full mt-3 origin-top' : 'bottom-full mb-3 origin-bottom'} w-[300px] overflow-hidden rounded-[20px] bg-white/95 backdrop-blur-xl text-left shadow-[0_24px_60px_-18px_rgba(26,28,26,0.35)] ring-1 ring-ink/6 opacity-0 ${below ? '-translate-y-1' : 'translate-y-1'} scale-95 blur-[2px] transition-[opacity,transform,filter] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 group-hover:blur-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:scale-100 group-focus-visible:blur-0`}
           >
-            <span className={`block ${TYPE.label}`}>{lot.kind}</span>
-            <span className="mt-1.5 block font-sans text-sm font-medium leading-snug text-ink">{hookOf(lot)}</span>
-            <span className="mt-3 pt-2.5 flex items-center justify-between gap-3 border-t border-ink/6">
-              <span className="font-sans text-[13px] font-semibold text-ink whitespace-nowrap">{priceOf(lot.sheet ?? {})}</span>
-              <span className="font-sans text-[13px] font-semibold text-accent-deep whitespace-nowrap">{lot.opportunity} →</span>
+            {/* the project's own colour, as light across the top */}
+            <span aria-hidden className={`absolute -top-16 -right-10 w-40 h-40 rounded-full blur-3xl opacity-60 ${lot.glow}`} />
+            <span className="relative block p-4">
+              <span className={`block ${TYPE.label}`}>{lot.type} · {lot.kind}</span>
+              <span className="mt-2 block font-serif font-semibold text-base leading-snug text-ink">{hookOf(lot)}</span>
+              <span className="mt-3.5 pt-3 flex items-center justify-between gap-3 border-t border-ink/6">
+                <span className="font-sans text-[13px] font-semibold text-ink whitespace-nowrap">{priceOf(lot.sheet ?? {})}</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2.5 py-1 font-sans text-[13px] font-semibold text-accent-deep whitespace-nowrap">
+                  {lot.opportunity} <span aria-hidden>→</span>
+                </span>
+              </span>
             </span>
           </span>
         )}
       </motion.button>
-    </div>
+    </motion.div>
   );
 }
 
@@ -238,7 +321,7 @@ function OrbitNode({
  *  It asks for the project that would sit there. */
 function OpenSeat({ x, y, label, dim, onOpen }: { x: number; y: number; label: string; dim: boolean; onOpen: () => void }) {
   return (
-    <div className="absolute -translate-x-1/2 -translate-y-1/2 z-10 hover:z-30 focus-within:z-30" style={{ left: `${x}%`, top: `${y}%` }}>
+    <div className="pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 z-10 hover:z-30 focus-within:z-30" style={{ left: `${x}%`, top: `${y}%` }}>
       <motion.button
         type="button"
         onClick={onOpen}
@@ -302,16 +385,43 @@ function Pending({ label }: { label: string }) {
 }
 
 const reveal = {
-  hidden: { opacity: 0, y: 8 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.32, ease: 'easeOut' as const } },
+  hidden: { opacity: 0, y: 10, filter: 'blur(4px)' },
+  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.45, ease: EASE.out } },
 };
+
+/** A number that counts up to itself when it appears — "500+" climbs from
+ *  0 to 500 and keeps its "+". Anything that isn't a number stays as written. */
+function CountUp({ value }: { value: string }) {
+  const reduced = useReducedMotion() ?? false;
+  const ref = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    const m = value.match(/^([^\d]*)([\d,]*\.?\d+)(.*)$/);
+    if (!m || reduced || !ref.current) return;
+    const [, pre, num, post] = m;
+    const target = parseFloat(num.replace(/,/g, ''));
+    const decimals = num.includes('.') ? num.split('.')[1].length : 0;
+    const el = ref.current;
+    const controls = animate(0, target, {
+      duration: 1.1,
+      ease: EASE.out,
+      delay: 0.25,
+      onUpdate: (v) => {
+        el.textContent = `${pre}${v.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}${post}`;
+      },
+    });
+    return () => controls.stop();
+  }, [value, reduced]);
+  return <span ref={ref}>{value}</span>;
+}
 
 /** The dashboard a click opens: just enough to want the dossier. The full
  *  story — summary, assets, risks, handover — stays in the dossier. */
 function LotPanel({
-  lot, position, total, onClose, onStep, onEnter, onAsk,
+  lot, position, total, onClose, onStep, onEnter, onAsk, sheetFromBelow,
 }: {
   lot: Lot;
+  /** Phones: the panel is a sheet and rises from the bottom edge. */
+  sheetFromBelow: boolean;
   position: number;
   total: number;
   onClose: () => void;
@@ -356,14 +466,27 @@ function LotPanel({
       role="dialog"
       aria-modal="false"
       aria-labelledby="lot-title"
-      initial={{ opacity: 0, x: 32 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 32 }}
-      transition={{ type: 'spring', stiffness: 160, damping: 22 }}
-      className="pointer-events-auto w-full max-h-full overflow-hidden rounded-[28px] bg-white/92 backdrop-blur-xl ring-1 ring-ink/6 shadow-2xl shadow-ink/12 flex flex-col"
+      initial={sheetFromBelow ? { opacity: 0, y: 80 } : { opacity: 0, x: 56, scale: 0.96 }}
+      animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+      exit={sheetFromBelow ? { opacity: 0, y: 60, transition: { duration: 0.25, ease: EASE.inOut } } : { opacity: 0, x: 40, scale: 0.97, transition: { duration: 0.25, ease: EASE.inOut } }}
+      transition={SPRING.glide}
+      className="relative pointer-events-auto w-full max-h-full overflow-hidden rounded-[28px] bg-white/90 backdrop-blur-2xl ring-1 ring-ink/6 shadow-[0_40px_100px_-30px_rgba(26,28,26,0.35)] flex flex-col"
     >
+      {/* the project's colour, as light from the top corner — it changes
+          with the lot as the visitor walks the orbit */}
+      <AnimatePresence initial={false}>
+        <motion.span
+          key={lot.id}
+          aria-hidden
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 0.75, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8, ease: EASE.out }}
+          className={`pointer-events-none absolute -top-28 -right-20 w-80 h-80 rounded-full blur-3xl ${lot.glow}`}
+        />
+      </AnimatePresence>
       {/* walk the orbit */}
-      <div className="flex items-center justify-between px-5 pt-4 shrink-0">
+      <div className="relative flex items-center justify-between px-5 pt-4 shrink-0">
         <div className="flex items-center gap-1">
           <button type="button" onClick={() => onStep(-1)} aria-label="Previous project" className="w-8 h-8 rounded-full text-ink-soft hover:bg-paper focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">←</button>
           <button type="button" onClick={() => onStep(1)} aria-label="Next project" className="w-8 h-8 rounded-full text-ink-soft hover:bg-paper focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">→</button>
@@ -374,14 +497,14 @@ function LotPanel({
         <button ref={closeRef} type="button" onClick={onClose} aria-label="Back to the orbit" className="w-8 h-8 rounded-full bg-paper text-ink-soft hover:bg-[#E2E6E2] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">×</button>
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 lg:px-7 pb-5">
+      <div className="relative flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 lg:px-7 pb-5">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={lot.id}
             initial="hidden"
             animate="show"
             exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
-            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05 } } }}
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.055, delayChildren: 0.05 } } }}
           >
             <motion.div variants={reveal} className="flex items-center gap-3 pt-3">
               {/* on desktop the camera already holds the sphere — phones show it here */}
@@ -389,7 +512,9 @@ function LotPanel({
               <span className={TYPE.label}>{lot.type} · {lot.kind}</span>
             </motion.div>
 
-            <motion.h2 variants={reveal} id="lot-title" className={`mt-3 ${TYPE.display}`}>{lot.name}</motion.h2>
+            <h2 id="lot-title" className="mt-3">
+              <RevealText text={lot.name} className={`block ${TYPE.display}`} delay={0.08} />
+            </h2>
             <motion.p variants={reveal} className={`mt-2.5 ${TYPE.lead}`}>{hookOf(lot, sheet)}</motion.p>
             {SHOW_EMPTY && !sheet.hook && <motion.p variants={reveal} className="mt-1"><Pending label="hook" /></motion.p>}
             <motion.span variants={reveal} className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1 font-mono font-bold text-[11px] uppercase tracking-[0.14em] text-accent-deep">
@@ -399,7 +524,7 @@ function LotPanel({
             {/* the three facts */}
             <motion.dl variants={reveal} className="mt-5 grid grid-cols-3 gap-2">
               {facts.map((f) => (
-                <div key={f.label} className="rounded-2xl bg-paper/80 px-3 py-3 min-w-0">
+                <div key={f.label} onPointerMove={trackPointer} className="py-spot rounded-2xl bg-paper/80 px-3 py-3 min-w-0">
                   <dt className={TYPE.label}>{f.label}</dt>
                   <dd className="mt-1.5 font-sans text-sm font-semibold leading-snug text-ink break-words">{f.value}</dd>
                   {f.note && <dd className="mt-0.5 font-sans text-[13px] leading-snug text-ink-mute">{f.note}</dd>}
@@ -411,8 +536,8 @@ function LotPanel({
             {numbers.length > 0 ? (
               <motion.div variants={reveal} className="mt-2 grid grid-cols-3 gap-2">
                 {numbers.map((n, i) => (
-                  <div key={`${n.label}-${i}`} className="rounded-2xl ring-1 ring-ink/8 px-3 py-3">
-                    <div className="font-serif font-semibold text-2xl leading-none text-ink">{n.value}</div>
+                  <div key={`${n.label}-${i}`} onPointerMove={trackPointer} className="py-spot rounded-2xl ring-1 ring-ink/8 bg-white/60 px-3 py-3">
+                    <div className="font-serif font-semibold text-2xl leading-none text-ink tabular-nums"><CountUp value={n.value} /></div>
                     <div className="mt-1.5 font-sans text-[13px] leading-snug text-ink-mute">{n.label}</div>
                   </div>
                 ))}
@@ -449,15 +574,18 @@ function LotPanel({
 
       {/* the move, always in reach — the dossier when the room is open, the
           conversation when it isn't — and the other one beside it */}
-      <div className="shrink-0 border-t border-ink/6 bg-white/80 px-6 lg:px-7 pt-3 pb-4 grid gap-1">
+      <div className="relative shrink-0 border-t border-ink/6 bg-white/80 px-6 lg:px-7 pt-3 pb-4 grid gap-1">
         <p className="text-center font-sans text-[13px] text-ink-mute pb-1">Every deal starts as a conversation — no checkout.</p>
-        <button
-          type="button"
-          onClick={() => (lot.enter_url ? onEnter(panelRef.current) : onAsk())}
-          className="cta-glow w-full rounded-full bg-ink text-white px-7 py-3.5 font-sans text-sm font-semibold shadow-lg shadow-ink/15 hover:bg-accent-deep transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-        >
-          {lot.enter_url ? 'Open the dossier →' : `Ask about ${lot.name} →`}
-        </button>
+        <Magnetic strength={0.12}>
+          <button
+            type="button"
+            onClick={() => (lot.enter_url ? onEnter(panelRef.current) : onAsk())}
+            className="py-sheen group/cta w-full inline-flex items-center justify-center gap-2 rounded-full bg-ink text-white px-7 py-3.5 font-sans text-sm font-semibold shadow-[0_14px_30px_-12px_rgba(26,28,26,0.55)] hover:bg-accent-deep hover:shadow-[0_18px_40px_-14px_rgba(4,120,87,0.7)] transition-[background-color,box-shadow] duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+          >
+            {lot.enter_url ? 'Open the dossier' : `Ask about ${lot.name}`}
+            <span aria-hidden className="transition-transform duration-300 group-hover/cta:translate-x-1">→</span>
+          </button>
+        </Magnetic>
         {lot.enter_url ? (
           <button
             type="button"
@@ -473,6 +601,184 @@ function LotPanel({
     </motion.aside>
     </div>
     </>
+  );
+}
+
+/* ---------- the dial ---------- */
+
+/** The sphere layer's own proportions — the stage minus its insets —
+ *  so the dial can draw in true units: circles stay round, strokes stay
+ *  even, and a line can be drawn in (pathLength) without distortion. */
+const VB_W = Math.round((100 * FIELD.w * (1 - 2 * INSET.x)) / (FIELD.h * (1 - 2 * INSET.y)) * 100) / 100;
+const dial = (p: { x: number; y: number }) => ({ x: Math.round(p.x * VB_W) / 100, y: p.y });
+const C = { x: VB_W / 2, y: 50 };
+
+/** The scale around the orbit — a tick every three degrees, longer every fifteen. */
+const TICKS = Array.from({ length: 120 }, (_, i) => {
+  const major = i % 5 === 0;
+  return { a: dial(toPoint(i * 3, 1.1)), b: dial(toPoint(i * 3, major ? 1.155 : 1.125)), major };
+});
+
+/** Each sector as a segment of the ready ring, with a small gap between. */
+const ARC_PATHS = ARCS.map((a) => {
+  const s = a.start + 1.6;
+  const e = a.end - 1.6;
+  const pts = Array.from({ length: 49 }, (_, i) => dial(toPoint(s + ((e - s) * i) / 48, RING.ready)));
+  return { key: a.key, d: `M${pts.map((p) => `${p.x} ${p.y}`).join(' L')}` };
+});
+
+/** A light that travels a ring forever — a soft tail and a bright head. */
+function Comet({ ring, duration, length, reverse = false }: { ring: number; duration: number; length: number; reverse?: boolean }) {
+  const shared = {
+    cx: C.x, cy: C.y, rx: (VB_W / 2) * ring, ry: 50 * ring,
+    fill: 'none', stroke: 'currentColor', strokeLinecap: 'round' as const, pathLength: 100,
+    className: 'py-comet',
+  };
+  const head = length * 0.22;
+  // the head rides the front of the tail: ahead in time going forward,
+  // level with it going back
+  const lead = reverse ? 0 : ((length - head) / 100) * duration;
+  return (
+    <>
+      <ellipse
+        {...shared}
+        strokeOpacity={0.22}
+        strokeWidth={0.5}
+        strokeDasharray={`${length} ${100 - length}`}
+        style={{ animationDuration: `${duration}s`, animationDirection: reverse ? 'reverse' : 'normal' }}
+      />
+      <ellipse
+        {...shared}
+        strokeOpacity={0.9}
+        strokeWidth={0.6}
+        strokeDasharray={`${head} ${100 - head}`}
+        style={{ animationDuration: `${duration}s`, animationDelay: `${-lead}s`, animationDirection: reverse ? 'reverse' : 'normal' }}
+      />
+    </>
+  );
+}
+
+/** The orbit drawn as an instrument: the scale, the two readiness rings,
+ *  the sectors as segments, the spokes between them, the lights that
+ *  travel the rings, and the thread to the sphere under the hand. */
+function Dial({
+  focused, isLit, hovered, reduced,
+}: {
+  focused: boolean;
+  isLit: (k: WayIn) => boolean;
+  hovered: { id: string; x: number; y: number } | null;
+  reduced: boolean;
+}) {
+  const h = hovered ? dial(hovered) : null;
+  return (
+    <svg
+      viewBox={`0 0 ${VB_W} 100`}
+      preserveAspectRatio="none"
+      className="absolute inset-0 w-full h-full overflow-visible pointer-events-none text-accent"
+      aria-hidden
+    >
+      <motion.g
+        initial={reduced ? false : { opacity: 0 }}
+        animate={{ opacity: focused ? 0.4 : 1 }}
+        transition={{ duration: 1.2, delay: reduced || focused ? 0 : 0.6 }}
+      >
+        {TICKS.map((t, i) => (
+          <line key={i} x1={t.a.x} y1={t.a.y} x2={t.b.x} y2={t.b.y} stroke="currentColor" strokeOpacity={t.major ? 0.45 : 0.2} strokeWidth={0.2} />
+        ))}
+      </motion.g>
+
+      {/* ready — drawn in as the room opens */}
+      <motion.ellipse
+        cx={C.x} cy={C.y} rx={(VB_W / 2) * RING.ready} ry={50 * RING.ready}
+        fill="none" stroke="currentColor" strokeOpacity={0.24} strokeWidth={0.2}
+        initial={reduced ? false : { pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 1.6, ease: EASE.inOut, delay: 0.15 }}
+      />
+      {/* forming — dotted, further out */}
+      <motion.ellipse
+        cx={C.x} cy={C.y} rx={(VB_W / 2) * RING.forming} ry={50 * RING.forming}
+        fill="none" stroke="currentColor" strokeOpacity={0.45} strokeWidth={0.3} strokeDasharray="0.05 1.4" strokeLinecap="round"
+        initial={reduced ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.4, ease: EASE.out, delay: 0.4 }}
+      />
+
+      {/* the sectors — the way in that's chosen or under the hand glows */}
+      {ARC_PATHS.map((a) => {
+        const lit = isLit(a.key);
+        return (
+          <motion.path
+            key={a.key}
+            d={a.d}
+            fill="none" stroke="currentColor" strokeLinecap="round"
+            initial={reduced ? false : { pathLength: 0, strokeOpacity: 0 }}
+            animate={{ pathLength: 1, strokeOpacity: lit ? 0.9 : 0.2, strokeWidth: lit ? 0.75 : 0.45 }}
+            transition={{ pathLength: { duration: 1.3, ease: EASE.out, delay: 0.5 }, default: { duration: 0.35 } }}
+          />
+        );
+      })}
+
+      {/* the spokes between the sectors */}
+      {ARCS.map((a) => {
+        const p = dial(toPoint(a.start, 1.1));
+        return (
+          <motion.line
+            key={a.key} x1={C.x} y1={C.y} x2={p.x} y2={p.y}
+            stroke="currentColor" strokeWidth={0.16}
+            initial={reduced ? false : { pathLength: 0, strokeOpacity: 0.1 }}
+            animate={{ pathLength: 1, strokeOpacity: isLit(a.key) ? 0.35 : 0.1 }}
+            transition={{ pathLength: { duration: 1, ease: EASE.out, delay: 0.3 }, default: { duration: 0.35 } }}
+          />
+        );
+      })}
+
+      {/* the orbit moves */}
+      {!reduced && (
+        <>
+          <Comet ring={RING.ready} duration={24} length={12} />
+          <Comet ring={RING.forming} duration={40} length={7} reverse />
+        </>
+      )}
+
+      {/* the thread from the centre to the sphere under the hand */}
+      <AnimatePresence>
+        {h && hovered && !focused && (
+          <motion.line
+            key={hovered.id}
+            x1={C.x} y1={C.y} x2={h.x} y2={h.y}
+            stroke="currentColor" strokeOpacity={0.6} strokeWidth={0.28} strokeLinecap="round"
+            initial={{ pathLength: 0, opacity: 1 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.2 } }}
+            transition={{ duration: 0.45, ease: EASE.out }}
+          />
+        )}
+      </AnimatePresence>
+    </svg>
+  );
+}
+
+/** The whole orbit tilts a few degrees toward the pointer. */
+function TiltLayer({ x, y, children }: { x: MotionValue<number>; y: MotionValue<number>; children: React.ReactNode }) {
+  const rotateY = useTransform(x, (v) => v * 4);
+  const rotateX = useTransform(y, (v) => v * -3);
+  return (
+    <motion.div className="absolute inset-0" style={{ rotateX, rotateY, transformPerspective: 1600 }}>
+      {children}
+    </motion.div>
+  );
+}
+
+/** A plane of the orbit, drifting against (far) or with (near) the
+ *  pointer — the parallax that gives the canvas its depth. */
+function DepthLayer({ x, y, depth, children }: { x: MotionValue<number>; y: MotionValue<number>; depth: 1 | -1; children: React.ReactNode }) {
+  const tx = useTransform(x, (v) => v * 10 * depth);
+  const ty = useTransform(y, (v) => v * 6 * depth);
+  return (
+    <motion.div className={`absolute inset-0 pointer-events-none ${depth > 0 ? 'z-20' : ''}`} style={{ x: tx, y: ty }}>
+      {children}
+    </motion.div>
   );
 }
 
@@ -598,41 +904,50 @@ export default function GalaxyExhibition() {
   const nodeState = (l: Lot) =>
     focus ? (focus.lot.id === l.id ? 'active' : 'dim') : way && l.wayIn !== way ? 'dim' : 'idle';
 
+  // The room answers the hand: the orbit tilts toward the pointer and its
+  // layers part a little — the rings fall back, the spheres come forward —
+  // and a light follows it across the floor. Still while a lot is open:
+  // the camera owns the view then.
+  const tiltOn = !reduced && !focus;
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const smx = useSpring(mx, { stiffness: 50, damping: 16, mass: 1 });
+  const smy = useSpring(my, { stiffness: 50, damping: 16, mass: 1 });
+  const lightX = useMotionValue(-2000);
+  const lightY = useMotionValue(-2000);
+  const light = useMotionTemplate`radial-gradient(560px circle at ${lightX}px ${lightY}px, rgba(5,150,105,0.075), transparent 70%)`;
+  const onRoomMove = (e: React.PointerEvent<HTMLElement>) => {
+    if (e.pointerType !== 'mouse') return;
+    const r = e.currentTarget.getBoundingClientRect();
+    lightX.set(e.clientX - r.left);
+    lightY.set(e.clientY - r.top);
+    if (!tiltOn) return;
+    mx.set((e.clientX / window.innerWidth) * 2 - 1);
+    my.set((e.clientY / window.innerHeight) * 2 - 1);
+  };
+  useEffect(() => {
+    if (tiltOn) return;
+    mx.set(0);
+    my.set(0);
+  }, [tiltOn, mx, my]);
+
+  const hoveredPlace = PLACED.find((p) => p.lot.id === hovered) ?? null;
+  const [arcHover, setArcHover] = useState<WayIn | null>(null);
+  const isLit = (k: WayIn) => way === k || hoveredWay === k || arcHover === k;
+
   return (
     <>
     <motion.div
       {...zoomProps}
-      className="bg-[#EDEFED] text-[#1A1C1A] relative overflow-x-clip antialiased selection:bg-[#059669] selection:text-white"
+      className="bg-paper text-ink relative overflow-x-clip antialiased selection:bg-accent selection:text-white"
     >
-      {/* ambient vignette */}
+      {/* ambient vignette — light from above, the floor darker */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-0 w-full h-[50vh] bg-gradient-to-b from-white/40 to-transparent" />
-        <div className="absolute bottom-0 left-0 w-full h-[50vh] bg-gradient-to-t from-[#D4DDD6]/40 to-transparent" />
+        <div className="absolute top-0 left-0 w-full h-[50vh] bg-gradient-to-b from-white/50 to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full h-[50vh] bg-gradient-to-t from-[#D4DDD6]/45 to-transparent" />
       </div>
 
-      {/* blueprint grid */}
-      <div
-        className="absolute inset-0 pointer-events-none z-0 opacity-[0.22]"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #D4DDD6 1px, transparent 1px),
-            linear-gradient(to bottom, #D4DDD6 1px, transparent 1px)
-          `,
-          backgroundSize: '40px 40px',
-        }}
-      />
-
-      {/* grain */}
-      <div className="absolute inset-0 pointer-events-none z-0 mix-blend-multiply opacity-[0.4]">
-        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" className="w-full h-full opacity-60" preserveAspectRatio="none">
-          <filter id="noiseFilter">
-            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" />
-          </filter>
-          <rect width="100%" height="100%" filter="url(#noiseFilter)" />
-        </svg>
-      </div>
-
-      <GreenDust count={160} />
+      <MuseumAtmosphere dust={56} />
 
       <SiteNav
         crumbs={[{ label: 'Galaxy' }]}
@@ -640,25 +955,36 @@ export default function GalaxyExhibition() {
       />
 
       {/* ============ THE FIRST SCREEN ============ */}
-      <section className="relative z-10 lg:h-[100svh] flex flex-col">
+      <section onPointerMove={onRoomMove} className="relative z-10 lg:h-[100svh] flex flex-col">
+        <motion.div aria-hidden className="hidden lg:block absolute inset-0 pointer-events-none" style={{ background: light }} />
+
         <motion.header
           initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: focus ? 0 : 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="pt-24 px-6 text-center"
+          animate={{ opacity: focus ? 0 : 1, y: focus ? -12 : 0 }}
+          transition={{ duration: 0.5, ease: EASE.out }}
+          className="relative pt-24 px-6 text-center"
         >
-          <p className={TYPE.label}>Galaxy · {COUNT} projects</p>
+          <motion.p
+            initial={{ opacity: 0, letterSpacing: '0.32em' }}
+            animate={{ opacity: 1, letterSpacing: '0.18em' }}
+            transition={{ duration: 1, ease: EASE.out }}
+            className={TYPE.label}
+          >
+            Galaxy · {COUNT} projects
+          </motion.p>
           <AnimatePresence mode="wait" initial={false}>
-            <motion.h1
+            <motion.div
               key={way ?? 'all'}
-              initial={{ opacity: 0, y: 8, filter: 'blur(4px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
-              transition={{ duration: 0.3 }}
-              className={`mt-3 ${TYPE.display}`}
+              exit={{ opacity: 0, y: -10, filter: 'blur(6px)', transition: { duration: 0.2 } }}
             >
-              {way ? TITLE[way] : 'Read the orbit'}<span className="text-accent">.</span>
-            </motion.h1>
+              <RevealText
+                as="h1"
+                text={way ? TITLE[way] : 'Read the orbit'}
+                after={<span className="text-accent">.</span>}
+                className={`mt-3 ${TYPE.display}`}
+                delay={0.1}
+              />
+            </motion.div>
           </AnimatePresence>
           <p className={`lg:hidden mt-3 max-w-md mx-auto ${TYPE.lead}`}>
             Grouped by how you can come in. Tap one to see what you put in and what you take away.
@@ -674,13 +1000,11 @@ export default function GalaxyExhibition() {
           >
             <motion.div
               className="absolute inset-0"
-              initial={reduced ? false : { opacity: 0, scale: 0.86 }}
+              initial={reduced ? false : { opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, ...camera }}
-              transition={{
-                opacity: { duration: 0.5 },
-                default: { type: 'spring', stiffness: 60, damping: 18, mass: 1 },
-              }}
+              transition={{ opacity: { duration: 0.6 }, default: SPRING.camera }}
             >
+              <TiltLayer x={smx} y={smy}>
               <div className="absolute" style={{ inset: `${INSET.y * 100}% ${INSET.x * 100}%` }}>
 
                 {/* the field itself — a click on empty space steps back out */}
@@ -688,96 +1012,96 @@ export default function GalaxyExhibition() {
                   <button type="button" aria-label="Back to the orbit" onClick={closeLot} className="absolute -inset-[40%] z-0 cursor-zoom-out bg-transparent border-0" />
                 )}
 
-                {/* rings and sector spokes */}
-                <svg
-                  viewBox="0 0 100 100"
-                  preserveAspectRatio="none"
-                  className="absolute inset-0 w-full h-full overflow-visible pointer-events-none text-[#059669]"
-                  aria-hidden
-                >
-                  {Object.values(RING).map((r, i) => (
-                    <ellipse
-                      key={r}
-                      cx="50" cy="50" rx={50 * r} ry={50 * r}
-                      fill="none" stroke="currentColor" strokeOpacity={i === 0 ? 0.28 : 0.18}
-                      strokeDasharray={i === 0 ? '3 5' : '1 7'}
-                      vectorEffect="non-scaling-stroke"
-                    />
-                  ))}
-                  {ARCS.map((a) => {
-                    const p = toPoint(a.start, 1.12);
-                    const lit = way === a.key || hoveredWay === a.key;
+                {/* ---- the far layer: the dial ---- */}
+                <DepthLayer x={smx} y={smy} depth={-1}>
+                  {/* the light at the heart of the orbit */}
+                  <motion.div
+                    aria-hidden
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[46%] aspect-square rounded-full pointer-events-none"
+                    style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.16), rgba(5,150,105,0.04) 45%, transparent 70%)' }}
+                    animate={reduced ? undefined : { scale: [1, 1.08, 1], opacity: [0.8, 1, 0.8] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+
+                  <Dial
+                    focused={!!focus}
+                    isLit={isLit}
+                    hovered={hoveredPlace ? { id: hoveredPlace.lot.id, x: hoveredPlace.x, y: hoveredPlace.y } : null}
+                    reduced={reduced}
+                  />
+
+                  {/* the sectors are the filters */}
+                  {ARCS.map((a, i) => {
+                    // neighbours alternate between two radii so narrow sectors
+                    // never print their names side by side
+                    const p = toPoint((a.start + a.end) / 2, i % 2 ? 0.44 : 0.3);
+                    const n = PLACED.filter((x) => x.lot.wayIn === a.key).length;
                     return (
-                      <line
-                        key={a.key} x1="50" y1="50" x2={p.x} y2={p.y}
-                        stroke="currentColor" strokeOpacity={lit ? 0.3 : 0.1}
-                        vectorEffect="non-scaling-stroke"
-                      />
+                      <motion.button
+                        key={a.key}
+                        type="button"
+                        aria-pressed={way === a.key}
+                        onClick={() => pickWay(a.key)}
+                        onMouseEnter={() => setArcHover(a.key)}
+                        onMouseLeave={() => setArcHover(null)}
+                        initial={reduced ? false : { opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: focus ? 0 : 1, scale: 1 }}
+                        transition={{ duration: 0.5, ease: EASE.out, delay: focus ? 0 : 0.9 + i * 0.05 }}
+                        whileTap={{ scale: 0.94 }}
+                        className={`pointer-events-auto absolute z-10 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full px-2.5 py-1 font-mono font-bold uppercase text-[11px] tracking-[0.18em] transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                          focus ? 'pointer-events-none' : ''
+                        } ${way === a.key ? 'bg-ink text-white shadow-lg shadow-ink/20' : isLit(a.key) ? 'bg-white/80 text-accent-deep shadow-sm' : 'text-ink-mute/80 hover:text-accent-deep'}`}
+                        style={{ left: `${p.x}%`, top: `${p.y}%` }}
+                      >
+                        {a.label} <span className="opacity-60">{n}</span>
+                      </motion.button>
                     );
                   })}
-                </svg>
-
-                {/* the sectors are the filters */}
-                {ARCS.map((a, i) => {
-                  // neighbours alternate between two radii so narrow sectors
-                  // never print their names side by side
-                  const p = toPoint((a.start + a.end) / 2, i % 2 ? 0.44 : 0.3);
-                  const n = PLACED.filter((x) => x.lot.wayIn === a.key).length;
-                  const lit = way === a.key || hoveredWay === a.key;
-                  return (
-                    <motion.button
-                      key={a.key}
-                      type="button"
-                      aria-pressed={way === a.key}
-                      onClick={() => pickWay(a.key)}
-                      animate={{ opacity: focus ? 0 : 1 }}
-                      className={`absolute z-10 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full px-2.5 py-1 font-mono font-bold uppercase text-[11px] tracking-[0.18em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                        focus ? 'pointer-events-none' : ''
-                      } ${way === a.key ? 'bg-ink text-white' : lit ? 'text-accent-deep' : 'text-ink-mute/80 hover:text-accent-deep'}`}
-                      style={{ left: `${p.x}%`, top: `${p.y}%` }}
-                    >
-                      {a.label} <span className="opacity-60">{n}</span>
-                    </motion.button>
-                  );
-                })}
+                </DepthLayer>
 
                 {/* central gem — the door to the museum shop */}
                 <motion.div
-                  animate={{ opacity: focus ? 0.25 : 1 }}
+                  initial={reduced ? false : { opacity: 0, scale: 0, rotate: -30 }}
+                  animate={{ opacity: focus ? 0.25 : 1, scale: 1, rotate: 0 }}
+                  transition={{ ...SPRING.glide, delay: reduced ? 0 : 0.2 }}
                   className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[clamp(40px,5cqw,64px)] aspect-square z-10"
                 >
                   <GemLink />
                 </motion.div>
 
-                {/* empty sectors keep a seat */}
-                {ARCS.filter((a) => !PLACED.some((p) => p.lot.wayIn === a.key)).map((a) => {
-                  const p = toPoint((a.start + a.end) / 2, RING.ready);
-                  return (
-                    <OpenSeat
-                      key={a.key}
+                {/* ---- the near layer: what you can take ---- */}
+                <DepthLayer x={smx} y={smy} depth={1}>
+                  {/* empty sectors keep a seat */}
+                  {ARCS.filter((a) => !PLACED.some((p) => p.lot.wayIn === a.key)).map((a) => {
+                    const p = toPoint((a.start + a.end) / 2, RING.ready);
+                    return (
+                      <OpenSeat
+                        key={a.key}
+                        x={p.x}
+                        y={p.y}
+                        label={a.label}
+                        dim={!!focus || (way !== null && way !== a.key)}
+                        onOpen={() => setDialog({})}
+                      />
+                    );
+                  })}
+
+                  {/* the lots */}
+                  {PLACED.map((p, index) => (
+                    <OrbitNode
+                      key={p.lot.id}
+                      lot={p.lot}
+                      index={index}
                       x={p.x}
                       y={p.y}
-                      label={a.label}
-                      dim={!!focus || (way !== null && way !== a.key)}
-                      onOpen={() => setDialog({})}
+                      state={nodeState(p.lot)}
+                      onOpen={() => (focus?.lot.id === p.lot.id ? closeLot() : openLot(p.lot.id))}
+                      onHover={(on) => setHovered(on ? p.lot.id : null)}
                     />
-                  );
-                })}
-
-                {/* the lots */}
-                {PLACED.map((p, index) => (
-                  <OrbitNode
-                    key={p.lot.id}
-                    lot={p.lot}
-                    index={index}
-                    x={p.x}
-                    y={p.y}
-                    state={nodeState(p.lot)}
-                    onOpen={() => (focus?.lot.id === p.lot.id ? closeLot() : openLot(p.lot.id))}
-                    onHover={(on) => setHovered(on ? p.lot.id : null)}
-                  />
-                ))}
+                  ))}
+                </DepthLayer>
               </div>
+              </TiltLayer>
             </motion.div>
           </div>
         </div>
@@ -808,7 +1132,14 @@ export default function GalaxyExhibition() {
               );
             }
             return (
-              <section key={a.key} aria-label={a.label}>
+              <motion.section
+                key={a.key}
+                aria-label={a.label}
+                initial={reduced ? false : { opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.6, ease: EASE.out }}
+              >
                 <h2 className={`px-2 mb-2.5 font-mono font-bold uppercase text-[11px] tracking-[0.18em] ${way === a.key ? 'text-accent-deep' : 'text-ink-mute'}`}>
                   {a.label} <span className="opacity-60">· {lots.length}</span>
                 </h2>
@@ -818,7 +1149,7 @@ export default function GalaxyExhibition() {
                       <button
                         type="button"
                         onClick={() => openLot(lot.id)}
-                        className="w-full flex items-center gap-3.5 px-4 py-3.5 text-left bg-transparent border-0 cursor-pointer active:bg-[#EDEFED] focus:outline-none focus-visible:bg-[#EDEFED]"
+                        className="w-full flex items-center gap-3.5 px-4 py-3.5 text-left bg-transparent border-0 cursor-pointer transition-colors active:bg-paper focus:outline-none focus-visible:bg-paper"
                       >
                         <Sphere lot={lot} className="w-11 h-11 shrink-0 shadow-[-4px_4px_10px_rgba(0,0,0,0.1)]" />
                         <span className="min-w-0 flex-1">
@@ -832,7 +1163,7 @@ export default function GalaxyExhibition() {
                     </li>
                   ))}
                 </ul>
-              </section>
+              </motion.section>
             );
           })}
           <Link
@@ -859,6 +1190,7 @@ export default function GalaxyExhibition() {
           onStep={step}
           onEnter={(from) => focus.lot.enter_url && zoomTo(from, focus.lot.enter_url)}
           onAsk={() => askAbout(focus.lot)}
+          sheetFromBelow={!box || box.vw < 1024}
         />
       )}
     </AnimatePresence>
@@ -871,6 +1203,7 @@ export default function GalaxyExhibition() {
         intent,
         hovered: PLACED.find((p) => p.lot.id === hovered)?.lot ?? null,
         focus: focus?.lot ?? null,
+        phone: !!box && box.vw < 1024,
       })}
       offsetRight={focus && box && box.vw >= 1024 ? PANEL_SPACE : 0}
       hidden={!!focus && (!box || box.vw < 1024)}
