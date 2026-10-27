@@ -394,14 +394,3 @@ html, body {
   .py-dust { display: none; }
   .py-sheen:hover::after { animation: none; }
 }
-
-/* a light travelling a Galaxy ring (page.tsx, Comet) — duration, delay
-   and direction are set per ring */
-.py-comet { animation: py-comet linear infinite; }
-@keyframes py-comet {
-  from { stroke-dashoffset: 0; }
-  to   { stroke-dashoffset: -100; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .py-comet { animation: none; }
-}

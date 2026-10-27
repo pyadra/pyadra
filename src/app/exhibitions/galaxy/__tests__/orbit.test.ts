@@ -49,3 +49,11 @@ describe('layoutOrbit', () => {
     expect(after).toBe(before + 1);
   });
 });
+
+describe('the featured lot', () => {
+  it('is at most one, and always a lot with a room to enter', () => {
+    const featured = LOTS.filter((l) => l.featured);
+    expect(featured.length).toBeLessThanOrEqual(1);
+    for (const l of featured) expect(l.enter_url).toBeTruthy();
+  });
+});

@@ -39,6 +39,9 @@ export type Lot = {
   sheet?: LotSheet;
   /** null until the project has a page — the sphere shows, it just isn't a door yet. */
   enter_url: string | null;
+  /** The piece the room leads with — larger, in full colour, where a first
+   *  visit starts. One at most, and only a lot with a room to enter. */
+  featured?: boolean;
   sphereClass: string;
   glow: string;
 };
@@ -71,12 +74,14 @@ export type LotSheet = {
   live?: { label: string; href: string };
 };
 
-/** The sectors, clockwise from the top. `pending` holds projects whose way
+/** The sectors, clockwise from the top — labelled with the Home's own
+ *  verbs ("I want to own one" lands on Own), so the words don't change
+ *  between rooms. `pending` holds projects whose way
  *  in the owner hasn't set yet — it disappears once it's empty. */
 export const SECTORS: { key: WayIn; label: string }[] = [
-  { key: 'acquire', label: 'Acquire' },
-  { key: 'operate', label: 'Operate' },
-  { key: 'support', label: 'Support' },
+  { key: 'acquire', label: 'Own' },
+  { key: 'operate', label: 'Run' },
+  { key: 'support', label: 'Back' },
   { key: 'build', label: 'Build' },
   { key: 'forming', label: 'Forming' },
   { key: 'pending', label: 'To confirm' },
@@ -101,6 +106,7 @@ export const LOTS: Lot[] = [
       get: 'The product and its operation. Pyadra keeps a small share of each capsule sold.',
     },
     enter_url: '/exhibitions/galaxy/ethernicapsule',
+    featured: true,
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FDF6EA,#EBD8B9,#D3B58C)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
     glow: 'bg-[#E4C99F]',
   },

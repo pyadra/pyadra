@@ -25,7 +25,7 @@ import RevealText from '@/app/components/ui/RevealText';
 import Magnetic from '@/app/components/ui/Magnetic';
 import BringIdeaDialog, { type DialogCopy } from '@/app/components/nav/BringIdeaDialog';
 import Guide from '@/app/components/guide/Guide';
-import { INTENTS, useIntent, type Intent } from '@/app/components/guide/intent';
+import { INTENTS, useIntent } from '@/app/components/guide/intent';
 import { LOTS, type Lot, type LotSheet, type WayIn } from './lots';
 import { layoutOrbit, toPoint, RING, FIELD } from './orbit';
 
@@ -76,7 +76,7 @@ const names = (lots: Lot[]) =>
 
 /** What the guide says on the orbit — counted from the lots, so it can
  *  never fall behind the data. */
-function narrate({ way, intent, hovered, focus, phone }: { way: WayIn | null; intent: Intent | null; hovered: Lot | null; focus: Lot | null; phone: boolean }): string {
+function narrate({ way, hovered, focus, phone }: { way: WayIn | null; hovered: Lot | null; focus: Lot | null; phone: boolean }): string {
   if (focus) {
     switch (focus.wayIn) {
       case 'acquire': return focus.enter_url
@@ -96,7 +96,7 @@ function narrate({ way, intent, hovered, focus, phone }: { way: WayIn | null; in
   switch (way) {
     case 'acquire':
       return lit.length > 3
-        ? `${say(lit.length)} projects are for sale today, each one whole. Hover one to see what you'd take.`
+        ? `${say(lit.length)} projects are for sale today, each one whole. ${phone ? 'Tap' : 'Hover'} one to see what you'd take.`
         : `${lit.length === 1 ? 'One project is' : `${say(lit.length)} projects are`} for sale today: ${names(lit)}. Each one can be yours, whole.`;
     case 'operate': return `${names(lit)} ${lit.length === 1 ? 'is' : 'are'} looking for someone to run ${lit.length === 1 ? 'it' : 'them'}. Here, your work is your capital.`;
     case 'support': return `${names(lit)} ${lit.length === 1 ? 'lives' : 'live'} on ${lit.length === 1 ? 'its' : 'their'} supporters. Backing isn't buying — see what it gives back.`;
@@ -105,9 +105,11 @@ function narrate({ way, intent, hovered, focus, phone }: { way: WayIn | null; in
     case 'pending': return `${names(lit)} haven't set how you come in yet. Ask Pyadra about any of them.`;
   }
   if (phone) return `This is Galaxy: ${say(LOTS.length).toLowerCase()} real projects, grouped by how you can come in. Tap one to meet it.`;
-  if (intent === 'look') return `${say(LOTS.length)} real projects. The direction tells you how to come in; the closer to the centre, the readier it is.`;
-  return `This is Galaxy: ${say(LOTS.length).toLowerCase()} real projects. Pick a direction to light it, or hover a sphere to meet it.`;
+  if (FEATURED) return `Start with ${FEATURED.name} — or hover any sphere to meet it.`;
+  return `This is Galaxy: ${say(LOTS.length).toLowerCase()} real projects. Hover a sphere to meet it.`;
 }
+/** The piece the room leads with (lots.ts `featured`). */
+const FEATURED = LOTS.find((l) => l.featured && l.enter_url) ?? null;
 const COUNT_WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
 const COUNT = COUNT_WORDS[LOTS.length] ?? String(LOTS.length);
 
@@ -174,11 +176,6 @@ function Sphere({ lot, className }: { lot: Lot; className: string }) {
   return (
     <div className={`relative rounded-full overflow-hidden [container-type:inline-size] ${lot.sphereClass} ${className}`}>
       <LogoSlot lot={lot} />
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-        className="absolute inset-0 opacity-40 bg-[conic-gradient(from_0deg,transparent_0deg,transparent_180deg,rgba(255,255,255,0.35)_270deg,transparent_360deg)]"
-      />
       <span aria-hidden className="py-glass" />
     </div>
   );
@@ -196,19 +193,23 @@ const StageDot = ({ lot }: { lot: Lot }) => (
 /** One lot on the canvas: a sphere and a name. The rest waits in the
  *  preview (hover / focus) and the panel (click). */
 function OrbitNode({
-  lot, index, x, y, state, onOpen, onHover,
+  lot, index, x, y, state, quiet, onOpen, onHover,
 }: {
   lot: Lot;
   index: number;
   x: number;
   y: number;
   state: 'idle' | 'active' | 'dim';
+  /** At rest the room is grey-green: a sphere keeps its own colour only
+   *  when it's the featured piece, lit by a direction, or under the hand. */
+  quiet: boolean;
   onOpen: () => void;
   onHover: (on: boolean) => void;
 }) {
   const below = y < 62; // previews open away from the canvas edge
   const reduced = useReducedMotion() ?? false;
   const float = 5 + (index % 4) * 0.7;
+  const size = lot.featured ? 'w-[clamp(60px,8.6cqw,114px)]' : 'w-[clamp(44px,6.2cqw,82px)]';
 
   // the sphere leans toward the hand that's over it
   const px = useMotionValue(0);
@@ -257,13 +258,16 @@ function OrbitNode({
         }}
         className="group relative flex flex-col items-center bg-transparent border-0 p-0 cursor-pointer rounded-2xl focus:outline-none"
       >
+        {lot.featured && (
+          <span className="mb-2 font-mono font-bold text-[11px] uppercase tracking-[0.18em] text-accent-deep">Start here</span>
+        )}
         <motion.span
-          className="relative block w-[clamp(44px,6.2cqw,82px)] aspect-square"
+          className={`relative block ${size} aspect-square`}
           animate={reduced ? undefined : { y: [0, -6, 0] }}
           transition={{ duration: float, repeat: Infinity, ease: 'easeInOut', delay: index * 0.6 }}
         >
-          {/* its colour, spilling onto the floor around it */}
-          <span className={`absolute -inset-2 rounded-full blur-2xl opacity-50 transition-opacity duration-500 group-hover:opacity-90 ${lot.glow}`} />
+          {/* its colour, spilling onto the floor around it — only once it's awake */}
+          <span className={`absolute -inset-2 rounded-full blur-2xl transition-opacity duration-500 group-hover:opacity-90 ${quiet ? 'opacity-0' : 'opacity-50'} ${lot.glow}`} />
           {/* the chosen one keeps a slow pulse */}
           {state === 'active' && !reduced && (
             <motion.span
@@ -277,20 +281,22 @@ function OrbitNode({
           <motion.span className="block w-full h-full" style={{ x: sx, y: sy }}>
             <Sphere
               lot={lot}
-              className={`w-full h-full shadow-[-10px_14px_24px_rgba(26,28,26,0.16)] transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.14] group-hover:shadow-[-14px_22px_34px_rgba(26,28,26,0.2)] group-focus-visible:scale-[1.14] ${
-                state === 'active' ? 'ring-2 ring-accent ring-offset-4 ring-offset-paper scale-[1.14]' : ''
-              }`}
+              className={`w-full h-full shadow-[-10px_14px_24px_rgba(26,28,26,0.16)] transition-[transform,box-shadow,filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.14] group-hover:saturate-100 group-hover:shadow-[-14px_22px_34px_rgba(26,28,26,0.2)] group-focus-visible:scale-[1.14] group-focus-visible:saturate-100 ${
+                quiet ? 'saturate-[0.35]' : ''
+              } ${state === 'active' ? 'ring-2 ring-accent ring-offset-4 ring-offset-paper scale-[1.14]' : ''}`}
             />
           </motion.span>
         </motion.span>
         {/* the contact shadow — it breathes with the float */}
         <motion.span
           aria-hidden
-          className="mt-1 block w-[clamp(30px,4.2cqw,56px)] h-[5px] rounded-[50%] bg-ink/25 blur-[4px]"
+          className={`mt-1 block ${lot.featured ? 'w-[clamp(42px,6cqw,80px)]' : 'w-[clamp(30px,4.2cqw,56px)]'} h-[5px] rounded-[50%] bg-ink/25 blur-[4px]`}
           animate={reduced ? undefined : { scaleX: [1, 0.78, 1], opacity: [0.55, 0.3, 0.55] }}
           transition={{ duration: float, repeat: Infinity, ease: 'easeInOut', delay: index * 0.6 }}
         />
-        <span className="mt-1.5 inline-flex items-center gap-1.5 whitespace-nowrap font-sans text-[13px] font-semibold text-ink transition-colors group-hover:text-accent-deep group-focus-visible:text-accent-deep">
+        <span className={`mt-1.5 inline-flex items-center gap-1.5 whitespace-nowrap font-sans text-[13px] transition-colors group-hover:text-accent-deep group-focus-visible:text-accent-deep ${
+          quiet ? 'font-medium text-ink-soft' : 'font-semibold text-ink'
+        }`}>
           <StageDot lot={lot} />
           {lot.name}
         </span>
@@ -639,44 +645,15 @@ const ARC_PATHS = ARCS.map((a) => {
   return { key: a.key, d: `M${pts.map((p) => `${p.x} ${p.y}`).join(' L')}` };
 });
 
-/** A light that travels a ring forever — a soft tail and a bright head. */
-function Comet({ ring, duration, length, reverse = false }: { ring: number; duration: number; length: number; reverse?: boolean }) {
-  const shared = {
-    cx: C.x, cy: C.y, rx: (VB_W / 2) * ring, ry: 50 * ring,
-    fill: 'none', stroke: 'currentColor', strokeLinecap: 'round' as const, pathLength: 100,
-    className: 'py-comet',
-  };
-  const head = length * 0.22;
-  // the head rides the front of the tail: ahead in time going forward,
-  // level with it going back
-  const lead = reverse ? 0 : ((length - head) / 100) * duration;
-  return (
-    <>
-      <ellipse
-        {...shared}
-        strokeOpacity={0.22}
-        strokeWidth={0.5}
-        strokeDasharray={`${length} ${100 - length}`}
-        style={{ animationDuration: `${duration}s`, animationDirection: reverse ? 'reverse' : 'normal' }}
-      />
-      <ellipse
-        {...shared}
-        strokeOpacity={0.9}
-        strokeWidth={0.6}
-        strokeDasharray={`${head} ${100 - head}`}
-        style={{ animationDuration: `${duration}s`, animationDelay: `${-lead}s`, animationDirection: reverse ? 'reverse' : 'normal' }}
-      />
-    </>
-  );
-}
-
-/** The orbit drawn as an instrument: the scale, the two readiness rings,
- *  the sectors as segments, the spokes between them, the lights that
- *  travel the rings, and the thread to the sphere under the hand. */
+/** The orbit drawn as an instrument. At rest it is only the two readiness
+ *  rings; the scale, the sector and its spokes light up when the visitor
+ *  reaches for something (a direction, a sphere) — light that answers a
+ *  touch, never a room that's busy on its own. */
 function Dial({
-  focused, isLit, hovered, reduced,
+  focused, awake, isLit, hovered, reduced,
 }: {
   focused: boolean;
+  awake: boolean;
   isLit: (k: WayIn) => boolean;
   hovered: { id: string; x: number; y: number } | null;
   reduced: boolean;
@@ -691,8 +668,8 @@ function Dial({
     >
       <motion.g
         initial={reduced ? false : { opacity: 0 }}
-        animate={{ opacity: focused ? 0.4 : 1 }}
-        transition={{ duration: 1.2, delay: reduced || focused ? 0 : 0.6 }}
+        animate={{ opacity: awake && !focused ? 1 : 0 }}
+        transition={{ duration: 0.5, ease: EASE.out }}
       >
         {TICKS.map((t, i) => (
           <line key={i} x1={t.a.x} y1={t.a.y} x2={t.b.x} y2={t.b.y} stroke="currentColor" strokeOpacity={t.major ? 0.45 : 0.2} strokeWidth={0.2} />
@@ -712,11 +689,11 @@ function Dial({
         cx={C.x} cy={C.y} rx={(VB_W / 2) * RING.forming} ry={50 * RING.forming}
         fill="none" stroke="currentColor" strokeOpacity={0.45} strokeWidth={0.3} strokeDasharray="0.05 1.4" strokeLinecap="round"
         initial={reduced ? false : { opacity: 0 }}
-        animate={{ opacity: 1 }}
+        animate={{ opacity: 0.6 }}
         transition={{ duration: 1.4, ease: EASE.out, delay: 0.4 }}
       />
 
-      {/* the sectors — the way in that's chosen or under the hand glows */}
+      {/* the sectors — only the way in that's chosen or under the hand shows */}
       {ARC_PATHS.map((a) => {
         const lit = isLit(a.key);
         return (
@@ -725,7 +702,7 @@ function Dial({
             d={a.d}
             fill="none" stroke="currentColor" strokeLinecap="round"
             initial={reduced ? false : { pathLength: 0, strokeOpacity: 0 }}
-            animate={{ pathLength: 1, strokeOpacity: lit ? 0.9 : 0.2, strokeWidth: lit ? 0.75 : 0.45 }}
+            animate={{ pathLength: 1, strokeOpacity: lit ? 0.9 : 0, strokeWidth: lit ? 0.75 : 0.45 }}
             transition={{ pathLength: { duration: 1.3, ease: EASE.out, delay: 0.5 }, default: { duration: 0.35 } }}
           />
         );
@@ -738,20 +715,12 @@ function Dial({
           <motion.line
             key={a.key} x1={C.x} y1={C.y} x2={p.x} y2={p.y}
             stroke="currentColor" strokeWidth={0.16}
-            initial={reduced ? false : { pathLength: 0, strokeOpacity: 0.1 }}
-            animate={{ pathLength: 1, strokeOpacity: isLit(a.key) ? 0.35 : 0.1 }}
+            initial={reduced ? false : { pathLength: 0, strokeOpacity: 0 }}
+            animate={{ pathLength: 1, strokeOpacity: isLit(a.key) ? 0.35 : 0 }}
             transition={{ pathLength: { duration: 1, ease: EASE.out, delay: 0.3 }, default: { duration: 0.35 } }}
           />
         );
       })}
-
-      {/* the orbit moves */}
-      {!reduced && (
-        <>
-          <Comet ring={RING.ready} duration={24} length={12} />
-          <Comet ring={RING.forming} duration={40} length={7} reverse />
-        </>
-      )}
 
       {/* the thread from the centre to the sphere under the hand */}
       <AnimatePresence>
@@ -773,8 +742,8 @@ function Dial({
 
 /** The whole orbit tilts a few degrees toward the pointer. */
 function TiltLayer({ x, y, children }: { x: MotionValue<number>; y: MotionValue<number>; children: React.ReactNode }) {
-  const rotateY = useTransform(x, (v) => v * 4);
-  const rotateX = useTransform(y, (v) => v * -3);
+  const rotateY = useTransform(x, (v) => v * 2);
+  const rotateX = useTransform(y, (v) => v * -1.5);
   return (
     <motion.div className="absolute inset-0" style={{ rotateX, rotateY, transformPerspective: 1600 }}>
       {children}
@@ -785,8 +754,8 @@ function TiltLayer({ x, y, children }: { x: MotionValue<number>; y: MotionValue<
 /** A plane of the orbit, drifting against (far) or with (near) the
  *  pointer — the parallax that gives the canvas its depth. */
 function DepthLayer({ x, y, depth, children }: { x: MotionValue<number>; y: MotionValue<number>; depth: 1 | -1; children: React.ReactNode }) {
-  const tx = useTransform(x, (v) => v * 10 * depth);
-  const ty = useTransform(y, (v) => v * 6 * depth);
+  const tx = useTransform(x, (v) => v * 6 * depth);
+  const ty = useTransform(y, (v) => v * 4 * depth);
   return (
     <motion.div className={`absolute inset-0 pointer-events-none ${depth > 0 ? 'z-20' : ''}`} style={{ x: tx, y: ty }}>
       {children}
@@ -959,12 +928,9 @@ export default function GalaxyExhibition() {
         <div className="absolute bottom-0 left-0 w-full h-[50vh] bg-gradient-to-t from-[#D4DDD6]/45 to-transparent" />
       </div>
 
-      <MuseumAtmosphere dust={56} />
+      <MuseumAtmosphere dust={16} />
 
-      <SiteNav
-        crumbs={[{ label: 'Galaxy' }]}
-        status={{ label: `${LOTS.length} projects`, live: true }}
-      />
+      <SiteNav crumbs={[{ label: 'Galaxy' }]} />
 
       {/* ============ THE FIRST SCREEN ============ */}
       <section onPointerMove={onRoomMove} className="relative z-10 lg:h-[100svh] flex flex-col">
@@ -974,7 +940,7 @@ export default function GalaxyExhibition() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: focus ? 0 : 1, y: focus ? -12 : 0 }}
           transition={{ duration: 0.5, ease: EASE.out }}
-          className="relative pt-24 px-6 text-center"
+          className={`relative pt-24 px-6 text-center ${focus ? 'pointer-events-none' : ''}`}
         >
           <motion.p
             initial={{ opacity: 0, letterSpacing: '0.32em' }}
@@ -982,7 +948,7 @@ export default function GalaxyExhibition() {
             transition={{ duration: 1, ease: EASE.out }}
             className={TYPE.label}
           >
-            Galaxy · {COUNT} projects
+            Galaxy
           </motion.p>
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
@@ -991,16 +957,46 @@ export default function GalaxyExhibition() {
             >
               <RevealText
                 as="h1"
-                text={way ? TITLE[way] : 'Read the orbit'}
+                text={way ? TITLE[way] : `${COUNT} real projects`}
                 after={<span className="text-accent">.</span>}
                 className={`mt-3 ${TYPE.display}`}
                 delay={0.1}
               />
             </motion.div>
           </AnimatePresence>
-          <p className={`lg:hidden mt-3 max-w-md mx-auto ${TYPE.lead}`}>
-            Grouped by how you can come in. Tap one to see what you put in and what you take away.
+          {/* the same three steps as the Home: a label, a name, the line under it */}
+          <p className={`mt-3 max-w-md mx-auto ${TYPE.lead}`}>
+            <span className="lg:hidden">Grouped by how you can come in. Tap one to see what you put in and what you take away.</span>
+            <span className="hidden lg:inline">The closer to the centre, the readier it is.</span>
           </p>
+
+          {/* the directions, in the Home's own verbs — a filter, not a puzzle on the dial */}
+          <nav aria-label="How you can come in" className="hidden lg:flex mt-6 justify-center">
+            <div className="inline-flex items-center gap-1 rounded-full bg-white/70 backdrop-blur-md ring-1 ring-ink/6 shadow-sm p-1">
+              {[{ key: null, label: 'All', n: 0 }, ...ARCS.map((a) => ({ key: a.key, label: a.label, n: PLACED.filter((p) => p.lot.wayIn === a.key).length }))]
+                // an empty direction keeps its open seat on the orbit; it gets a chip only when it's the one chosen
+                .filter((c) => c.key === null || c.n > 0 || c.key === way)
+                .map((c) => {
+                  const on = way === c.key;
+                  return (
+                    <button
+                      key={c.key ?? 'all'}
+                      type="button"
+                      aria-pressed={on}
+                      onClick={() => (c.key ? pickWay(c.key) : setUrl({ way: null }))}
+                      onMouseEnter={() => setArcHover(c.key)}
+                      onMouseLeave={() => setArcHover(null)}
+                      className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 font-sans text-[13px] font-medium cursor-pointer border-0 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                        on ? 'bg-ink text-white' : 'bg-transparent text-ink-soft hover:bg-paper hover:text-ink'
+                      }`}
+                    >
+                      {c.label}
+                      {c.key && <span className={`font-mono text-[11px] ${on ? 'text-white/60' : 'text-ink-mute'}`}>{c.n}</span>}
+                    </button>
+                  );
+                })}
+            </div>
+          </nav>
         </motion.header>
 
         {/* ---- desktop: the canvas ---- */}
@@ -1037,38 +1033,11 @@ export default function GalaxyExhibition() {
 
                   <Dial
                     focused={!!focus}
+                    awake={!!(way || hoveredPlace || arcHover)}
                     isLit={isLit}
                     hovered={hoveredPlace ? { id: hoveredPlace.lot.id, x: hoveredPlace.x, y: hoveredPlace.y } : null}
                     reduced={reduced}
                   />
-
-                  {/* the sectors are the filters */}
-                  {ARCS.map((a, i) => {
-                    // neighbours alternate between two radii so narrow sectors
-                    // never print their names side by side
-                    const p = toPoint((a.start + a.end) / 2, i % 2 ? 0.44 : 0.3);
-                    const n = PLACED.filter((x) => x.lot.wayIn === a.key).length;
-                    return (
-                      <motion.button
-                        key={a.key}
-                        type="button"
-                        aria-pressed={way === a.key}
-                        onClick={() => pickWay(a.key)}
-                        onMouseEnter={() => setArcHover(a.key)}
-                        onMouseLeave={() => setArcHover(null)}
-                        initial={reduced ? false : { opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: focus ? 0 : 1, scale: 1 }}
-                        transition={{ duration: 0.5, ease: EASE.out, delay: focus ? 0 : 0.9 + i * 0.05 }}
-                        whileTap={{ scale: 0.94 }}
-                        className={`pointer-events-auto absolute z-10 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full px-2.5 py-1 font-mono font-bold uppercase text-[11px] tracking-[0.18em] transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                          focus ? 'pointer-events-none' : ''
-                        } ${way === a.key ? 'bg-ink text-white shadow-lg shadow-ink/20' : isLit(a.key) ? 'bg-white/80 text-accent-deep shadow-sm' : 'text-ink-mute/80 hover:text-accent-deep'}`}
-                        style={{ left: `${p.x}%`, top: `${p.y}%` }}
-                      >
-                        {a.label} <span className="opacity-60">{n}</span>
-                      </motion.button>
-                    );
-                  })}
                 </DepthLayer>
 
                 {/* central gem — the door to the museum shop */}
@@ -1107,6 +1076,7 @@ export default function GalaxyExhibition() {
                       x={p.x}
                       y={p.y}
                       state={nodeState(p.lot)}
+                      quiet={!focus && !way && !p.lot.featured}
                       onOpen={() => (focus?.lot.id === p.lot.id ? closeLot() : openLot(p.lot.id))}
                       onHover={(on) => setHovered(on ? p.lot.id : null)}
                     />
@@ -1212,7 +1182,6 @@ export default function GalaxyExhibition() {
       path={focus ? ['Pyadra', 'Galaxy', focus.lot.name] : ['Pyadra', 'Galaxy']}
       line={narrate({
         way,
-        intent,
         hovered: PLACED.find((p) => p.lot.id === hovered)?.lot ?? null,
         focus: focus?.lot ?? null,
         phone: !!box && box.vw < 1024,
