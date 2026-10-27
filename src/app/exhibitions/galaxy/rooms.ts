@@ -81,8 +81,8 @@ export const ROOMS: Record<string, Room> = {
       kind: 'acquire',
       anchor: { label: 'What it cost to build', value: '$12,000 AUD', note: 'not the price' },
       options: [
-        { name: 'Operator — hosted', price: '$1,500', terms: 'Pyadra keeps 15% per capsule', detail: 'Run it on Pyadra’s servers and keep 85% of each capsule. You cover the running costs.', pick: true },
-        { name: 'Owner — hosted', price: '$3,000', terms: 'Pyadra keeps 5% per capsule', detail: 'More up front; almost everything each capsule earns is yours.' },
+        { name: 'Operator, hosted', price: '$1,500', terms: 'Pyadra keeps 15% per capsule', detail: 'Run it on Pyadra’s servers and keep 85% of each capsule. You cover the running costs.', pick: true },
+        { name: 'Owner, hosted', price: '$3,000', terms: 'Pyadra keeps 5% per capsule', detail: 'More up front; almost everything each capsule earns is yours.' },
         { name: 'Make an offer', price: 'Let’s talk', terms: 'A different structure', detail: 'Including taking the whole thing to your own servers.' },
       ],
       after: [
@@ -91,14 +91,14 @@ export const ROOMS: Record<string, Room> = {
       ],
     },
     take: [
-      { title: 'The finished app', detail: 'Frontend, backend and database — built, live and working today. Write, seal, pay, deliver, unlock.' },
+      { title: 'The finished app', detail: 'Frontend, backend and database, built, live and working today. Write, seal, pay, deliver, unlock.' },
       { title: 'The brand & the design', detail: 'The name, the logo, the gold identity and the ceremonial vault design.' },
-      { title: 'Sealed until its day', detail: 'A capsule opens only with its key, and keys are never stored — only their fingerprints.' },
+      { title: 'Sealed until its day', detail: 'A capsule opens only with its key, and keys are never stored, only their fingerprints.' },
       { title: 'Payments already flowing', detail: 'Stripe checkout is live and takes $9 the moment someone seals.' },
       { title: 'Email & delivery that run themselves', detail: 'Keys go out by email; time-vault capsules unlock for the guardian on the chosen date.' },
       { title: 'A safety net for emergencies', detail: 'A guardian can unlock a capsule if something happens to the sender.' },
     ],
-    proofNote: 'The live count of sealed capsules returns once its fix is deployed. Until then it is not shown — a zero there would not mean zero sales.',
+    proofNote: 'The live count of sealed capsules returns once its fix is deployed. Until then it is not shown, because a zero there would not mean zero sales.',
     verify: [{ label: 'Try the live product', href: 'https://eternicapsule.com' }],
     handover: 'Already independent: its own domain, code and deploy. Moving the shared database and payment account to yours is a documented job.',
     risks: [
@@ -106,12 +106,12 @@ export const ROOMS: Record<string, Room> = {
       { title: 'We can’t see where visitors give up', detail: 'There are no analytics installed. Installing them and finding out is the new owner’s first job.' },
       { title: 'It still shares a database and payment account with Pyadra', detail: 'The app runs on its own domain and hosting; the database and Stripe account are still shared.' },
       { title: 'It’s slow on purpose', detail: 'Sealing takes a deliberate 30-second ritual. It will never be a fast, impulse-buy product.' },
-      { title: '$9 is a small ticket', detail: 'Payment fees take about 6% of each capsule. Real income needs volume — or the planned $25 audio and $49 video capsules.' },
+      { title: '$9 is a small ticket', detail: 'Payment fees take about 6% of each capsule. Real income needs volume, or the planned $25 audio and $49 video capsules.' },
     ],
-    person: { name: 'Cristian Niño', role: 'Founder · EterniCapsule, 2025', quote: 'I came to Australia as an IT student with a suitcase and a head full of ideas. I like building things that feel different — and EterniCapsule is the one I couldn’t let go: a place where sealed means sealed, until the day you chose.', photo: '/images/ethernicapsule/cristian_founder.jpg' },
+    person: { name: 'Cristian Niño', role: 'Founder · EterniCapsule, 2025', quote: 'I came to Australia as an IT student with a suitcase and a head full of ideas. I like building things that feel different, and EterniCapsule is the one I couldn’t let go: a place where sealed means sealed, until the day you chose.', photo: '/images/ethernicapsule/cristian_founder.jpg' },
     faq: [
-      { q: 'Does it actually work?', a: 'Yes — the complete flow is live: compose, seal, pay $9, scheduled delivery, unlock with a key. Try it yourself in the vault.' },
-      { q: 'How is a capsule protected?', a: 'Every capsule opens only with its unique 128-bit key. Keys are never stored — only cryptographic hashes — so a lost key is truly unrecoverable. Messages rest on encrypted infrastructure, and full in-browser encryption is on the roadmap.' },
+      { q: 'Does it actually work?', a: 'Yes. The complete flow is live: compose, seal, pay $9, scheduled delivery, unlock with a key. Try it yourself in the vault.' },
+      { q: 'How is a capsule protected?', a: 'Every capsule opens only with its unique 128-bit key. Keys are never stored, only cryptographic hashes, so a lost key is truly unrecoverable. Messages rest on encrypted infrastructure, and full in-browser encryption is on the roadmap.' },
       { q: 'Why is there no revenue yet?', a: 'It launched recently and the first sale is still pending. We say it plainly because everything on Pyadra is said plainly.' },
     ],
   },
@@ -122,8 +122,8 @@ export const ROOMS: Record<string, Room> = {
     ways: {
       kind: 'acquire',
       options: [
-        { name: 'Take it all', price: '$2,500', terms: 'Store, brand, styles, printer, pipeline, know-how', detail: 'The whole project in one step — the 3D printer included.', pick: true },
-        { name: 'Make an offer', price: 'Let’s talk', terms: 'A different structure', detail: 'A smaller start, a partnership, or something else — tell us.' },
+        { name: 'Take it all', price: '$2,500', terms: 'Store, brand, styles, printer, pipeline, know-how', detail: 'The whole project in one step, 3D printer included.', pick: true },
+        { name: 'Make an offer', price: 'Let’s talk', terms: 'A different structure', detail: 'A smaller start, a partnership, or something else. Tell us.' },
       ],
       after: [
         { who: 'You', what: 'The store, the brand and everything it earns from then on.' },
@@ -131,12 +131,12 @@ export const ROOMS: Record<string, Room> = {
       ],
     },
     take: [
-      { title: 'The store', detail: 'A polished Shopify store where customers order their figuitoons — products, inventory and deliveries in one place.' },
+      { title: 'The store', detail: 'A polished Shopify store where customers order their figuitoons, with products, inventory and deliveries in one place.' },
       { title: '100+ styles', detail: 'More than one hundred designs across teams, sports and professions, ready to sell.' },
       { title: 'The brand', detail: 'Name, logo, visual identity and the Instagram presence.' },
       { title: 'The 3D printer', detail: 'The Bambu printer that produces every figurine comes with the project.' },
       { title: 'The software pipeline', detail: 'Turns a customer’s photo into a stylised render, then into a print-ready 3D file.' },
-      { title: 'The know-how', detail: 'Print settings, measurements, filaments, 3D structure — and what we’ve learned about making it profitable.' },
+      { title: 'The know-how', detail: 'Print settings, measurements, filaments, 3D structure, and what we’ve learned about making it profitable.' },
     ],
     verify: [
       { label: 'figuitoon.com', href: 'https://www.figuitoon.com' },
@@ -147,12 +147,12 @@ export const ROOMS: Record<string, Room> = {
       { title: 'No sales yet', detail: 'The store and the product are real and tested, but no one has bought one yet. You’d be validating demand.' },
       { title: 'Costs not yet measured', detail: 'Print times are still high and the true cost per figurine isn’t calculated yet. Margin is unproven.' },
       { title: 'Quality still maturing', detail: 'It prints and assembles, but finish, waste and calibration still need work to reach premium quality.' },
-      { title: 'Built to hand over', detail: 'It’s designed to run without the original builder — but the operations manual is still being written.' },
+      { title: 'Built to hand over', detail: 'It’s designed to run without the original builder, but the operations manual is still being written.' },
     ],
-    person: { name: 'Charina Oan', role: 'Founder · Figuitoon, 2026', quote: 'I’m from the Philippines and helping people is just who I am. Figuitoon caught me because I love new things — innovating, creating something people haven’t seen before.', photo: '/images/figuitoon/charina_founder.jpg' },
+    person: { name: 'Charina Oan', role: 'Founder · Figuitoon, 2026', quote: 'I’m from the Philippines and helping people is just who I am. Figuitoon caught me because I love new things: innovating, creating something people haven’t seen before.', photo: '/images/figuitoon/charina_founder.jpg' },
     faq: [
-      { q: 'Does it really work end to end?', a: 'Yes — the pipeline runs from photo to physical figurine, and the Shopify store is live for orders. The first paying customer is still pending; everything else has been tested.' },
-      { q: 'What exactly is for sale here?', a: 'The whole project — brand, store, files, pipeline and know-how. Buying a figurine is a separate thing, on figuitoon.com.' },
+      { q: 'Does it really work end to end?', a: 'Yes. The pipeline runs from photo to physical figurine, and the Shopify store is live for orders. The first paying customer is still pending; everything else has been tested.' },
+      { q: 'What exactly is for sale here?', a: 'The whole project: brand, store, files, pipeline and know-how. Buying a figurine is a separate thing, on figuitoon.com.' },
       { q: 'Why $49 per figurine?', a: 'It is a launch price set before the true per-figurine cost is fully measured. It may change once production costs are calculated.' },
     ],
   },
@@ -166,7 +166,7 @@ export const ROOMS: Record<string, Room> = {
       options: [
         { name: 'Grow Together', price: '$2,500', terms: '8% of yearly revenue, shared', detail: 'The lowest door in. Keep your cash for the van and tools, and grow it together over the years.', pick: true },
         { name: 'Shared Path', price: '$4,000', terms: '5% of yearly revenue, shared', detail: 'Bigger step in, lighter share. Real upside left for both sides.' },
-        { name: 'Take the Wheel', price: '$6,000', terms: '3% of yearly revenue, shared', detail: 'Most up front, smallest share — you keep nearly everything you earn.' },
+        { name: 'Take the Wheel', price: '$6,000', terms: '3% of yearly revenue, shared', detail: 'Most up front, smallest share. You keep nearly everything you earn.' },
       ],
       after: [
         { who: 'You', what: '100% of the operation, from day one.' },
@@ -175,9 +175,9 @@ export const ROOMS: Record<string, Room> = {
       ],
     },
     take: [
-      { title: 'The brand & its 5.0 reputation', detail: 'The name, logo and visual identity — plus the public Airtasker profile. Sydney already trusts it; you inherit that trust.' },
-      { title: 'The customer channels', detail: 'Business phone, WhatsApp, website, Instagram and email — all live, with customers still calling today.' },
-      { title: 'Pricing & recycling know-how', detail: 'What to charge for each job, how to quote, and which Sydney disposal and recycling sites to use — with their real costs.' },
+      { title: 'The brand & its 5.0 reputation', detail: 'The name, logo and visual identity, plus the public Airtasker profile. Sydney already trusts it; you inherit that trust.' },
+      { title: 'The customer channels', detail: 'Business phone, WhatsApp, website, Instagram and email, all live, with customers still calling today.' },
+      { title: 'Pricing & recycling know-how', detail: 'What to charge for each job, how to quote, and which Sydney disposal and recycling sites to use, with their real costs.' },
       { title: 'Two years of experience', detail: 'Which jobs make money, which to walk away from, and the mistakes already paid for. You start on year two, not year zero.' },
     ],
     notIncluded: [
@@ -185,7 +185,7 @@ export const ROOMS: Record<string, Room> = {
       { item: 'The ABN', note: 'you operate under your own legal structure.' },
       { item: 'A guarantee', note: 'results depend on your execution.' },
     ],
-    proofNote: 'Revenue: ~$23k AUD in FY2024 and ~$30k AUD in FY2025, invoiced gross — founder-recorded, confirmed in due diligence under a signed agreement.',
+    proofNote: 'Revenue: ~$23k AUD in FY2024 and ~$30k AUD in FY2025, invoiced gross. Founder-recorded, confirmed in due diligence under a signed agreement.',
     verify: [
       { label: 'Airtasker profile', href: 'https://www.airtasker.com/users/a9226792b540-p-29587653/' },
       { label: 'Instagram', href: 'https://www.instagram.com/kangaroocleanup' },
@@ -194,15 +194,15 @@ export const ROOMS: Record<string, Room> = {
     risks: [
       { title: 'It’s physical work', detail: 'Lifting, logistics, showing up. No remote version. You have to be in Sydney.' },
       { title: 'Competition is real', detail: 'Other operators work this city. Demand shifts by season and suburb.' },
-      { title: 'Reputation is daily', detail: 'The 5.0 rating helps you win — it doesn’t win for you. Keep the standard.' },
+      { title: 'Reputation is daily', detail: 'The 5.0 rating helps you win. It doesn’t win for you. Keep the standard.' },
       { title: 'Numbers get verified', detail: 'Founder-recorded revenue, confirmed in due diligence. Requires a signed agreement.' },
     ],
-    person: { name: 'Eduardo Díaz', role: 'Founder · Sydney 2023 — Perth 2026', quote: 'I showed up to a country where I knew nobody, bought a beat-up ute, and built this with my own hands — one honest job at a time. I’m only letting it go because I had to move, not because I stopped believing in it.', photo: '/images/kangaroo/kangaroo_founder.jpg' },
+    person: { name: 'Eduardo Díaz', role: 'Founder · Sydney 2023 to Perth 2026', quote: 'I showed up to a country where I knew nobody, bought a beat-up ute, and built this with my own hands, one honest job at a time. I’m only letting it go because I had to move, not because I stopped believing in it.', photo: '/images/kangaroo/kangaroo_founder.jpg' },
     faq: [
-      { q: 'Is this real?', a: 'Yes — and you don’t have to take my word for it. The Airtasker profile is public; check the reviews, the rating and the completed jobs yourself before you ever message me.' },
+      { q: 'Is this real?', a: 'Yes, and you don’t have to take my word for it. The Airtasker profile is public; check the reviews, the rating and the completed jobs yourself before you ever message me.' },
       { q: 'Why did it stop?', a: 'The founder relocated to Perth and sold the ute. Not because of lack of demand.' },
-      { q: 'If you’re in Perth, what’s really transferable?', a: 'Everything except the physical presence — which was always the operator’s job. The brand, the 5.0 reputation, the playbook, the disposal contacts and the live channels all transfer.' },
-      { q: 'What if it doesn’t work?', a: 'The demand is proven and the channels are live — what’s left is execution. Every risk is written down here.' },
+      { q: 'If you’re in Perth, what’s really transferable?', a: 'Everything except the physical presence, which was always the operator’s job. The brand, the 5.0 reputation, the playbook, the disposal contacts and the live channels all transfer.' },
+      { q: 'What if it doesn’t work?', a: 'The demand is proven and the channels are live. What’s left is execution. Every risk is written down here.' },
     ],
   },
 
@@ -217,23 +217,23 @@ export const ROOMS: Record<string, Room> = {
         { name: 'Transmission Keeper', price: '$50', terms: 'Everything above + direct updates from Pablo', detail: 'Pablo writes to you as the season is made.', checkout: 50 },
         { name: 'Journey Patron', price: '$100–500', terms: 'Name in S2 credits, behind-the-scenes, merch', detail: 'Your name in the Season 2 credits. The exact amount is set at checkout.', checkout: 100 },
         { name: 'Co-Producer / Sponsor', price: '$1,000+', terms: 'Your brand named in the podcast', detail: 'For a brand or business that wants to be heard in the show.', checkout: 1000 },
-        { name: 'Big investor', price: 'Let’s talk', terms: 'A private conversation with Pablo', detail: 'Bigger support or a partnership — a conversation, not a checkout.' },
+        { name: 'Big investor', price: 'Let’s talk', terms: 'A private conversation with Pablo', detail: 'Bigger support or a partnership: a conversation, not a checkout.' },
       ],
       after: [
-        { who: 'You', what: 'A permanent credential and the perks of your layer — never ownership, never a return.' },
+        { who: 'You', what: 'A permanent credential and the perks of your layer. Never ownership, never a return.' },
         { who: 'Pablo', what: 'The project and full creative control.' },
       ],
     },
     take: [
       { title: 'More listeners', detail: 'Growing the audience on YouTube and Spotify, getting Season 1 in front of the people it was made for.' },
-      { title: 'Seasons 2, 3 and 4', detail: 'Recording and releasing the next three seasons — life, art and music, one orbit at a time.' },
+      { title: 'Seasons 2, 3 and 4', detail: 'Recording and releasing the next three seasons: life, art and music, one orbit at a time.' },
       { title: 'The clothing brand', detail: 'orbit77.shop is live today. Support helps refresh the designs and grow the merch that funds the show.' },
-      { title: 'A physical home', detail: 'A space in Sydney to record the podcast, paint and sell the clothing — studio, gallery and store in one.' },
-      { title: 'Events & parties', detail: 'Live Orbit 77 nights with sponsors and brands — the conversations, in a room full of people.' },
+      { title: 'A physical home', detail: 'A space in Sydney to record the podcast, paint and sell the clothing: studio, gallery and store in one.' },
+      { title: 'Events & parties', detail: 'Live Orbit 77 nights with sponsors and brands: the conversations, in a room full of people.' },
       { title: 'A real community', detail: 'The Orbit 77 community, each member with their own credential, permanently in the archive.' },
     ],
     notIncluded: [
-      { item: 'Equity', note: 'no shares, no ownership — Pablo keeps the project.' },
+      { item: 'Equity', note: 'no shares, no ownership. Pablo keeps the project.' },
       { item: 'A return', note: 'this is a contribution, not an investment.' },
       { item: 'Creative votes', note: 'no influence on episodes, guests or direction.' },
     ],
@@ -242,15 +242,15 @@ export const ROOMS: Record<string, Room> = {
       { label: 'orbit77.shop', href: 'https://orbit77.shop/' },
     ],
     risks: [
-      { title: 'The audience is small', detail: 'Early YouTube channel, supporters still being counted. You’d be backing it before the proof — that’s the point, and the risk.' },
+      { title: 'The audience is small', detail: 'Early YouTube channel, supporters still being counted. You’d be backing it before the proof. That’s the point, and the risk.' },
       { title: 'Monetization isn’t active yet', detail: 'No AdSense, no Spotify revenue, no sponsors yet. Today the only revenue is credentials and merch.' },
-      { title: 'Production is real work', detail: 'A podcast doesn’t run itself. Episodes need recording, editing and publishing — every season.' },
-      { title: 'Draft tiers', detail: 'The goal is set — $10,000 AUD for Season 2. The tiers are v1, still being refined with Pablo; the exact perks may shift.' },
+      { title: 'Production is real work', detail: 'A podcast doesn’t run itself. Episodes need recording, editing and publishing, every season.' },
+      { title: 'Draft tiers', detail: 'The goal is set: $10,000 AUD for Season 2. The tiers are v1, still being refined with Pablo; the exact perks may shift.' },
     ],
-    person: { name: 'Pablo Ramírez', role: 'Founder · Orbit 77, Sydney 2025', quote: 'I’m a graphic designer who likes to listen, help and build things with other people. Orbit 77 is where all of that lives — art, deep conversations, and orbiting at high frequencies.', photo: '/images/orbit/pablo_founder.jpg' },
+    person: { name: 'Pablo Ramírez', role: 'Founder · Orbit 77, Sydney 2025', quote: 'I’m a graphic designer who likes to listen, help and build things with other people. Orbit 77 is where all of that lives: art, deep conversations, and orbiting at high frequencies.', photo: '/images/orbit/pablo_founder.jpg' },
     faq: [
       { q: 'What do supporters get?', a: 'A permanent credential engraved in the archive (O77-S1-XXXXXX), founding member status, early Season 2 access, and direct founder updates.' },
-      { q: 'Is this an investment? Do I own a piece?', a: 'No. You’re funding the journey, not buying equity. Pablo keeps the project and creative control. Supporters get recognition, perks and a permanent credential — never ownership, never a return, never a vote on the content.' },
+      { q: 'Is this an investment? Do I own a piece?', a: 'No. You’re funding the journey, not buying equity. Pablo keeps the project and creative control. Supporters get recognition, perks and a permanent credential. Never ownership, never a return, never a vote on the content.' },
       { q: 'Where does the money go?', a: 'Straight into Season 2 production. The progress on this page is live, and every credential moves it.' },
     ],
   },
@@ -266,7 +266,7 @@ export const ROOMS: Record<string, Room> = {
         { name: 'Make an offer', price: 'Let’s talk', terms: 'A different structure', detail: 'Including taking it independent.' },
       ],
       after: [
-        { who: 'You', what: 'The site, code, brand, content and documentation — and what it earns.' },
+        { who: 'You', what: 'The site, code, brand, content and documentation, and what it earns.' },
         { who: 'Cristian', what: 'A royalty for life, paid through Pyadra (% set in the agreement).' },
         { who: 'Pyadra', what: 'A permanent share by option, plus 5% at closing.' },
       ],
@@ -286,7 +286,7 @@ export const ROOMS: Record<string, Room> = {
       { title: 'Very short sales history', detail: 'Only 3 sales; demand at scale is not proven.' },
       { title: 'Paused', detail: 'The site is closed to new orders until an operator restarts it.' },
       { title: 'A human promise', detail: 'Premium and Signature songs are made by hand in 3 hours or refunded; it needs someone available.' },
-      { title: 'Supplier dependency', detail: 'Automatic songs depend on MusicGPT — its links expire in about 24 hours and it bans real artist names.' },
+      { title: 'Supplier dependency', detail: 'Automatic songs depend on MusicGPT: its links expire in about 24 hours and it bans real artist names.' },
       { title: 'AI rights', detail: 'Rights over AI-generated music and covers depend on the providers’ terms; to verify.' },
       { title: 'No version control', detail: 'The code lives in one local folder; a buyer should move it to version control.' },
     ],
@@ -312,7 +312,7 @@ export const ROOMS: Record<string, Room> = {
     take: [
       { title: 'The live app and its code', detail: 'An installable web app that remembers every set and tells you the weight, reps and effort for next time.' },
       { title: 'The URELIT brand and its social accounts', detail: 'The name, the identity, and the Instagram and Facebook accounts.' },
-      { title: 'Free and Premium plans, ready to charge', detail: 'A 14-day Premium trial and a $4.99 monthly plan — payments run in test mode today.' },
+      { title: 'Free and Premium plans, ready to charge', detail: 'A 14-day Premium trial and a $4.99 monthly plan. Payments run in test mode today.' },
     ],
     verify: [
       { label: 'urelit.app', href: 'https://urelit.app' },
@@ -347,7 +347,7 @@ export const ROOMS: Record<string, Room> = {
     take: [
       { title: 'Coach, client and admin apps with their code', detail: 'A mobile and web platform where coaches run their clients’ training and nutrition, with 750+ automated tests.' },
       { title: 'The WEMAIT brand, domain and 16 tutorial videos', detail: 'The name, wemait.app and a tutorial library that teaches coaches the system.' },
-      { title: 'A pricing model by active clients, ready to switch on', detail: 'Plans priced by how many clients a coach has — not charging yet.' },
+      { title: 'A pricing model by active clients, ready to switch on', detail: 'Plans priced by how many clients a coach has, not charging yet.' },
     ],
     verify: [
       { label: 'wemait.app', href: 'https://wemait.app' },
@@ -360,7 +360,7 @@ export const ROOMS: Record<string, Room> = {
       { title: 'Capacity unproven', detail: 'The target of 200 clients has not been load-tested; external backups are pending.' },
       { title: 'Health data', detail: 'It stores health and nutrition data; legal review and moderation are pending.' },
     ],
-    person: { name: 'Cristian Ruiz', role: 'Founder of WEMAIT · Co-founder of Pyadra', quote: 'Coaches change lives every day. WEMAIT exists so they can prove it — with data, not promises.', photo: CRIS_RUIZ },
+    person: { name: 'Cristian Ruiz', role: 'Founder of WEMAIT · Co-founder of Pyadra', quote: 'Coaches change lives every day. WEMAIT exists so they can prove it, with data, not promises.', photo: CRIS_RUIZ },
   },
 
   byndi: {

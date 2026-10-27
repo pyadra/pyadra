@@ -112,7 +112,7 @@ export const LOTS: Lot[] = [
     wayIn: 'acquire',
     stage: 'ready',
     offer: {
-      give: 'An upfront amount — two ways to take it on, agreed in a conversation.',
+      give: 'An upfront amount, with two ways to take it on, agreed in a conversation.',
       get: 'The product and its operation. Pyadra keeps a small share of each capsule sold.',
     },
     /* From 04_Projects/EterniCapsule.md (v2.4): the copy deck's tagline and
@@ -125,7 +125,7 @@ export const LOTS: Lot[] = [
       summary: "A vault for words you can't say today. Write them, seal them in digital metal, and choose the exact day they can be opened.",
       formats: ['Web app'],
       includes: [
-        'The finished app — live and working today',
+        'The finished app, live and working today',
         'The brand and the ceremonial vault design',
         'Payments, key emails and delivery, already wired',
       ],
@@ -160,7 +160,7 @@ export const LOTS: Lot[] = [
     },
     sheet: {
       hook: 'Your face. Your team. Your figurine.',
-      summary: 'Figuitoon turns one photo into a mini you — a 3D-printed figurine in your favourite team’s colours, your sport or your profession. Made for gifts, keepsakes and collectors.',
+      summary: 'Figuitoon turns one photo into a mini you: a 3D-printed figurine in your favourite team’s colours, your sport or your profession. Made for gifts, keepsakes and collectors.',
       formats: ['Online store', 'Physical product'],
       idealFor: ['A first-time founder', 'A gift or merch shop', 'A maker with a 3D printer'],
       numbers: [
@@ -190,7 +190,7 @@ export const LOTS: Lot[] = [
       get: 'A real Sydney business: the brand, its reputation, the website, email and phone, and a guided handover.',
     },
     sheet: {
-      hook: 'Your own business — without starting from zero.',
+      hook: 'Your own business, without starting from zero.',
       summary: 'A recycling and waste-removal business built in Sydney in 2023: furniture, green waste, office clear-outs, household junk. 500+ jobs later, the channels still ring today.',
       formats: ['Local business'],
       idealFor: ['An operator with a vehicle', 'Someone who wants a head start', 'A local cleanup crew'],
@@ -200,7 +200,7 @@ export const LOTS: Lot[] = [
         { value: '248', label: 'jobs on Airtasker', evidence: 'Public', live: 'airtasker.tasks' },
         { value: '~$30k', label: 'AUD revenue · FY2025', evidence: 'Founder-recorded' },
       ],
-      handover: 'A short, optional handover with Eduardo — the channels, the price list and the disposal sites.',
+      handover: 'A short, optional handover with Eduardo: the channels, the price list and the disposal sites.',
       live: { label: 'kangaroocleanup.com.au', href: 'https://kangaroocleanup.com.au', note: 'the business' },
     },
     enter_url: '/exhibitions/galaxy/kangaroo-cleanup',
@@ -219,12 +219,12 @@ export const LOTS: Lot[] = [
     wayIn: 'support',
     stage: 'ready',
     offer: {
-      give: 'A contribution — any size you choose.',
-      get: 'A permanent credential in the archive, founding-member status, early access to Season 2 — never ownership.',
+      give: 'A contribution, any size you choose.',
+      get: 'A permanent credential in the archive, founding-member status, early access to Season 2. Never ownership.',
     },
     sheet: {
       hook: 'Real conversations. No filters. No script. No bullshit.',
-      summary: 'A podcast created in Sydney that does things differently, moving through three orbits: real talks about life, art and music — built for permanence, not virality.',
+      summary: 'A podcast created in Sydney that does things differently, moving through three orbits: real talks about life, art and music, built for permanence, not virality.',
       formats: ['Podcast', 'Clothing'],
       idealFor: ['Listeners who want Season 2', 'A brand that wants exposure', 'Someone who backs creators'],
       numbers: [
@@ -257,11 +257,11 @@ export const LOTS: Lot[] = [
     wayIn: 'acquire',
     stage: 'ready',
     offer: {
-      give: 'An upfront amount — run it or own it, agreed in a conversation.',
+      give: 'An upfront amount to run it or own it, agreed in a conversation.',
       get: 'The site, code, brand, content and documentation. The creator keeps a royalty, paid through Pyadra.',
     },
     sheet: {
-      hook: 'A gift business that already sold every package — waiting to be switched on.',
+      hook: 'A gift business that already sold every package, waiting to be switched on.',
       summary: 'You tell us a story about someone you love; we turn it into an original song you can give them, with a gift page they open from a QR code.',
       formats: ['Website', 'Studio panel'],
       includes: [
@@ -276,7 +276,7 @@ export const LOTS: Lot[] = [
         { value: '3 h', label: 'studio delivery', evidence: 'Founder-recorded' },
         { value: '2', label: 'languages', evidence: 'In the code' },
       ],
-      live: { label: 'momentoseternos.vercel.app', href: 'https://momentoseternos.vercel.app', note: 'paused — reopens with its operator' },
+      live: { label: 'momentoseternos.vercel.app', href: 'https://momentoseternos.vercel.app', note: 'paused until its operator reopens it' },
     },
     enter_url: '/exhibitions/galaxy/momentos-eternos',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFF8F3,#F6D9CB,#E2AA92)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
@@ -294,12 +294,12 @@ export const LOTS: Lot[] = [
     wayIn: 'acquire',
     stage: 'ready',
     offer: {
-      give: 'An upfront amount — run it or own it, agreed in a conversation.',
+      give: 'An upfront amount to run it or own it, agreed in a conversation.',
       get: 'The app, code, brand, social accounts and documentation. The creator keeps a royalty, paid through Pyadra.',
     },
     sheet: {
       hook: 'A finished gym app, live and tested, one step from charging.',
-      summary: 'A gym app that remembers every set you do and tells you the weight, reps and effort for your next session — in plain gym language, with safety limits built in.',
+      summary: 'A gym app that remembers every set you do and tells you the weight, reps and effort for your next session, in plain gym language, with safety limits built in.',
       formats: ['Installable web app'],
       includes: [
         'The live app and its code',
@@ -330,7 +330,7 @@ export const LOTS: Lot[] = [
     wayIn: 'acquire',
     stage: 'ready',
     offer: {
-      give: 'An upfront amount — run it or own it, agreed in a conversation.',
+      give: 'An upfront amount to run it or own it, agreed in a conversation.',
       get: 'The app, code, brand, domain and documentation. The creator keeps a royalty, paid through Pyadra.',
     },
     sheet: {
@@ -373,7 +373,7 @@ export const LOTS: Lot[] = [
     offer: null,
     sheet: {
       hook: 'Understand her cycle. Care for the relationship.',
-      summary: 'A mobile app for someone in a couple to understand their partner’s cycle — what she is likely feeling each day, and concrete ways to help.',
+      summary: 'A mobile app for someone in a couple to understand their partner’s cycle: what she is likely feeling each day, and concrete ways to help.',
       formats: ['Mobile app'],
       idealFor: ['An app operator', 'A wellness or couples brand'],
       numbers: [
@@ -399,7 +399,7 @@ export const LOTS: Lot[] = [
     stage: 'forming',
     offer: null,
     sheet: {
-      summary: 'Still forming — the service is not running yet. Follow it to hear when it opens, or tell us how you could help it start.',
+      summary: 'Still forming. The service is not running yet. Follow it to hear when it opens, or tell us how you could help it start.',
     },
     enter_url: '/exhibitions/galaxy/backmate',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#F7F8F7,#E3E6E3,#C9CEC9)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',

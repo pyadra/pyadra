@@ -33,10 +33,10 @@ import { InterestDialog, SupportDialog } from './dialogs';
 const ORDER = layoutOrbit(LOTS).placed.map((p) => p.lot);
 
 const SUPPORT_STEPS = [
-  { title: 'Pick a layer', detail: 'Any size you choose — every one moves the Season 2 bar.' },
+  { title: 'Pick a layer', detail: 'Any size you choose. Every one moves the Season 2 bar.' },
   { title: 'Pay with Stripe', detail: 'A secure checkout; nothing is stored on this page.' },
   { title: 'Get your credential', detail: 'A permanent code (O77-S1-XXXXXX) arrives by email.' },
-  { title: 'Stay in the archive', detail: 'Your name — or your choice to stay anonymous — is kept for good.' },
+  { title: 'Stay in the archive', detail: 'Your name, or your choice to stay anonymous, is kept for good.' },
 ];
 
 const isTalk = (o: Option) => o.price === 'Let’s talk';
@@ -85,13 +85,13 @@ function Ways({
   const progress = ways.kind === 'support' ? progressOf(numbers) : null;
   const heading = { acquire: 'Ways in', operate: 'Ways in', support: 'Back it', forming: 'Follow it' }[ways.kind];
   const cta =
-    ways.kind === 'support' ? (chosen.checkout ? `Lock in — ${chosen.price} AUD →` : `Talk to ${room.person?.name.split(' ')[0] ?? 'us'} →`)
+    ways.kind === 'support' ? (chosen.checkout ? `Lock in ${chosen.price} AUD →` : `Talk to ${room.person?.name.split(' ')[0] ?? 'us'} →`)
     : ways.kind === 'forming' ? (isTalk(chosen) ? 'Tell us how →' : `Follow ${lot.name} →`)
     : isTalk(chosen) ? 'Make an offer →' : `Ask about ${chosen.name} →`;
   const foot =
     ways.kind === 'support' ? 'Secure payment via Stripe · a contribution, never ownership.'
-    : ways.kind === 'forming' ? 'No payment — just a note when it opens.'
-    : 'Introductory prices. Every deal starts as a conversation — no checkout.';
+    : ways.kind === 'forming' ? 'No payment. Just a note when it opens.'
+    : 'Introductory prices. Every deal starts as a conversation, with no checkout.';
 
   return (
     <aside id="ways" className="lg:sticky lg:top-24 relative overflow-hidden rounded-[28px] bg-white p-5 lg:p-6 ring-1 ring-ink/6 shadow-[0_30px_70px_-34px_rgba(26,28,26,0.35)] scroll-mt-24">
@@ -201,7 +201,7 @@ function Panel({ tab, lot, room }: { tab: Tab; lot: Lot; room: Room }) {
       <>
         <PanelHead title={support ? 'What your support builds' : 'What you’d take'} note={support ? 'Where the money goes' : 'Everything here changes hands'} />
         <p className={`mt-1.5 mb-5 max-w-[70ch] ${TYPE.small}`}>
-          {support ? 'Season 2 first — then what the show grows into.' : 'Real parts of a working project. Nothing on this list is a promise of what it could become.'}
+          {support ? 'Season 2 first, then what the show grows into.' : 'Real parts of a working project. Nothing on this list is a promise of what it could become.'}
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
           {room.take.map((t) => (
@@ -220,7 +220,7 @@ function Panel({ tab, lot, room }: { tab: Tab; lot: Lot; room: Room }) {
           <div className="mt-4 pt-4 border-t border-dashed border-ink/15 flex flex-wrap gap-x-6 gap-y-1.5">
             <p className={`w-full ${TYPE.label}`}>{support ? 'What you don’t get' : 'Not included'}</p>
             {room.notIncluded.map((n) => (
-              <p key={n.item} className={TYPE.small}><span className="font-semibold text-ink">{n.item}</span> — {n.note}</p>
+              <p key={n.item} className={TYPE.small}><span className="font-semibold text-ink">{n.item}:</span> {n.note}</p>
             ))}
           </div>
         ) : null}

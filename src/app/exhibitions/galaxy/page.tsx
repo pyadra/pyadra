@@ -23,7 +23,6 @@ import BringIdeaDialog, { type DialogCopy } from '@/app/components/nav/BringIdea
 import Guide from '@/app/components/guide/Guide';
 import { LOTS, type Lot, type LotSheet, type WayIn } from './lots';
 import { GemIcon, Sphere } from './Sphere';
-import { priceFrom } from './rooms';
 import { useLiveLots } from './live';
 import FocusPanel from './FocusPanel';
 import { getFlight, landAt, useFlight, type Landing } from '@/app/components/flight/flight';
@@ -70,10 +69,10 @@ function narrate({ way, focus, present, phone }: { way: WayIn | null; focus: Lot
   if (focus) {
     switch (focus.wayIn) {
       case 'acquire': return `${focus.name} can be bought whole. Open the project to see everything that comes with it.`;
-      case 'operate': return `No capital needed to start — ${focus.name} needs someone who wants to run it.`;
+      case 'operate': return `No capital needed to start. ${focus.name} needs someone who wants to run it.`;
       case 'support': return `Backing ${focus.name} isn't investing: you help it keep going, and it gives back.`;
       case 'forming': return `${focus.name} is still forming. Follow it to hear when it opens.`;
-      default: return `Every deal here starts as a conversation — open ${focus.name} to begin one.`;
+      default: return `Every deal here starts as a conversation. Open ${focus.name} to begin one.`;
     }
   }
   // a hand on the orbit learns how to move it
@@ -85,9 +84,9 @@ function narrate({ way, focus, present, phone }: { way: WayIn | null; focus: Lot
         ? `${say(lit.length)} projects are for sale today, each one whole. ${phone ? 'Tap one' : 'Move over the orbit'} to see what you'd take.`
         : `${lit.length === 1 ? 'One project is' : `${say(lit.length)} projects are`} for sale today: ${names(lit)}. Each one can be yours, whole.`;
     case 'operate': return `${names(lit)} ${lit.length === 1 ? 'is' : 'are'} looking for someone to run ${lit.length === 1 ? 'it' : 'them'}. Here, your work is your capital.`;
-    case 'support': return `${names(lit)} ${lit.length === 1 ? 'lives' : 'live'} on ${lit.length === 1 ? 'its' : 'their'} supporters. Backing isn't buying — see what it gives back.`;
-    case 'build': return lit.length ? `${names(lit)} ${lit.length === 1 ? 'is' : 'are'} looking for builders.` : 'Nothing to build here yet — that seat is open. Your idea could be the next project in this orbit.';
-    case 'forming': return `${names(lit)} ${lit.length === 1 ? 'is' : 'are'} still forming — close enough to follow.`;
+    case 'support': return `${names(lit)} ${lit.length === 1 ? 'lives' : 'live'} on ${lit.length === 1 ? 'its' : 'their'} supporters. Backing isn't buying: see what it gives back.`;
+    case 'build': return lit.length ? `${names(lit)} ${lit.length === 1 ? 'is' : 'are'} looking for builders.` : 'Nothing to build here yet, and that seat is open. Your idea could be the next project in this orbit.';
+    case 'forming': return `${names(lit)} ${lit.length === 1 ? 'is' : 'are'} still forming, close enough to follow.`;
     case 'pending': return `${names(lit)} haven't set how you come in yet. Ask Pyadra about any of them.`;
   }
   if (phone) return `This is Galaxy: ${say(LOTS.length).toLowerCase()} real projects, grouped by how you can come in. Tap one to meet it.`;
@@ -192,7 +191,7 @@ function RingNode({
         onMouseLeave={() => hov.set(0)}
         onFocus={() => hov.set(1)}
         onBlur={() => hov.set(0)}
-        aria-label={isFront ? (item.kind === 'lot' ? `${name} — ${item.lot.opportunity}` : 'Open seat — bring your idea') : `Turn the orbit to ${name}`}
+        aria-label={isFront ? (item.kind === 'lot' ? `${name}: ${item.lot.opportunity}` : 'Open seat: bring your idea') : `Turn the orbit to ${name}`}
         animate={{ opacity: hidden ? 0 : state === 'dim' ? 0.22 : 1 }}
         transition={{ duration: hidden ? 0 : 0.4 }}
         className="group relative flex flex-col items-center bg-transparent border-0 p-0 cursor-pointer rounded-2xl focus:outline-none"
@@ -247,8 +246,9 @@ function RingNode({
           </motion.span>
         )}
 
-        {/* the first look — what it is, under the hand, on whichever sphere
-            the hand is on. A click opens the second look (FocusPanel). */}
+        {/* the first look — what it is, on whichever sphere the hand is on.
+            No price here: what it costs belongs to the second look
+            (FocusPanel), with what it has. */}
         {preview && !hidden && item.kind === 'lot' && state !== 'active' && (
           <span
             className={`pointer-events-none absolute left-1/2 -translate-x-1/2 ${back ? 'top-full mt-2 origin-top' : 'bottom-full mb-3 origin-bottom'} w-[260px] overflow-hidden rounded-[18px] bg-white/95 backdrop-blur-xl text-left shadow-[0_20px_50px_-18px_rgba(26,28,26,0.35)] ring-1 ring-ink/6 opacity-0 scale-95 ${back ? '-translate-y-1' : 'translate-y-1'} transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:scale-100 group-focus-visible:translate-y-0`}
@@ -258,10 +258,7 @@ function RingNode({
               <span className={`block ${TYPE.label}`}>{item.lot.type} · {item.lot.kind}</span>
               <span className="mt-1 block font-sans text-sm font-semibold text-ink">{item.lot.name}</span>
               <span className="mt-1 block font-serif font-semibold text-[15px] leading-snug text-ink line-clamp-3">{hookOf(item.lot)}</span>
-              <span className="mt-2.5 pt-2 flex items-center justify-between gap-2 border-t border-ink/6">
-                <span className="font-sans text-[13px] font-semibold text-ink whitespace-nowrap">{priceFrom(item.lot.id) ?? priceOf(item.lot.sheet ?? {})}</span>
-                <span className="font-sans text-xs font-semibold text-accent-deep whitespace-nowrap">Click for the ways in</span>
-              </span>
+              <span className="mt-2.5 pt-2 block border-t border-ink/6 font-sans text-xs font-semibold text-accent-deep">Click to see what it has</span>
             </span>
           </span>
         )}
@@ -273,7 +270,6 @@ function RingNode({
 /** The line that makes a visitor lean in — the sheet's hook, or the
  *  subtitle until the owner writes one. */
 const hookOf = (lot: Lot, sheet: LotSheet = lot.sheet ?? {}) => sheet.hook ?? lot.subtitle;
-const priceOf = (sheet: LotSheet) => sheet.price ?? 'Price on request';
 
 /* ---------- URL state ---------- */
 

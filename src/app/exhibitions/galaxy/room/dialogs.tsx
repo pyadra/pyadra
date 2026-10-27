@@ -154,10 +154,10 @@ export function InterestDialog({
           <h3 className={`${TYPE.title} mb-2`}>{follow ? `Follow ${project}.` : offer ? 'Tell us the structure you have in mind.' : `Talk with ${who}.`}</h3>
           <p className={`mb-5 ${TYPE.small}`}>
             {follow
-              ? 'Leave your email — one note when it opens, nothing else.'
+              ? 'Leave your email. One note when it opens, nothing else.'
               : offer
-                ? 'Upfront, share, hosted or independent — sketch it, and we reply directly.'
-                : `Leave your details. ${who} answers personally — every deal starts as a conversation.`}
+                ? 'Upfront, share, hosted or independent: sketch it, and we reply directly.'
+                : `Leave your details. ${who} answers personally, and every deal starts as a conversation.`}
           </p>
           <div className="space-y-4">
             <Field label="Name" value={name} onChange={setName} required autoFocus />
@@ -250,14 +250,14 @@ export function SupportDialog({ open, onClose, option }: { open: boolean; onClos
       ) : (
         <form onSubmit={submit} className="p-6 md:p-8">
           <p className={`${TYPE.label} text-accent-deep mb-2`}>{isForm ? 'Orbit 77 · Private channel' : 'Orbit 77 · Lock In Your Frequency'}</p>
-          <h3 className={`${TYPE.title} mb-2`}>{isForm ? 'Tell us the structure you’re thinking.' : `Lock in — ${option.name}.`}</h3>
+          <h3 className={`${TYPE.title} mb-2`}>{isForm ? 'Tell us the structure you’re thinking.' : `Lock in: ${option.name}.`}</h3>
           <p className={`mb-5 ${TYPE.small}`}>
             {isForm
-              ? 'Sketch the kind of involvement you have in mind — sponsorship, larger contribution, partnership. We reply directly.'
+              ? 'Sketch the kind of involvement you have in mind: sponsorship, a larger contribution, a partnership. We reply directly.'
               : `Your credential (O77-S1-XXXXXX) is delivered to your email after Stripe checkout.${(option.checkout ?? 0) >= 100 ? ' For ranges, the exact final amount is set at checkout.' : ''}`}
           </p>
           <div className="space-y-4">
-            <Field label={isForm ? 'Name' : 'Display name'} value={name} onChange={setName} required={isForm} placeholder={isForm ? '' : 'optional — or stay anonymous'} autoFocus />
+            <Field label={isForm ? 'Name' : 'Display name'} value={name} onChange={setName} required={isForm} placeholder={isForm ? '' : 'optional, or stay anonymous'} autoFocus />
             <Field label="Email" type="email" value={email} onChange={setEmail} required />
             <Field
               label={isForm ? 'Your proposal' : 'Short note'}
@@ -277,7 +277,7 @@ export function SupportDialog({ open, onClose, option }: { open: boolean; onClos
             </p>
           )}
           <button type="submit" disabled={status === 'sending' || !email.trim() || (isForm && (!name.trim() || !message.trim()))} className={submitClass}>
-            {status === 'sending' ? (isForm ? 'Sending…' : 'Opening checkout…') : isForm ? 'Hold The Signal — Send →' : `Lock In — $${option.checkout} AUD →`}
+            {status === 'sending' ? (isForm ? 'Sending…' : 'Opening checkout…') : isForm ? 'Hold the signal: send →' : `Lock in $${option.checkout} AUD →`}
           </button>
           {!isForm && <p className="mt-3 text-center font-sans text-xs text-ink-mute">Secure payment via Stripe · credential is permanent</p>}
         </form>

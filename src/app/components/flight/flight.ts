@@ -32,9 +32,10 @@ export type Flight = {
   gemTo: FlightSpot | null;
 };
 
-/** How long one sphere travels, and the gap between one leaving and the next. */
-export const FLY_S = 0.8;
-export const STAGGER_S = 0.03;
+/** How long the trip reads — the path itself is a spring (FlightLayer) —
+ *  and the small offset between spheres changing size and colour. */
+export const FLY_S = 0.75;
+export const STAGGER_S = 0.02;
 /** If Galaxy never says where to land, the layer lets go after this. */
 const GIVE_UP_MS = 3500;
 

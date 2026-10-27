@@ -36,8 +36,8 @@ import { LOTS } from '@/app/exhibitions/galaxy/lots';
 /*  Galaxy lights what fits and the guide speaks to it.                */
 /* ------------------------------------------------------------------ */
 
-const CURTAIN_MS = 2000;         // the full ceremony — first visit of a session
-const CURTAIN_AGAIN_MS = 350;    // coming back within the session: a breath, not a wait
+const CURTAIN_MS = 3200;         // the full ceremony — first visit of a session: long enough to read it
+const CURTAIN_AGAIN_MS = 1100;   // coming back within the session: the name once, then the room
 const GALAXY = '/exhibitions/galaxy';
 const SPRING = { type: 'spring' as const, stiffness: 130, damping: 18, mass: 0.9 };
 
@@ -129,7 +129,7 @@ function HeroSymbol({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }) {
       <motion.button
         type="button"
         onClick={enter}
-        aria-label="Pyadra symbol — enter Galaxy"
+        aria-label="Pyadra symbol: enter Galaxy"
         className="cursor-pointer bg-transparent border-0 p-0 block"
         style={{ lineHeight: 0 }}
         whileHover={reduced ? undefined : { scale: 1.04 }}
@@ -261,8 +261,8 @@ function IntentChooser({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }
     <div className="w-full">
       <RevealText
         as="p"
-        text="Real projects, already built — looking for the people who will take them further."
-        className={`${TYPE.title} max-w-xl mx-auto`}
+        text="Real projects, already built. Looking for the people who will take them further."
+        className={`${TYPE.statement} max-w-xl mx-auto`}
         delay={1.5}
         stagger={0.035}
       />
@@ -286,9 +286,6 @@ function IntentChooser({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }
 
       <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2 md:gap-2.5 text-left">
         {INTENTS.map((it, i) => {
-          // what waits behind this door, counted from the lots
-          const n = it.way ? LOTS.filter((l) => l.wayIn === it.way).length : LOTS.length;
-          const waiting = n === 0 ? 'An open seat' : `${n} project${n === 1 ? '' : 's'}`;
           return (
             <motion.button
               key={it.key}
@@ -314,15 +311,8 @@ function IntentChooser({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }
               <span className="min-w-0 flex-1 md:mt-3.5">
                 <span className="block font-sans text-sm font-semibold text-ink">{it.title}</span>
                 <span className="block font-sans text-[13px] leading-snug text-ink-mute">{it.line}</span>
-                <span className="mt-2.5 hidden md:flex items-center gap-1.5 font-mono font-bold text-[11px] uppercase tracking-[0.14em] text-accent-deep/80">
-                  <span aria-hidden className={`w-1.5 h-1.5 rounded-full ${n ? 'bg-accent' : 'border border-accent'}`} />
-                  {waiting}
-                </span>
               </span>
-              {/* phones: what waits behind the door, where desktop shows the arrow */}
-              <span className="md:hidden shrink-0 font-mono font-bold text-[11px] uppercase tracking-[0.14em] text-accent-deep/80">
-                {n || 'Open'}
-              </span>
+              <span aria-hidden className="md:hidden shrink-0 text-accent">→</span>
               <span aria-hidden className="hidden md:block md:absolute md:top-4 md:right-4 text-accent opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">→</span>
             </motion.button>
           );

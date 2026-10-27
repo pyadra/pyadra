@@ -148,6 +148,15 @@ Phones and tablets read the same orbit as a list grouped by sector; the lot open
 - **Click — how you'd come in** (`FocusPanel.tsx`). The sphere turns to the front and is ringed, the rest dim, the ring steps left, and the panel opens: the numbers with their evidence, ideal for, the ways in with their prices (three; the rest on the page), after the deal — and **Open the project** / **Visit {its site}**. ← → walk the projects, Esc or the field steps back; a second click on the chosen sphere opens the project too. `?lot=` is this panel again.
 - **Open — everything** (the dashboard).
 
+**Thirteenth pass — small fixes before deploying (owner, October 27, 2026).**
+- **The curtain lasts long enough to read:** 3.2 s on the first visit of a session (was 2 s), 1.1 s when coming back (was 0.35 s, a flash).
+- **The Home's sentence is said, not shouted:** Fraunces regular in `ink-soft` (new `TYPE.statement`) instead of semibold black, and without the dash — "Real projects, already built. Looking for the people who will take them further."
+- **No dashes in the copy a visitor reads** on the Home, Galaxy and the dashboards (`lots.ts`, `rooms.ts`, the panel, the dialogs): the owner reads " — " as machine-written. Commas, colons and full stops instead; founders' quotes keep their words, only the punctuation changed. Other pages (manifesto, store, legal, team) were not touched.
+- **The Home's doors lost their counts** ("6 projects", "An open seat"…): numbers on every card read as noise. Galaxy's filter still counts.
+- **Hover says what it is; the panel says what it has:** the hover card no longer shows the price — "From $…" lives in the panel with the ways in.
+- **The flight no longer pauses:** the path to the ring is a spring, so when Galaxy says where to land each sphere turns toward it with the speed it already has, instead of slowing to a stop and starting again; no sphere waits its turn.
+- **The Observer number:** works in production (the database answers there); locally the Supabase key in `.env.local` is no longer registered, so the API returns no number and none is shown — by design, never an invented one.
+
 **One data file.** `src/app/exhibitions/galaxy/lots.ts` holds one row per project — the "WHAT THE USER SEES BEFORE ENTERING" block plus `wayIn` and `stage`. `orbit.ts` computes every position from those two fields (sectors sized by how many lots they hold; spacing even along the ring, measured in card sizes). **Adding a project is adding a row.** Tested in `__tests__/orbit.test.ts`.
 
 **Projects on the branch (owner, October 26–27, 2026):** EterniCapsule, Figuitoon, Byndi, Momentos Eternos, URELIT, WEMAIT (acquire · ready), Kangaroo Cleanup (operate · ready), Orbit 77 (support · ready), BackMate (forming).
