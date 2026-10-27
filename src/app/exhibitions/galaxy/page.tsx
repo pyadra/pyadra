@@ -79,7 +79,9 @@ const names = (lots: Lot[]) =>
 function narrate({ way, intent, hovered, focus, phone }: { way: WayIn | null; intent: Intent | null; hovered: Lot | null; focus: Lot | null; phone: boolean }): string {
   if (focus) {
     switch (focus.wayIn) {
-      case 'acquire': return `${focus.name} can be bought whole. If it's for you, the dossier is your next step.`;
+      case 'acquire': return focus.enter_url
+        ? `${focus.name} can be bought whole. If it's for you, the dossier is your next step.`
+        : `${focus.name} can be bought whole. Its room opens soon — ask Pyadra about it now.`;
       case 'operate': return `No capital needed to start here — ${focus.name} needs time and someone who wants to run it.`;
       case 'support': return `Backing ${focus.name} isn't investing: you help it keep going, and it gives back.`;
       case 'forming': return `${focus.name} is still forming. Ask Pyadra where it's heading.`;
@@ -594,6 +596,16 @@ function LotPanel({
           >
             Ask Pyadra about it
           </button>
+        ) : sheet.live ? (
+          // no room yet — the product itself is the proof
+          <a
+            href={sheet.live.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full inline-flex items-center justify-center gap-1.5 rounded-full px-7 py-2 font-sans text-[13px] font-semibold text-accent-deep hover:bg-accent/8 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          >
+            See it live · {sheet.live.label} <span aria-hidden>↗</span>
+          </a>
         ) : (
           <span className="text-center font-sans text-[13px] text-ink-mute py-1">Its room opens soon.</span>
         )}

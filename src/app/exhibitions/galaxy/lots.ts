@@ -162,14 +162,124 @@ export const LOTS: Lot[] = [
     glow: 'bg-[#A3CFB6]',
   },
   /* ------------------------------------------------------------------ */
-  /*  The new projects.                                                  */
-  /*                                                                     */
-  /*  ⚠ TODO (owner) — ready and for sale (owner, October 27, 2026).    */
-  /*  Each still needs, from its own lot sheet (Lot_Sheet_Template.md),  */
-  /*  before this page is deployed: subtitle, proof, offer, the `sheet`  */
-  /*  fields, and enter_url — its Pyadra page or its own site. Until     */
-  /*  then they show "Details to confirm" and no link — never a claim    */
-  /*  the code can't keep (Company_Master #13).                          */
+  /*  Christian Ruiz's projects (co-founder), from their Project         */
+  /*  Standard docs of October 23, 2026 (04_Projects/). Strings are the  */
+  /*  docs' own — copy decks, canonical metrics, asset lists — trimmed   */
+  /*  to the lot sheet's lengths. No asking price: the docs share the    */
+  /*  figure only in due diligence. No Pyadra page yet (enter_url null). */
+  /* ------------------------------------------------------------------ */
+  {
+    id: 'momentos-eternos',
+    name: 'Momentos Eternos',
+    type: 'Global',
+    kind: 'Gift songs',
+    logo: { kind: 'pending' },
+    subtitle: 'Personalized songs to give as a gift',
+    proof: '3 sales, one per package · Paused, ready to reopen',
+    opportunity: 'Available to acquire',
+    wayIn: 'acquire',
+    stage: 'ready',
+    offer: {
+      give: 'An upfront amount — run it or own it, agreed in a conversation.',
+      get: 'The site, code, brand, content and documentation. The creator keeps a royalty, paid through Pyadra.',
+    },
+    sheet: {
+      hook: 'A gift business that already sold every package — waiting to be switched on.',
+      summary: 'You tell us a story about someone you love; we turn it into an original song you can give them, with a gift page they open from a QR code.',
+      formats: ['Website', 'Studio panel'],
+      includes: [
+        'The site, with payments and a studio panel',
+        'The brand, its characters and ad videos',
+        'Three packages, six cover styles, five sample songs',
+        'The README, content catalog and production scripts',
+      ],
+      idealFor: ['An operator to switch it back on', 'An owner to restart and grow it'],
+      numbers: [
+        { value: '3', label: 'sales, one per package' },
+        { value: '3 h', label: 'studio delivery' },
+        { value: '2', label: 'languages' },
+      ],
+      // the site is paused — no live link until it reopens
+    },
+    enter_url: null,
+    sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFF8F3,#F6D9CB,#E2AA92)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
+    glow: 'bg-[#EDBFAB]',
+  },
+  {
+    id: 'urelit',
+    name: 'URELIT',
+    type: 'Global',
+    kind: 'Gym app',
+    logo: { kind: 'pending' },
+    subtitle: 'The gym app that tells you what to lift next time',
+    proof: 'Live at urelit.app · 5 testers since September',
+    opportunity: 'Available to acquire',
+    wayIn: 'acquire',
+    stage: 'ready',
+    offer: {
+      give: 'An upfront amount — run it or own it, agreed in a conversation.',
+      get: 'The app, code, brand, social accounts and documentation. The creator keeps a royalty, paid through Pyadra.',
+    },
+    sheet: {
+      hook: 'A finished gym app, live and tested, one step from charging.',
+      summary: 'A gym app that remembers every set you do and tells you the weight, reps and effort for your next session — in plain gym language, with safety limits built in.',
+      formats: ['Installable web app'],
+      includes: [
+        'The live app and its code',
+        'The URELIT brand and its social accounts',
+        'Free and Premium plans, ready to charge',
+      ],
+      idealFor: ['Someone to run it', 'Someone to fund the launch', 'Someone to own it'],
+      numbers: [
+        { value: '5', label: 'active testers' },
+        { value: '$4.99', label: 'Premium/mo · not live yet' },
+        { value: '14', label: 'day Premium trial' },
+      ],
+      live: { label: 'urelit.app', href: 'https://urelit.app' },
+    },
+    enter_url: null,
+    sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFF6F5,#F6D2CE,#E3A09A)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
+    glow: 'bg-[#EDB5AF]',
+  },
+  {
+    id: 'wemait',
+    name: 'WEMAIT',
+    type: 'Global',
+    kind: 'Coaching app',
+    logo: { kind: 'pending' },
+    subtitle: 'An app for certified coaches and their clients',
+    proof: 'Live demo at wemait.app · 5 coaches in conversation',
+    opportunity: 'Available to acquire',
+    wayIn: 'acquire',
+    stage: 'ready',
+    offer: {
+      give: 'An upfront amount — run it or own it, agreed in a conversation.',
+      get: 'The app, code, brand, domain and documentation. The creator keeps a royalty, paid through Pyadra.',
+    },
+    sheet: {
+      hook: "The coaching platform that proves a coach's system works.",
+      summary: "An app for certified coaches and their clients: training, nutrition, habits and check-ins in one place. It shows with data whether a coach's system actually works.",
+      formats: ['Mobile app', 'Web app'],
+      includes: [
+        'Coach, client and admin apps with their code',
+        'The WEMAIT brand, domain and 16 tutorial videos',
+        'A pricing model by active clients, ready to switch on',
+      ],
+      idealFor: ['Someone to fund the launch', 'An operator for its coaches'],
+      numbers: [
+        { value: '5', label: 'coaches in conversation' },
+        { value: '750+', label: 'automated tests' },
+        { value: '16', label: 'tutorial videos' },
+      ],
+      live: { label: 'the wemait.app demo', href: 'https://wemait.app/app/' },
+    },
+    enter_url: null,
+    sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#F3FBFA,#CFEDE8,#93CFC6)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
+    glow: 'bg-[#ABDDD6]',
+  },
+  /* ------------------------------------------------------------------ */
+  /*  ⚠ TODO (owner) — Byndi has no Project Standard doc in the vault    */
+  /*  yet: its sheet, offer and destination wait for it.                 */
   /* ------------------------------------------------------------------ */
   {
     id: 'byndi',
@@ -187,54 +297,6 @@ export const LOTS: Lot[] = [
     enter_url: null,
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFF6F8,#F4DAE2,#DFB3C3)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
     glow: 'bg-[#EFC7D3]',
-  },
-  {
-    id: 'momentos-inolvidables',
-    name: 'Momentos Inolvidables',
-    type: 'Glocal',
-    kind: 'Custom songs',
-    logo: { kind: 'pending' },
-    subtitle: 'Songs made for one moment',
-    proof: 'Details to confirm',
-    opportunity: 'Available to acquire',
-    wayIn: 'acquire',
-    stage: 'ready',
-    offer: null,
-    enter_url: null,
-    sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FAF8FF,#E4DCF7,#C5B8E8)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
-    glow: 'bg-[#D6CBF0]',
-  },
-  {
-    id: 'gym',
-    name: 'Gym routines',
-    type: 'Global',
-    kind: 'Fitness app',
-    logo: { kind: 'pending' },
-    subtitle: 'Training routines, guided',
-    proof: 'Details to confirm',
-    opportunity: 'Available to acquire',
-    wayIn: 'acquire',
-    stage: 'ready',
-    offer: null,
-    enter_url: null,
-    sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#F6FBFF,#D9E8F4,#B4CADE)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
-    glow: 'bg-[#CBDDEB]',
-  },
-  {
-    id: 'we-made-it',
-    name: 'We Made It',
-    type: 'Details to confirm',
-    kind: 'Project',
-    logo: { kind: 'pending' },
-    subtitle: 'Details to confirm',
-    proof: 'Details to confirm',
-    opportunity: 'Available to acquire',
-    wayIn: 'acquire',
-    stage: 'ready',
-    offer: null,
-    enter_url: null,
-    sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFFBF2,#F6E7C8,#E6CB98)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
-    glow: 'bg-[#F0DDB4]',
   },
   {
     id: 'backmate',
