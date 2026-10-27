@@ -105,6 +105,28 @@ export const LOTS: Lot[] = [
       give: 'An upfront amount — two ways to take it on, agreed in a conversation.',
       get: 'The product and its operation. Pyadra keeps a small share of each capsule sold.',
     },
+    /* From 04_Projects/EterniCapsule.md (v2.4): the copy deck's tagline and
+       "What you get", the "What it is" block, and the participation options
+       as ideal-for. No sales figure (the live counts aren't trustworthy yet,
+       and the doc says no one has bought one) and no deal price — those
+       live on the dossier. */
+    sheet: {
+      hook: 'Leave a message in time. It opens on the date you choose.',
+      summary: "A vault for words you can't say today. Write them, seal them in digital metal, and choose the exact day they can be opened.",
+      formats: ['Web app'],
+      includes: [
+        'The finished app — live and working today',
+        'The brand and the ceremonial vault design',
+        'Payments, key emails and delivery, already wired',
+      ],
+      idealFor: ['An operator to run it', 'An owner to take it whole', 'Someone with a different offer'],
+      numbers: [
+        { value: '$9', label: 'AUD per capsule · Stripe live' },
+        { value: '128-bit', label: 'key per capsule' },
+        { value: '30 s', label: 'sealing ritual, on purpose' },
+      ],
+      live: { label: 'eternicapsule.com', href: 'https://eternicapsule.com' },
+    },
     enter_url: '/exhibitions/galaxy/ethernicapsule',
     featured: true,
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FDF6EA,#EBD8B9,#D3B58C)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
