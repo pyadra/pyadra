@@ -242,6 +242,8 @@ Everything else (more categories, accessories, premium versions) is secondary. T
 > 
 > 1. **No sales = the value rests on the asset, not earnings.** To justify $11,500, Figuitoon needs first sales, documented costs, recorded tests, physical samples, and a clear operations manual. Without those, a buyer values it as an unproven prototype (much lower). Don't show a hard valuation headline on the page — use a narrative of what's built, per [[Company_Master]].
 > 2. **The 3D printer belongs to Charina.** It is listed in "what's included," but Charina owns it and is the intended future CEO/owner. The printer (and Charina's role) cannot be sold out from under her. The deal structure must be defined WITH Charina before any sale is offered. This is a real blocker, not a detail.
+>
+> **Owner decision (October 27, 2026):** the 3D printer IS included in the sale of Figuitoon. The dashboard lists it under "What you'd take" and in the "Take it all" option.
 
 > [!note] Charina is the planned destination, not a co-decider today Eduardo builds and decides now; Charina becomes CEO/owner once the project is running. So the "sale" of Figuitoon is really a handover to Charina, not a sale to a stranger — unless the plan changes. Clarify which path before building a sale page: handover-to-Charina vs sell-to-external. They are different pages.
 

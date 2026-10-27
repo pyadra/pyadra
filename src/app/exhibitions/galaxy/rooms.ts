@@ -122,7 +122,7 @@ export const ROOMS: Record<string, Room> = {
     ways: {
       kind: 'acquire',
       options: [
-        { name: 'Take it all', price: '$2,500', terms: 'Store, brand, styles, files, pipeline, know-how', detail: 'The whole project in one step. The details of the printer are agreed in the conversation.', pick: true },
+        { name: 'Take it all', price: '$2,500', terms: 'Store, brand, styles, printer, pipeline, know-how', detail: 'The whole project in one step — the 3D printer included.', pick: true },
         { name: 'Make an offer', price: 'Let’s talk', terms: 'A different structure', detail: 'A smaller start, a partnership, or something else — tell us.' },
       ],
       after: [
