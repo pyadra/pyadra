@@ -10,12 +10,19 @@ import {
   useTime,
   useTransform,
 } from 'framer-motion';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SiteNav from '@/app/components/nav/SiteNav';
+import { useZoomDoor } from '@/app/components/ui/useZoomDoor';
+import { liftOff, type FlightSpot } from '@/app/components/flight/flight';
+import { TYPE } from '@/app/components/ui/type';
+import { INTENTS, galaxyHref, setIntent, type Intent } from '@/app/components/guide/intent';
 import SiteFooter from '@/app/components/nav/SiteFooter';
 import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
+import RevealText from '@/app/components/ui/RevealText';
+import { trackPointer } from '@/app/components/ui/pointer';
+import { EASE } from '@/app/components/ui/motion';
+import { LOTS } from '@/app/exhibitions/galaxy/lots';
 
 /* ------------------------------------------------------------------ */
 /*  PYADRA — HOME · The Threshold                                      */
@@ -23,48 +30,67 @@ import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
 /*  The Pyadra symbol IS the home. It assembles, breathes, and can be  */
 /*  met (click → gem and body encounter). The words orbit around it,   */
 /*  not the other way around. One door leads to the exhibition.        */
+/*                                                                     */
+/*  Then it says what Pyadra is, in one line, and asks the visitor     */
+/*  what brought them here. The answer travels with them (intent.ts):  */
+/*  Galaxy lights what fits and the guide speaks to it.                */
 /* ------------------------------------------------------------------ */
 
-const CURTAIN_MS = 2000;         // every visit — the full ceremony
+const CURTAIN_MS = 3200;         // the full ceremony — first visit of a session: long enough to read it
+const CURTAIN_AGAIN_MS = 1100;   // coming back within the session: the name once, then the room
+const GALAXY = '/exhibitions/galaxy';
 const SPRING = { type: 'spring' as const, stiffness: 130, damping: 18, mass: 0.9 };
 
-/* Fixed spark orbit params — no Math.random() (SSR/hydration safe). */
-const SPARKS: { radius: number; speed: number; phase: number; size: number; opacity: number }[] = [
-  { radius: 230, speed: 0.15,  phase: 0.0, size: 6, opacity: 0.55 },
-  { radius: 265, speed: -0.10, phase: 1.5, size: 4, opacity: 0.45 },
-  { radius: 205, speed: 0.13,  phase: 3.1, size: 5, opacity: 0.50 },
-  { radius: 285, speed: -0.08, phase: 4.7, size: 4, opacity: 0.40 },
-  { radius: 218, speed: 0.19,  phase: 2.4, size: 3, opacity: 0.60 },
-  { radius: 250, speed: -0.14, phase: 5.6, size: 3, opacity: 0.35 },
-];
+/* The projects, already in orbit around the symbol — one small sphere per
+   lot, in its own colour, so the Home shows what Galaxy holds before the
+   visitor walks in. Counted from lots.ts: a new project joins the orbit
+   here too. Fixed params, no Math.random() (SSR/hydration safe). */
+const ORBS = LOTS.map((lot, i) => ({
+  id: lot.id,
+  glow: lot.glow,
+  radius: [190, 236, 172, 258, 214, 182, 246, 200, 226][i % 9],
+  speed: (i % 2 ? -1 : 1) * [0.11, 0.08, 0.13, 0.07, 0.1, 0.12, 0.09, 0.14, 0.085][i % 9],
+  phase: Math.round(((i * 2 * Math.PI) / LOTS.length) * 1000) / 1000,
+  size: [20, 14, 18, 13, 16, 20, 14, 17, 13][i % 9],
+}));
 
-/* One spark, endlessly orbiting the symbol. */
-function OrbitingSpark({
+/* One project, endlessly orbiting the symbol — it passes in front of the
+   symbol on the near side of its ellipse and behind it on the far side. */
+function OrbitingOrb({
+  id,
   radius,
   speed,
   phase,
   size,
-  opacity,
+  glow,
   reduced,
 }: {
+  id: string;
   radius: number;
   speed: number;
   phase: number;
   size: number;
-  opacity: number;
+  glow: string;
   reduced: boolean;
 }) {
   const time = useTime();
   const v = reduced ? 0 : speed;
-  const x = useTransform(time, (t) => Math.cos(phase + (t / 1000) * v) * radius);
-  const y = useTransform(time, (t) => Math.sin(phase + (t / 1000) * v) * radius * 0.6);
+  const angle = useTransform(time, (t) => phase + (t / 1000) * v);
+  const x = useTransform(angle, (a) => Math.cos(a) * radius);
+  const y = useTransform(angle, (a) => Math.sin(a) * radius * 0.36);
+  // nearer (lower on the ellipse) reads bigger and brighter
+  const scale = useTransform(angle, (a) => 0.8 + 0.3 * ((Math.sin(a) + 1) / 2));
+  const zIndex = useTransform(angle, (a) => (Math.sin(a) > 0 ? 20 : 0));
 
   return (
     <motion.div
       aria-hidden
-      style={{ x, y, width: size, height: size, opacity }}
-      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#059669] shadow-[0_0_10px_rgba(5,150,105,0.7)] pointer-events-none"
-    />
+      data-orb={id}
+      style={{ x, y, scale, zIndex, width: size, height: size }}
+      className={`absolute left-1/2 top-[32%] -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none shadow-[-2px_3px_6px_rgba(26,28,26,0.18)] ${glow}`}
+    >
+      <span className="py-glass" />
+    </motion.div>
   );
 }
 
@@ -78,20 +104,24 @@ const STROKE = '#059669';
 const SW = 11;
 const SYMBOL_SIZE = 260;
 
-function HeroSymbol({ reduced }: { reduced: boolean }) {
+type ZoomTo = (from: Element | null, href: string) => void;
+
+function HeroSymbol({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }) {
   const router = useRouter();
   const [met, setMet] = useState(false);
+  const symbolRef = useRef<SVGSVGElement>(null);
   const height = Math.round((SYMBOL_SIZE * 232) / 240);
 
   useEffect(() => {
-    router.prefetch('/exhibitions');
+    router.prefetch(GALAXY);
   }, [router]);
 
   // click → they meet (the shrink), then the door opens
   const enter = () => {
     if (met) return;
     setMet(true);
-    setTimeout(() => router.push('/exhibitions'), reduced ? 150 : 950);
+    setIntent('look');
+    setTimeout(() => zoomTo(symbolRef.current, GALAXY), reduced ? 150 : 650);
   };
 
   return (
@@ -99,7 +129,7 @@ function HeroSymbol({ reduced }: { reduced: boolean }) {
       <motion.button
         type="button"
         onClick={enter}
-        aria-label="Pyadra symbol — enter the exhibitions"
+        aria-label="Pyadra symbol: enter Galaxy"
         className="cursor-pointer bg-transparent border-0 p-0 block"
         style={{ lineHeight: 0 }}
         whileHover={reduced ? undefined : { scale: 1.04 }}
@@ -107,12 +137,13 @@ function HeroSymbol({ reduced }: { reduced: boolean }) {
         transition={{ type: 'spring', stiffness: 300, damping: 18 }}
       >
         <svg
+          ref={symbolRef}
           width={SYMBOL_SIZE}
           height={height}
           viewBox="0 0 240 232"
           overflow="visible"
           className="block h-auto"
-          style={{ width: 'min(260px, 58vw)' }}
+          style={{ width: 'min(150px, 38vw)' }}
         >
           {/* GEM */}
           <motion.g
@@ -121,6 +152,7 @@ function HeroSymbol({ reduced }: { reduced: boolean }) {
             transition={{ type: 'spring', stiffness: 130, damping: 16, mass: 1 }}
           >
             <path
+              data-flight-gem
               d="M106,20 L134,20 L150,38 L150,72 L134,90 L106,90 L90,72 L90,38 Z"
               fill="none"
               stroke={STROKE}
@@ -182,10 +214,10 @@ function HeroSymbol({ reduced }: { reduced: boolean }) {
         transition={{ duration: 0.8, delay: reduced ? 0 : 1.3 }}
         className="font-serif font-semibold text-center text-[#1A1C1A]"
         style={{
-          fontSize: 'clamp(34px, 15vw, 78px)',
+          fontSize: 'clamp(30px, 10vw, 50px)',
           letterSpacing: '0.32em',
           textIndent: '0.32em',
-          marginTop: 'clamp(30px, 13vw, 57px)',
+          marginTop: 'clamp(18px, 6vw, 28px)',
         }}
       >
         PYADRA
@@ -198,19 +230,100 @@ function HeroSymbol({ reduced }: { reduced: boolean }) {
         transition={{ duration: 0.8, delay: reduced ? 0 : 1.45 }}
         className="font-mono uppercase text-center text-[#6B8070]"
         style={{
-          fontSize: 'clamp(9px, 3.4vw, 19px)',
+          fontSize: 'clamp(9px, 2.8vw, 15px)',
           letterSpacing: '0.3em',
-          marginTop: 'clamp(12px, 5vw, 21px)',
+          marginTop: 'clamp(10px, 3.5vw, 16px)',
         }}
       >
-        DISCOVER. CONNECT. BUILD. BUY.
+        Discover. Connect. Build. Buy.
       </motion.div>
     </div>
   );
 }
 
+/* One small line mark per intent — drawn, not an icon font. */
+const INTENT_MARK: Record<Intent, React.ReactNode> = {
+  own: <path d="M8 14a4 4 0 1 1 3.5-6H20v3h-2v2h-2.5v-2h-4A4 4 0 0 1 8 14Zm0-2.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />,
+  run: <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.4 2.4-2.1-.6-.6-2.1 2.4-2.4Z" />,
+  back: <path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0 1 12 8a3.8 3.8 0 0 1 7 2.5C19 15.6 12 20 12 20Z" />,
+  idea: <path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.9V16h5v-.2c0-.8.4-1.5 1-1.9A6 6 0 0 0 12 3Z" />,
+  look: <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Zm9.5 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />,
+};
+
+/* The question that turns a visitor into a guest: what brought you here?
+   Each answer is a door — it zooms into Galaxy with what fits lit. */
+function IntentChooser({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }) {
+  const choose = (key: Intent, el: Element) => {
+    setIntent(key);
+    zoomTo(el, galaxyHref(key));
+  };
+  return (
+    <div className="w-full">
+      <RevealText
+        as="p"
+        text="Real projects, already built. Looking for the people who will take them further."
+        className={`${TYPE.statement} max-w-xl mx-auto`}
+        delay={1.5}
+        stagger={0.035}
+      />
+      <motion.p
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: reduced ? 0 : 1.75, ...SPRING }}
+        className={`mt-2 ${TYPE.lead}`}
+      >
+        Come in with money, work or skills.
+      </motion.p>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: reduced ? 0 : 1.9 }}
+        className="mt-7 font-mono font-bold text-[11px] uppercase tracking-[0.18em] text-accent-deep"
+      >
+        What brings you here?
+      </motion.p>
+
+      <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2 md:gap-2.5 text-left">
+        {INTENTS.map((it, i) => {
+          return (
+            <motion.button
+              key={it.key}
+              type="button"
+              onClick={(e) => choose(it.key, e.currentTarget)}
+              onPointerMove={trackPointer}
+              initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ delay: reduced ? 0 : 2.0 + i * 0.07, duration: 0.7, ease: EASE.out }}
+              whileHover={reduced ? undefined : { y: -4 }}
+              whileTap={{ scale: 0.97 }}
+              className={`py-spot group relative flex md:flex-col items-center md:items-start gap-3 md:gap-0 text-left rounded-2xl px-4 py-3 md:p-4 cursor-pointer ring-1 transition-[background-color,box-shadow] duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                it.key === 'look'
+                  ? 'bg-transparent ring-ink/10 hover:bg-white/60'
+                  : 'bg-white/70 backdrop-blur-sm ring-ink/6 shadow-sm hover:bg-white hover:shadow-[0_22px_40px_-18px_rgba(4,120,87,0.35)]'
+              }`}
+            >
+              <span className="flex w-9 h-9 shrink-0 items-center justify-center rounded-xl bg-paper text-ink-mute transition-[background-color,color,transform] duration-300 group-hover:bg-accent group-hover:text-white group-hover:-rotate-6">
+                <svg viewBox="0 0 24 24" className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" aria-hidden>
+                  {INTENT_MARK[it.key]}
+                </svg>
+              </span>
+              <span className="min-w-0 flex-1 md:mt-3.5">
+                <span className="block font-sans text-sm font-semibold text-ink">{it.title}</span>
+                <span className="block font-sans text-[13px] leading-snug text-ink-mute">{it.line}</span>
+              </span>
+              <span aria-hidden className="md:hidden shrink-0 text-accent">→</span>
+              <span aria-hidden className="hidden md:block md:absolute md:top-4 md:right-4 text-accent opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">→</span>
+            </motion.button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 /* The logo showcase: halos + orbiting sparks + interactive symbol. */
-function LogoShowcase({ reduced }: { reduced: boolean }) {
+function LogoShowcase({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }) {
   return (
     <div className="relative flex flex-col items-center justify-center py-4">
       {/* Halo 1 — wide, slow breath */}
@@ -218,7 +331,7 @@ function LogoShowcase({ reduced }: { reduced: boolean }) {
         aria-hidden
         animate={reduced ? undefined : { scale: [1, 1.18, 1], opacity: [0.35, 0.6, 0.35] }}
         transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full pointer-events-none"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.18), transparent 65%)', filter: 'blur(20px)' }}
       />
 
@@ -227,17 +340,27 @@ function LogoShowcase({ reduced }: { reduced: boolean }) {
         aria-hidden
         animate={reduced ? undefined : { scale: [1.15, 1, 1.15], opacity: [0.5, 0.25, 0.5] }}
         transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] rounded-full pointer-events-none"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.22), transparent 60%)', filter: 'blur(12px)' }}
       />
 
-      {/* Orbiting sparks — atmosphere, not projects */}
-      {SPARKS.map((s, i) => (
-        <OrbitingSpark key={i} {...s} reduced={reduced} />
+      {/* the projects, in orbit — Galaxy, seen from the threshold */}
+      {ORBS.map(({ id, ...o }, i) => (
+        <motion.div
+          key={id}
+          aria-hidden
+          // phones get a tighter orbit, so the projects stay on screen
+          className="absolute inset-0 pointer-events-none origin-[50%_32%] scale-[0.62] sm:scale-[0.8] md:scale-100"
+          initial={reduced ? false : { opacity: 0, scale: 0.6 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, ease: EASE.out, delay: reduced ? 0 : 1.1 + i * 0.08 }}
+        >
+          <OrbitingOrb id={id} {...o} reduced={reduced} />
+        </motion.div>
       ))}
 
       {/* THE SYMBOL — click always works. */}
-      <HeroSymbol reduced={reduced} />
+      <HeroSymbol reduced={reduced} zoomTo={zoomTo} />
     </div>
   );
 }
@@ -284,6 +407,32 @@ export default function PyadraHome() {
   const [curtainUp, setCurtainUp] = useState(false);
   const [observerId, setObserverId] = useState<string | null>(null);
   const reduced = useReducedMotion() ?? false;
+  const { zoomTo, overlay, zoomProps } = useZoomDoor();
+  const router = useRouter();
+
+  // Into Galaxy. Where there's room for its ring, the spheres circling the
+  // symbol fly there (components/flight) while the Home steps back;
+  // elsewhere — phones, reduced motion — the zoom door.
+  const [leaving, setLeaving] = useState(false);
+  const enterGalaxy: ZoomTo = (from, href) => {
+    if (leaving) return;
+    if (reduced || window.innerWidth < 1024) return zoomTo(from, href);
+    const spot = (el: Element): FlightSpot => {
+      const r = el.getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2, size: r.width };
+    };
+    const spheres: Record<string, FlightSpot> = {};
+    document.querySelectorAll<HTMLElement>('[data-orb]').forEach((el) => {
+      if (el.dataset.orb) spheres[el.dataset.orb] = spot(el);
+    });
+    if (!Object.keys(spheres).length) return zoomTo(from, href);
+    const gem = document.querySelector('[data-flight-gem]');
+    router.prefetch(href);
+    liftOff(spheres, gem ? spot(gem) : null);
+    setLeaving(true);
+    // the page changes almost at once — the spheres are already moving
+    setTimeout(() => router.push(href), 140);
+  };
 
   // Every visitor becomes a numbered Observer — Pyadra's quiet signature.
   // Returning visitors read their stored id; first-timers get registered,
@@ -309,9 +458,15 @@ export default function PyadraHome() {
       .catch(() => {});
   }, []);
 
-  // the curtain rises — three seconds of black, every visit
+  // the curtain rises — the full two seconds on the first visit of a
+  // session, a breath when the visitor comes back to the threshold
   useEffect(() => {
-    const wait = reduced ? 250 : CURTAIN_MS;
+    let seen = false;
+    try {
+      seen = window.sessionStorage.getItem('pyadra_curtain') === '1';
+      window.sessionStorage.setItem('pyadra_curtain', '1');
+    } catch {}
+    const wait = reduced ? 250 : seen ? CURTAIN_AGAIN_MS : CURTAIN_MS;
     const t = setTimeout(() => setCurtainUp(true), wait);
     return () => clearTimeout(t);
   }, [reduced]);
@@ -330,7 +485,12 @@ export default function PyadraHome() {
   };
 
   return (
-    <div className="bg-[#EDEFED] text-[#1A1C1A] overflow-x-clip antialiased selection:bg-[#059669] selection:text-white">
+    <>
+    <motion.div
+      {...zoomProps}
+      {...(leaving ? { animate: { opacity: 0, y: 24, filter: 'blur(6px)' }, transition: { duration: 0.3, ease: EASE.out } } : {})}
+      className={`bg-[#EDEFED] text-[#1A1C1A] overflow-x-clip antialiased selection:bg-[#059669] selection:text-white ${leaving ? 'py-leaving' : ''}`}
+    >
 
       {/* ============ THE CURTAIN — 3 seconds of black ============ */}
       <AnimatePresence>
@@ -402,40 +562,23 @@ export default function PyadraHome() {
         <MuseumAtmosphere />
 
         {/* ---- the composition ---- */}
-        <div className="relative z-10 w-full max-w-3xl mx-auto px-6 flex flex-col items-center text-center gap-8 md:gap-10 py-24">
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-5 md:px-6 flex flex-col items-center text-center gap-5 md:gap-6 pt-20 md:pt-24 pb-16">
 
           {/* THE LOGO — mounted only after the curtain lifts, so intro
               plays as black slides away. Symbol + PYADRA + tagline.
               Nothing else competes with it. */}
-          <div className="relative w-full flex items-center justify-center min-h-[380px]">
-            {curtainUp && <LogoShowcase reduced={reduced} />}
+          <div className="relative w-full flex items-center justify-center min-h-[250px] md:min-h-[260px]">
+            {curtainUp && <LogoShowcase reduced={reduced} zoomTo={enterGalaxy} />}
           </div>
 
-          {/* THE ONE DOOR */}
-          {curtainUp && (
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.0, ...SPRING }}
-            >
-              <Link
-                href="/exhibitions"
-                className="cta-glow group relative block rounded-full bg-[#1A1C1A] text-white px-12 py-4 t-d5 font-semibold shadow-lg shadow-[#1A1C1A]/20 overflow-hidden"
-              >
-                {/* emerald bloom seeps in from below on hover */}
-                <span
-                  aria-hidden
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                  style={{ background: 'radial-gradient(80% 120% at 50% 130%, rgba(5,150,105,0.55), transparent 70%)' }}
-                />
-                <span className="relative">Join</span>
-              </Link>
-            </motion.div>
-          )}
+          {/* WHAT PYADRA IS — AND WHAT BRINGS YOU HERE */}
+          {curtainUp && <IntentChooser reduced={reduced} zoomTo={enterGalaxy} />}
         </div>
       </section>
 
       <SiteFooter />
-    </div>
+    </motion.div>
+    {overlay}
+    </>
   );
 }

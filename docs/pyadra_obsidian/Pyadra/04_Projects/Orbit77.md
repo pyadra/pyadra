@@ -384,6 +384,9 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 
 ## COPY DECK — LOCKED STRINGS
 
+> [!important] Dashboard v6 (October 27, 2026) — this page now renders from the shared template
+> The project page is `src/app/exhibitions/galaxy/[project]` + `room/ProjectDashboard.tsx`, filled from `galaxy/lots.ts` and `galaxy/rooms.ts` — no longer a page of its own. Section names are shared by every project ("What you'd take", "How a deal works", "Before you decide", "The person", "Questions", "Ways in", "After the deal"). Prices on the page are the owner's low estimates (October 27) pending his real figures. The strings below are the source; reconcile them with `rooms.ts` when they change.
+
 > [!important] How to use this section Verbatim record of every visible string on the Orbit 77 dashboard, post-payment page and archive. New copy is written here first; Claude Code copies verbatim — never paraphrase, invent, or "improve". If this deck and the live page disagree, the deck is updated to the live string the same day, and a false live string is flagged ⚠ and fixed in code ([[Company_Master]] §6). Last reconciled against the code on September 19, 2026. For any NUMBER (tiers, funding goal, supporters, episodes), the metrics in WHAT THE USER SEES are canonical; update those first. This deck reflects the CONTRIBUTION model (no equity, no "own a piece" — that old framing is removed). Draft amounts are provisional (refine with Pablo).
 
 > [!warning] Orbit is a CONTRIBUTION page, not a sale Remove all "own / 49% / acquire / equity" language. People contribute to fund Season 2 and get recognition/perks — never ownership, revenue share, or creative control. The founders keep Orbit 77.
@@ -610,4 +613,6 @@ buy now · fake supporter numbers
 
 > [!note] Changelog v1.6 (September 22, 2026) — Owner decisions: Orbit is GLOCAL (page badge corrected to `Glocal · Podcast Archive`, pending deploy) and the project stays with Pablo. The $10 in the fund is most likely the owner's own test payment, so real support is treated as $0 and the row is flagged for deletion. The Pablo/Eduardo split question now points to the open revenue-attribution question in [[Company_Master]] §10.
 
-_END · ORBIT 77 · v1.6_
+> [!note] Changelog v1.7 (October 21, 2026) — The September 22 page badge correction (`Glocal · Podcast Archive`) is confirmed live on `main`, so the "pending deploy" note is resolved. No amounts, perks or copy changed.
+
+_END · ORBIT 77 · v1.7_

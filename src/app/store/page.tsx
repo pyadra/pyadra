@@ -225,7 +225,7 @@ export default function PyadraStore() {
             The museum shop
           </motion.span>
 
-          <h1 className="text-4xl md:text-7xl font-bold tracking-[-0.035em] leading-[1.08] md:leading-[1.0] mb-7">
+          <h1 className="t-d1 md:text-[64px] text-ink leading-[1.02] mb-7">
             {['Take something', 'home.'].map((line, i) => (
               <span key={line} className="block overflow-hidden">
                 <motion.span

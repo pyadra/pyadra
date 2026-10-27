@@ -153,7 +153,7 @@ export default function Manifesto() {
             className="inline-block"
           >
             <Link
-              href="/exhibitions"
+              href="/exhibitions/galaxy"
               className="block rounded-full bg-[#1A1C1A] text-white px-8 py-3.5 t-d5 font-semibold shadow-lg shadow-[#1A1C1A]/20"
             >
               Enter the exhibition →

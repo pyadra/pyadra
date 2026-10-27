@@ -55,9 +55,11 @@ From Company_Master §15. These are not style preferences:
   in code. If the deck and the live page disagree, the deck is updated to the
   live string the same day — unless the live string is false, and then the
   page is fixed instead.
-- **One canonical number.** A figure lives in one place. Proof lines are
-  duplicated in Galaxy's `PROJECTS` array and in `/team`'s rows — if a number
-  changes, both move in the same commit, with the project document.
+- **One canonical number.** A figure lives in one place. The Galaxy sphere
+  proof lines live in Galaxy's `PROJECTS` array — the only hardcoded copy,
+  since the founder's room moved to `/team` and no longer lists per-project
+  numbers. If a number changes, update it there in the same commit, with the
+  project document.
 - Numbers that change without a deploy belong in the `pyadra_settings` table,
   read with `getSetting(key, fallback)`.
 - `pyadra@pyadra.io` is the only real inbox. Never a personal address.
@@ -83,7 +85,24 @@ npm run verify      # tsc + vitest + next build + smoke. No lint in it.
 (EterniCapsule's proof line, "key-locked", Orbit as Glocal, Observer numbers no
 longer invented, the privacy page) plus the reconciled documentation.
 
-**In progress — Galaxy with seven projects.** The field grows from four spheres
+**In progress — Galaxy v5, the orbit as an instrument** (branch
+`feat/galaxy-orbit-instrument`, local, October 26, 2026). Supersedes the 3 · 2 · 2
+grid below: one canvas with four zooms from the Home to the dossier, positions
+computed from `galaxy/lots.ts`. What it is and what blocks it: the v5 section of
+`03_Exhibitions/Galaxy.md`.
+
+**Type and colour — one voice (October 27, 2026).** New UI composes
+`src/app/components/ui/type.ts` (six sizes: names in Fraunces, labels in Plex
+Mono uppercase, the rest in DM Sans) and the palette names in `globals.css`
+(`text-ink`, `text-ink-soft`, `text-ink-mute`, `bg-paper`, `text-accent`,
+`text-accent-deep`). Don't write a new `text-[Npx]` or a raw museum hex.
+Motion the same way: curves and springs from `components/ui/motion.ts`;
+surfaces that answer the pointer use `.py-spot` / `.py-sheen` / `.py-glass`
+(globals.css). Background motion is CSS only — never JS-animated particles.
+
+**Project dashboards — one template (October 27, 2026).** Every project page is `galaxy/[project]` rendering `room/ProjectDashboard.tsx` from `lots.ts` (what Galaxy also shows) and `rooms.ts` (what only the dashboard shows). A new project is a row in each, not a new page. Numbers say where they come from and read live through `live.ts`. Prices in `rooms.ts` are owner estimates until he sends the real ones.
+
+**Earlier — Galaxy with seven projects.** The field grows from four spheres
 to seven: rows of 3 · 2 · 2 on desktop, the gem keeping the empty centre of the
 middle row; two per row on phones with the seventh centred. Built and
 typechecked, not committed. It is blocked on content, not on code: Byndi,
@@ -93,10 +112,12 @@ destination — their Pyadra page or their own URL. Until then they render with
 provisional copy and no link, which must not be deployed. Shipping it also means
 updating `/team`'s three `soon-*` rows and Galaxy's copy deck in the same commit.
 
-**Pending:** a critical Next.js advisory (middleware/proxy bypass in App Router)
+**Deployed — Galaxy v6 and the project dashboards (October 28, 2026).** Released from `release/galaxy-v6` as one squashed commit on top of the previous production (`43bf017`, tagged `prod-backup-2026-10-27`; its Vercel deployment is `pyadra-7ejzze3ox-pyadras-projects.vercel.app`). To roll back: in Vercel, promote that deployment again (Instant Rollback), or `git revert` the release commit on `main`. The full commit history of the work stays on the local branch `feat/galaxy-orbit-instrument`. Left out of the public repo on purpose: the Project Standard docs of Momentos Eternos, URELIT and WEMAIT (revenue, royalties, due diligence) — they live in the owner's vault only.
+
+~~**Pending:** a critical Next.js advisory (middleware/proxy bypass in App Router)
 against the installed 16.2.10, with a fix available — the middleware does the
 rate limiting and the redirects. Draft PR #1 from Vercel is stale, based on a
-`main` from March; it should be closed rather than merged.
+`main` from March; it should be closed rather than merged.~~ Fixed: Next.js 16.4.2 (October 28, 2026).
 
 **Note:** this repository is public, and `docs/pyadra_obsidian/` has been
 tracked in it since May 2026 — including deal terms, revenue figures and the

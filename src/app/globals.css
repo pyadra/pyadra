@@ -12,6 +12,16 @@
   --font-serif: var(--font-fraunces), "Fraunces", Georgia, serif;      /* DISPLAY */
   --font-sans:  var(--font-dm-sans),  "DM Sans", system-ui, sans-serif; /* TEXT / UI */
   --font-mono:  var(--font-ibm-mono), "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace; /* LABELS */
+
+  /* The museum's palette as utilities (text-ink, bg-paper, text-accent…) —
+     the same values the dossiers write as hex, given names so new pages
+     can't drift. Project brand colours stay with their own pages. */
+  --color-ink: #1A1C1A;          /* headings, primary text */
+  --color-ink-soft: #3A4A3E;     /* body, subtitles */
+  --color-ink-mute: #6B8070;     /* labels, metadata */
+  --color-paper: #EDEFED;        /* the museum's wall */
+  --color-accent: #059669;       /* emerald — the one accent */
+  --color-accent-deep: #047857;  /* emerald on light, hover */
 }
 
 :root {
@@ -267,3 +277,125 @@ html, body {
   .rise-col { animation: none; }
   .panel-lift, .panel-lift:hover, .cta-glow, .cta-glow:hover { transition: none; transform: none; }
 }
+
+/* ==================================================================
+   PYADRA · Atmosphere — the floor every room stands on.
+   Static layers and compositor-only motion: none of it costs the
+   main thread a frame (MuseumAtmosphere.tsx, GreenDust.tsx).
+   ================================================================== */
+
+/* the blueprint grid, lit from the centre and fading at the edges */
+.py-grid {
+  background-image:
+    linear-gradient(to right, rgba(180, 196, 184, 0.55) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(180, 196, 184, 0.55) 1px, transparent 1px);
+  background-size: 40px 40px;
+  -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, #000 30%, transparent 100%);
+  mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, #000 30%, transparent 100%);
+  opacity: 0.26;
+}
+
+/* film grain — one small tile, drawn once */
+.py-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.12 0 0 0 0 0.1 1.4 0 0 0 -0.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  opacity: 0.22;
+}
+
+/* the dust — a soft emerald mote, glow drawn in its own box */
+.py-dust {
+  position: absolute;
+  bottom: -4%;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.95) 0 22%, rgba(5, 150, 105, 0.35) 40%, transparent 70%);
+  animation-name: py-dust;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+@keyframes py-dust {
+  0%   { transform: translate3d(0, 0, 0); opacity: 0; }
+  12%  { opacity: 0.55; }
+  50%  { opacity: 0.85; }
+  88%  { opacity: 0.45; }
+  100% { transform: translate3d(var(--drift, 0px), -115vh, 0); opacity: 0; }
+}
+
+/* ==================================================================
+   PYADRA · Surfaces that answer the hand.
+   ================================================================== */
+
+/* Spotlight — a light that follows the pointer across a card and lights
+   its edge where the pointer is (pointer.ts sets --mx / --my). */
+.py-spot { position: relative; isolation: isolate; }
+.py-spot::before,
+.py-spot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.py-spot::before {
+  z-index: -1;
+  background: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), rgba(5, 150, 105, 0.10), transparent 65%);
+}
+.py-spot::after {
+  padding: 1px;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(5, 150, 105, 0.65), transparent 60%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+@media (hover: hover) {
+  .py-spot:hover::before,
+  .py-spot:hover::after { opacity: 1; }
+}
+
+/* Glass — the light on a Galaxy sphere: a specular spot, a rim and the
+   shade underneath, so a pastel disc reads as an object in the room. */
+.py-glass {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.95) 0, rgba(255, 255, 255, 0.55) 9%, rgba(255, 255, 255, 0) 30%),
+    radial-gradient(circle at 70% 85%, rgba(255, 255, 255, 0.35) 0, rgba(255, 255, 255, 0) 30%),
+    radial-gradient(circle at 50% 50%, transparent 58%, rgba(26, 28, 26, 0.10) 100%);
+  box-shadow:
+    inset 0 2px 3px rgba(255, 255, 255, 0.85),
+    inset 0 -8px 14px rgba(26, 28, 26, 0.10);
+}
+
+/* a sheen that crosses a surface once on hover */
+.py-sheen { position: relative; overflow: hidden; }
+.py-sheen::after {
+  content: '';
+  position: absolute;
+  inset: -20% auto -20% -60%;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: skewX(-20deg) translateX(0);
+  opacity: 0;
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .py-sheen:hover::after { animation: py-sheen 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+}
+@keyframes py-sheen {
+  0%   { transform: skewX(-20deg) translateX(0); opacity: 1; }
+  100% { transform: skewX(-20deg) translateX(420%); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .py-dust { display: none; }
+  .py-sheen:hover::after { animation: none; }
+}
+
+/* the Home stepping back while its spheres fly to Galaxy (components/flight):
+   the layer above has taken them, so the originals hide at once */
+.py-leaving [data-orb],
+.py-leaving [data-flight-gem] { visibility: hidden; }

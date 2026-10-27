@@ -497,6 +497,9 @@ _For potential buyers and participants. Answers: what can they get involved in, 
 
 ## COPY DECK — LOCKED STRINGS
 
+> [!important] Dashboard v6 (October 27, 2026) — this page now renders from the shared template
+> The project page is `src/app/exhibitions/galaxy/[project]` + `room/ProjectDashboard.tsx`, filled from `galaxy/lots.ts` and `galaxy/rooms.ts` — no longer a page of its own. Section names are shared by every project ("What you'd take", "How a deal works", "Before you decide", "The person", "Questions", "Ways in", "After the deal"). Prices on the page are the owner's low estimates (October 27) pending his real figures. The strings below are the source; reconcile them with `rooms.ts` when they change.
+
 > [!important] How to use this section This deck records every visible string on the EterniCapsule **showcase page** on Pyadra (`src/app/exhibitions/galaxy/ethernicapsule/page.tsx` — the project-sale page, NOT the product at eternicapsule.com). New copy is written here first and copied verbatim — do not paraphrase, invent, or "improve". If the deck and the live page disagree, the deck is updated to the live string the same day; a false live string is flagged ⚠ and fixed in code ([[Company_Master]] §6). For any NUMBER, the metrics in "What the user sees before entering" and the participation tables above are canonical — update those first, then the string here. Last reconciled against `page.tsx` on September 19, 2026.
 
 > [!warning] Two products, do not confuse them This deck is for the **showcase** (sells the project). The live product at **eternicapsule.com** (its own repo) is where users actually seal capsules — it has its own ceremonial copy (see Experience & Design section) and is NOT covered here. The showcase's interactive monolith links out to eternicapsule.com — a live demo, a selling point, not the product page itself.
@@ -713,4 +716,6 @@ _Priorities only. One line per item._
 
 > [!note] Changelog v2.3 (September 22, 2026) — The defects the audit found were fixed in code: the showcase caption now says `key-locked` instead of the untrue `client-side sealed`; Pyadra's CSP allows eternicapsule.com; and in the eternicapsule repo the stats query uses `deliver_at`, the CORS list accepts both the apex and `www` origins, and rate limiting is back. Nothing is deployed yet — the eternicapsule fixes need that repo deployed before the live counts mean anything. The "hosted" question for the deal options is still with the owner.
 
-_END · ETERNICAPSULE · v2.3_
+> [!note] Changelog v2.4 (October 21, 2026) — The Pyadra-side September corrections are confirmed live on `main`: the showcase caption reads `key-locked` and the CSP allows eternicapsule.com. The fixes inside the separate eternicapsule repo (stats query, CORS, rate limiting) live outside this repo and were not re-verified here. The "Encrypted time capsules" shorthand on the Galaxy sphere was re-checked and kept as an accepted owner decision, to become literal with EterniCapsule v2 (client-side AES). The "hosted" deal question is still with the owner. No prices or deal terms changed.
+
+_END · ETERNICAPSULE · v2.4_

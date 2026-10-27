@@ -16,12 +16,18 @@ const BASE = `http://localhost:${PORT}`;
 const CHECKS = [
   // Pages
   ['/', [200], 'Pyadra'],
-  ['/exhibitions', [200]],
+  ['/exhibitions', [301, 308], null], // the hall redirects to Galaxy while it's the only room
   ['/exhibitions/galaxy', [200]],
   ['/exhibitions/galaxy/orbit', [200], 'Orbit 77'],
   ['/exhibitions/galaxy/ethernicapsule', [200]], // showcase only now — app lives at eternicapsule.com
   ['/exhibitions/galaxy/figurines', [200]],
   ['/exhibitions/galaxy/kangaroo-cleanup', [200]],
+  // every project's dashboard comes from one template (galaxy/[project])
+  ['/exhibitions/galaxy/momentos-eternos', [200], 'Momentos Eternos'],
+  ['/exhibitions/galaxy/urelit', [200], 'URELIT'],
+  ['/exhibitions/galaxy/wemait', [200], 'WEMAIT'],
+  ['/exhibitions/galaxy/byndi', [200], 'Byndi'],
+  ['/exhibitions/galaxy/backmate', [200], 'BackMate'],
   ['/store', [200]],
   ['/team', [200], 'Eduardo'],
   ['/team/edu', [200], 'Eduardo'],

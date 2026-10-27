@@ -1,50 +1,61 @@
-"use client";
+/* ------------------------------------------------------------------ */
+/*  PYADRA · GreenDust — the emerald motes rising through every room.  */
+/*                                                                     */
+/*  CSS keyframes only (globals.css, `.py-dust`): the compositor moves */
+/*  them, so the dust never competes with the page for the main thread */
+/*  — it used to be hundreds of JS-driven nodes, and the museum        */
+/*  stuttered whenever something else moved. Positions come from a    */
+/*  seeded generator, so the server and the browser print the same    */
+/*  dust and nothing waits for an effect to appear.                    */
+/* ------------------------------------------------------------------ */
 
-import { useState, useEffect } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+/** Beyond this the eye stops counting and the GPU starts. */
+const MAX = 72;
+
+/** mulberry32 — a tiny seeded PRNG. */
+function seeded(seed: number) {
+  return () => {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const r2 = (v: number) => Math.round(v * 100) / 100;
 
 export default function GreenDust({ count = 30 }: { count?: number }) {
-  const [particles, setParticles] = useState<{ id: number; left: string; duration: number; delay: number; size: number }[]>([]);
-  const reduced = useReducedMotion() ?? false;
-
-  useEffect(() => {
-    if (reduced) return;
-    // Phones don't need (or handle) hundreds of animated nodes — cap them.
-    const effective = window.innerWidth < 768 ? Math.min(count, 120) : count;
-    const generated = Array.from({ length: effective }).map((_, i) => ({
+  const rand = seeded(77);
+  const motes = Array.from({ length: Math.min(count, MAX) }, (_, i) => {
+    const duration = 16 + rand() * 22;
+    return {
       id: i,
-      left: `${Math.random() * 100}%`,
-      duration: Math.random() * 20 + 15, // 15 to 35 seconds (lento y majestuoso)
-      delay: Math.random() * 10,
-      size: Math.random() * 2.5 + 1 // 1px to 3.5px
-    }));
-    setParticles(generated);
-  }, [count, reduced]);
+      left: r2(rand() * 100),
+      size: r2(3 + rand() * 6), // the glow is drawn inside the box
+      duration: r2(duration),
+      // negative: the dust is already mid-air when the page appears
+      delay: r2(-rand() * duration),
+      drift: Math.round(rand() * 80 - 40),
+    };
+  });
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden mix-blend-multiply opacity-80">
-      {particles.map((p) => (
-        <motion.div
-          key={p.id}
-          className="absolute bottom-[-10%] bg-[#059669] rounded-full"
-          initial={{ y: 0, opacity: 0, x: 0 }}
-          animate={{
-            y: "-120vh", // Sube hasta desaparecer
-            opacity: [0, 0.6, 0.9, 0.6, 0],
-            x: [0, Math.random() * 80 - 40] // Desplazamiento lateral sutil (viento)
-          }}
-          transition={{
-            duration: p.duration,
-            repeat: Infinity,
-            delay: p.delay,
-            ease: "linear"
-          }}
-          style={{ 
-            left: p.left,
-            width: `${p.size}px`,
-            height: `${p.size}px`,
-            boxShadow: "0 0 10px rgba(5,150,105,0.6)" // Resplandor esmeralda
-          }}
+    <div aria-hidden className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+      {motes.map((m) => (
+        <span
+          key={m.id}
+          className={`py-dust ${m.id % 2 ? 'hidden md:block' : ''}`}
+          style={
+            {
+              left: `${m.left}%`,
+              width: m.size,
+              height: m.size,
+              animationDuration: `${m.duration}s`,
+              animationDelay: `${m.delay}s`,
+              '--drift': `${m.drift}px`,
+            } as React.CSSProperties
+          }
         />
       ))}
     </div>

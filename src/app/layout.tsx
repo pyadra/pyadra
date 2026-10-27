@@ -1,6 +1,7 @@
 import './globals.css'
 import CustomCursor from "./components/interactive/CustomCursor";
 import { Providers } from "./providers";
+import FlightLayer from "./components/flight/FlightLayer";
 import { Analytics } from "@vercel/analytics/react";
 import { Fraunces, DM_Sans, IBM_Plex_Mono } from 'next/font/google'
 
@@ -67,6 +68,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
          <Providers>
             <CustomCursor />
             {children}
+            <FlightLayer />
             <Analytics />
          </Providers>
       </body>

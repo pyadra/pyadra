@@ -1,15 +1,16 @@
-'use client';
-
 /* ------------------------------------------------------------------ */
-/*  PYADRA · MuseumAtmosphere — the Galaxy background, shared.         */
+/*  PYADRA · MuseumAtmosphere — the background every room shares.      */
 /*  Three layers: blueprint grid + film grain + rising green dust.     */
-/*  `fixed` pins it to the viewport for long scrolling pages.          */
+/*  The grid fades out toward the edges, so it reads as light on the   */
+/*  floor rather than graph paper. All static or CSS-driven — nothing  */
+/*  here costs the main thread a frame. `fixed` pins it to the         */
+/*  viewport for long scrolling pages.                                 */
 /* ------------------------------------------------------------------ */
 
 import GreenDust from './GreenDust';
 
 export default function MuseumAtmosphere({
-  dust = 280,
+  dust = 72,
   fixed = false,
 }: {
   dust?: number;
@@ -20,27 +21,11 @@ export default function MuseumAtmosphere({
       aria-hidden
       className={`${fixed ? 'fixed' : 'absolute'} inset-0 pointer-events-none z-0 overflow-hidden`}
     >
-      {/* blueprint grid */}
-      <div
-        className="absolute inset-0 opacity-[0.25]"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #D4DDD6 1px, transparent 1px),
-            linear-gradient(to bottom, #D4DDD6 1px, transparent 1px)
-          `,
-          backgroundSize: '40px 40px',
-        }}
-      />
+      {/* blueprint grid, lit from the centre */}
+      <div className="py-grid absolute inset-0" />
 
       {/* grain */}
-      <div className="absolute inset-0 mix-blend-multiply opacity-[0.4]">
-        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" className="w-full h-full opacity-60" preserveAspectRatio="none">
-          <filter id="museumNoise">
-            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" />
-          </filter>
-          <rect width="100%" height="100%" filter="url(#museumNoise)" />
-        </svg>
-      </div>
+      <div className="py-grain absolute inset-0" />
 
       <GreenDust count={dust} />
     </div>
