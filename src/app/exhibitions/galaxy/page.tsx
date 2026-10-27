@@ -9,7 +9,9 @@ import SiteNav from '@/app/components/nav/SiteNav';
 import SiteFooter from '@/app/components/nav/SiteFooter';
 import { useZoomDoor } from '@/app/components/ui/useZoomDoor';
 import BringIdeaDialog, { type DialogCopy } from '@/app/components/nav/BringIdeaDialog';
-import { LOTS, SECTORS, type Lot, type WayIn } from './lots';
+import Guide from '@/app/components/guide/Guide';
+import { INTENTS, useIntent, type Intent } from '@/app/components/guide/intent';
+import { LOTS, type Lot, type WayIn } from './lots';
 import { layoutOrbit, toPoint, RING, FIELD } from './orbit';
 
 /* ------------------------------------------------------------------ */
@@ -39,8 +41,59 @@ const FOCUS_SCALE = 1.55;
  *  lot in the space left of it. */
 const PANEL_SPACE = 456;
 
-const SECTOR_LABEL = Object.fromEntries(SECTORS.map((s) => [s.key, s.label])) as Record<WayIn, string>;
 const STAGE_LABEL: Record<Lot['stage'], string> = { ready: 'Ready', forming: 'Forming' };
+
+/** "How you come in", said as something the visitor does. */
+const DO_LABEL: Record<WayIn, string> = {
+  acquire: 'Own it',
+  operate: 'Run it',
+  support: 'Back it',
+  build: 'Build it',
+  forming: 'Follow it as it forms',
+  pending: 'To confirm with Pyadra',
+};
+
+/** The orbit's title, written for the direction that's lit. */
+const TITLE: Record<WayIn, string> = {
+  acquire: 'What you can own',
+  operate: 'What you can run',
+  support: 'What you can back',
+  build: 'What you can build',
+  forming: 'What is forming',
+  pending: 'Still to confirm',
+};
+
+/** Small counts read as words — a guide talks, it doesn't print. */
+const say = (n: number) => (COUNT_WORDS[n] ?? String(n));
+
+const names = (lots: Lot[]) =>
+  lots.length <= 1 ? (lots[0]?.name ?? '') : `${lots.slice(0, -1).map((l) => l.name).join(', ')} and ${lots[lots.length - 1].name}`;
+
+/** What the guide says on the orbit — counted from the lots, so it can
+ *  never fall behind the data. */
+function narrate({ way, intent, hovered, focus }: { way: WayIn | null; intent: Intent | null; hovered: Lot | null; focus: Lot | null }): string {
+  if (focus) {
+    switch (focus.wayIn) {
+      case 'acquire': return `${focus.name} can be bought whole. If it's for you, the dossier is your next step.`;
+      case 'operate': return `No capital needed to start here — ${focus.name} needs time and someone who wants to run it.`;
+      case 'support': return `Backing ${focus.name} isn't investing: you help it keep going, and it gives back.`;
+      case 'forming': return `${focus.name} is still forming. Ask Pyadra where it's heading.`;
+      default: return `${focus.name} hasn't set how you come in yet. Every deal here starts as a conversation — ask.`;
+    }
+  }
+  if (hovered) return `${hovered.name} — ${hovered.opportunity.toLowerCase()}. Click to step in.`;
+  const lit = way ? LOTS.filter((l) => l.wayIn === way) : [];
+  switch (way) {
+    case 'acquire': return `${lit.length === 1 ? 'One project is' : `${say(lit.length)} projects are`} for sale today: ${names(lit)}. Each one can be yours, whole.`;
+    case 'operate': return `${names(lit)} ${lit.length === 1 ? 'is' : 'are'} looking for someone to run ${lit.length === 1 ? 'it' : 'them'}. Here, your work is your capital.`;
+    case 'support': return `${names(lit)} ${lit.length === 1 ? 'lives' : 'live'} on ${lit.length === 1 ? 'its' : 'their'} supporters. Backing isn't buying — see what it gives back.`;
+    case 'build': return lit.length ? `${names(lit)} ${lit.length === 1 ? 'is' : 'are'} looking for builders.` : 'Nothing to build here yet — that seat is open. Your idea could be the next project in this orbit.';
+    case 'forming': return `${names(lit)} ${lit.length === 1 ? 'is' : 'are'} still forming — close enough to follow.`;
+    case 'pending': return `${names(lit)} haven't set how you come in yet. Ask Pyadra about any of them.`;
+  }
+  if (intent === 'look') return `${say(LOTS.length)} real projects. The direction tells you how to come in; the closer to the centre, the readier it is.`;
+  return `This is Galaxy: ${say(LOTS.length).toLowerCase()} real projects. Pick a direction to light it, or hover a sphere to meet it.`;
+}
 const COUNT_WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
 const COUNT = COUNT_WORDS[LOTS.length] ?? String(LOTS.length);
 
@@ -228,7 +281,9 @@ function LotPanel({
   }, []);
 
   const rows: [string, React.ReactNode][] = [
-    ['How you come in', SECTOR_LABEL[lot.wayIn]],
+    ['What you can do', DO_LABEL[lot.wayIn]],
+    ['What you put in', lot.offer?.give ?? 'To confirm — ask Pyadra.'],
+    ['What you take away', lot.offer?.get ?? 'To confirm — ask Pyadra.'],
     ['Where it stands', <span key="s" className="inline-flex items-center gap-2"><StageDot lot={lot} />{STAGE_LABEL[lot.stage]}</span>],
     ['Proof', lot.proof],
   ];
@@ -276,22 +331,23 @@ function LotPanel({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.22 }}
-          className="flex-1 flex flex-col px-6 pb-6 pt-4 lg:px-7"
+          className="flex-1 flex flex-col px-6 pb-5 pt-3 lg:px-7"
         >
-          <div className="flex items-center gap-4">
-            <Sphere lot={lot} className="w-16 h-16 lg:w-20 lg:h-20 shrink-0 shadow-[-8px_8px_18px_rgba(0,0,0,0.12)]" />
+          <div className="flex items-center gap-3">
+            {/* on desktop the camera already holds the sphere — phones show it here */}
+            <Sphere lot={lot} className="lg:hidden w-14 h-14 shrink-0 shadow-[-6px_6px_14px_rgba(0,0,0,0.12)]" />
             <div className="flex flex-wrap gap-1.5">
               <span className="rounded-full bg-[#EDEFED] px-3 py-1 text-[10px] font-bold text-[#3A4A3E]">{lot.type} · {lot.kind}</span>
               <span className="rounded-full bg-[#059669]/10 px-3 py-1 text-[10px] font-bold text-[#047857]">{lot.opportunity}</span>
             </div>
           </div>
 
-          <h2 id="lot-title" className="mt-5 text-[28px] lg:text-[32px] font-bold tracking-[-0.035em] leading-[1.05]">{lot.name}</h2>
+          <h2 id="lot-title" className="mt-4 text-[28px] lg:text-[32px] font-bold tracking-[-0.035em] leading-[1.05]">{lot.name}</h2>
           <p className="mt-2 text-[15px] font-medium leading-snug text-[#3A4A3E]">{lot.subtitle}</p>
 
-          <dl className="mt-6 grid gap-3.5 border-t border-[#1A1C1A]/8 pt-5">
+          <dl className="mt-5 grid gap-3 border-t border-[#1A1C1A]/8 pt-4">
             {rows.map(([k, v]) => (
-              <div key={k} className="grid grid-cols-[120px_1fr] gap-3 text-[13px] leading-snug">
+              <div key={k} className="grid grid-cols-[132px_1fr] gap-3 text-[13px] leading-snug">
                 <dt className="font-semibold text-[#6B8070]">{k}</dt>
                 <dd className="font-medium text-[#1A1C1A]">{v}</dd>
               </div>
@@ -299,7 +355,7 @@ function LotPanel({
           </dl>
 
           {/* what happens next — every deal is a conversation, never a checkout */}
-          <ol className="mt-6 grid gap-2 rounded-2xl bg-[#EDEFED]/70 px-4 py-3.5 text-[12px] leading-snug text-[#3A4A3E]">
+          <ol className="mt-5 grid gap-1.5 rounded-2xl bg-[#EDEFED]/70 px-4 py-3.5 text-[12px] leading-snug text-[#3A4A3E]">
             {[
               lot.enter_url ? 'Read the dossier — proof, assets and the honest risks.' : 'Its room opens soon — proof, assets and risks, in full.',
               'Write to Pyadra. Every deal starts as a conversation.',
@@ -314,7 +370,7 @@ function LotPanel({
 
           {/* one primary move — the dossier when the room is open, the
               conversation when it isn't — and the other one beside it */}
-          <div className="pt-6 grid gap-2">
+          <div className="pt-5 grid gap-1.5">
             <button
               type="button"
               onClick={() => (lot.enter_url ? onEnter(panelRef.current) : onAsk())}
@@ -404,6 +460,7 @@ export default function GalaxyExhibition() {
   const focusIndex = PLACED.findIndex((p) => p.lot.id === q.get('lot'));
   const focus = focusIndex >= 0 ? PLACED[focusIndex] : null;
 
+  const intent = useIntent();
   const [hovered, setHovered] = useState<string | null>(null);
   const hoveredWay = PLACED.find((p) => p.lot.id === hovered)?.lot.wayIn ?? null;
 
@@ -418,31 +475,31 @@ export default function GalaxyExhibition() {
         messageLabel: 'Your question',
         messagePlaceholder: 'What would you like to know?',
         submitLabel: 'Send',
-        model: `Galaxy · ${lot.name}`,
+        // the inbox learns which door the visitor came through
+        model: `Galaxy · ${lot.name}${intent ? ` · came in as: ${INTENTS.find((i) => i.key === intent)?.title}` : ''}`,
       },
     });
 
   const openLot = (id: string) => setUrl({ lot: id });
   const closeLot = useCallback(() => setUrl({ lot: null }), []);
-  const step = useCallback(
-    (dir: 1 | -1) => {
-      if (focusIndex < 0) return;
-      setUrl({ lot: PLACED[(focusIndex + dir + PLACED.length) % PLACED.length].lot.id });
-    },
-    [focusIndex],
-  );
+  const step = (dir: 1 | -1) => {
+    if (focusIndex < 0) return;
+    setUrl({ lot: PLACED[(focusIndex + dir + PLACED.length) % PLACED.length].lot.id });
+  };
   const pickWay = (w: WayIn) => setUrl({ way: way === w ? null : w });
 
   useEffect(() => {
-    if (!focus || dialog) return; // the dialog owns the keys while it's open
+    if (focusIndex < 0 || dialog) return; // the dialog owns the keys while it's open
+    const walk = (dir: 1 | -1) =>
+      setUrl({ lot: PLACED[(focusIndex + dir + PLACED.length) % PLACED.length].lot.id });
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeLot();
-      if (e.key === 'ArrowRight') step(1);
-      if (e.key === 'ArrowLeft') step(-1);
+      if (e.key === 'ArrowRight') walk(1);
+      if (e.key === 'ArrowLeft') walk(-1);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [focus, dialog, closeLot, step]);
+  }, [focusIndex, dialog, closeLot]);
 
   // the camera — flies to the focused lot and leaves room for the panel
   const stageRef = useRef<HTMLDivElement>(null);
@@ -516,16 +573,25 @@ export default function GalaxyExhibition() {
           className="pt-24 px-6 text-center"
         >
           <p className="font-mono uppercase text-[10px] tracking-[0.3em] text-[#6B8070]">Galaxy · {COUNT} projects</p>
-          <h1 className="mt-2 text-[28px] md:text-[34px] font-bold tracking-[-0.035em] leading-[1.05]">
-            Read the orbit<span className="text-[#059669]">.</span>
-          </h1>
-          <p className="mt-2 text-[14px] md:text-[15px] font-medium text-[#3A4A3E] max-w-md mx-auto">
-            Where a project sits tells you how to come in. The closer to the centre, the readier it is.
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.h1
+              key={way ?? 'all'}
+              initial={{ opacity: 0, y: 8, filter: 'blur(4px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
+              transition={{ duration: 0.3 }}
+              className="mt-2 text-[28px] md:text-[34px] font-bold tracking-[-0.035em] leading-[1.05]"
+            >
+              {way ? TITLE[way] : 'Read the orbit'}<span className="text-[#059669]">.</span>
+            </motion.h1>
+          </AnimatePresence>
+          <p className="lg:hidden mt-2 text-[14px] font-medium text-[#3A4A3E] max-w-md mx-auto">
+            Grouped by how you can come in. Tap one to see what you put in and what you take away.
           </p>
         </motion.header>
 
         {/* ---- desktop: the canvas ---- */}
-        <div className="hidden lg:flex flex-1 min-h-0 items-center justify-center px-6 pb-2 [container-type:size]">
+        <div className="hidden lg:flex flex-1 min-h-0 items-center justify-center px-6 pt-2 pb-24 [container-type:size]">
           <div
             ref={stageRef}
             className="relative [container-type:inline-size]"
@@ -641,19 +707,10 @@ export default function GalaxyExhibition() {
           </div>
         </div>
 
-        {/* the one line that says how to use it */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: focus ? 0 : 1 }}
-          transition={{ delay: focus ? 0 : 0.8 }}
-          className="hidden lg:block pb-6 text-center font-mono uppercase text-[10px] tracking-[0.24em] text-[#6B8070]/80"
-        >
-          Hover to preview · Click to step in · Pick a sector to light it
-        </motion.p>
-
         {/* ---- phones and tablets: the same orbit, read as a list ---- */}
-        <div className="lg:hidden w-full max-w-md mx-auto px-4 pt-8 pb-12 flex flex-col gap-7">
-          {ARCS.map((a) => {
+        <div className="lg:hidden w-full max-w-md mx-auto px-4 pt-8 pb-32 flex flex-col gap-7">
+          {/* the direction the visitor chose comes first */}
+          {[...ARCS].sort((a, b) => Number(b.key === way) - Number(a.key === way)).map((a) => {
             const lots = PLACED.filter((p) => p.lot.wayIn === a.key);
             if (!lots.length) {
               return (
@@ -730,6 +787,19 @@ export default function GalaxyExhibition() {
         />
       )}
     </AnimatePresence>
+
+    {/* the guide — says where you are and what you can do here */}
+    <Guide
+      path={focus ? ['Pyadra', 'Galaxy', focus.lot.name] : ['Pyadra', 'Galaxy']}
+      line={narrate({
+        way,
+        intent,
+        hovered: PLACED.find((p) => p.lot.id === hovered)?.lot ?? null,
+        focus: focus?.lot ?? null,
+      })}
+      offsetRight={focus && box && box.vw >= 1024 ? PANEL_SPACE : 0}
+      hidden={!!focus && (!box || box.vw < 1024)}
+    />
 
     <BringIdeaDialog open={dialog !== null} onClose={() => setDialog(null)} copy={dialog?.copy} />
 

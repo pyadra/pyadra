@@ -4,6 +4,7 @@ import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } fro
 import { useRef } from 'react';
 import { useZoomDoor } from '@/app/components/ui/useZoomDoor';
 import { LOTS } from './galaxy/lots';
+import Guide from '@/app/components/guide/Guide';
 import MuseumAtmosphere from '../components/ui/MuseumAtmosphere';
 import SiteNav from '@/app/components/nav/SiteNav';
 import SiteFooter from '@/app/components/nav/SiteFooter';
@@ -168,7 +169,7 @@ export default function ExhibitionsPage() {
       {/* shared nav */}
       <SiteNav crumbs={[{ label: 'Exhibitions' }]} />
 
-      <main className="relative z-10 flex-1 flex flex-col justify-center max-w-6xl mx-auto w-full px-6 pt-28 pb-16">
+      <main className="relative z-10 flex-1 flex flex-col justify-center max-w-6xl mx-auto w-full px-6 pt-28 pb-28">
 
         {/* headline */}
         <div className="text-center mb-14 md:mb-16">
@@ -287,6 +288,10 @@ export default function ExhibitionsPage() {
 
       <SiteFooter />
     </motion.div>
+    <Guide
+      path={['Pyadra', 'Exhibitions']}
+      line={`This is the museum. Galaxy is open, with ${LOTS.length} real projects inside — Jungle and City are still forming.`}
+    />
     {overlay}
     </>
   );

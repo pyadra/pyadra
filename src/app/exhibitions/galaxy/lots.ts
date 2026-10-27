@@ -30,6 +30,10 @@ export type Lot = {
   opportunity: string;
   wayIn: WayIn;
   stage: Stage;
+  /** What a visitor puts in and takes away, in plain words — from the
+   *  project's own doc (participation section). Never a valuation figure:
+   *  numbers live on the dossier (Company_Master §7). null = not set yet. */
+  offer: { give: string; get: string } | null;
   /** null until the project has a page — the sphere shows, it just isn't a door yet. */
   enter_url: string | null;
   sphereClass: string;
@@ -61,6 +65,10 @@ export const LOTS: Lot[] = [
     opportunity: 'Open for acquisition',
     wayIn: 'acquire',
     stage: 'ready',
+    offer: {
+      give: 'An upfront amount — two ways to take it on, agreed in a conversation.',
+      get: 'The product and its operation. Pyadra keeps a small share of each capsule sold.',
+    },
     enter_url: '/exhibitions/galaxy/ethernicapsule',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FDF6EA,#EBD8B9,#D3B58C)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
     glow: 'bg-[#E4C99F]',
@@ -76,6 +84,10 @@ export const LOTS: Lot[] = [
     opportunity: 'Available to acquire',
     wayIn: 'acquire',
     stage: 'ready',
+    offer: {
+      give: 'The price, agreed in a conversation.',
+      get: 'The whole project: the store, 100+ designs, the brand, the 3D printer, the software pipeline and the know-how.',
+    },
     enter_url: '/exhibitions/galaxy/figurines',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFFFFF,#FFFFFF,#F2F2F2)] shadow-[-10px_10px_20px_rgba(0,0,0,0.12)]',
     glow: 'bg-white',
@@ -91,6 +103,10 @@ export const LOTS: Lot[] = [
     opportunity: 'Looking for a partner',
     wayIn: 'operate',
     stage: 'ready',
+    offer: {
+      give: 'Your work, a suitable vehicle, and a handover deal agreed in a conversation.',
+      get: 'A real Sydney business: the brand, its reputation, the website, email and phone, and a guided handover.',
+    },
     enter_url: '/exhibitions/galaxy/kangaroo-cleanup',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFFEF9,#F3EFE2,#DCD5C2)] shadow-[-10px_10px_20px_rgba(0,0,0,0.12)]',
     glow: 'bg-[#EDE8D8]',
@@ -106,6 +122,10 @@ export const LOTS: Lot[] = [
     opportunity: 'Open for support',
     wayIn: 'support',
     stage: 'ready',
+    offer: {
+      give: 'A contribution — any size you choose.',
+      get: 'A permanent credential in the archive, founding-member status, early access to Season 2 — never ownership.',
+    },
     enter_url: '/exhibitions/galaxy/orbit',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#F2FBF5,#CDEBD9,#A3CFB6)] shadow-[-10px_10px_20px_rgba(0,0,0,0.12)]',
     glow: 'bg-[#A3CFB6]',
@@ -120,6 +140,7 @@ export const LOTS: Lot[] = [
   /*    · subtitle    what it is, one line                               */
   /*    · proof       what anyone can verify today                       */
   /*    · opportunity the line under the name                            */
+  /*    · offer       what you put in / what you take away               */
   /*    · enter_url   its Pyadra page, or its own site                   */
   /*  Until then they sit in the "To confirm" sector with no      */
   /*  link — never a claim the code can't keep (Company_Master #13).     */
@@ -136,6 +157,7 @@ export const LOTS: Lot[] = [
     opportunity: 'Opening soon',
     wayIn: 'pending',
     stage: 'ready',
+    offer: null,
     enter_url: null,
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFF6F8,#F4DAE2,#DFB3C3)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
     glow: 'bg-[#EFC7D3]',
@@ -151,6 +173,7 @@ export const LOTS: Lot[] = [
     opportunity: 'Opening soon',
     wayIn: 'pending',
     stage: 'ready',
+    offer: null,
     enter_url: null,
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FAF8FF,#E4DCF7,#C5B8E8)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
     glow: 'bg-[#D6CBF0]',
@@ -166,6 +189,7 @@ export const LOTS: Lot[] = [
     opportunity: 'Opening soon',
     wayIn: 'pending',
     stage: 'ready',
+    offer: null,
     enter_url: null,
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#F6FBFF,#D9E8F4,#B4CADE)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
     glow: 'bg-[#CBDDEB]',
@@ -181,6 +205,7 @@ export const LOTS: Lot[] = [
     opportunity: 'Opening soon',
     wayIn: 'pending',
     stage: 'ready',
+    offer: null,
     enter_url: null,
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFFBF2,#F6E7C8,#E6CB98)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
     glow: 'bg-[#F0DDB4]',
@@ -196,6 +221,7 @@ export const LOTS: Lot[] = [
     opportunity: 'Forming',
     wayIn: 'forming',
     stage: 'forming',
+    offer: null,
     enter_url: null,
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#F7F8F7,#E3E6E3,#C9CEC9)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
     glow: 'bg-[#D9DDD9]',

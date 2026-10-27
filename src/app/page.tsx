@@ -10,11 +10,11 @@ import {
   useTime,
   useTransform,
 } from 'framer-motion';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import SiteNav from '@/app/components/nav/SiteNav';
 import { useZoomDoor } from '@/app/components/ui/useZoomDoor';
+import { INTENTS, galaxyHref, setIntent, type Intent } from '@/app/components/guide/intent';
 import SiteFooter from '@/app/components/nav/SiteFooter';
 import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
 
@@ -25,9 +25,9 @@ import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
 /*  met (click → gem and body encounter). The words orbit around it,   */
 /*  not the other way around. One door leads to the exhibition.        */
 /*                                                                     */
-/*  The canvas starts here: the symbol and Join zoom into the museum   */
-/*  (Zoom 0), and each word of the tagline is a door of its own,       */
-/*  landing in Galaxy with its way in lit (useZoomDoor).               */
+/*  Then it says what Pyadra is, in one line, and asks the visitor     */
+/*  what brought them here. The answer travels with them (intent.ts):  */
+/*  Galaxy lights what fits and the guide speaks to it.                */
 /* ------------------------------------------------------------------ */
 
 const CURTAIN_MS = 2000;         // the full ceremony — first visit of a session
@@ -37,12 +37,12 @@ const SPRING = { type: 'spring' as const, stiffness: 130, damping: 18, mass: 0.9
 
 /* Fixed spark orbit params — no Math.random() (SSR/hydration safe). */
 const SPARKS: { radius: number; speed: number; phase: number; size: number; opacity: number }[] = [
-  { radius: 230, speed: 0.15,  phase: 0.0, size: 6, opacity: 0.55 },
-  { radius: 265, speed: -0.10, phase: 1.5, size: 4, opacity: 0.45 },
-  { radius: 205, speed: 0.13,  phase: 3.1, size: 5, opacity: 0.50 },
-  { radius: 285, speed: -0.08, phase: 4.7, size: 4, opacity: 0.40 },
-  { radius: 218, speed: 0.19,  phase: 2.4, size: 3, opacity: 0.60 },
-  { radius: 250, speed: -0.14, phase: 5.6, size: 3, opacity: 0.35 },
+  { radius: 175, speed: 0.15,  phase: 0.0, size: 6, opacity: 0.55 },
+  { radius: 200, speed: -0.10, phase: 1.5, size: 4, opacity: 0.45 },
+  { radius: 158, speed: 0.13,  phase: 3.1, size: 5, opacity: 0.50 },
+  { radius: 215, speed: -0.08, phase: 4.7, size: 4, opacity: 0.40 },
+  { radius: 166, speed: 0.19,  phase: 2.4, size: 3, opacity: 0.60 },
+  { radius: 190, speed: -0.14, phase: 5.6, size: 3, opacity: 0.35 },
 ];
 
 /* One spark, endlessly orbiting the symbol. */
@@ -87,15 +87,6 @@ const SYMBOL_SIZE = 260;
 
 type ZoomTo = (from: Element | null, href: string) => void;
 
-/* The tagline's four verbs are the four ways in. Discover is the whole
-   museum; the other three land in Galaxy with their sector lit. */
-const VERBS: { word: string; href: string }[] = [
-  { word: 'Discover', href: '/exhibitions' },
-  { word: 'Connect', href: '/exhibitions/galaxy?way=operate' },
-  { word: 'Build', href: '/exhibitions/galaxy?way=build' },
-  { word: 'Buy', href: '/exhibitions/galaxy?way=acquire' },
-];
-
 function HeroSymbol({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }) {
   const router = useRouter();
   const [met, setMet] = useState(false);
@@ -110,6 +101,7 @@ function HeroSymbol({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }) {
   const enter = () => {
     if (met) return;
     setMet(true);
+    setIntent('look');
     setTimeout(() => zoomTo(symbolRef.current, GALAXY), reduced ? 150 : 650);
   };
 
@@ -132,7 +124,7 @@ function HeroSymbol({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }) {
           viewBox="0 0 240 232"
           overflow="visible"
           className="block h-auto"
-          style={{ width: 'min(260px, 58vw)' }}
+          style={{ width: 'min(150px, 38vw)' }}
         >
           {/* GEM */}
           <motion.g
@@ -202,40 +194,105 @@ function HeroSymbol({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }) {
         transition={{ duration: 0.8, delay: reduced ? 0 : 1.3 }}
         className="font-serif font-semibold text-center text-[#1A1C1A]"
         style={{
-          fontSize: 'clamp(34px, 15vw, 78px)',
+          fontSize: 'clamp(30px, 10vw, 50px)',
           letterSpacing: '0.32em',
           textIndent: '0.32em',
-          marginTop: 'clamp(30px, 13vw, 57px)',
+          marginTop: 'clamp(18px, 6vw, 28px)',
         }}
       >
         PYADRA
       </motion.div>
 
-      {/* Tagline — each verb is a door */}
-      <motion.nav
-        aria-label="Ways in"
+      {/* Tagline */}
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: reduced ? 0 : 1.45 }}
-        className="font-mono uppercase text-center text-[#6B8070] flex flex-wrap justify-center"
+        className="font-mono uppercase text-center text-[#6B8070]"
         style={{
-          fontSize: 'clamp(9px, 3.4vw, 19px)',
+          fontSize: 'clamp(9px, 2.8vw, 15px)',
           letterSpacing: '0.3em',
-          marginTop: 'clamp(12px, 5vw, 21px)',
-          columnGap: '0.6em',
+          marginTop: 'clamp(10px, 3.5vw, 16px)',
         }}
       >
-        {VERBS.map((v) => (
-          <button
-            key={v.word}
+        Discover. Connect. Build. Buy.
+      </motion.div>
+    </div>
+  );
+}
+
+/* One small line mark per intent — drawn, not an icon font. */
+const INTENT_MARK: Record<Intent, React.ReactNode> = {
+  own: <path d="M8 14a4 4 0 1 1 3.5-6H20v3h-2v2h-2.5v-2h-4A4 4 0 0 1 8 14Zm0-2.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />,
+  run: <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.4 2.4-2.1-.6-.6-2.1 2.4-2.4Z" />,
+  back: <path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0 1 12 8a3.8 3.8 0 0 1 7 2.5C19 15.6 12 20 12 20Z" />,
+  idea: <path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.9V16h5v-.2c0-.8.4-1.5 1-1.9A6 6 0 0 0 12 3Z" />,
+  look: <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Zm9.5 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />,
+};
+
+/* The question that turns a visitor into a guest: what brought you here?
+   Each answer is a door — it zooms into Galaxy with what fits lit. */
+function IntentChooser({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }) {
+  const choose = (key: Intent, el: Element) => {
+    setIntent(key);
+    zoomTo(el, galaxyHref(key));
+  };
+  return (
+    <div className="w-full">
+      <motion.p
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: reduced ? 0 : 1.65, ...SPRING }}
+        className="text-[17px] md:text-[20px] font-semibold tracking-[-0.02em] leading-snug text-[#1A1C1A] max-w-xl mx-auto"
+      >
+        Real projects, already built — looking for the people who will take them further.
+      </motion.p>
+      <motion.p
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: reduced ? 0 : 1.75, ...SPRING }}
+        className="mt-1.5 text-[14px] md:text-[15px] font-medium text-[#3A4A3E]"
+      >
+        Come in with money, work or skills.
+      </motion.p>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: reduced ? 0 : 1.9 }}
+        className="mt-6 font-mono uppercase text-[10px] tracking-[0.3em] text-[#047857]"
+      >
+        What brings you here?
+      </motion.p>
+
+      <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2 md:gap-2.5 text-left">
+        {INTENTS.map((it, i) => (
+          <motion.button
+            key={it.key}
             type="button"
-            onClick={(e) => zoomTo(e.currentTarget, v.href)}
-            className="uppercase bg-transparent border-0 p-0 cursor-pointer text-inherit tracking-[inherit] underline-offset-[6px] decoration-[#059669]/50 hover:text-[#047857] hover:underline focus:outline-none focus-visible:text-[#047857] focus-visible:underline transition-colors"
+            onClick={(e) => choose(it.key, e.currentTarget)}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: reduced ? 0 : 2.0 + i * 0.07, type: 'spring', stiffness: 150, damping: 18 }}
+            whileHover={reduced ? undefined : { y: -4 }}
+            whileTap={{ scale: 0.97 }}
+            className={`group relative flex md:flex-col items-center md:items-start gap-3 md:gap-0 text-left rounded-2xl px-4 py-3 md:p-4 cursor-pointer ring-1 transition-[background-color,box-shadow] duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] ${
+              it.key === 'look'
+                ? 'bg-transparent ring-[#1A1C1A]/10 hover:bg-white/60'
+                : 'bg-white/70 backdrop-blur-sm ring-[#1A1C1A]/6 shadow-sm hover:bg-white hover:shadow-xl hover:shadow-[#059669]/10 hover:ring-[#059669]/30'
+            }`}
           >
-            {v.word}.
-          </button>
+            <svg viewBox="0 0 24 24" className="w-5 h-5 shrink-0 text-[#6B8070] group-hover:text-[#059669] transition-colors" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" aria-hidden>
+              {INTENT_MARK[it.key]}
+            </svg>
+            <span className="min-w-0 flex-1 md:mt-3">
+              <span className="block text-[14px] font-semibold tracking-[-0.01em] text-[#1A1C1A]">{it.title}</span>
+              <span className="block text-[12px] font-medium text-[#6B8070] leading-snug">{it.line}</span>
+            </span>
+            <span aria-hidden className="md:absolute md:top-4 md:right-4 text-[#059669] opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">→</span>
+          </motion.button>
         ))}
-      </motion.nav>
+      </div>
     </div>
   );
 }
@@ -249,7 +306,7 @@ function LogoShowcase({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo })
         aria-hidden
         animate={reduced ? undefined : { scale: [1, 1.18, 1], opacity: [0.35, 0.6, 0.35] }}
         transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full pointer-events-none"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.18), transparent 65%)', filter: 'blur(20px)' }}
       />
 
@@ -258,7 +315,7 @@ function LogoShowcase({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo })
         aria-hidden
         animate={reduced ? undefined : { scale: [1.15, 1, 1.15], opacity: [0.5, 0.25, 0.5] }}
         transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] rounded-full pointer-events-none"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.22), transparent 60%)', filter: 'blur(12px)' }}
       />
 
@@ -441,40 +498,17 @@ export default function PyadraHome() {
         <MuseumAtmosphere />
 
         {/* ---- the composition ---- */}
-        <div className="relative z-10 w-full max-w-3xl mx-auto px-6 flex flex-col items-center text-center gap-8 md:gap-10 py-24">
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-5 md:px-6 flex flex-col items-center text-center gap-5 md:gap-6 pt-20 md:pt-24 pb-16">
 
           {/* THE LOGO — mounted only after the curtain lifts, so intro
               plays as black slides away. Symbol + PYADRA + tagline.
               Nothing else competes with it. */}
-          <div className="relative w-full flex items-center justify-center min-h-[380px]">
+          <div className="relative w-full flex items-center justify-center min-h-[250px] md:min-h-[260px]">
             {curtainUp && <LogoShowcase reduced={reduced} zoomTo={zoomTo} />}
           </div>
 
-          {/* THE ONE DOOR */}
-          {curtainUp && (
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.0, ...SPRING }}
-            >
-              <Link
-                href={GALAXY}
-                onClick={(e) => {
-                  e.preventDefault();
-                  zoomTo(e.currentTarget, GALAXY);
-                }}
-                className="cta-glow group relative block rounded-full bg-[#1A1C1A] text-white px-12 py-4 t-d5 font-semibold shadow-lg shadow-[#1A1C1A]/20 overflow-hidden"
-              >
-                {/* emerald bloom seeps in from below on hover */}
-                <span
-                  aria-hidden
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                  style={{ background: 'radial-gradient(80% 120% at 50% 130%, rgba(5,150,105,0.55), transparent 70%)' }}
-                />
-                <span className="relative">Join</span>
-              </Link>
-            </motion.div>
-          )}
+          {/* WHAT PYADRA IS — AND WHAT BRINGS YOU HERE */}
+          {curtainUp && <IntentChooser reduced={reduced} zoomTo={zoomTo} />}
         </div>
       </section>
 
