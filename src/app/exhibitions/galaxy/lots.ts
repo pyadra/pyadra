@@ -46,6 +46,12 @@ export type Lot = {
   glow: string;
 };
 
+/** A number shown about a project. `value` is the fallback when it is
+ *  read live and the source can't be reached. */
+export type LotNumber = { value: string; label: string; evidence?: string; live?: LiveKey };
+/** The live figures a number can read (see `live.ts`). */
+export type LiveKey = 'airtasker.tasks' | 'orbit.episodes' | 'orbit.raised' | 'orbit.goal';
+
 /** Filled from the owner's lot sheet (04_Projects/Lot_Sheet_Template.md).
  *  Every field is optional: a missing one is hidden on the live site and
  *  shown as a marked, empty slot in development — so the page always
@@ -66,12 +72,16 @@ export type LotSheet = {
   includes?: string[];
   /** Who it suits — 2 or 3 short profiles. */
   idealFor?: string[];
-  /** Verifiable numbers — 2 or 3. */
-  numbers?: { label: string; value: string }[];
+  /** Verifiable numbers — 3 or 4. Galaxy shows the first three, the
+   *  project's dashboard all of them. Each says where it comes from
+   *  (Company_Master §0) and may be read live (`live.ts`), so the same
+   *  figure is never written twice. */
+  numbers?: LotNumber[];
   /** How the takeover works, in one line — e.g. "Two weeks, guided". */
   handover?: string;
-  /** Where to see it working today. */
-  live?: { label: string; href: string };
+  /** The project's own page — where its product is sold. `note` says what
+   *  is sold there, e.g. "capsules from $9". */
+  live?: { label: string; href: string; note?: string };
 };
 
 /** The sectors, clockwise from the top — labelled with the Home's own
@@ -121,11 +131,12 @@ export const LOTS: Lot[] = [
       ],
       idealFor: ['An operator to run it', 'An owner to take it whole', 'Someone with a different offer'],
       numbers: [
-        { value: '$9', label: 'AUD per capsule · Stripe live' },
-        { value: '128-bit', label: 'key per capsule' },
-        { value: '30 s', label: 'sealing ritual, on purpose' },
+        { value: '$9', label: 'AUD per capsule · Stripe live', evidence: 'Public' },
+        { value: '128-bit', label: 'key per capsule', evidence: 'In the code' },
+        { value: '30 s', label: 'sealing ritual, on purpose', evidence: 'Public' },
+        { value: '~150 h', label: 'of senior build and design', evidence: 'Owner-recorded' },
       ],
-      live: { label: 'eternicapsule.com', href: 'https://eternicapsule.com' },
+      live: { label: 'eternicapsule.com', href: 'https://eternicapsule.com', note: 'capsules from $9' },
     },
     enter_url: '/exhibitions/galaxy/ethernicapsule',
     featured: true,
@@ -147,6 +158,18 @@ export const LOTS: Lot[] = [
       give: 'The price, agreed in a conversation.',
       get: 'The whole project: the store, 100+ designs, the brand, the 3D printer, the software pipeline and the know-how.',
     },
+    sheet: {
+      hook: 'Your face. Your team. Your figurine.',
+      summary: 'Figuitoon turns one photo into a mini you — a 3D-printed figurine in your favourite team’s colours, your sport or your profession. Made for gifts, keepsakes and collectors.',
+      formats: ['Online store', 'Physical product'],
+      idealFor: ['A first-time founder', 'A gift or merch shop', 'A maker with a 3D printer'],
+      numbers: [
+        { value: '100+', label: 'styles across teams and professions', evidence: 'Public' },
+        { value: '$49', label: 'AUD per figurine · launch price', evidence: 'Public' },
+        { value: '100%', label: 'made to order, from a photo', evidence: 'Public' },
+      ],
+      live: { label: 'figuitoon.com', href: 'https://www.figuitoon.com', note: 'figurines from $49' },
+    },
     enter_url: '/exhibitions/galaxy/figurines',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFFFFF,#FFFFFF,#F2F2F2)] shadow-[-10px_10px_20px_rgba(0,0,0,0.12)]',
     glow: 'bg-white',
@@ -165,6 +188,20 @@ export const LOTS: Lot[] = [
     offer: {
       give: 'Your work, a suitable vehicle, and a handover deal agreed in a conversation.',
       get: 'A real Sydney business: the brand, its reputation, the website, email and phone, and a guided handover.',
+    },
+    sheet: {
+      hook: 'Your own business — without starting from zero.',
+      summary: 'A recycling and waste-removal business built in Sydney in 2023: furniture, green waste, office clear-outs, household junk. 500+ jobs later, the channels still ring today.',
+      formats: ['Local business'],
+      idealFor: ['An operator with a vehicle', 'Someone who wants a head start', 'A local cleanup crew'],
+      numbers: [
+        { value: '500+', label: 'jobs done', evidence: 'Founder-recorded' },
+        { value: '5.0 ★', label: 'rating on Airtasker', evidence: 'Public' },
+        { value: '248', label: 'jobs on Airtasker', evidence: 'Public', live: 'airtasker.tasks' },
+        { value: '~$30k', label: 'AUD revenue · FY2025', evidence: 'Founder-recorded' },
+      ],
+      handover: 'A short, optional handover with Eduardo — the channels, the price list and the disposal sites.',
+      live: { label: 'kangaroocleanup.com.au', href: 'https://kangaroocleanup.com.au', note: 'the business' },
     },
     enter_url: '/exhibitions/galaxy/kangaroo-cleanup',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFFEF9,#F3EFE2,#DCD5C2)] shadow-[-10px_10px_20px_rgba(0,0,0,0.12)]',
@@ -185,6 +222,18 @@ export const LOTS: Lot[] = [
       give: 'A contribution — any size you choose.',
       get: 'A permanent credential in the archive, founding-member status, early access to Season 2 — never ownership.',
     },
+    sheet: {
+      hook: 'Real conversations. No filters. No script. No bullshit.',
+      summary: 'A podcast created in Sydney that does things differently, moving through three orbits: real talks about life, art and music — built for permanence, not virality.',
+      formats: ['Podcast', 'Clothing'],
+      idealFor: ['Listeners who want Season 2', 'A brand that wants exposure', 'Someone who backs creators'],
+      numbers: [
+        { value: '10', label: 'episodes live on YouTube', evidence: 'Public', live: 'orbit.episodes' },
+        { value: '$10', label: 'AUD raised for Season 2', evidence: 'Live', live: 'orbit.raised' },
+        { value: '$10,000', label: 'AUD goal for Season 2', evidence: 'Owner decision', live: 'orbit.goal' },
+      ],
+      live: { label: 'Orbit 77 on YouTube', href: 'https://www.youtube.com/@Orbit77Podcast', note: 'and orbit77.shop' },
+    },
     enter_url: '/exhibitions/galaxy/orbit',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#F2FBF5,#CDEBD9,#A3CFB6)] shadow-[-10px_10px_20px_rgba(0,0,0,0.12)]',
     glow: 'bg-[#A3CFB6]',
@@ -194,7 +243,7 @@ export const LOTS: Lot[] = [
   /*  Standard docs of October 23, 2026 (04_Projects/). Strings are the  */
   /*  docs' own — copy decks, canonical metrics, asset lists — trimmed   */
   /*  to the lot sheet's lengths. No asking price: the docs share the    */
-  /*  figure only in due diligence. No Pyadra page yet (enter_url null). */
+  /*  figure only in due diligence. */
   /* ------------------------------------------------------------------ */
   {
     id: 'momentos-eternos',
@@ -223,13 +272,13 @@ export const LOTS: Lot[] = [
       ],
       idealFor: ['An operator to switch it back on', 'An owner to restart and grow it'],
       numbers: [
-        { value: '3', label: 'sales, one per package' },
-        { value: '3 h', label: 'studio delivery' },
-        { value: '2', label: 'languages' },
+        { value: '3', label: 'sales, one per package', evidence: 'Verified in due diligence' },
+        { value: '3 h', label: 'studio delivery', evidence: 'Founder-recorded' },
+        { value: '2', label: 'languages', evidence: 'In the code' },
       ],
-      // the site is paused — no live link until it reopens
+      live: { label: 'momentoseternos.vercel.app', href: 'https://momentoseternos.vercel.app', note: 'paused — reopens with its operator' },
     },
-    enter_url: null,
+    enter_url: '/exhibitions/galaxy/momentos-eternos',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFF8F3,#F6D9CB,#E2AA92)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
     glow: 'bg-[#EDBFAB]',
   },
@@ -259,13 +308,13 @@ export const LOTS: Lot[] = [
       ],
       idealFor: ['Someone to run it', 'Someone to fund the launch', 'Someone to own it'],
       numbers: [
-        { value: '5', label: 'active testers' },
-        { value: '$4.99', label: 'Premium/mo · not live yet' },
-        { value: '14', label: 'day Premium trial' },
+        { value: '5', label: 'active testers', evidence: 'Founder-recorded' },
+        { value: '$4.99', label: 'Premium/mo · not live yet', evidence: 'In the code' },
+        { value: '14', label: 'day Premium trial', evidence: 'In the code' },
       ],
-      live: { label: 'urelit.app', href: 'https://urelit.app' },
+      live: { label: 'urelit.app', href: 'https://urelit.app', note: 'the live app' },
     },
-    enter_url: null,
+    enter_url: '/exhibitions/galaxy/urelit',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFF6F5,#F6D2CE,#E3A09A)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
     glow: 'bg-[#EDB5AF]',
   },
@@ -295,13 +344,13 @@ export const LOTS: Lot[] = [
       ],
       idealFor: ['Someone to fund the launch', 'An operator for its coaches'],
       numbers: [
-        { value: '5', label: 'coaches in conversation' },
-        { value: '750+', label: 'automated tests' },
-        { value: '16', label: 'tutorial videos' },
+        { value: '5', label: 'coaches in conversation', evidence: 'Founder-recorded' },
+        { value: '750+', label: 'automated tests', evidence: 'In the code' },
+        { value: '16', label: 'tutorial videos', evidence: 'Founder-recorded' },
       ],
-      live: { label: 'the wemait.app demo', href: 'https://wemait.app/app/' },
+      live: { label: 'wemait.app', href: 'https://wemait.app', note: 'with a full demo' },
     },
-    enter_url: null,
+    enter_url: '/exhibitions/galaxy/wemait',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#F3FBFA,#CFEDE8,#93CFC6)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
     glow: 'bg-[#ABDDD6]',
   },
@@ -317,12 +366,23 @@ export const LOTS: Lot[] = [
     logo: { kind: 'pending' },
     // The in-app tagline, verified in the Byndi repo.
     subtitle: 'Understand her cycle. Care for the relationship.',
-    proof: 'Live on Android · App Store next',
+    proof: 'Built · in testing',
     opportunity: 'Available to acquire',
     wayIn: 'acquire',
     stage: 'ready',
     offer: null,
-    enter_url: null,
+    sheet: {
+      hook: 'Understand her cycle. Care for the relationship.',
+      summary: 'A mobile app for someone in a couple to understand their partner’s cycle — what she is likely feeling each day, and concrete ways to help.',
+      formats: ['Mobile app'],
+      idealFor: ['An app operator', 'A wellness or couples brand'],
+      numbers: [
+        { value: '2', label: 'languages, English and Spanish', evidence: 'In the code' },
+        { value: '6', label: 'SOS guides for hard moments', evidence: 'In the code' },
+        { value: '€1.99', label: 'Plus per month · not charging yet', evidence: 'In the code' },
+      ],
+    },
+    enter_url: '/exhibitions/galaxy/byndi',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#FFF6F8,#F4DAE2,#DFB3C3)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
     glow: 'bg-[#EFC7D3]',
   },
@@ -338,7 +398,10 @@ export const LOTS: Lot[] = [
     wayIn: 'forming',
     stage: 'forming',
     offer: null,
-    enter_url: null,
+    sheet: {
+      summary: 'Still forming — the service is not running yet. Follow it to hear when it opens, or tell us how you could help it start.',
+    },
+    enter_url: '/exhibitions/galaxy/backmate',
     sphereClass: 'bg-[radial-gradient(circle_at_30%_30%,#F7F8F7,#E3E6E3,#C9CEC9)] shadow-[-10px_10px_20px_rgba(0,0,0,0.1)]',
     glow: 'bg-[#D9DDD9]',
   },

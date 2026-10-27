@@ -57,3 +57,28 @@ describe('the featured lot', () => {
     for (const l of featured) expect(l.enter_url).toBeTruthy();
   });
 });
+
+describe('the project dashboards', () => {
+  it('give every lot a dashboard, reached from its sphere', async () => {
+    const { ROOMS } = await import('../rooms');
+    for (const l of LOTS) {
+      const room = ROOMS[l.id];
+      expect(room, l.id).toBeTruthy();
+      expect(l.enter_url).toBe(`/exhibitions/galaxy/${room.slug}`);
+    }
+  });
+
+  it('never reuse an address', async () => {
+    const { ROOMS } = await import('../rooms');
+    const slugs = Object.values(ROOMS).map((r) => r.slug);
+    expect(new Set(slugs).size).toBe(slugs.length);
+  });
+
+  it('always give a way in, and mark at most one as the pick', async () => {
+    const { ROOMS } = await import('../rooms');
+    for (const [id, r] of Object.entries(ROOMS)) {
+      expect(r.ways.options.length, id).toBeGreaterThan(0);
+      expect(r.ways.options.filter((o) => o.pick).length, id).toBeLessThanOrEqual(1);
+    }
+  });
+});

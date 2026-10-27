@@ -21,12 +21,15 @@ import { TYPE } from '@/app/components/ui/type';
 import { EASE, SPRING } from '@/app/components/ui/motion';
 import { trackPointer } from '@/app/components/ui/pointer';
 import RevealText from '@/app/components/ui/RevealText';
+import CountUp from '@/app/components/ui/CountUp';
 import Magnetic from '@/app/components/ui/Magnetic';
 import BringIdeaDialog, { type DialogCopy } from '@/app/components/nav/BringIdeaDialog';
 import Guide from '@/app/components/guide/Guide';
 import { INTENTS, useIntent } from '@/app/components/guide/intent';
-import { LOTS, type Lot, type LotSheet, type WayIn } from './lots';
+import { LOTS, type Lot, type LotNumber, type LotSheet, type WayIn } from './lots';
 import { GemIcon, Sphere } from './Sphere';
+import { priceFrom } from './rooms';
+import { useLiveLots } from './live';
 import { getFlight, landAt, useFlight, type Landing } from '@/app/components/flight/flight';
 import { layoutOrbit, FIELD } from './orbit';
 
@@ -42,7 +45,7 @@ import { layoutOrbit, FIELD } from './orbit';
 /*           hook and numbers beside it; it folds away when the hand   */
 /*           leaves. Nothing shows that the visitor didn't reach for.  */
 /*  The lot  — clicking the front one opens its panel (?lot=); the     */
-/*           room — "Open the dossier" — zooms into the project's page.*/
+/*           room — "Open the project" — zooms into its dashboard.  */
 /* ------------------------------------------------------------------ */
 
 const { arcs: ARCS, placed: PLACED } = layoutOrbit(LOTS);
@@ -252,9 +255,9 @@ const glanceRise = {
 /** The glance — the front project at a look, the moment a hand is over the
  *  orbit. It unfolds from the sphere and folds away when the hand leaves:
  *  the room shows nothing the visitor didn't reach for. */
-function Glance({ item, onOpen, onSeat }: { item: Item; onOpen: () => void; onSeat: () => void }) {
+function Glance({ item, numbers: liveNumbers, onOpen, onSeat }: { item: Item; numbers: LotNumber[]; onOpen: () => void; onSeat: () => void }) {
   const sheet = item.kind === 'lot' ? (item.lot.sheet ?? {}) : {};
-  const numbers = sheet.numbers?.slice(0, 3) ?? [];
+  const numbers = liveNumbers.slice(0, 3);
   return (
     <motion.div
       initial={{ opacity: 0, x: -20, scale: 0.94, filter: 'blur(8px)', clipPath: 'inset(0% 100% 0% 0% round 24px)' }}
@@ -284,7 +287,7 @@ function Glance({ item, onOpen, onSeat }: { item: Item; onOpen: () => void; onSe
               <motion.p variants={glanceRise} className={`mt-3 ${TYPE.small}`}>{item.lot.proof}</motion.p>
             )}
             <motion.div variants={glanceRise} className="mt-4 pt-3 flex items-center justify-between gap-3 border-t border-ink/6">
-              <span className="font-sans text-[13px] font-semibold text-ink whitespace-nowrap">{priceOf(sheet)}</span>
+              <span className="font-sans text-[13px] font-semibold text-ink whitespace-nowrap">{(item.kind === 'lot' && priceFrom(item.lot.id)) || priceOf(sheet)}</span>
               <button
                 type="button"
                 onClick={onOpen}
@@ -359,37 +362,14 @@ const reveal = {
   show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.45, ease: EASE.out } },
 };
 
-/** A number that counts up to itself when it appears — "500+" climbs from
- *  0 to 500 and keeps its "+". Anything that isn't a number stays as written. */
-function CountUp({ value }: { value: string }) {
-  const reduced = useReducedMotion() ?? false;
-  const ref = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    const m = value.match(/^([^\d]*)([\d,]*\.?\d+)(.*)$/);
-    if (!m || reduced || !ref.current) return;
-    const [, pre, num, post] = m;
-    const target = parseFloat(num.replace(/,/g, ''));
-    const decimals = num.includes('.') ? num.split('.')[1].length : 0;
-    const el = ref.current;
-    const controls = animate(0, target, {
-      duration: 1.1,
-      ease: EASE.out,
-      delay: 0.25,
-      onUpdate: (v) => {
-        el.textContent = `${pre}${v.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}${post}`;
-      },
-    });
-    return () => controls.stop();
-  }, [value, reduced]);
-  return <span ref={ref}>{value}</span>;
-}
-
 /** The dashboard a click opens: just enough to want the dossier. The full
  *  story — summary, assets, risks, handover — stays in the dossier. */
 function LotPanel({
-  lot, position, total, onClose, onStep, onEnter, onAsk, sheetFromBelow,
+  lot, numbers: liveNumbers, position, total, onClose, onStep, onEnter, onAsk, sheetFromBelow,
 }: {
   lot: Lot;
+  /** Its numbers, live where they can be (live.ts). */
+  numbers: LotNumber[];
   /** Phones: the panel is a sheet and rises from the bottom edge. */
   sheetFromBelow: boolean;
   position: number;
@@ -409,13 +389,13 @@ function LotPanel({
 
   // the three facts a buyer looks for first
   const facts: { label: string; value: React.ReactNode; note?: string }[] = [
-    { label: 'Price', value: sheet.price ?? (SHOW_EMPTY ? <Pending label="price" /> : 'On request'), note: sheet.priceNote },
+    { label: 'Price', value: priceFrom(lot.id) ?? sheet.price ?? (SHOW_EMPTY ? <Pending label="price" /> : 'On request'), note: sheet.priceNote },
     { label: 'Format', value: sheet.formats?.length ? sheet.formats.join(' · ') : lot.kind },
     { label: 'Stage', value: <span className="inline-flex items-center gap-1.5"><StageDot lot={lot} />{STAGE_LABEL[lot.stage]}</span> },
   ];
 
   // the highlights — numbers if there are any, else what comes with it
-  const numbers = sheet.numbers?.slice(0, 3) ?? [];
+  const numbers = (liveNumbers.length ? liveNumbers : sheet.numbers ?? []).slice(0, 3);
   const includes = sheet.includes?.slice(0, 3) ?? [];
 
   return (
@@ -552,7 +532,7 @@ function LotPanel({
             onClick={() => (lot.enter_url ? onEnter(panelRef.current) : onAsk())}
             className="py-sheen group/cta w-full inline-flex items-center justify-center gap-2 rounded-full bg-ink text-white px-7 py-3.5 font-sans text-sm font-semibold shadow-[0_14px_30px_-12px_rgba(26,28,26,0.55)] hover:bg-accent-deep hover:shadow-[0_18px_40px_-14px_rgba(4,120,87,0.7)] transition-[background-color,box-shadow] duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
-            {lot.enter_url ? 'Open the dossier' : `Ask about ${lot.name}`}
+            {lot.enter_url ? 'Open the project' : `Ask about ${lot.name}`}
             <span aria-hidden className="transition-transform duration-300 group-hover/cta:translate-x-1">→</span>
           </button>
         </Magnetic>
@@ -647,6 +627,8 @@ export default function GalaxyExhibition() {
   const focus = focusIndex >= 0 ? PLACED[focusIndex] : null;
 
   const intent = useIntent();
+  // every lot's numbers, read live once for the whole room (live.ts)
+  const liveNumbers = useLiveLots(LOTS);
 
   // one dialog, two doors: an open seat asks for an idea, a lot for a question
   const [dialog, setDialog] = useState<{ copy?: DialogCopy } | null>(null);
@@ -1003,6 +985,7 @@ export default function GalaxyExhibition() {
                     <Glance
                       key={itemId(ITEMS[front])}
                       item={ITEMS[front]}
+                      numbers={(() => { const it = ITEMS[front]; return it.kind === 'lot' ? liveNumbers[it.lot.id] ?? [] : []; })()}
                       onOpen={() => {
                         const it = ITEMS[front];
                         if (it.kind === 'lot') openLot(it.lot.id);
@@ -1094,6 +1077,7 @@ export default function GalaxyExhibition() {
       {focus && (
         <LotPanel
           lot={focus.lot}
+          numbers={liveNumbers[focus.lot.id] ?? []}
           position={focusIndex + 1}
           total={PLACED.length}
           onClose={closeLot}

@@ -100,6 +100,8 @@ Motion the same way: curves and springs from `components/ui/motion.ts`;
 surfaces that answer the pointer use `.py-spot` / `.py-sheen` / `.py-glass`
 (globals.css). Background motion is CSS only — never JS-animated particles.
 
+**Project dashboards — one template (October 27, 2026).** Every project page is `galaxy/[project]` rendering `room/ProjectDashboard.tsx` from `lots.ts` (what Galaxy also shows) and `rooms.ts` (what only the dashboard shows). A new project is a row in each, not a new page. Numbers say where they come from and read live through `live.ts`. Prices in `rooms.ts` are owner estimates until he sends the real ones.
+
 **Earlier — Galaxy with seven projects.** The field grows from four spheres
 to seven: rows of 3 · 2 · 2 on desktop, the gem keeping the empty centre of the
 middle row; two per row on phones with the seventh centred. Built and

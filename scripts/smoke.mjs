@@ -22,6 +22,12 @@ const CHECKS = [
   ['/exhibitions/galaxy/ethernicapsule', [200]], // showcase only now — app lives at eternicapsule.com
   ['/exhibitions/galaxy/figurines', [200]],
   ['/exhibitions/galaxy/kangaroo-cleanup', [200]],
+  // every project's dashboard comes from one template (galaxy/[project])
+  ['/exhibitions/galaxy/momentos-eternos', [200], 'Momentos Eternos'],
+  ['/exhibitions/galaxy/urelit', [200], 'URELIT'],
+  ['/exhibitions/galaxy/wemait', [200], 'WEMAIT'],
+  ['/exhibitions/galaxy/byndi', [200], 'Byndi'],
+  ['/exhibitions/galaxy/backmate', [200], 'BackMate'],
   ['/store', [200]],
   ['/team', [200], 'Eduardo'],
   ['/team/edu', [200], 'Eduardo'],

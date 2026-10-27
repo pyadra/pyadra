@@ -260,6 +260,9 @@ Everything else (more categories, accessories, premium versions) is secondary. T
 
 ## COPY DECK — LOCKED STRINGS
 
+> [!important] Dashboard v6 (October 27, 2026) — this page now renders from the shared template
+> The project page is `src/app/exhibitions/galaxy/[project]` + `room/ProjectDashboard.tsx`, filled from `galaxy/lots.ts` and `galaxy/rooms.ts` — no longer a page of its own. Section names are shared by every project ("What you'd take", "How a deal works", "Before you decide", "The person", "Questions", "Ways in", "After the deal"). Prices on the page are the owner's low estimates (October 27) pending his real figures. The strings below are the source; reconcile them with `rooms.ts` when they change.
+
 > [!important] How to use this section Verbatim record of every visible string on the Figuitoon page (`src/app/exhibitions/galaxy/figurines/page.tsx`, live since July 2026). New copy is written here first; Claude Code copies verbatim — no paraphrasing, no inventing. If this deck and the live page disagree, the deck is updated to the live string the same day, and a false live string is flagged ⚠ and fixed in code ([[Company_Master]] §6). For any NUMBER, the metrics in "WHAT THE USER SEES" and "PRODUCTS AND PRICING" are canonical; update those first. Last reconciled against the code on September 19, 2026. The sale path still depends on the open Charina/printer question in IDENTITY.
 
 ### Identity block

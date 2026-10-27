@@ -553,6 +553,9 @@ _A buyer can verify the reputation before making any inquiry — without contact
 
 ## COPY DECK — LOCKED STRINGS
 
+> [!important] Dashboard v6 (October 27, 2026) — this page now renders from the shared template
+> The project page is `src/app/exhibitions/galaxy/[project]` + `room/ProjectDashboard.tsx`, filled from `galaxy/lots.ts` and `galaxy/rooms.ts` — no longer a page of its own. Section names are shared by every project ("What you'd take", "How a deal works", "Before you decide", "The person", "Questions", "Ways in", "After the deal"). Prices on the page are the owner's low estimates (October 27) pending his real figures. The strings below are the source; reconcile them with `rooms.ts` when they change.
+
 > [!important] How to use this section This is the verbatim record of every visible string on the Kangaroo Cleanup page. Claude Code and any builder must copy these strings **verbatim**. Do not paraphrase, rewrite, invent, or "improve" them. If a string is needed that is not in this deck, it must be added here first and approved — never improvised in code. If this deck and the live page disagree, the deck is updated to the live string the same day, and a false live string is flagged ⚠ and fixed in code ([[Company_Master]] §6). Last reconciled against `page.tsx` on September 19, 2026 (automated check: every deck string is on the page; the two that aren't literal are built from dynamic values — the Airtasker count in 14.3 and the error text in 14.10).
 
 > [!note] Numbers come from METRICS AND NUMBERS This deck is the source of truth for _wording_. For any _number_ (jobs, reviews, rating, revenue), the METRICS AND NUMBERS table is the canonical source. If a number changes, update that table first, then update the matching string here. The two must always agree.
