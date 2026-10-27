@@ -13,7 +13,6 @@ import {
   type MotionValue,
 } from 'framer-motion';
 import Link from 'next/link';
-import Image from 'next/image';
 import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
 import SiteNav from '@/app/components/nav/SiteNav';
 import SiteFooter from '@/app/components/nav/SiteFooter';
@@ -27,6 +26,8 @@ import BringIdeaDialog, { type DialogCopy } from '@/app/components/nav/BringIdea
 import Guide from '@/app/components/guide/Guide';
 import { INTENTS, useIntent } from '@/app/components/guide/intent';
 import { LOTS, type Lot, type LotSheet, type WayIn } from './lots';
+import { GemIcon, Sphere } from './Sphere';
+import { getFlight, landAt, useFlight, type Landing } from '@/app/components/flight/flight';
 import { layoutOrbit, FIELD } from './orbit';
 
 /* ------------------------------------------------------------------ */
@@ -104,72 +105,6 @@ const COUNT = COUNT_WORDS[LOTS.length] ?? String(LOTS.length);
 
 /* ---------- pieces ---------- */
 
-const GemIcon = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full text-[#059669] drop-shadow-md">
-    <polygon points="50 5, 95 27.5, 95 72.5, 50 95, 5 72.5, 5 27.5" fill="currentColor" opacity="0.8" />
-    <polygon points="50 20, 75 35, 75 65, 50 80, 25 65, 25 35" fill="white" opacity="0.2" />
-    <polygon points="50 5, 95 27.5, 50 50, 5 27.5" fill="white" opacity="0.4" />
-    <polygon points="95 27.5, 95 72.5, 50 50" fill="black" opacity="0.1" />
-    <polygon points="5 27.5, 5 72.5, 50 50" fill="white" opacity="0.1" />
-  </svg>
-);
-
-/** Inline stand-in mark used until EterniCapsule has a real logo asset. */
-const CapsuleMark = () => (
-  <svg viewBox="0 0 40 60" className="w-full h-full">
-    <rect x="10" y="6" width="20" height="48" rx="10" fill="none" stroke="#C9A961" strokeWidth="2.5" />
-    <circle cx="20" cy="30" r="2.6" fill="#C9A961" />
-  </svg>
-);
-
-/** The logo inside a sphere, sized as a share of the sphere so the same
- *  piece works at 44px in a list and 80px on the canvas. */
-function LogoSlot({ lot }: { lot: Lot }) {
-  return (
-    <div className="absolute inset-0 flex items-center justify-center">
-      {lot.logo.kind === 'image' && (
-        <Image
-          src={lot.logo.src}
-          alt=""
-          width={96}
-          height={96}
-          className="relative w-[64%] h-[64%] object-contain opacity-75 pointer-events-none select-none"
-          draggable={false}
-        />
-      )}
-      {lot.logo.kind === 'inline-capsule' && (
-        <div className="relative w-[34%] h-[50%] opacity-80 pointer-events-none">
-          <CapsuleMark />
-        </div>
-      )}
-      {/* No logo asset yet — the project's initials, set in the museum's
-          serif like a monogram, until its mark is made. */}
-      {lot.logo.kind === 'pending' && (
-        <span className="relative font-serif font-semibold text-[34cqw] leading-none tracking-[-0.02em] text-ink/45 pointer-events-none select-none">
-          {initials(lot.name)}
-        </span>
-      )}
-    </div>
-  );
-}
-
-const initials = (name: string) =>
-  name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase() ?? '')
-    .join('');
-
-/** A sphere: the brand colour, the mark, and the room's light on it. */
-function Sphere({ lot, className }: { lot: Lot; className: string }) {
-  return (
-    <div className={`relative rounded-full overflow-hidden [container-type:inline-size] ${lot.sphereClass} ${className}`}>
-      <LogoSlot lot={lot} />
-      <span aria-hidden className="py-glass" />
-    </div>
-  );
-}
-
 const StageDot = ({ lot }: { lot: Lot }) => (
   <span
     aria-hidden
@@ -217,7 +152,7 @@ function onRing(offset: number) {
 /** One place on the ring — a lot or an open seat. As it turns to the front
  *  it grows, comes forward and takes its colour back. */
 function RingNode({
-  item, index, pos, isFront, state, onPick,
+  item, index, pos, isFront, state, hidden, onPick,
 }: {
   item: Item;
   index: number;
@@ -225,6 +160,8 @@ function RingNode({
   pos: MotionValue<number>;
   isFront: boolean;
   state: 'idle' | 'active' | 'dim';
+  /** Its sphere is still flying in from the Home (components/flight). */
+  hidden: boolean;
   onPick: () => void;
 }) {
   const reduced = useReducedMotion() ?? false;
@@ -249,20 +186,11 @@ function RingNode({
         type="button"
         onClick={onPick}
         aria-label={isFront ? (item.kind === 'lot' ? `${name} — ${item.lot.opportunity}` : 'Open seat — bring your idea') : `Turn the orbit to ${name}`}
-        animate={{ opacity: state === 'dim' ? 0.22 : 1 }}
-        transition={{ duration: 0.4 }}
+        animate={{ opacity: hidden ? 0 : state === 'dim' ? 0.22 : 1 }}
+        transition={{ duration: hidden ? 0 : 0.4 }}
         className="group relative flex flex-col items-center bg-transparent border-0 p-0 cursor-pointer rounded-2xl focus:outline-none"
       >
-        {item.kind === 'lot' && item.lot.featured && isFront && (
-          <motion.span
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="absolute bottom-full mb-3 whitespace-nowrap font-mono font-bold text-[11px] uppercase tracking-[0.18em] text-accent-deep"
-          >
-            Start here
-          </motion.span>
-        )}
-        <motion.span className="relative block aspect-square" style={{ width: size }}>
+        <motion.span data-orb={item.kind === 'lot' ? item.lot.id : undefined} className="relative block aspect-square" style={{ width: size }}>
           {item.kind === 'lot' ? (
             <>
               {/* its colour, on the floor around it — only at the front */}
@@ -301,6 +229,16 @@ function RingNode({
           {item.kind === 'lot' && <StageDot lot={item.lot} />}
           {name}
         </motion.span>
+        {/* the featured lot says where to begin — under its name, clear of the gem */}
+        {item.kind === 'lot' && item.lot.featured && isFront && (
+          <motion.span
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-1.5 whitespace-nowrap font-mono font-bold text-[11px] uppercase tracking-[0.18em] text-accent-deep"
+          >
+            Start here
+          </motion.span>
+        )}
       </motion.button>
     </motion.div>
   );
@@ -734,6 +672,13 @@ export default function GalaxyExhibition() {
   };
   const pickWay = (w: WayIn) => setUrl({ way: way === w ? null : w });
 
+  // Arriving from the Home by the flight: the spheres are on their way, so
+  // the ring's own stay hidden until they touch down, and nothing here plays
+  // an entrance of its own.
+  const flight = useFlight();
+  const arriving = !!flight && flight.phase !== 'land';
+  const [cameByFlight] = useState(() => getFlight() !== null);
+
   // The ring turns in whole steps. `turn` keeps counting past a full circle
   // so the spring always takes the short way round; the front is turn mod N.
   const [turn, setTurn] = useState(START);
@@ -742,8 +687,12 @@ export default function GalaxyExhibition() {
   const spun = useSpring(target, { stiffness: 70, damping: 18, mass: 1 });
   const pos = reduced ? target : spun;
   useEffect(() => {
-    target.set(turn);
-  }, [turn, target]);
+    // while the spheres fly in, the ring is placed, not turned
+    if (getFlight()) {
+      target.jump(turn);
+      spun.jump(turn);
+    } else target.set(turn);
+  }, [turn, target, spun]);
   const turnTo = useCallback((i: number) => setTurn((t) => t + wrap(i - mod(t, RING_N))), []);
 
   // a direction chosen (here, or on the Home) brings its first project round
@@ -764,7 +713,7 @@ export default function GalaxyExhibition() {
 
   // Nobody there: the orbit turns on its own, one project at a time — within
   // the chosen direction if there is one — and each lights as it arrives.
-  const touring = !reduced && !present && !focus && !dialog;
+  const touring = !reduced && !present && !focus && !dialog && !arriving;
   useEffect(() => {
     if (!touring) return;
     const id = window.setInterval(() => {
@@ -845,6 +794,36 @@ export default function GalaxyExhibition() {
   const nodeState = (it: Item) =>
     focus ? (it.kind === 'lot' && focus.lot.id === it.lot.id ? 'active' : 'dim') : way && it.way !== way ? 'dim' : 'idle';
 
+  // the flight asks where to land: measured from the ring as laid out, with
+  // the look each sphere has there, so it arrives already looking like it
+  const lifting = flight?.phase === 'lift';
+  useEffect(() => {
+    if (!lifting || !box || box.vw < 1024) return;
+    let raf = requestAnimationFrame(() => {
+      raf = requestAnimationFrame(() => {
+        const stage = stageRef.current;
+        if (!stage) return;
+        const to: Record<string, Landing> = {};
+        stage.querySelectorAll<HTMLElement>('[data-orb]').forEach((el) => {
+          const i = ITEMS.findIndex((it) => itemId(it) === el.dataset.orb);
+          if (i < 0) return;
+          const r = el.getBoundingClientRect();
+          const d = onRing(wrap(i - turn)).depth;
+          to[itemId(ITEMS[i])] = {
+            x: r.left + r.width / 2,
+            y: r.top + r.height / 2,
+            size: r.width,
+            opacity: (0.45 + 0.55 * d) * (way && ITEMS[i].way !== way ? 0.22 : 1),
+            saturate: 0.3 + 0.7 * d ** 6,
+          };
+        });
+        const g = stage.querySelector('[data-flight-gem]')?.getBoundingClientRect();
+        landAt(to, g ? { x: g.left + g.width / 2, y: g.top + g.height / 2, size: g.width } : null);
+      });
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [lifting, box, turn, way]);
+
   // a light follows the pointer across the floor
   const lightX = useMotionValue(-2000);
   const lightY = useMotionValue(-2000);
@@ -878,7 +857,7 @@ export default function GalaxyExhibition() {
 
         <motion.header
           initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: focus ? 0 : 1, y: focus ? -12 : 0 }}
+          animate={{ opacity: focus || arriving ? 0 : 1, y: focus ? -12 : arriving ? -10 : 0 }}
           transition={{ duration: 0.5, ease: EASE.out }}
           className={`relative pt-24 px-6 text-center ${focus ? 'pointer-events-none' : ''}`}
         >
@@ -956,7 +935,7 @@ export default function GalaxyExhibition() {
           >
             <motion.div
               className="absolute inset-0"
-              initial={reduced ? false : { opacity: 0, scale: 0.94 }}
+              initial={reduced || cameByFlight ? false : { opacity: 0, scale: 0.94 }}
               animate={{ opacity: 1, scale: 1, x: shift }}
               transition={{ opacity: { duration: 0.6 }, default: SPRING.camera }}
             >
@@ -991,9 +970,10 @@ export default function GalaxyExhibition() {
 
               {/* central gem — the door to the museum shop, behind the front half */}
               <motion.div
-                initial={reduced ? false : { opacity: 0, scale: 0, rotate: -30 }}
-                animate={{ opacity: focus ? 0.25 : 1, scale: 1, rotate: 0 }}
-                transition={{ ...SPRING.glide, delay: reduced ? 0 : 0.2 }}
+                data-flight-gem
+                initial={reduced || cameByFlight ? false : { opacity: 0, scale: 0, rotate: -30 }}
+                animate={{ opacity: arriving ? 0 : focus ? 0.25 : 1, scale: 1, rotate: 0 }}
+                transition={arriving || cameByFlight ? { duration: 0.2 } : { ...SPRING.glide, delay: reduced ? 0 : 0.2 }}
                 className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 w-[clamp(36px,4.4cqw,56px)] aspect-square"
                 style={{ top: `${RING_SHAPE.cy}%`, zIndex: 50 }}
               >
@@ -1008,6 +988,7 @@ export default function GalaxyExhibition() {
                   pos={pos}
                   isFront={i === front}
                   state={nodeState(it)}
+                  hidden={arriving && it.kind === 'lot'}
                   onPick={() => pick(i)}
                 />
               ))}

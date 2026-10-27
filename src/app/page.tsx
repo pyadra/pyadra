@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import SiteNav from '@/app/components/nav/SiteNav';
 import { useZoomDoor } from '@/app/components/ui/useZoomDoor';
+import { liftOff, type FlightSpot } from '@/app/components/flight/flight';
 import { TYPE } from '@/app/components/ui/type';
 import { INTENTS, galaxyHref, setIntent, type Intent } from '@/app/components/guide/intent';
 import SiteFooter from '@/app/components/nav/SiteFooter';
@@ -56,6 +57,7 @@ const ORBS = LOTS.map((lot, i) => ({
 /* One project, endlessly orbiting the symbol — it passes in front of the
    symbol on the near side of its ellipse and behind it on the far side. */
 function OrbitingOrb({
+  id,
   radius,
   speed,
   phase,
@@ -63,6 +65,7 @@ function OrbitingOrb({
   glow,
   reduced,
 }: {
+  id: string;
   radius: number;
   speed: number;
   phase: number;
@@ -82,6 +85,7 @@ function OrbitingOrb({
   return (
     <motion.div
       aria-hidden
+      data-orb={id}
       style={{ x, y, scale, zIndex, width: size, height: size }}
       className={`absolute left-1/2 top-[32%] -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none shadow-[-2px_3px_6px_rgba(26,28,26,0.18)] ${glow}`}
     >
@@ -148,6 +152,7 @@ function HeroSymbol({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }) {
             transition={{ type: 'spring', stiffness: 130, damping: 16, mass: 1 }}
           >
             <path
+              data-flight-gem
               d="M106,20 L134,20 L150,38 L150,72 L134,90 L106,90 L90,72 L90,38 Z"
               fill="none"
               stroke={STROKE}
@@ -360,7 +365,7 @@ function LogoShowcase({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo })
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.2, ease: EASE.out, delay: reduced ? 0 : 1.1 + i * 0.08 }}
         >
-          <OrbitingOrb {...o} reduced={reduced} />
+          <OrbitingOrb id={id} {...o} reduced={reduced} />
         </motion.div>
       ))}
 
@@ -413,6 +418,30 @@ export default function PyadraHome() {
   const [observerId, setObserverId] = useState<string | null>(null);
   const reduced = useReducedMotion() ?? false;
   const { zoomTo, overlay, zoomProps } = useZoomDoor();
+  const router = useRouter();
+
+  // Into Galaxy. Where there's room for its ring, the spheres circling the
+  // symbol fly there (components/flight) while the Home steps back;
+  // elsewhere — phones, reduced motion — the zoom door.
+  const [leaving, setLeaving] = useState(false);
+  const enterGalaxy: ZoomTo = (from, href) => {
+    if (leaving) return;
+    if (reduced || window.innerWidth < 1024) return zoomTo(from, href);
+    const spot = (el: Element): FlightSpot => {
+      const r = el.getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2, size: r.width };
+    };
+    const spheres: Record<string, FlightSpot> = {};
+    document.querySelectorAll<HTMLElement>('[data-orb]').forEach((el) => {
+      if (el.dataset.orb) spheres[el.dataset.orb] = spot(el);
+    });
+    if (!Object.keys(spheres).length) return zoomTo(from, href);
+    const gem = document.querySelector('[data-flight-gem]');
+    router.prefetch(href);
+    liftOff(spheres, gem ? spot(gem) : null);
+    setLeaving(true);
+    setTimeout(() => router.push(href), 420);
+  };
 
   // Every visitor becomes a numbered Observer — Pyadra's quiet signature.
   // Returning visitors read their stored id; first-timers get registered,
@@ -466,7 +495,11 @@ export default function PyadraHome() {
 
   return (
     <>
-    <motion.div {...zoomProps} className="bg-[#EDEFED] text-[#1A1C1A] overflow-x-clip antialiased selection:bg-[#059669] selection:text-white">
+    <motion.div
+      {...zoomProps}
+      {...(leaving ? { animate: { opacity: 0, y: 24, filter: 'blur(6px)' }, transition: { duration: 0.42, ease: EASE.out } } : {})}
+      className={`bg-[#EDEFED] text-[#1A1C1A] overflow-x-clip antialiased selection:bg-[#059669] selection:text-white ${leaving ? 'py-leaving' : ''}`}
+    >
 
       {/* ============ THE CURTAIN — 3 seconds of black ============ */}
       <AnimatePresence>
@@ -544,11 +577,11 @@ export default function PyadraHome() {
               plays as black slides away. Symbol + PYADRA + tagline.
               Nothing else competes with it. */}
           <div className="relative w-full flex items-center justify-center min-h-[250px] md:min-h-[260px]">
-            {curtainUp && <LogoShowcase reduced={reduced} zoomTo={zoomTo} />}
+            {curtainUp && <LogoShowcase reduced={reduced} zoomTo={enterGalaxy} />}
           </div>
 
           {/* WHAT PYADRA IS — AND WHAT BRINGS YOU HERE */}
-          {curtainUp && <IntentChooser reduced={reduced} zoomTo={zoomTo} />}
+          {curtainUp && <IntentChooser reduced={reduced} zoomTo={enterGalaxy} />}
         </div>
       </section>
 

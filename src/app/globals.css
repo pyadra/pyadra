@@ -394,3 +394,8 @@ html, body {
   .py-dust { display: none; }
   .py-sheen:hover::after { animation: none; }
 }
+
+/* the Home stepping back while its spheres fly to Galaxy (components/flight):
+   the layer above has taken them, so the originals hide at once */
+.py-leaving [data-orb],
+.py-leaving [data-flight-gem] { visibility: hidden; }

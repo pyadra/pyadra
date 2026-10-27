@@ -1,5 +1,7 @@
 "use client";
+import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { getFlight } from "@/app/components/flight/flight";
 import { EASE } from "@/app/components/ui/motion";
 
 /* Museum-room transition: each room settles into place as you arrive.
@@ -8,12 +10,15 @@ import { EASE } from "@/app/components/ui/motion";
    and still — so the two read as one step inward.
    Opacity, scale and a short blur on one layer — compositor work.
    Pages time their choreography with ENTER ≈ 0.75s, which still
-   lands right as this settles. */
+   lands right as this settles.
+   A room reached by the flight (components/flight) skips it: the
+   spheres are already travelling into it, and they are the move. */
 export default function Template({ children }: { children: React.ReactNode }) {
   const reduced = useReducedMotion() ?? false;
+  const [inFlight] = useState(() => getFlight() !== null);
   return (
     <motion.div
-      initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.97, filter: "blur(6px)" }}
+      initial={inFlight ? false : reduced ? { opacity: 0 } : { opacity: 0, scale: 0.97, filter: "blur(6px)" }}
       // a filter left on (even blur(0)) would trap every fixed element of the
       // page inside this layer — it is cleared the moment the room settles
       animate={{ opacity: 1, scale: 1, filter: "blur(0px)", transitionEnd: { filter: "none" } }}
