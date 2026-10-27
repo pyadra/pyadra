@@ -8,6 +8,7 @@ import GreenDust from '../../components/ui/GreenDust';
 import SiteNav from '@/app/components/nav/SiteNav';
 import SiteFooter from '@/app/components/nav/SiteFooter';
 import { useZoomDoor } from '@/app/components/ui/useZoomDoor';
+import { TYPE } from '@/app/components/ui/type';
 import BringIdeaDialog, { type DialogCopy } from '@/app/components/nav/BringIdeaDialog';
 import Guide from '@/app/components/guide/Guide';
 import { INTENTS, useIntent, type Intent } from '@/app/components/guide/intent';
@@ -39,19 +40,9 @@ const INSET = { x: 0.07, y: 0.11 };
 const FOCUS_SCALE = 1.55;
 /** Desktop panel width + its gap from the edge — the camera centres the
  *  lot in the space left of it. */
-const PANEL_SPACE = 476;
+const PANEL_SPACE = 456;
 
 const STAGE_LABEL: Record<Lot['stage'], string> = { ready: 'Ready', forming: 'Forming' };
-
-/** "How you come in", said as something the visitor does. */
-const DO_LABEL: Record<WayIn, string> = {
-  acquire: 'Own it',
-  operate: 'Run it',
-  support: 'Back it',
-  build: 'Build it',
-  forming: 'Follow it as it forms',
-  pending: 'To confirm with Pyadra',
-};
 
 /** The orbit's title, written for the direction that's lit. */
 const TITLE: Record<WayIn, string> = {
@@ -81,7 +72,10 @@ function narrate({ way, intent, hovered, focus }: { way: WayIn | null; intent: I
       default: return `${focus.name} hasn't set how you come in yet. Every deal here starts as a conversation — ask.`;
     }
   }
-  if (hovered) return `${hovered.name} — ${hovered.opportunity.toLowerCase()}. Click to step in.`;
+  if (hovered) {
+    const next = { acquire: "what you'd take", operate: "what you'd run", support: 'what it gives back' }[hovered.wayIn as 'acquire'] ?? 'more';
+    return `${hovered.name}: ${hookOf(hovered).replace(/\.$/, '')}. Click to see ${next}.`;
+  }
   const lit = way ? LOTS.filter((l) => l.wayIn === way) : [];
   switch (way) {
     case 'acquire':
@@ -217,18 +211,22 @@ function OrbitNode({
             }`}
           />
         </motion.span>
-        <span className="mt-2.5 inline-flex items-center gap-1.5 whitespace-nowrap text-[13px] font-semibold tracking-[-0.01em] text-[#1A1C1A] transition-colors group-hover:text-[#047857] group-focus-visible:text-[#047857]">
+        <span className="mt-2.5 inline-flex items-center gap-1.5 whitespace-nowrap font-sans text-[13px] font-semibold text-ink transition-colors group-hover:text-accent-deep group-focus-visible:text-accent-deep">
           <StageDot lot={lot} />
           {lot.name}
         </span>
 
-        {/* preview — the one-line answer to "what is this, can I come in?" */}
+        {/* preview — the hook: what it is, why look, what it costs */}
         {state !== 'active' && (
           <span
-            className={`pointer-events-none absolute left-1/2 -translate-x-1/2 ${below ? 'top-full mt-2' : 'bottom-full mb-2'} w-[230px] rounded-2xl bg-white/95 backdrop-blur-md px-4 py-3 text-left shadow-xl shadow-[#1A1C1A]/10 ring-1 ring-[#1A1C1A]/5 opacity-0 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0`}
+            className={`pointer-events-none absolute left-1/2 -translate-x-1/2 ${below ? 'top-full mt-2' : 'bottom-full mb-2'} w-[290px] rounded-2xl bg-white/95 backdrop-blur-md p-4 text-left shadow-xl shadow-ink/10 ring-1 ring-ink/5 opacity-0 translate-y-1 scale-[0.98] transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 group-focus-visible:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:scale-100`}
           >
-            <span className="block text-[12px] font-medium leading-snug text-[#3A4A3E]">{lot.subtitle}</span>
-            <span className="mt-1.5 block text-[11px] font-semibold text-[#059669]">{lot.opportunity} →</span>
+            <span className={`block ${TYPE.label}`}>{lot.kind}</span>
+            <span className="mt-1.5 block font-sans text-sm font-medium leading-snug text-ink">{hookOf(lot)}</span>
+            <span className="mt-3 pt-2.5 flex items-center justify-between gap-3 border-t border-ink/6">
+              <span className="font-sans text-[13px] font-semibold text-ink whitespace-nowrap">{priceOf(lot.sheet ?? {})}</span>
+              <span className="font-sans text-[13px] font-semibold text-accent-deep whitespace-nowrap">{lot.opportunity} →</span>
+            </span>
           </span>
         )}
       </motion.button>
@@ -253,17 +251,18 @@ function OpenSeat({ x, y, label, dim, onOpen }: { x: number; y: number; label: s
         <span className="flex items-center justify-center w-[clamp(44px,6.2cqw,82px)] aspect-square rounded-full border border-dashed border-[#059669]/45 text-[#059669] text-xl transition-all duration-300 group-hover:bg-white/70 group-hover:border-solid group-hover:scale-105 group-focus-visible:bg-white/70">
           +
         </span>
-        <span className="mt-2.5 whitespace-nowrap text-[13px] font-semibold text-[#6B8070] group-hover:text-[#047857] group-focus-visible:text-[#047857]">Open seat</span>
-        <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[220px] rounded-2xl bg-white/95 px-4 py-3 text-left shadow-xl shadow-[#1A1C1A]/10 ring-1 ring-[#1A1C1A]/5 opacity-0 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0">
-          <span className="block text-[12px] font-medium leading-snug text-[#3A4A3E]">Nothing to {label.toLowerCase()} here yet. Have the project that belongs in this seat?</span>
-          <span className="mt-1.5 block text-[11px] font-semibold text-[#059669]">Bring your idea →</span>
+        <span className="mt-2.5 whitespace-nowrap font-sans text-[13px] font-semibold text-ink-mute group-hover:text-accent-deep group-focus-visible:text-accent-deep">Open seat</span>
+        <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-[240px] rounded-2xl bg-white/95 p-4 text-left shadow-xl shadow-ink/10 ring-1 ring-ink/5 opacity-0 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0">
+          <span className={`block ${TYPE.label}`}>{label}</span>
+          <span className="mt-1.5 block font-sans text-sm font-medium leading-snug text-ink">Nothing to {label.toLowerCase()} here yet. Have the project that belongs in this seat?</span>
+          <span className="mt-3 pt-2.5 block border-t border-ink/6 font-sans text-[13px] font-semibold text-accent-deep">Bring your idea →</span>
         </span>
       </motion.button>
     </div>
   );
 }
 
-/* ---------- the lot panel ---------- */
+/* ---------- the lot dashboard ---------- */
 
 /** In development an empty lot-sheet field shows as a marked slot, so the
  *  owner sees the template and what's left to write; the live site hides it. */
@@ -272,7 +271,8 @@ const SHOW_EMPTY = process.env.NODE_ENV !== 'production';
 /** Development only, with ?sample=1: fills the empty fields with marked
  *  sample text, so the owner can see a finished sheet before writing one. */
 const SAMPLE_SHEET: LotSheet = {
-  summary: 'Sample — two sentences that tell a stranger what this project is and why it matters. Plain words, no jargon.',
+  hook: 'Sample — the one line that makes someone want to look closer.',
+  summary: 'Sample — two sentences that tell a stranger what this project is and why it matters.',
   formats: ['Sample format', 'Website'],
   price: 'Sample $0,000',
   priceNote: 'Sample — negotiable',
@@ -283,12 +283,19 @@ const SAMPLE_SHEET: LotSheet = {
   live: { label: 'Sample — see it live', href: 'https://pyadra.io' },
 };
 
-function Pending({ label, className = '', compact = false }: { label: string; className?: string; compact?: boolean }) {
-  if (compact) {
-    return <span className="block font-mono text-[10px] uppercase tracking-[0.14em] text-[#059669]/80 border-b border-dashed border-[#059669]/40 w-fit">{label}</span>;
-  }
+function useSheet(lot: Lot): LotSheet {
+  const sample = SHOW_EMPTY && typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('sample');
+  return sample ? { ...SAMPLE_SHEET, ...lot.sheet } : (lot.sheet ?? {});
+}
+
+/** The line that makes a visitor lean in — the sheet's hook, or the
+ *  subtitle until the owner writes one. */
+const hookOf = (lot: Lot, sheet: LotSheet = lot.sheet ?? {}) => sheet.hook ?? lot.subtitle;
+const priceOf = (sheet: LotSheet) => sheet.price ?? 'Price on request';
+
+function Pending({ label }: { label: string }) {
   return (
-    <span className={`block rounded-xl border border-dashed border-[#059669]/35 bg-[#059669]/[0.03] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[#059669]/80 ${className}`}>
+    <span className="inline-block font-mono font-bold text-[11px] uppercase tracking-[0.14em] text-accent/80 border-b border-dashed border-accent/40">
       To complete · {label}
     </span>
   );
@@ -299,18 +306,8 @@ const reveal = {
   show: { opacity: 1, y: 0, transition: { duration: 0.32, ease: 'easeOut' as const } },
 };
 
-/** One section of the lot sheet. With no content it's a pending slot in
- *  development and nothing at all on the live site. */
-function SheetSection({ title, has, empty, children }: { title: string; has: boolean; empty: string; children: React.ReactNode }) {
-  if (!has && !SHOW_EMPTY) return null;
-  return (
-    <motion.section variants={reveal} className="pt-5">
-      <h3 className="mb-2 font-mono uppercase text-[10px] tracking-[0.22em] text-[#6B8070]">{title}</h3>
-      {has ? children : <Pending label={empty} />}
-    </motion.section>
-  );
-}
-
+/** The dashboard a click opens: just enough to want the dossier. The full
+ *  story — summary, assets, risks, handover — stays in the dossier. */
 function LotPanel({
   lot, position, total, onClose, onStep, onEnter, onAsk,
 }: {
@@ -324,8 +321,7 @@ function LotPanel({
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLElement>(null);
-  const sample = SHOW_EMPTY && typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('sample');
-  const sheet: LotSheet = sample ? { ...SAMPLE_SHEET, ...lot.sheet } : (lot.sheet ?? {});
+  const sheet = useSheet(lot);
 
   useEffect(() => {
     closeRef.current?.focus({ preventScroll: true });
@@ -333,26 +329,14 @@ function LotPanel({
 
   // the three facts a buyer looks for first
   const facts: { label: string; value: React.ReactNode; note?: string }[] = [
-    {
-      label: 'Asking price',
-      value: sheet.price ?? (SHOW_EMPTY ? <Pending label="to complete" compact /> : 'On request'),
-      note: sheet.priceNote,
-    },
-    {
-      label: 'Format',
-      value: sheet.formats?.length ? sheet.formats.join(' · ') : lot.kind,
-    },
-    {
-      label: 'Where it stands',
-      value: <span className="inline-flex items-center gap-1.5"><StageDot lot={lot} />{STAGE_LABEL[lot.stage]}</span>,
-    },
+    { label: 'Price', value: sheet.price ?? (SHOW_EMPTY ? <Pending label="price" /> : 'On request'), note: sheet.priceNote },
+    { label: 'Format', value: sheet.formats?.length ? sheet.formats.join(' · ') : lot.kind },
+    { label: 'Stage', value: <span className="inline-flex items-center gap-1.5"><StageDot lot={lot} />{STAGE_LABEL[lot.stage]}</span> },
   ];
 
-  const how: [string, string | undefined][] = [
-    ['You put in', lot.offer?.give],
-    ['You take away', lot.offer?.get],
-    ['Handover', sheet.handover],
-  ];
+  // the highlights — numbers if there are any, else what comes with it
+  const numbers = sheet.numbers?.slice(0, 3) ?? [];
+  const includes = sheet.includes?.slice(0, 3) ?? [];
 
   return (
     <>
@@ -364,9 +348,9 @@ function LotPanel({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="lg:hidden fixed inset-0 z-40 bg-[#1A1C1A]/25 backdrop-blur-[2px] border-0 cursor-default"
+      className="lg:hidden fixed inset-0 z-40 bg-ink/25 backdrop-blur-[2px] border-0 cursor-default"
     />
-    <div className="fixed z-50 inset-x-3 bottom-3 top-16 lg:inset-x-auto lg:right-6 lg:top-20 lg:bottom-6 lg:w-[440px] flex items-end lg:items-stretch pointer-events-none">
+    <div className="fixed z-50 inset-x-3 bottom-3 top-16 lg:inset-x-auto lg:right-6 lg:top-20 lg:bottom-6 lg:w-[420px] flex items-end lg:items-center pointer-events-none">
     <motion.aside
       ref={panelRef}
       role="dialog"
@@ -376,21 +360,20 @@ function LotPanel({
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 32 }}
       transition={{ type: 'spring', stiffness: 160, damping: 22 }}
-      className="pointer-events-auto w-full max-h-full overflow-hidden rounded-[28px] bg-white/92 backdrop-blur-xl ring-1 ring-[#1A1C1A]/6 shadow-2xl shadow-[#1A1C1A]/12 flex flex-col"
+      className="pointer-events-auto w-full max-h-full overflow-hidden rounded-[28px] bg-white/92 backdrop-blur-xl ring-1 ring-ink/6 shadow-2xl shadow-ink/12 flex flex-col"
     >
       {/* walk the orbit */}
-      <div className="flex items-center justify-between px-5 pt-4 pb-1 shrink-0">
+      <div className="flex items-center justify-between px-5 pt-4 shrink-0">
         <div className="flex items-center gap-1">
-          <button type="button" onClick={() => onStep(-1)} aria-label="Previous project" className="w-8 h-8 rounded-full text-[#3A4A3E] hover:bg-[#EDEFED] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669]">←</button>
-          <button type="button" onClick={() => onStep(1)} aria-label="Next project" className="w-8 h-8 rounded-full text-[#3A4A3E] hover:bg-[#EDEFED] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669]">→</button>
-          <span className="ml-1 font-mono text-[10px] tracking-[0.2em] text-[#6B8070]">
+          <button type="button" onClick={() => onStep(-1)} aria-label="Previous project" className="w-8 h-8 rounded-full text-ink-soft hover:bg-paper focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">←</button>
+          <button type="button" onClick={() => onStep(1)} aria-label="Next project" className="w-8 h-8 rounded-full text-ink-soft hover:bg-paper focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">→</button>
+          <span className={`ml-1 ${TYPE.label}`}>
             {String(position).padStart(2, '0')} / {String(total).padStart(2, '0')}
           </span>
         </div>
-        <button ref={closeRef} type="button" onClick={onClose} aria-label="Back to the orbit" className="w-8 h-8 rounded-full bg-[#EDEFED] text-[#3A4A3E] hover:bg-[#E2E6E2] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669]">×</button>
+        <button ref={closeRef} type="button" onClick={onClose} aria-label="Back to the orbit" className="w-8 h-8 rounded-full bg-paper text-ink-soft hover:bg-[#E2E6E2] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">×</button>
       </div>
 
-      {/* the sheet — same sections for every project, in the same order */}
       <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 lg:px-7 pb-5">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
@@ -398,117 +381,80 @@ function LotPanel({
             initial="hidden"
             animate="show"
             exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
-            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.045 } } }}
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05 } } }}
           >
-            <motion.div variants={reveal} className="flex items-center gap-3 pt-2">
+            <motion.div variants={reveal} className="flex items-center gap-3 pt-3">
               {/* on desktop the camera already holds the sphere — phones show it here */}
               <Sphere lot={lot} className="lg:hidden w-12 h-12 shrink-0 shadow-[-6px_6px_14px_rgba(0,0,0,0.12)]" />
-              <div className="flex flex-wrap gap-1.5">
-                <span className="rounded-full bg-[#EDEFED] px-3 py-1 text-[10px] font-bold text-[#3A4A3E]">{lot.type} · {lot.kind}</span>
-                <span className="rounded-full bg-[#059669]/10 px-3 py-1 text-[10px] font-bold text-[#047857]">{lot.opportunity}</span>
-              </div>
+              <span className={TYPE.label}>{lot.type} · {lot.kind}</span>
             </motion.div>
 
-            <motion.h2 variants={reveal} id="lot-title" className="mt-4 text-[28px] lg:text-[32px] font-bold tracking-[-0.035em] leading-[1.05]">{lot.name}</motion.h2>
-            <motion.p variants={reveal} className="mt-1.5 text-[15px] font-medium leading-snug text-[#3A4A3E]">{lot.subtitle}</motion.p>
+            <motion.h2 variants={reveal} id="lot-title" className={`mt-3 ${TYPE.display}`}>{lot.name}</motion.h2>
+            <motion.p variants={reveal} className={`mt-2.5 ${TYPE.lead}`}>{hookOf(lot, sheet)}</motion.p>
+            {SHOW_EMPTY && !sheet.hook && <motion.p variants={reveal} className="mt-1"><Pending label="hook" /></motion.p>}
+            <motion.span variants={reveal} className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1 font-mono font-bold text-[11px] uppercase tracking-[0.14em] text-accent-deep">
+              {lot.opportunity}
+            </motion.span>
 
-            {/* key facts */}
+            {/* the three facts */}
             <motion.dl variants={reveal} className="mt-5 grid grid-cols-3 gap-2">
               {facts.map((f) => (
-                <div key={f.label} className="rounded-2xl bg-[#EDEFED]/70 px-3 py-2.5 min-w-0">
-                  <dt className="font-mono uppercase text-[9px] tracking-[0.18em] text-[#6B8070]">{f.label}</dt>
-                  <dd className="mt-1 text-[13px] font-semibold leading-snug text-[#1A1C1A] break-words">{f.value}</dd>
-                  {f.note && <dd className="mt-0.5 text-[11px] font-medium text-[#6B8070] leading-snug">{f.note}</dd>}
+                <div key={f.label} className="rounded-2xl bg-paper/80 px-3 py-3 min-w-0">
+                  <dt className={TYPE.label}>{f.label}</dt>
+                  <dd className="mt-1.5 font-sans text-sm font-semibold leading-snug text-ink break-words">{f.value}</dd>
+                  {f.note && <dd className="mt-0.5 font-sans text-[13px] leading-snug text-ink-mute">{f.note}</dd>}
                 </div>
               ))}
             </motion.dl>
 
-            <SheetSection title="What it is" has={!!sheet.summary} empty="summary · two sentences">
-              <p className="text-[14px] font-medium leading-relaxed text-[#1A1C1A]">{sheet.summary}</p>
-            </SheetSection>
-
-            <SheetSection title="What's included" has={!!sheet.includes?.length} empty="what transfers · 3 to 6 items">
-              <ul className="grid gap-1.5">
-                {sheet.includes?.map((it, i) => (
-                  <li key={`${it}-${i}`} className="flex gap-2.5 text-[13px] font-medium leading-snug text-[#1A1C1A]">
-                    <span aria-hidden className="mt-[3px] flex w-4 h-4 shrink-0 items-center justify-center rounded-full bg-[#059669]/12 text-[9px] text-[#047857]">✓</span>
+            {/* the highlights */}
+            {numbers.length > 0 ? (
+              <motion.div variants={reveal} className="mt-2 grid grid-cols-3 gap-2">
+                {numbers.map((n, i) => (
+                  <div key={`${n.label}-${i}`} className="rounded-2xl ring-1 ring-ink/8 px-3 py-3">
+                    <div className="font-serif font-semibold text-2xl leading-none text-ink">{n.value}</div>
+                    <div className="mt-1.5 font-sans text-[13px] leading-snug text-ink-mute">{n.label}</div>
+                  </div>
+                ))}
+              </motion.div>
+            ) : includes.length > 0 ? (
+              <motion.ul variants={reveal} className="mt-4 grid gap-1.5">
+                {includes.map((it, i) => (
+                  <li key={`${it}-${i}`} className="flex gap-2.5 font-sans text-sm leading-snug text-ink">
+                    <span aria-hidden className="mt-[3px] flex w-4 h-4 shrink-0 items-center justify-center rounded-full bg-accent/12 text-[11px] leading-none text-accent-deep">✓</span>
                     {it}
                   </li>
                 ))}
-              </ul>
-            </SheetSection>
+              </motion.ul>
+            ) : (
+              SHOW_EMPTY && <motion.p variants={reveal} className="mt-4"><Pending label="numbers or what's included" /></motion.p>
+            )}
 
-            <SheetSection title="Ideal for" has={!!sheet.idealFor?.length} empty="who it suits · 2 or 3 profiles">
-              <div className="flex flex-wrap gap-1.5">
-                {sheet.idealFor?.map((p, i) => (
-                  <span key={`${p}-${i}`} className="rounded-full ring-1 ring-[#1A1C1A]/10 px-3 py-1 text-[12px] font-medium text-[#3A4A3E]">{p}</span>
-                ))}
-              </div>
-            </SheetSection>
-
-            <SheetSection title="In numbers" has={!!sheet.numbers?.length} empty="2 or 3 verifiable numbers">
-              <div className="grid grid-cols-3 gap-2">
-                {sheet.numbers?.map((n, i) => (
-                  <div key={`${n.label}-${i}`} className="rounded-2xl ring-1 ring-[#1A1C1A]/8 px-3 py-2.5">
-                    <div className="text-[17px] font-bold tracking-[-0.02em] text-[#1A1C1A]">{n.value}</div>
-                    <div className="text-[11px] font-medium leading-snug text-[#6B8070]">{n.label}</div>
-                  </div>
-                ))}
-              </div>
-            </SheetSection>
-
-            <motion.section variants={reveal} className="pt-5">
-              <h3 className="mb-2 font-mono uppercase text-[10px] tracking-[0.22em] text-[#6B8070]">How it works</h3>
-              <dl className="grid gap-2.5">
-                <div className="grid grid-cols-[112px_1fr] gap-3 text-[13px] leading-snug">
-                  <dt className="font-semibold text-[#6B8070]">You can</dt>
-                  <dd className="font-medium text-[#1A1C1A]">{DO_LABEL[lot.wayIn]}</dd>
+            {/* who it's for */}
+            {sheet.idealFor?.length ? (
+              <motion.div variants={reveal} className="mt-5">
+                <p className={TYPE.label}>Ideal for</p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {sheet.idealFor.map((p, i) => (
+                    <span key={`${p}-${i}`} className="rounded-full ring-1 ring-ink/10 px-3 py-1 font-sans text-[13px] font-medium text-ink-soft">{p}</span>
+                  ))}
                 </div>
-                {how.map(([k, v]) =>
-                  v || SHOW_EMPTY ? (
-                    <div key={k} className="grid grid-cols-[112px_1fr] gap-3 text-[13px] leading-snug">
-                      <dt className="font-semibold text-[#6B8070]">{k}</dt>
-                      <dd className="font-medium text-[#1A1C1A]">{v ?? <Pending label={k.toLowerCase()} className="!py-1" />}</dd>
-                    </div>
-                  ) : null,
-                )}
-              </dl>
-            </motion.section>
-
-            <motion.section variants={reveal} className="pt-5">
-              <h3 className="mb-2 font-mono uppercase text-[10px] tracking-[0.22em] text-[#6B8070]">Proof</h3>
-              <p className="text-[13px] font-medium leading-snug text-[#1A1C1A]">{lot.proof}</p>
-              {sheet.live && (
-                <a href={sheet.live.href} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-[12px] font-semibold text-[#047857] hover:underline">
-                  {sheet.live.label} ↗
-                </a>
-              )}
-            </motion.section>
-
-            {/* what happens next — every deal is a conversation, never a checkout */}
-            <motion.ol variants={reveal} className="mt-5 grid gap-1.5 rounded-2xl bg-[#EDEFED]/70 px-4 py-3.5 text-[12px] leading-snug text-[#3A4A3E]">
-              {[
-                lot.enter_url ? 'Read the dossier — proof, assets and the honest risks.' : 'Its room opens soon — proof, assets and risks, in full.',
-                'Write to Pyadra. Every deal starts as a conversation.',
-                'Agree how you come in — and take it further.',
-              ].map((t, i) => (
-                <li key={t} className="flex gap-2.5">
-                  <span className="font-mono text-[10px] text-[#059669] pt-px">{String(i + 1).padStart(2, '0')}</span>
-                  <span>{t}</span>
-                </li>
-              ))}
-            </motion.ol>
+              </motion.div>
+            ) : (
+              SHOW_EMPTY && <motion.p variants={reveal} className="mt-5"><Pending label="ideal for" /></motion.p>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* one primary move, always in reach — the dossier when the room is
-          open, the conversation when it isn't — and the other beside it */}
-      <div className="shrink-0 border-t border-[#1A1C1A]/6 bg-white/80 px-6 lg:px-7 pt-3 pb-4 grid gap-1">
+      {/* the move, always in reach — the dossier when the room is open, the
+          conversation when it isn't — and the other one beside it */}
+      <div className="shrink-0 border-t border-ink/6 bg-white/80 px-6 lg:px-7 pt-3 pb-4 grid gap-1">
+        <p className="text-center font-sans text-[13px] text-ink-mute pb-1">Every deal starts as a conversation — no checkout.</p>
         <button
           type="button"
           onClick={() => (lot.enter_url ? onEnter(panelRef.current) : onAsk())}
-          className="cta-glow w-full rounded-full bg-[#1A1C1A] text-white px-7 py-3.5 text-sm font-semibold shadow-lg shadow-[#1A1C1A]/15 hover:bg-[#047857] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] focus-visible:ring-offset-2"
+          className="cta-glow w-full rounded-full bg-ink text-white px-7 py-3.5 font-sans text-sm font-semibold shadow-lg shadow-ink/15 hover:bg-accent-deep transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
         >
           {lot.enter_url ? 'Open the dossier →' : `Ask about ${lot.name} →`}
         </button>
@@ -516,12 +462,12 @@ function LotPanel({
           <button
             type="button"
             onClick={onAsk}
-            className="w-full rounded-full px-7 py-2 text-[13px] font-semibold text-[#047857] hover:bg-[#059669]/8 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669]"
+            className="w-full rounded-full px-7 py-2 font-sans text-[13px] font-semibold text-accent-deep hover:bg-accent/8 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             Ask Pyadra about it
           </button>
         ) : (
-          <span className="text-center text-[12px] font-medium text-[#6B8070] py-1">Its room opens soon.</span>
+          <span className="text-center font-sans text-[13px] text-ink-mute py-1">Its room opens soon.</span>
         )}
       </div>
     </motion.aside>
@@ -701,7 +647,7 @@ export default function GalaxyExhibition() {
           transition={{ duration: 0.4 }}
           className="pt-24 px-6 text-center"
         >
-          <p className="font-mono uppercase text-[10px] tracking-[0.3em] text-[#6B8070]">Galaxy · {COUNT} projects</p>
+          <p className={TYPE.label}>Galaxy · {COUNT} projects</p>
           <AnimatePresence mode="wait" initial={false}>
             <motion.h1
               key={way ?? 'all'}
@@ -709,12 +655,12 @@ export default function GalaxyExhibition() {
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
               transition={{ duration: 0.3 }}
-              className="mt-2 text-[28px] md:text-[34px] font-bold tracking-[-0.035em] leading-[1.05]"
+              className={`mt-3 ${TYPE.display}`}
             >
-              {way ? TITLE[way] : 'Read the orbit'}<span className="text-[#059669]">.</span>
+              {way ? TITLE[way] : 'Read the orbit'}<span className="text-accent">.</span>
             </motion.h1>
           </AnimatePresence>
-          <p className="lg:hidden mt-2 text-[14px] font-medium text-[#3A4A3E] max-w-md mx-auto">
+          <p className={`lg:hidden mt-3 max-w-md mx-auto ${TYPE.lead}`}>
             Grouped by how you can come in. Tap one to see what you put in and what you take away.
           </p>
         </motion.header>
@@ -785,9 +731,9 @@ export default function GalaxyExhibition() {
                       aria-pressed={way === a.key}
                       onClick={() => pickWay(a.key)}
                       animate={{ opacity: focus ? 0 : 1 }}
-                      className={`absolute z-10 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full px-2.5 py-1 font-mono uppercase text-[10px] tracking-[0.22em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] ${
+                      className={`absolute z-10 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full px-2.5 py-1 font-mono font-bold uppercase text-[11px] tracking-[0.18em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                         focus ? 'pointer-events-none' : ''
-                      } ${way === a.key ? 'bg-[#1A1C1A] text-white' : lit ? 'text-[#047857]' : 'text-[#6B8070]/80 hover:text-[#047857]'}`}
+                      } ${way === a.key ? 'bg-ink text-white' : lit ? 'text-accent-deep' : 'text-ink-mute/80 hover:text-accent-deep'}`}
                       style={{ left: `${p.x}%`, top: `${p.y}%` }}
                     >
                       {a.label} <span className="opacity-60">{n}</span>
@@ -844,7 +790,7 @@ export default function GalaxyExhibition() {
             if (!lots.length) {
               return (
                 <section key={a.key} aria-label={a.label}>
-                  <h2 className={`px-2 mb-2.5 font-mono uppercase text-[10px] tracking-[0.24em] ${way === a.key ? 'text-[#047857] font-bold' : 'text-[#6B8070]'}`}>
+                  <h2 className={`px-2 mb-2.5 font-mono font-bold uppercase text-[11px] tracking-[0.18em] ${way === a.key ? 'text-accent-deep' : 'text-ink-mute'}`}>
                     {a.label} <span className="opacity-60">· 0</span>
                   </h2>
                   <button
@@ -854,8 +800,8 @@ export default function GalaxyExhibition() {
                   >
                     <span className="w-11 h-11 shrink-0 rounded-full border border-dashed border-[#059669]/45 flex items-center justify-center text-[#059669] text-lg">+</span>
                     <span className="min-w-0 flex-1">
-                      <span className="block text-[15px] font-semibold tracking-[-0.01em] text-[#3A4A3E]">Open seat</span>
-                      <span className="block text-[12px] font-medium text-[#059669]">Bring your idea →</span>
+                      <span className="block font-sans text-base font-semibold text-ink-soft">Open seat</span>
+                      <span className="block font-sans text-[13px] font-semibold text-accent-deep">Bring your idea →</span>
                     </span>
                   </button>
                 </section>
@@ -863,7 +809,7 @@ export default function GalaxyExhibition() {
             }
             return (
               <section key={a.key} aria-label={a.label}>
-                <h2 className={`px-2 mb-2.5 font-mono uppercase text-[10px] tracking-[0.24em] ${way === a.key ? 'text-[#047857] font-bold' : 'text-[#6B8070]'}`}>
+                <h2 className={`px-2 mb-2.5 font-mono font-bold uppercase text-[11px] tracking-[0.18em] ${way === a.key ? 'text-accent-deep' : 'text-ink-mute'}`}>
                   {a.label} <span className="opacity-60">· {lots.length}</span>
                 </h2>
                 <ul className="rounded-[24px] bg-white/75 backdrop-blur-sm ring-1 ring-[#1A1C1A]/5 shadow-sm divide-y divide-[#1A1C1A]/6 overflow-hidden">
@@ -876,10 +822,10 @@ export default function GalaxyExhibition() {
                       >
                         <Sphere lot={lot} className="w-11 h-11 shrink-0 shadow-[-4px_4px_10px_rgba(0,0,0,0.1)]" />
                         <span className="min-w-0 flex-1">
-                          <span className="flex items-center gap-1.5 text-[15px] font-semibold tracking-[-0.01em]">
+                          <span className="flex items-center gap-1.5 font-sans text-base font-semibold text-ink">
                             <StageDot lot={lot} />{lot.name}
                           </span>
-                          <span className="block truncate text-[12px] font-medium text-[#6B8070]">{lot.subtitle}</span>
+                          <span className="block truncate font-sans text-[13px] text-ink-mute">{hookOf(lot)}</span>
                         </span>
                         <span aria-hidden className="text-[#6B8070]">›</span>
                       </button>
@@ -894,7 +840,7 @@ export default function GalaxyExhibition() {
             className="self-center inline-flex items-center gap-2 rounded-full bg-white/80 ring-1 ring-[#1A1C1A]/8 shadow-sm px-4 py-2"
           >
             <span className="w-5 h-5 shrink-0"><GemIcon /></span>
-            <span className="text-[12px] font-semibold text-[#1A1C1A]">The museum shop →</span>
+            <span className="font-sans text-[13px] font-semibold text-ink">The museum shop →</span>
           </Link>
         </div>
       </section>
@@ -954,7 +900,7 @@ function GemLink() {
         />
         <GemIcon />
       </motion.div>
-      <span className="absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white px-3.5 py-1.5 text-[11px] font-semibold text-[#1A1C1A] shadow-md ring-1 ring-[#1A1C1A]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+      <span className="absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white px-3.5 py-1.5 font-sans text-[13px] font-semibold text-ink shadow-md ring-1 ring-[#1A1C1A]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
         The museum shop →
       </span>
     </Link>

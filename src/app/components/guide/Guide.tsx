@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useSyncExternalStore } from 'react';
+import { TYPE } from '@/app/components/ui/type';
 
 /* ------------------------------------------------------------------ */
 /*  PYADRA · Guide — the museum's audio guide, in one line.            */
@@ -81,12 +82,12 @@ export default function Guide({
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-white/85 backdrop-blur-xl ring-1 ring-[#1A1C1A]/8 shadow-lg shadow-[#1A1C1A]/8 pl-3 pr-4 py-2 text-[12px] font-semibold text-[#3A4A3E] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669]"
+            className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-white/85 backdrop-blur-xl ring-1 ring-ink/8 shadow-lg shadow-ink/8 pl-3 pr-4 py-2 font-sans text-[13px] font-semibold text-ink-soft cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             aria-label="Open the guide"
           >
             <span className="relative flex w-2 h-2">
-              <span className="absolute inset-0 rounded-full bg-[#059669] animate-ping opacity-50" />
-              <span className="relative w-2 h-2 rounded-full bg-[#059669]" />
+              <span className="absolute inset-0 rounded-full bg-accent animate-ping opacity-50" />
+              <span className="relative w-2 h-2 rounded-full bg-accent" />
             </span>
             Guide
           </motion.button>
@@ -97,18 +98,18 @@ export default function Guide({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
             transition={{ type: 'spring', stiffness: 170, damping: 22, delay: 0.1 }}
-            className="pointer-events-auto w-full max-w-[600px] flex items-start gap-3 rounded-[22px] bg-white/85 backdrop-blur-xl ring-1 ring-[#1A1C1A]/8 shadow-xl shadow-[#1A1C1A]/10 pl-4 pr-2 py-3"
+            className="pointer-events-auto w-full max-w-[600px] flex items-start gap-3 rounded-[22px] bg-white/85 backdrop-blur-xl ring-1 ring-ink/8 shadow-xl shadow-ink/10 pl-4 pr-2 py-3"
           >
             <span className="relative mt-[5px] flex w-2 h-2 shrink-0" aria-hidden>
-              <span className="absolute inset-0 rounded-full bg-[#059669] animate-ping opacity-40" />
-              <span className="relative w-2 h-2 rounded-full bg-[#059669]" />
+              <span className="absolute inset-0 rounded-full bg-accent animate-ping opacity-40" />
+              <span className="relative w-2 h-2 rounded-full bg-accent" />
             </span>
 
             <div className="min-w-0 flex-1">
-              <p className="font-mono uppercase text-[9.5px] tracking-[0.22em] text-[#6B8070] truncate">
+              <p className={`truncate ${TYPE.label}`}>
                 You are here ·{' '}
                 {path.map((p, i) => (
-                  <span key={`${p}-${i}`} className={i === path.length - 1 ? 'text-[#047857] font-bold' : ''}>
+                  <span key={`${p}-${i}`} className={i === path.length - 1 ? 'text-accent-deep' : ''}>
                     {i > 0 && <span className="opacity-50"> › </span>}
                     {p}
                   </span>
@@ -117,7 +118,7 @@ export default function Guide({
               <AnimatePresence mode="wait" initial={false}>
                 <motion.p
                   key={line}
-                  className="mt-1 text-[13.5px] md:text-[14px] leading-snug font-medium text-[#1A1C1A]"
+                  className="mt-1 font-sans text-sm font-medium leading-snug text-ink"
                   exit={{ opacity: 0, transition: { duration: 0.12 } }}
                 >
                   {reduced
@@ -137,12 +138,12 @@ export default function Guide({
               </AnimatePresence>
             </div>
 
-            <span className="mt-0.5 text-[#6B8070]" aria-hidden><Headphones /></span>
+            <span className="mt-0.5 text-ink-mute" aria-hidden><Headphones /></span>
             <button
               type="button"
               onClick={() => setFolded(true)}
               aria-label="Fold the guide"
-              className="w-7 h-7 shrink-0 rounded-full text-[#6B8070] hover:bg-[#EDEFED] text-[15px] leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669]"
+              className="w-7 h-7 shrink-0 rounded-full text-ink-mute hover:bg-paper font-sans text-base leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               –
             </button>

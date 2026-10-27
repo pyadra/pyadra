@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import SiteNav from '@/app/components/nav/SiteNav';
 import { useZoomDoor } from '@/app/components/ui/useZoomDoor';
+import { TYPE } from '@/app/components/ui/type';
 import { INTENTS, galaxyHref, setIntent, type Intent } from '@/app/components/guide/intent';
 import SiteFooter from '@/app/components/nav/SiteFooter';
 import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
@@ -243,7 +244,7 @@ function IntentChooser({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: reduced ? 0 : 1.65, ...SPRING }}
-        className="text-[17px] md:text-[20px] font-semibold tracking-[-0.02em] leading-snug text-[#1A1C1A] max-w-xl mx-auto"
+        className={`${TYPE.title} max-w-xl mx-auto`}
       >
         Real projects, already built — looking for the people who will take them further.
       </motion.p>
@@ -251,7 +252,7 @@ function IntentChooser({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: reduced ? 0 : 1.75, ...SPRING }}
-        className="mt-1.5 text-[14px] md:text-[15px] font-medium text-[#3A4A3E]"
+        className={`mt-2 ${TYPE.lead}`}
       >
         Come in with money, work or skills.
       </motion.p>
@@ -260,7 +261,7 @@ function IntentChooser({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: reduced ? 0 : 1.9 }}
-        className="mt-6 font-mono uppercase text-[10px] tracking-[0.3em] text-[#047857]"
+        className="mt-7 font-mono font-bold text-[11px] uppercase tracking-[0.18em] text-accent-deep"
       >
         What brings you here?
       </motion.p>
@@ -276,20 +277,20 @@ function IntentChooser({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }
             transition={{ delay: reduced ? 0 : 2.0 + i * 0.07, type: 'spring', stiffness: 150, damping: 18 }}
             whileHover={reduced ? undefined : { y: -4 }}
             whileTap={{ scale: 0.97 }}
-            className={`group relative flex md:flex-col items-center md:items-start gap-3 md:gap-0 text-left rounded-2xl px-4 py-3 md:p-4 cursor-pointer ring-1 transition-[background-color,box-shadow] duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] ${
+            className={`group relative flex md:flex-col items-center md:items-start gap-3 md:gap-0 text-left rounded-2xl px-4 py-3 md:p-4 cursor-pointer ring-1 transition-[background-color,box-shadow] duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
               it.key === 'look'
-                ? 'bg-transparent ring-[#1A1C1A]/10 hover:bg-white/60'
-                : 'bg-white/70 backdrop-blur-sm ring-[#1A1C1A]/6 shadow-sm hover:bg-white hover:shadow-xl hover:shadow-[#059669]/10 hover:ring-[#059669]/30'
+                ? 'bg-transparent ring-ink/10 hover:bg-white/60'
+                : 'bg-white/70 backdrop-blur-sm ring-ink/6 shadow-sm hover:bg-white hover:shadow-xl hover:shadow-accent/10 hover:ring-accent/30'
             }`}
           >
-            <svg viewBox="0 0 24 24" className="w-5 h-5 shrink-0 text-[#6B8070] group-hover:text-[#059669] transition-colors" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" aria-hidden>
+            <svg viewBox="0 0 24 24" className="w-5 h-5 shrink-0 text-ink-mute group-hover:text-accent transition-colors" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" aria-hidden>
               {INTENT_MARK[it.key]}
             </svg>
             <span className="min-w-0 flex-1 md:mt-3">
-              <span className="block text-[14px] font-semibold tracking-[-0.01em] text-[#1A1C1A]">{it.title}</span>
-              <span className="block text-[12px] font-medium text-[#6B8070] leading-snug">{it.line}</span>
+              <span className="block font-sans text-sm font-semibold text-ink">{it.title}</span>
+              <span className="block font-sans text-[13px] leading-snug text-ink-mute">{it.line}</span>
             </span>
-            <span aria-hidden className="md:absolute md:top-4 md:right-4 text-[#059669] opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">→</span>
+            <span aria-hidden className="md:absolute md:top-4 md:right-4 text-accent opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">→</span>
           </motion.button>
         ))}
       </div>

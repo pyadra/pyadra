@@ -12,6 +12,16 @@
   --font-serif: var(--font-fraunces), "Fraunces", Georgia, serif;      /* DISPLAY */
   --font-sans:  var(--font-dm-sans),  "DM Sans", system-ui, sans-serif; /* TEXT / UI */
   --font-mono:  var(--font-ibm-mono), "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace; /* LABELS */
+
+  /* The museum's palette as utilities (text-ink, bg-paper, text-accent…) —
+     the same values the dossiers write as hex, given names so new pages
+     can't drift. Project brand colours stay with their own pages. */
+  --color-ink: #1A1C1A;          /* headings, primary text */
+  --color-ink-soft: #3A4A3E;     /* body, subtitles */
+  --color-ink-mute: #6B8070;     /* labels, metadata */
+  --color-paper: #EDEFED;        /* the museum's wall */
+  --color-accent: #059669;       /* emerald — the one accent */
+  --color-accent-deep: #047857;  /* emerald on light, hover */
 }
 
 :root {

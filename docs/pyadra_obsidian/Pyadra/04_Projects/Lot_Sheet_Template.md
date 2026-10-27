@@ -5,6 +5,12 @@
 > Fill one copy per project and hand it over; it goes into `src/app/exhibitions/galaxy/lots.ts` as written. Leave a field empty if you don't have it yet — the live site hides empty fields, it never invents them.
 > Created October 27, 2026 · Galaxy v5 (branch `feat/galaxy-orbit-instrument`). The full project story stays in the project's own Project Standard doc ([[Project_Standard_Template]]).
 
+> [!tip] Three steps, each showing a little more
+> **Hover** a sphere → the **hook**: kind, hook line, price, opportunity.
+> **Click** → the **dashboard**: name, hook, opportunity, price · format · stage, up to 3 numbers (or 3 included items), ideal for.
+> **Open the dossier** → everything: summary, all that's included, handover, proof, risks.
+> The note in italics after a field name says where it shows up.
+
 ---
 
 ## Project: `NAME`
@@ -14,6 +20,7 @@
 | Field | Fill in | Rules |
 |---|---|---|
 | **Name** | | As the brand writes it. |
+| **Hook** | | **The one line that makes someone want to look closer.** ≤ 80 characters. Shown on hover, said by the guide, first on the dashboard. Until it's written, the subtitle stands in. |
 | **Scope** | | `Global` · `Glocal` · `Local` |
 | **Kind** | | One or two words — e.g. `Mobile app`, `Physical product`, `Local business`. |
 | **Subtitle** | | What it is, one line, ≤ 50 characters. |
@@ -25,21 +32,21 @@
 
 | Field | Fill in | Rules |
 |---|---|---|
-| **Asking price** | | As it should read, e.g. `AUD $4,000`. **Leave empty to show "On request".** ⚠ Showing a price in Galaxy is an owner decision — see the note below. |
+| **Asking price** *(hover · dashboard)* | | As it should read, e.g. `AUD $4,000`. **Leave empty to show "On request".** ⚠ Showing a price in Galaxy is an owner decision — see the note below. |
 | **Price note** | | Optional, one short line — e.g. `Negotiable`, `Plus revenue share`. |
-| **Formats** | | What the buyer gets, as formats — e.g. `Mobile app · Website`. 1–3. |
+| **Formats** *(dashboard)* | | What the buyer gets, as formats — e.g. `Mobile app · Website`. 1–3. |
 
 ### The sheet
 
 | Field | Fill in | Rules |
 |---|---|---|
-| **What it is** | | Two sentences a stranger understands. ≤ 220 characters. |
-| **What's included** | | What transfers to whoever takes it. **3 to 6 items**, each ≤ 60 characters. |
-| **Ideal for** | | Who it suits. **2 or 3 profiles**, each ≤ 35 characters — e.g. `A first-time founder`. |
-| **In numbers** | | **2 or 3 verifiable numbers**: value + label — e.g. `500+` · `jobs done`. Must match the project doc's canonical metrics. |
+| **What it is** *(dossier)* | | Two sentences a stranger understands. ≤ 220 characters. |
+| **What's included** *(dashboard, top 3 if no numbers · dossier)* | | What transfers to whoever takes it. **3 to 6 items**, each ≤ 60 characters. |
+| **Ideal for** *(dashboard)* | | Who it suits. **2 or 3 profiles**, each ≤ 35 characters — e.g. `A first-time founder`. |
+| **In numbers** *(dashboard)* | | **2 or 3 verifiable numbers**: value + label — e.g. `500+` · `jobs done`. Must match the project doc's canonical metrics. |
 | **You put in** | | What the person contributes, one line — money, work, skills. |
 | **You take away** | | What they receive, one line. |
-| **Handover** | | How the takeover works, one line — e.g. `Two weeks, guided`. |
+| **Handover** *(dossier)* | | How the takeover works, one line — e.g. `Two weeks, guided`. |
 | **Proof** | | What anyone can verify today, one line. |
 | **See it live** | | Link label + URL, if the product is public. |
 | **Dossier** | | Its Pyadra page, or its own site. |

@@ -48,6 +48,9 @@ export type Lot = {
  *  shown as a marked, empty slot in development — so the page always
  *  shows what is still to be written, and never invents it. */
 export type LotSheet = {
+  /** The hook — one line that makes someone want to look closer. Shown on
+   *  hover, said by the guide, and first on the panel. ≤ 80 characters. */
+  hook?: string;
   /** What it is, in two sentences a stranger understands. */
   summary?: string;
   /** What you'd be buying, as formats — e.g. "Mobile app", "Website". */
