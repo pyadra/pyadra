@@ -12,16 +12,16 @@ export default function NotFound() {
       </h1>
 
       <p className="t-d4 text-[#3A4A3E] max-w-sm mb-10">
-        The door you tried leads nowhere in the museum. The exhibitions are
+        The door you tried leads nowhere in the museum. The projects are
         this way.
       </p>
 
       <div className="flex items-center gap-3 flex-wrap justify-center">
         <Link
-          href="/exhibitions"
+          href="/exhibitions/galaxy"
           className="rounded-full bg-[#1A1C1A] text-white px-8 py-3.5 t-d5 font-semibold shadow-lg shadow-[#1A1C1A]/20 hover:scale-[1.03] transition-transform"
         >
-          See the exhibitions →
+          See the projects →
         </Link>
         <Link
           href="/"

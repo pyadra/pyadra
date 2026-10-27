@@ -16,7 +16,7 @@ const BASE = `http://localhost:${PORT}`;
 const CHECKS = [
   // Pages
   ['/', [200], 'Pyadra'],
-  ['/exhibitions', [200]],
+  ['/exhibitions', [301, 308], null], // the hall redirects to Galaxy while it's the only room
   ['/exhibitions/galaxy', [200]],
   ['/exhibitions/galaxy/orbit', [200], 'Orbit 77'],
   ['/exhibitions/galaxy/ethernicapsule', [200]], // showcase only now — app lives at eternicapsule.com

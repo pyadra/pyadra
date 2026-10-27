@@ -90,6 +90,11 @@ Phones and tablets read the same orbit as a list grouped by sector; the lot open
 2. **What can I do here?** — the Home asks _"What brings you here?"_: `I want to own one` · `I want to run one` · `I want to back one` · `I have an idea` · `Just looking`. The answer is the visitor's **intent** (`components/guide/intent.ts`, kept for the session): Galaxy opens with that direction lit, the title says it (_"What you can own."_), phones list it first, and a contact message records it (`came in as: …`). Each lot's panel answers in plain words — **what you can do · what you put in · what you take away** — from each project's own doc (`offer` in `lots.ts`, never a valuation figure).
 3. **Where am I?** — **the guide** (`components/guide/Guide.tsx`): the museum's audio guide in one line, fixed at the bottom of Galaxy and Exhibitions. "You are here · Pyadra › Galaxy › EterniCapsule", and one sentence that speaks to the visitor's intent and to what they're pointing at — counted from the lots, so it never falls behind the data. It folds into a dot for anyone who'd rather walk alone. Not on the Home (the question does that job) nor the dossiers (full-screen boards; the nav already shows the path).
 
+**Fourth pass — the lot sheet, and no more hall (owner, October 27, 2026).**
+- **Ways in reorganized:** EterniCapsule, Figuitoon, Byndi, Momentos Inolvidables, Gym routines and We Made It are all **for sale** (`acquire`). Orbit 77 (support) and Kangaroo Cleanup (operate) are the different ones; BackMate stays forming. The `To confirm` sector is gone.
+- **The lot sheet:** every project's panel shows the same fields in the same order — key facts (asking price · format · where it stands), what it is, what's included, ideal for, in numbers, how it works (you can · you put in · you take away · handover), proof, what happens next — with the main action pinned at the bottom. Fields come from [[Lot_Sheet_Template]], one per project; empty ones hide on the live site and show as "To complete" slots locally. Content not written yet — the owner is preparing it.
+- **`/exhibitions` redirects to Galaxy** (308). Galaxy is the only open room, so the hall only delayed it; the page comes back when a second exhibition opens. Jungle and City are no longer shown.
+
 **One data file.** `src/app/exhibitions/galaxy/lots.ts` holds one row per project — the "WHAT THE USER SEES BEFORE ENTERING" block plus `wayIn` and `stage`. `orbit.ts` computes every position from those two fields (sectors sized by how many lots they hold; spacing even along the ring, measured in card sizes). **Adding a project is adding a row.** Tested in `__tests__/orbit.test.ts`.
 
 **Projects on the branch (owner, October 26, 2026):** EterniCapsule, Figuitoon (acquire · ready), Kangaroo Cleanup (operate · ready), Orbit 77 (support · ready), Byndi (ready — live on Android, App Store next), Momentos Inolvidables, Gym routines, We Made It (ready), BackMate (forming).
@@ -101,7 +106,8 @@ Phones and tablets read the same orbit as a list grouped by sector; the lot open
   - On the orbit a sphere shows **its name only**; the five elements move to the hover preview and the lot panel.
   - A sphere click **opens its panel** instead of going straight to the dashboard.
   - The Home's doors go **straight to Galaxy**; `/exhibitions` is no longer a required step.
-  - `/exhibitions` shows the open room's projects as **unnamed lights** (still no project names outside their exhibition).
+  - `/exhibitions` **redirects to Galaxy** — the hall is gone while Galaxy is the only room.
+  - The lot sheet can show an **asking price** in Galaxy, if the owner fills it (see [[Lot_Sheet_Template]]).
   - The curtain plays in full **once per session**, not on every visit.
 - The copy deck below, `/team`'s `soon-*` rows and the metadata update with it, in the same commit.
 

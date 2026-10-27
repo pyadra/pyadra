@@ -11,7 +11,7 @@ import { useZoomDoor } from '@/app/components/ui/useZoomDoor';
 import BringIdeaDialog, { type DialogCopy } from '@/app/components/nav/BringIdeaDialog';
 import Guide from '@/app/components/guide/Guide';
 import { INTENTS, useIntent, type Intent } from '@/app/components/guide/intent';
-import { LOTS, type Lot, type WayIn } from './lots';
+import { LOTS, type Lot, type LotSheet, type WayIn } from './lots';
 import { layoutOrbit, toPoint, RING, FIELD } from './orbit';
 
 /* ------------------------------------------------------------------ */
@@ -39,7 +39,7 @@ const INSET = { x: 0.07, y: 0.11 };
 const FOCUS_SCALE = 1.55;
 /** Desktop panel width + its gap from the edge — the camera centres the
  *  lot in the space left of it. */
-const PANEL_SPACE = 456;
+const PANEL_SPACE = 476;
 
 const STAGE_LABEL: Record<Lot['stage'], string> = { ready: 'Ready', forming: 'Forming' };
 
@@ -84,7 +84,10 @@ function narrate({ way, intent, hovered, focus }: { way: WayIn | null; intent: I
   if (hovered) return `${hovered.name} — ${hovered.opportunity.toLowerCase()}. Click to step in.`;
   const lit = way ? LOTS.filter((l) => l.wayIn === way) : [];
   switch (way) {
-    case 'acquire': return `${lit.length === 1 ? 'One project is' : `${say(lit.length)} projects are`} for sale today: ${names(lit)}. Each one can be yours, whole.`;
+    case 'acquire':
+      return lit.length > 3
+        ? `${say(lit.length)} projects are for sale today, each one whole. Hover one to see what you'd take.`
+        : `${lit.length === 1 ? 'One project is' : `${say(lit.length)} projects are`} for sale today: ${names(lit)}. Each one can be yours, whole.`;
     case 'operate': return `${names(lit)} ${lit.length === 1 ? 'is' : 'are'} looking for someone to run ${lit.length === 1 ? 'it' : 'them'}. Here, your work is your capital.`;
     case 'support': return `${names(lit)} ${lit.length === 1 ? 'lives' : 'live'} on ${lit.length === 1 ? 'its' : 'their'} supporters. Backing isn't buying — see what it gives back.`;
     case 'build': return lit.length ? `${names(lit)} ${lit.length === 1 ? 'is' : 'are'} looking for builders.` : 'Nothing to build here yet — that seat is open. Your idea could be the next project in this orbit.';
@@ -262,6 +265,52 @@ function OpenSeat({ x, y, label, dim, onOpen }: { x: number; y: number; label: s
 
 /* ---------- the lot panel ---------- */
 
+/** In development an empty lot-sheet field shows as a marked slot, so the
+ *  owner sees the template and what's left to write; the live site hides it. */
+const SHOW_EMPTY = process.env.NODE_ENV !== 'production';
+
+/** Development only, with ?sample=1: fills the empty fields with marked
+ *  sample text, so the owner can see a finished sheet before writing one. */
+const SAMPLE_SHEET: LotSheet = {
+  summary: 'Sample — two sentences that tell a stranger what this project is and why it matters. Plain words, no jargon.',
+  formats: ['Sample format', 'Website'],
+  price: 'Sample $0,000',
+  priceNote: 'Sample — negotiable',
+  includes: ['Sample — the product itself', 'Sample — the brand and domain', 'Sample — the customers so far', 'Sample — the know-how'],
+  idealFor: ['Sample — a first-time founder', 'Sample — an operator', 'Sample — a studio'],
+  numbers: [{ label: 'Sample metric', value: '000' }, { label: 'Sample metric', value: '00%' }, { label: 'Sample metric', value: '0.0' }],
+  handover: 'Sample — two weeks, guided',
+  live: { label: 'Sample — see it live', href: 'https://pyadra.io' },
+};
+
+function Pending({ label, className = '', compact = false }: { label: string; className?: string; compact?: boolean }) {
+  if (compact) {
+    return <span className="block font-mono text-[10px] uppercase tracking-[0.14em] text-[#059669]/80 border-b border-dashed border-[#059669]/40 w-fit">{label}</span>;
+  }
+  return (
+    <span className={`block rounded-xl border border-dashed border-[#059669]/35 bg-[#059669]/[0.03] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[#059669]/80 ${className}`}>
+      To complete · {label}
+    </span>
+  );
+}
+
+const reveal = {
+  hidden: { opacity: 0, y: 8 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.32, ease: 'easeOut' as const } },
+};
+
+/** One section of the lot sheet. With no content it's a pending slot in
+ *  development and nothing at all on the live site. */
+function SheetSection({ title, has, empty, children }: { title: string; has: boolean; empty: string; children: React.ReactNode }) {
+  if (!has && !SHOW_EMPTY) return null;
+  return (
+    <motion.section variants={reveal} className="pt-5">
+      <h3 className="mb-2 font-mono uppercase text-[10px] tracking-[0.22em] text-[#6B8070]">{title}</h3>
+      {has ? children : <Pending label={empty} />}
+    </motion.section>
+  );
+}
+
 function LotPanel({
   lot, position, total, onClose, onStep, onEnter, onAsk,
 }: {
@@ -275,17 +324,34 @@ function LotPanel({
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLElement>(null);
+  const sample = SHOW_EMPTY && typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('sample');
+  const sheet: LotSheet = sample ? { ...SAMPLE_SHEET, ...lot.sheet } : (lot.sheet ?? {});
 
   useEffect(() => {
     closeRef.current?.focus({ preventScroll: true });
   }, []);
 
-  const rows: [string, React.ReactNode][] = [
-    ['What you can do', DO_LABEL[lot.wayIn]],
-    ['What you put in', lot.offer?.give ?? 'To confirm — ask Pyadra.'],
-    ['What you take away', lot.offer?.get ?? 'To confirm — ask Pyadra.'],
-    ['Where it stands', <span key="s" className="inline-flex items-center gap-2"><StageDot lot={lot} />{STAGE_LABEL[lot.stage]}</span>],
-    ['Proof', lot.proof],
+  // the three facts a buyer looks for first
+  const facts: { label: string; value: React.ReactNode; note?: string }[] = [
+    {
+      label: 'Asking price',
+      value: sheet.price ?? (SHOW_EMPTY ? <Pending label="to complete" compact /> : 'On request'),
+      note: sheet.priceNote,
+    },
+    {
+      label: 'Format',
+      value: sheet.formats?.length ? sheet.formats.join(' · ') : lot.kind,
+    },
+    {
+      label: 'Where it stands',
+      value: <span className="inline-flex items-center gap-1.5"><StageDot lot={lot} />{STAGE_LABEL[lot.stage]}</span>,
+    },
+  ];
+
+  const how: [string, string | undefined][] = [
+    ['You put in', lot.offer?.give],
+    ['You take away', lot.offer?.get],
+    ['Handover', sheet.handover],
   ];
 
   return (
@@ -300,7 +366,7 @@ function LotPanel({
       exit={{ opacity: 0 }}
       className="lg:hidden fixed inset-0 z-40 bg-[#1A1C1A]/25 backdrop-blur-[2px] border-0 cursor-default"
     />
-    <div className="fixed z-50 inset-x-3 bottom-3 lg:inset-x-auto lg:right-6 lg:top-20 lg:bottom-6 lg:w-[420px] flex items-end lg:items-center pointer-events-none">
+    <div className="fixed z-50 inset-x-3 bottom-3 top-16 lg:inset-x-auto lg:right-6 lg:top-20 lg:bottom-6 lg:w-[440px] flex items-end lg:items-stretch pointer-events-none">
     <motion.aside
       ref={panelRef}
       role="dialog"
@@ -310,10 +376,10 @@ function LotPanel({
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 32 }}
       transition={{ type: 'spring', stiffness: 160, damping: 22 }}
-      className="pointer-events-auto w-full max-h-[86svh] lg:max-h-full overflow-y-auto rounded-[28px] bg-white/90 backdrop-blur-xl ring-1 ring-[#1A1C1A]/6 shadow-2xl shadow-[#1A1C1A]/12 flex flex-col"
+      className="pointer-events-auto w-full max-h-full overflow-hidden rounded-[28px] bg-white/92 backdrop-blur-xl ring-1 ring-[#1A1C1A]/6 shadow-2xl shadow-[#1A1C1A]/12 flex flex-col"
     >
       {/* walk the orbit */}
-      <div className="flex items-center justify-between px-5 pt-4">
+      <div className="flex items-center justify-between px-5 pt-4 pb-1 shrink-0">
         <div className="flex items-center gap-1">
           <button type="button" onClick={() => onStep(-1)} aria-label="Previous project" className="w-8 h-8 rounded-full text-[#3A4A3E] hover:bg-[#EDEFED] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669]">←</button>
           <button type="button" onClick={() => onStep(1)} aria-label="Next project" className="w-8 h-8 rounded-full text-[#3A4A3E] hover:bg-[#EDEFED] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669]">→</button>
@@ -324,74 +390,140 @@ function LotPanel({
         <button ref={closeRef} type="button" onClick={onClose} aria-label="Back to the orbit" className="w-8 h-8 rounded-full bg-[#EDEFED] text-[#3A4A3E] hover:bg-[#E2E6E2] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669]">×</button>
       </div>
 
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div
-          key={lot.id}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.22 }}
-          className="flex-1 flex flex-col px-6 pb-5 pt-3 lg:px-7"
-        >
-          <div className="flex items-center gap-3">
-            {/* on desktop the camera already holds the sphere — phones show it here */}
-            <Sphere lot={lot} className="lg:hidden w-14 h-14 shrink-0 shadow-[-6px_6px_14px_rgba(0,0,0,0.12)]" />
-            <div className="flex flex-wrap gap-1.5">
-              <span className="rounded-full bg-[#EDEFED] px-3 py-1 text-[10px] font-bold text-[#3A4A3E]">{lot.type} · {lot.kind}</span>
-              <span className="rounded-full bg-[#059669]/10 px-3 py-1 text-[10px] font-bold text-[#047857]">{lot.opportunity}</span>
-            </div>
-          </div>
-
-          <h2 id="lot-title" className="mt-4 text-[28px] lg:text-[32px] font-bold tracking-[-0.035em] leading-[1.05]">{lot.name}</h2>
-          <p className="mt-2 text-[15px] font-medium leading-snug text-[#3A4A3E]">{lot.subtitle}</p>
-
-          <dl className="mt-5 grid gap-3 border-t border-[#1A1C1A]/8 pt-4">
-            {rows.map(([k, v]) => (
-              <div key={k} className="grid grid-cols-[132px_1fr] gap-3 text-[13px] leading-snug">
-                <dt className="font-semibold text-[#6B8070]">{k}</dt>
-                <dd className="font-medium text-[#1A1C1A]">{v}</dd>
+      {/* the sheet — same sections for every project, in the same order */}
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 lg:px-7 pb-5">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={lot.id}
+            initial="hidden"
+            animate="show"
+            exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.045 } } }}
+          >
+            <motion.div variants={reveal} className="flex items-center gap-3 pt-2">
+              {/* on desktop the camera already holds the sphere — phones show it here */}
+              <Sphere lot={lot} className="lg:hidden w-12 h-12 shrink-0 shadow-[-6px_6px_14px_rgba(0,0,0,0.12)]" />
+              <div className="flex flex-wrap gap-1.5">
+                <span className="rounded-full bg-[#EDEFED] px-3 py-1 text-[10px] font-bold text-[#3A4A3E]">{lot.type} · {lot.kind}</span>
+                <span className="rounded-full bg-[#059669]/10 px-3 py-1 text-[10px] font-bold text-[#047857]">{lot.opportunity}</span>
               </div>
-            ))}
-          </dl>
+            </motion.div>
 
-          {/* what happens next — every deal is a conversation, never a checkout */}
-          <ol className="mt-5 grid gap-1.5 rounded-2xl bg-[#EDEFED]/70 px-4 py-3.5 text-[12px] leading-snug text-[#3A4A3E]">
-            {[
-              lot.enter_url ? 'Read the dossier — proof, assets and the honest risks.' : 'Its room opens soon — proof, assets and risks, in full.',
-              'Write to Pyadra. Every deal starts as a conversation.',
-              'Agree how you come in — and take it further.',
-            ].map((t, i) => (
-              <li key={t} className="flex gap-2.5">
-                <span className="font-mono text-[10px] text-[#059669] pt-px">{String(i + 1).padStart(2, '0')}</span>
-                <span>{t}</span>
-              </li>
-            ))}
-          </ol>
+            <motion.h2 variants={reveal} id="lot-title" className="mt-4 text-[28px] lg:text-[32px] font-bold tracking-[-0.035em] leading-[1.05]">{lot.name}</motion.h2>
+            <motion.p variants={reveal} className="mt-1.5 text-[15px] font-medium leading-snug text-[#3A4A3E]">{lot.subtitle}</motion.p>
 
-          {/* one primary move — the dossier when the room is open, the
-              conversation when it isn't — and the other one beside it */}
-          <div className="pt-5 grid gap-1.5">
-            <button
-              type="button"
-              onClick={() => (lot.enter_url ? onEnter(panelRef.current) : onAsk())}
-              className="cta-glow w-full rounded-full bg-[#1A1C1A] text-white px-7 py-3.5 text-sm font-semibold shadow-lg shadow-[#1A1C1A]/15 hover:bg-[#047857] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] focus-visible:ring-offset-2"
-            >
-              {lot.enter_url ? 'Open the dossier →' : `Ask about ${lot.name} →`}
-            </button>
-            {lot.enter_url ? (
-              <button
-                type="button"
-                onClick={onAsk}
-                className="w-full rounded-full px-7 py-2.5 text-[13px] font-semibold text-[#047857] hover:bg-[#059669]/8 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669]"
-              >
-                Ask Pyadra about it
-              </button>
-            ) : (
-              <span className="text-center text-[12px] font-medium text-[#6B8070] py-1">Its room opens soon.</span>
-            )}
-          </div>
-        </motion.div>
-      </AnimatePresence>
+            {/* key facts */}
+            <motion.dl variants={reveal} className="mt-5 grid grid-cols-3 gap-2">
+              {facts.map((f) => (
+                <div key={f.label} className="rounded-2xl bg-[#EDEFED]/70 px-3 py-2.5 min-w-0">
+                  <dt className="font-mono uppercase text-[9px] tracking-[0.18em] text-[#6B8070]">{f.label}</dt>
+                  <dd className="mt-1 text-[13px] font-semibold leading-snug text-[#1A1C1A] break-words">{f.value}</dd>
+                  {f.note && <dd className="mt-0.5 text-[11px] font-medium text-[#6B8070] leading-snug">{f.note}</dd>}
+                </div>
+              ))}
+            </motion.dl>
+
+            <SheetSection title="What it is" has={!!sheet.summary} empty="summary · two sentences">
+              <p className="text-[14px] font-medium leading-relaxed text-[#1A1C1A]">{sheet.summary}</p>
+            </SheetSection>
+
+            <SheetSection title="What's included" has={!!sheet.includes?.length} empty="what transfers · 3 to 6 items">
+              <ul className="grid gap-1.5">
+                {sheet.includes?.map((it, i) => (
+                  <li key={`${it}-${i}`} className="flex gap-2.5 text-[13px] font-medium leading-snug text-[#1A1C1A]">
+                    <span aria-hidden className="mt-[3px] flex w-4 h-4 shrink-0 items-center justify-center rounded-full bg-[#059669]/12 text-[9px] text-[#047857]">✓</span>
+                    {it}
+                  </li>
+                ))}
+              </ul>
+            </SheetSection>
+
+            <SheetSection title="Ideal for" has={!!sheet.idealFor?.length} empty="who it suits · 2 or 3 profiles">
+              <div className="flex flex-wrap gap-1.5">
+                {sheet.idealFor?.map((p, i) => (
+                  <span key={`${p}-${i}`} className="rounded-full ring-1 ring-[#1A1C1A]/10 px-3 py-1 text-[12px] font-medium text-[#3A4A3E]">{p}</span>
+                ))}
+              </div>
+            </SheetSection>
+
+            <SheetSection title="In numbers" has={!!sheet.numbers?.length} empty="2 or 3 verifiable numbers">
+              <div className="grid grid-cols-3 gap-2">
+                {sheet.numbers?.map((n, i) => (
+                  <div key={`${n.label}-${i}`} className="rounded-2xl ring-1 ring-[#1A1C1A]/8 px-3 py-2.5">
+                    <div className="text-[17px] font-bold tracking-[-0.02em] text-[#1A1C1A]">{n.value}</div>
+                    <div className="text-[11px] font-medium leading-snug text-[#6B8070]">{n.label}</div>
+                  </div>
+                ))}
+              </div>
+            </SheetSection>
+
+            <motion.section variants={reveal} className="pt-5">
+              <h3 className="mb-2 font-mono uppercase text-[10px] tracking-[0.22em] text-[#6B8070]">How it works</h3>
+              <dl className="grid gap-2.5">
+                <div className="grid grid-cols-[112px_1fr] gap-3 text-[13px] leading-snug">
+                  <dt className="font-semibold text-[#6B8070]">You can</dt>
+                  <dd className="font-medium text-[#1A1C1A]">{DO_LABEL[lot.wayIn]}</dd>
+                </div>
+                {how.map(([k, v]) =>
+                  v || SHOW_EMPTY ? (
+                    <div key={k} className="grid grid-cols-[112px_1fr] gap-3 text-[13px] leading-snug">
+                      <dt className="font-semibold text-[#6B8070]">{k}</dt>
+                      <dd className="font-medium text-[#1A1C1A]">{v ?? <Pending label={k.toLowerCase()} className="!py-1" />}</dd>
+                    </div>
+                  ) : null,
+                )}
+              </dl>
+            </motion.section>
+
+            <motion.section variants={reveal} className="pt-5">
+              <h3 className="mb-2 font-mono uppercase text-[10px] tracking-[0.22em] text-[#6B8070]">Proof</h3>
+              <p className="text-[13px] font-medium leading-snug text-[#1A1C1A]">{lot.proof}</p>
+              {sheet.live && (
+                <a href={sheet.live.href} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-[12px] font-semibold text-[#047857] hover:underline">
+                  {sheet.live.label} ↗
+                </a>
+              )}
+            </motion.section>
+
+            {/* what happens next — every deal is a conversation, never a checkout */}
+            <motion.ol variants={reveal} className="mt-5 grid gap-1.5 rounded-2xl bg-[#EDEFED]/70 px-4 py-3.5 text-[12px] leading-snug text-[#3A4A3E]">
+              {[
+                lot.enter_url ? 'Read the dossier — proof, assets and the honest risks.' : 'Its room opens soon — proof, assets and risks, in full.',
+                'Write to Pyadra. Every deal starts as a conversation.',
+                'Agree how you come in — and take it further.',
+              ].map((t, i) => (
+                <li key={t} className="flex gap-2.5">
+                  <span className="font-mono text-[10px] text-[#059669] pt-px">{String(i + 1).padStart(2, '0')}</span>
+                  <span>{t}</span>
+                </li>
+              ))}
+            </motion.ol>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* one primary move, always in reach — the dossier when the room is
+          open, the conversation when it isn't — and the other beside it */}
+      <div className="shrink-0 border-t border-[#1A1C1A]/6 bg-white/80 px-6 lg:px-7 pt-3 pb-4 grid gap-1">
+        <button
+          type="button"
+          onClick={() => (lot.enter_url ? onEnter(panelRef.current) : onAsk())}
+          className="cta-glow w-full rounded-full bg-[#1A1C1A] text-white px-7 py-3.5 text-sm font-semibold shadow-lg shadow-[#1A1C1A]/15 hover:bg-[#047857] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] focus-visible:ring-offset-2"
+        >
+          {lot.enter_url ? 'Open the dossier →' : `Ask about ${lot.name} →`}
+        </button>
+        {lot.enter_url ? (
+          <button
+            type="button"
+            onClick={onAsk}
+            className="w-full rounded-full px-7 py-2 text-[13px] font-semibold text-[#047857] hover:bg-[#059669]/8 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#059669]"
+          >
+            Ask Pyadra about it
+          </button>
+        ) : (
+          <span className="text-center text-[12px] font-medium text-[#6B8070] py-1">Its room opens soon.</span>
+        )}
+      </div>
     </motion.aside>
     </div>
     </>
@@ -557,10 +689,7 @@ export default function GalaxyExhibition() {
       <GreenDust count={160} />
 
       <SiteNav
-        crumbs={[
-          { label: 'Exhibitions', href: '/exhibitions' },
-          { label: 'Galaxy' },
-        ]}
+        crumbs={[{ label: 'Galaxy' }]}
         status={{ label: `${LOTS.length} projects`, live: true }}
       />
 

@@ -34,10 +34,38 @@ export type Lot = {
    *  project's own doc (participation section). Never a valuation figure:
    *  numbers live on the dossier (Company_Master §7). null = not set yet. */
   offer: { give: string; get: string } | null;
+  /** The lot sheet — the same fields for every project, shown in its panel
+   *  before the dossier, so a visitor knows what they'd be taking. */
+  sheet?: LotSheet;
   /** null until the project has a page — the sphere shows, it just isn't a door yet. */
   enter_url: string | null;
   sphereClass: string;
   glow: string;
+};
+
+/** Filled from the owner's lot sheet (04_Projects/Lot_Sheet_Template.md).
+ *  Every field is optional: a missing one is hidden on the live site and
+ *  shown as a marked, empty slot in development — so the page always
+ *  shows what is still to be written, and never invents it. */
+export type LotSheet = {
+  /** What it is, in two sentences a stranger understands. */
+  summary?: string;
+  /** What you'd be buying, as formats — e.g. "Mobile app", "Website". */
+  formats?: string[];
+  /** The asking price as it should read — or leave it out for "on request". */
+  price?: string;
+  /** One line under the price — e.g. "Negotiable", "Plus revenue share". */
+  priceNote?: string;
+  /** What transfers to whoever takes it — 3 to 6 short items. */
+  includes?: string[];
+  /** Who it suits — 2 or 3 short profiles. */
+  idealFor?: string[];
+  /** Verifiable numbers — 2 or 3. */
+  numbers?: { label: string; value: string }[];
+  /** How the takeover works, in one line — e.g. "Two weeks, guided". */
+  handover?: string;
+  /** Where to see it working today. */
+  live?: { label: string; href: string };
 };
 
 /** The sectors, clockwise from the top. `pending` holds projects whose way
@@ -133,17 +161,12 @@ export const LOTS: Lot[] = [
   /* ------------------------------------------------------------------ */
   /*  The new projects.                                                  */
   /*                                                                     */
-  /*  ⚠ TODO (owner) — the owner confirmed these are ready (October 26,  */
-  /*  2026), but each still needs, from its own Project Standard doc,    */
-  /*  before this page is deployed:                                      */
-  /*    · wayIn       acquire / operate / support / build                */
-  /*    · subtitle    what it is, one line                               */
-  /*    · proof       what anyone can verify today                       */
-  /*    · opportunity the line under the name                            */
-  /*    · offer       what you put in / what you take away               */
-  /*    · enter_url   its Pyadra page, or its own site                   */
-  /*  Until then they sit in the "To confirm" sector with no      */
-  /*  link — never a claim the code can't keep (Company_Master #13).     */
+  /*  ⚠ TODO (owner) — ready and for sale (owner, October 27, 2026).    */
+  /*  Each still needs, from its own lot sheet (Lot_Sheet_Template.md),  */
+  /*  before this page is deployed: subtitle, proof, offer, the `sheet`  */
+  /*  fields, and enter_url — its Pyadra page or its own site. Until     */
+  /*  then they show "Details to confirm" and no link — never a claim    */
+  /*  the code can't keep (Company_Master #13).                          */
   /* ------------------------------------------------------------------ */
   {
     id: 'byndi',
@@ -154,8 +177,8 @@ export const LOTS: Lot[] = [
     // The in-app tagline, verified in the Byndi repo.
     subtitle: 'Understand her cycle. Care for the relationship.',
     proof: 'Live on Android · App Store next',
-    opportunity: 'Opening soon',
-    wayIn: 'pending',
+    opportunity: 'Available to acquire',
+    wayIn: 'acquire',
     stage: 'ready',
     offer: null,
     enter_url: null,
@@ -170,8 +193,8 @@ export const LOTS: Lot[] = [
     logo: { kind: 'pending' },
     subtitle: 'Songs made for one moment',
     proof: 'Details to confirm',
-    opportunity: 'Opening soon',
-    wayIn: 'pending',
+    opportunity: 'Available to acquire',
+    wayIn: 'acquire',
     stage: 'ready',
     offer: null,
     enter_url: null,
@@ -186,8 +209,8 @@ export const LOTS: Lot[] = [
     logo: { kind: 'pending' },
     subtitle: 'Training routines, guided',
     proof: 'Details to confirm',
-    opportunity: 'Opening soon',
-    wayIn: 'pending',
+    opportunity: 'Available to acquire',
+    wayIn: 'acquire',
     stage: 'ready',
     offer: null,
     enter_url: null,
@@ -202,8 +225,8 @@ export const LOTS: Lot[] = [
     logo: { kind: 'pending' },
     subtitle: 'Details to confirm',
     proof: 'Details to confirm',
-    opportunity: 'Opening soon',
-    wayIn: 'pending',
+    opportunity: 'Available to acquire',
+    wayIn: 'acquire',
     stage: 'ready',
     offer: null,
     enter_url: null,
