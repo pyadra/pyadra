@@ -138,6 +138,11 @@ Phones and tablets read the same orbit as a list grouped by sector; the lot open
 - **Honesty fixes on the way:** Byndi's proof line said "Live on Android · App Store next"; its doc marks store publication as unverified — it now reads "Built · in testing". Cristian Ruiz's photo is the team one (`/images/team/cris.jpg`).
 - **Settled (owner, October 27):** Figuitoon's 3D printer is included in the sale. **Still open:** Byndi's doc says it is not exhibited yet and has no participation option; its dashboard uses the owner's estimate. BackMate has no project doc. Each project doc's copy deck must be reconciled with the new strings.
 
+**Eleventh pass — one step into a project, and a quicker flight (owner, October 27, 2026).** The owner found two previews before a project redundant (the glance on hover, then a side panel showing nearly the same) and the step from the Home a little stuck. Now:
+- **The side panel is gone.** The glance is the only preview; clicking the front sphere or **Open the project** goes straight to its dashboard (the zoom door). An old `?lot=` link opens the project itself.
+- **The glance rises under the front sphere**, as one horizontal card (kind, hook, three numbers, "From $…", Open the project), so it never covers the spheres either side — the visitor can still reach right or left. The guide steps aside while it's open. The ring sits a little higher (`cy` 34%) to make room.
+- **The flight starts at the click:** the Home hands over its spheres and changes page after 140 ms (was 420), and while Galaxy loads the spheres already drift toward where the ring will be instead of waiting; once Galaxy measures the ring they carry on from where they are. Each travels 0.8 s (was 1.05), 30 ms apart (was 45).
+
 **One data file.** `src/app/exhibitions/galaxy/lots.ts` holds one row per project — the "WHAT THE USER SEES BEFORE ENTERING" block plus `wayIn` and `stage`. `orbit.ts` computes every position from those two fields (sectors sized by how many lots they hold; spacing even along the ring, measured in card sizes). **Adding a project is adding a row.** Tested in `__tests__/orbit.test.ts`.
 
 **Projects on the branch (owner, October 26–27, 2026):** EterniCapsule, Figuitoon, Byndi, Momentos Eternos, URELIT, WEMAIT (acquire · ready), Kangaroo Cleanup (operate · ready), Orbit 77 (support · ready), BackMate (forming).

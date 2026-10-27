@@ -440,7 +440,8 @@ export default function PyadraHome() {
     router.prefetch(href);
     liftOff(spheres, gem ? spot(gem) : null);
     setLeaving(true);
-    setTimeout(() => router.push(href), 420);
+    // the page changes almost at once — the spheres are already moving
+    setTimeout(() => router.push(href), 140);
   };
 
   // Every visitor becomes a numbered Observer — Pyadra's quiet signature.
@@ -497,7 +498,7 @@ export default function PyadraHome() {
     <>
     <motion.div
       {...zoomProps}
-      {...(leaving ? { animate: { opacity: 0, y: 24, filter: 'blur(6px)' }, transition: { duration: 0.42, ease: EASE.out } } : {})}
+      {...(leaving ? { animate: { opacity: 0, y: 24, filter: 'blur(6px)' }, transition: { duration: 0.3, ease: EASE.out } } : {})}
       className={`bg-[#EDEFED] text-[#1A1C1A] overflow-x-clip antialiased selection:bg-[#059669] selection:text-white ${leaving ? 'py-leaving' : ''}`}
     >
 

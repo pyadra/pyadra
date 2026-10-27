@@ -12,6 +12,15 @@ import { FLY_S, STAGGER_S, touchDown, useFlight, type FlightSpot, type Landing }
 
 const travel = (i: number) => ({ duration: FLY_S, ease: EASE.inOut, delay: i * STAGGER_S });
 
+/** Where the spheres drift while Galaxy is still loading: a third of the way
+ *  toward the middle of the screen, where the ring will be — so the move
+ *  starts at the click, never as a pause. */
+const drift = (from: FlightSpot) => {
+  const cx = typeof window === 'undefined' ? from.x : window.innerWidth / 2;
+  const cy = typeof window === 'undefined' ? from.y : window.innerHeight * 0.56;
+  return { left: from.x + (cx - from.x) * 0.3, top: from.y + (cy - from.y) * 0.3 };
+};
+
 function FlyingSphere({ lot, index, from, to }: { lot: Lot; index: number; from: FlightSpot; to: Landing | null }) {
   const t = travel(index);
   return (
@@ -19,9 +28,10 @@ function FlyingSphere({ lot, index, from, to }: { lot: Lot; index: number; from:
       className="absolute"
       style={{ x: '-50%', y: '-50%' }}
       initial={{ left: from.x, top: from.y, width: from.size, height: from.size }}
-      // while the page changes underneath, they gather themselves a little
-      animate={to ? { left: to.x, top: to.y, width: to.size, height: to.size, opacity: to.opacity, scale: 1 } : { scale: 1.25 }}
-      transition={to ? t : { duration: 0.5, ease: EASE.out }}
+      // while the page changes underneath they are already on their way;
+      // once Galaxy says where, they carry on from wherever they are
+      animate={to ? { left: to.x, top: to.y, width: to.size, height: to.size, opacity: to.opacity, scale: 1 } : { ...drift(from), scale: 1.3 }}
+      transition={to ? t : { duration: 1.2, ease: EASE.out }}
     >
       {/* a little arc on the way, not a straight slide */}
       <motion.div
@@ -59,7 +69,7 @@ function FlyingGem({ from, to }: { from: FlightSpot; to: FlightSpot | null }) {
       className="absolute"
       style={{ x: '-50%', y: '-50%' }}
       initial={{ left: from.x, top: from.y, width: from.size, height: from.size, rotate: 0 }}
-      animate={to ? { left: to.x, top: to.y, width: to.size, height: to.size, rotate: [0, -24, 0] } : undefined}
+      animate={to ? { left: to.x, top: to.y, width: to.size, height: to.size, rotate: [0, -24, 0] } : { top: from.y + 40 }}
       transition={t}
     >
       <motion.svg viewBox="88 18 64 74" className="absolute inset-0 w-full h-full overflow-visible" animate={to ? { opacity: 0 } : undefined} transition={{ ...t, duration: FLY_S * 0.5, delay: 0.1 + FLY_S * 0.35 }}>

@@ -33,8 +33,8 @@ export type Flight = {
 };
 
 /** How long one sphere travels, and the gap between one leaving and the next. */
-export const FLY_S = 1.05;
-export const STAGGER_S = 0.045;
+export const FLY_S = 0.8;
+export const STAGGER_S = 0.03;
 /** If Galaxy never says where to land, the layer lets go after this. */
 const GIVE_UP_MS = 3500;
 
