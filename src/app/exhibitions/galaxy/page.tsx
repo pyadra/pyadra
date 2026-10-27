@@ -19,13 +19,13 @@ import { useZoomDoor } from '@/app/components/ui/useZoomDoor';
 import { TYPE } from '@/app/components/ui/type';
 import { EASE, SPRING } from '@/app/components/ui/motion';
 import RevealText from '@/app/components/ui/RevealText';
-import CountUp from '@/app/components/ui/CountUp';
 import BringIdeaDialog, { type DialogCopy } from '@/app/components/nav/BringIdeaDialog';
 import Guide from '@/app/components/guide/Guide';
-import { LOTS, type Lot, type LotNumber, type LotSheet, type WayIn } from './lots';
+import { LOTS, type Lot, type LotSheet, type WayIn } from './lots';
 import { GemIcon, Sphere } from './Sphere';
 import { priceFrom } from './rooms';
 import { useLiveLots } from './live';
+import FocusPanel from './FocusPanel';
 import { getFlight, landAt, useFlight, type Landing } from '@/app/components/flight/flight';
 import { layoutOrbit, FIELD } from './orbit';
 
@@ -66,9 +66,18 @@ const names = (lots: Lot[]) =>
 
 /** What the guide says on the orbit — counted from the lots, so it can
  *  never fall behind the data. */
-function narrate({ way, present, phone }: { way: WayIn | null; present: boolean; phone: boolean }): string {
+function narrate({ way, focus, present, phone }: { way: WayIn | null; focus: Lot | null; present: boolean; phone: boolean }): string {
+  if (focus) {
+    switch (focus.wayIn) {
+      case 'acquire': return `${focus.name} can be bought whole. Open the project to see everything that comes with it.`;
+      case 'operate': return `No capital needed to start — ${focus.name} needs someone who wants to run it.`;
+      case 'support': return `Backing ${focus.name} isn't investing: you help it keep going, and it gives back.`;
+      case 'forming': return `${focus.name} is still forming. Follow it to hear when it opens.`;
+      default: return `Every deal here starts as a conversation — open ${focus.name} to begin one.`;
+    }
+  }
   // a hand on the orbit learns how to move it
-  if (present) return 'Drag the orbit or use ← → to turn it. Click the one in front to open it.';
+  if (present) return 'Hover a sphere to meet it, click it for the ways in. Drag or use ← → to turn the orbit.';
   const lit = way ? LOTS.filter((l) => l.wayIn === way) : [];
   switch (way) {
     case 'acquire':
@@ -108,6 +117,10 @@ const ITEMS: Item[] = ARCS.flatMap((a): Item[] => {
     : [{ kind: 'seat', way: a.key, label: a.label }];
 });
 const RING_N = ITEMS.length;
+/** The lots in ring order — what ← → walk through with a project open. */
+const RING_LOTS = ITEMS.flatMap((it) => (it.kind === 'lot' ? [it.lot] : []));
+/** Desktop panel width + its gap from the edge — the ring steps aside for it. */
+const PANEL_SPACE = 456;
 const itemId = (it: Item) => (it.kind === 'lot' ? it.lot.id : `seat-${it.way}`);
 /** The featured lot starts at the front. */
 const START = Math.max(0, ITEMS.findIndex((it) => it.kind === 'lot' && it.lot.featured));
@@ -136,7 +149,7 @@ function onRing(offset: number) {
 /** One place on the ring — a lot or an open seat. As it turns to the front
  *  it grows, comes forward and takes its colour back. */
 function RingNode({
-  item, index, pos, isFront, state, hidden, onPick,
+  item, index, pos, isFront, back, preview, state, hidden, onPick,
 }: {
   item: Item;
   index: number;
@@ -144,6 +157,10 @@ function RingNode({
   pos: MotionValue<number>;
   isFront: boolean;
   state: 'idle' | 'active' | 'dim';
+  /** On the far half of the ring — its card opens below it, not above. */
+  back: boolean;
+  /** Hover cards are on (off while a project is open in the panel). */
+  preview: boolean;
   /** Its sphere is still flying in from the Home (components/flight). */
   hidden: boolean;
   onPick: (from: Element) => void;
@@ -152,12 +169,14 @@ function RingNode({
   const offset = useTransform(pos, (p) => wrap(index - p));
   const left = useTransform(offset, (o) => `${onRing(o).x}%`);
   const top = useTransform(offset, (o) => `${onRing(o).y}%`);
-  const zIndex = useTransform(offset, (o) => Math.round(onRing(o).depth * 100));
+  // under the hand a sphere comes fully forward, so its card sits on top
+  const hov = useMotionValue(0);
+  const zIndex = useTransform([offset, hov], ([o, h]) => ((h as number) ? 300 : Math.round(onRing(o as number).depth * 100)));
   const k = useTransform(offset, (o) => 0.3 + 0.7 * onRing(o).depth ** 2);
   const size = useTransform(k, (v) => `calc(${v.toFixed(3)} * ${FRONT})`);
   // the sphere's centre, not the button's, sits on the ring
   const lift = useTransform(k, (v) => `calc(${(-v / 2).toFixed(3)} * ${FRONT})`);
-  const opacity = useTransform(offset, (o) => 0.45 + 0.55 * onRing(o).depth);
+  const opacity = useTransform([offset, hov], ([o, h]) => ((h as number) ? 1 : 0.45 + 0.55 * onRing(o as number).depth));
   // the colour arrives only near the front
   const filter = useTransform(offset, (o) => `saturate(${(0.3 + 0.7 * onRing(o).depth ** 6).toFixed(2)})`);
   const glow = useTransform(offset, (o) => 0.6 * onRing(o).depth ** 6);
@@ -169,6 +188,10 @@ function RingNode({
       <motion.button
         type="button"
         onClick={(e) => onPick(e.currentTarget)}
+        onMouseEnter={() => hov.set(1)}
+        onMouseLeave={() => hov.set(0)}
+        onFocus={() => hov.set(1)}
+        onBlur={() => hov.set(0)}
         aria-label={isFront ? (item.kind === 'lot' ? `${name} — ${item.lot.opportunity}` : 'Open seat — bring your idea') : `Turn the orbit to ${name}`}
         animate={{ opacity: hidden ? 0 : state === 'dim' ? 0.22 : 1 }}
         transition={{ duration: hidden ? 0 : 0.4 }}
@@ -223,79 +246,26 @@ function RingNode({
             Start here
           </motion.span>
         )}
-      </motion.button>
-    </motion.div>
-  );
-}
 
-const glanceRise = {
-  hidden: { opacity: 0, y: 8 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE.out } },
-};
-
-/** The glance — the front project at a look, the moment a hand is over the
- *  orbit. It rises under the front sphere, clear of the ring, and folds
- *  away when the hand leaves; one click from it opens the project. It is
- *  the only preview: the project's dashboard is the next step. */
-function Glance({ item, numbers: liveNumbers, onOpen, onSeat }: { item: Item; numbers: LotNumber[]; onOpen: (from: Element) => void; onSeat: () => void }) {
-  const sheet = item.kind === 'lot' ? (item.lot.sheet ?? {}) : {};
-  const numbers = liveNumbers.slice(0, 3);
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 14, scale: 0.97, filter: 'blur(6px)' }}
-      animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', transitionEnd: { filter: 'none' } }}
-      exit={{ opacity: 0, y: 8, scale: 0.98, filter: 'blur(4px)', transition: { duration: 0.18, ease: EASE.inOut } }}
-      transition={{ ...SPRING.glide, opacity: { duration: 0.25 }, filter: { duration: 0.35 } }}
-      style={{ transformOrigin: '50% 0%' }}
-      className="relative pointer-events-auto w-[min(720px,94cqw)] overflow-hidden rounded-[22px] bg-white/92 backdrop-blur-xl ring-1 ring-ink/6 shadow-[0_24px_60px_-24px_rgba(26,28,26,0.35)] text-left"
-    >
-      {item.kind === 'lot' && <span aria-hidden className={`absolute -top-20 -left-10 w-48 h-48 rounded-full blur-3xl opacity-50 ${item.lot.glow}`} />}
-      <motion.div className="relative flex items-center gap-4 p-4" initial="hidden" animate="show" transition={{ staggerChildren: 0.05, delayChildren: 0.06 }}>
-        {item.kind === 'lot' ? (
-          <>
-            <motion.div variants={glanceRise} className="min-w-0 flex-1">
-              <p className={TYPE.label}>{item.lot.type} · {item.lot.kind}</p>
-              <p className="mt-1 font-serif font-semibold text-base leading-snug text-ink">{hookOf(item.lot)}</p>
-            </motion.div>
-            {numbers.length > 0 && (
-              <motion.div variants={glanceRise} className="hidden xl:flex shrink-0 gap-1.5">
-                {numbers.map((n, i) => (
-                  <div key={`${n.label}-${i}`} className="w-[86px] rounded-xl ring-1 ring-ink/6 bg-white/60 px-2 py-1.5">
-                    <p className="font-serif font-semibold text-base leading-none text-ink"><CountUp value={n.value} /></p>
-                    <p className="mt-0.5 font-sans text-[11px] leading-tight text-ink-mute line-clamp-2">{n.label}</p>
-                  </div>
-                ))}
-              </motion.div>
-            )}
-            <motion.div variants={glanceRise} className="shrink-0 flex flex-col items-end gap-1.5">
-              <span className="font-sans text-[13px] font-semibold text-ink whitespace-nowrap">{priceFrom(item.lot.id) || priceOf(sheet)}</span>
-              <button
-                type="button"
-                onClick={(e) => onOpen(e.currentTarget)}
-                className="inline-flex items-center gap-1 rounded-full bg-ink px-3.5 py-1.5 font-sans text-[13px] font-semibold text-white whitespace-nowrap border-0 cursor-pointer transition-colors hover:bg-accent-deep focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-              >
-                Open the project <span aria-hidden>→</span>
-              </button>
-            </motion.div>
-          </>
-        ) : (
-          <>
-            <motion.div variants={glanceRise} className="min-w-0 flex-1">
-              <p className={TYPE.label}>{item.label} · open seat</p>
-              <p className={`mt-1 ${TYPE.small}`}>Nothing to {item.label.toLowerCase()} here yet. Have the project that belongs in this seat?</p>
-            </motion.div>
-            <motion.div variants={glanceRise} className="shrink-0">
-              <button
-                type="button"
-                onClick={onSeat}
-                className="inline-flex items-center gap-1 rounded-full bg-ink px-3.5 py-1.5 font-sans text-[13px] font-semibold text-white whitespace-nowrap border-0 cursor-pointer transition-colors hover:bg-accent-deep focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-              >
-                Bring your idea <span aria-hidden>→</span>
-              </button>
-            </motion.div>
-          </>
+        {/* the first look — what it is, under the hand, on whichever sphere
+            the hand is on. A click opens the second look (FocusPanel). */}
+        {preview && !hidden && item.kind === 'lot' && state !== 'active' && (
+          <span
+            className={`pointer-events-none absolute left-1/2 -translate-x-1/2 ${back ? 'top-full mt-2 origin-top' : 'bottom-full mb-3 origin-bottom'} w-[260px] overflow-hidden rounded-[18px] bg-white/95 backdrop-blur-xl text-left shadow-[0_20px_50px_-18px_rgba(26,28,26,0.35)] ring-1 ring-ink/6 opacity-0 scale-95 ${back ? '-translate-y-1' : 'translate-y-1'} transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:scale-100 group-focus-visible:translate-y-0`}
+          >
+            <span aria-hidden className={`absolute -top-12 -right-10 w-32 h-32 rounded-full blur-3xl opacity-50 ${item.lot.glow}`} />
+            <span className="relative block p-3.5">
+              <span className={`block ${TYPE.label}`}>{item.lot.type} · {item.lot.kind}</span>
+              <span className="mt-1 block font-sans text-sm font-semibold text-ink">{item.lot.name}</span>
+              <span className="mt-1 block font-serif font-semibold text-[15px] leading-snug text-ink line-clamp-3">{hookOf(item.lot)}</span>
+              <span className="mt-2.5 pt-2 flex items-center justify-between gap-2 border-t border-ink/6">
+                <span className="font-sans text-[13px] font-semibold text-ink whitespace-nowrap">{priceFrom(item.lot.id) ?? priceOf(item.lot.sheet ?? {})}</span>
+                <span className="font-sans text-xs font-semibold text-accent-deep whitespace-nowrap">Click for the ways in</span>
+              </span>
+            </span>
+          </span>
         )}
-      </motion.div>
+      </motion.button>
     </motion.div>
   );
 }
@@ -360,24 +330,27 @@ export default function GalaxyExhibition() {
   const reduced = useReducedMotion() ?? false;
 
   // The URL is the state: ?way= lights a direction (the Home's verbs land
-  // here) and survives a reload or a share.
+  // here), ?lot= is the project open in the panel — both survive a reload
+  // or a share.
   const search = useSyncExternalStore(subscribeUrl, () => window.location.search, () => '');
   const q = new URLSearchParams(search);
   const way = ARCS.find((a) => a.key === q.get('way'))?.key ?? null;
-  // ?lot= used to open a panel here; a link that still carries it now
-  // opens the project itself
-  const legacyLot = LOTS.find((l) => l.id === q.get('lot'))?.enter_url ?? null;
-  useEffect(() => {
-    if (legacyLot) window.location.replace(legacyLot);
-  }, [legacyLot]);
+  const focusAt = RING_LOTS.findIndex((l) => l.id === q.get('lot'));
+  const focus = focusAt >= 0 ? RING_LOTS[focusAt] : null;
 
   // every lot's numbers, read live once for the whole room (live.ts)
   const liveNumbers = useLiveLots(LOTS);
 
   // one dialog, two doors: an open seat asks for an idea, a lot for a question
   const [dialog, setDialog] = useState<{ copy?: DialogCopy } | null>(null);
-  // a project opens straight into its dashboard — the glance has already
-  // said what it is, so there is no second preview in between
+  // hover says what it is; a click opens the panel (how you'd come in);
+  // the panel — or a second click on the chosen sphere — opens the project
+  const openLot = (id: string) => setUrl({ lot: id });
+  const closeLot = useCallback(() => setUrl({ lot: null }), []);
+  const walk = useCallback((dir: 1 | -1) => {
+    if (focusAt < 0) return;
+    setUrl({ lot: RING_LOTS[(focusAt + dir + RING_LOTS.length) % RING_LOTS.length].id });
+  }, [focusAt]);
   const enterLot = (lot: Lot, from: Element | null) => {
     if (lot.enter_url) zoomTo(from, lot.enter_url);
   };
@@ -413,13 +386,19 @@ export default function GalaxyExhibition() {
     if (i >= 0) turnTo(i);
   }, [way, turnTo]);
 
+  // an open project turns to the front — a shared ?lot= link arrives with it there
+  const focusId = focus?.id ?? null;
+  useEffect(() => {
+    if (focusId) turnTo(ITEMS.findIndex((it) => itemId(it) === focusId));
+  }, [focusId, turnTo]);
+
   // A hand over the orbit: the glance shows the front project while it's
   // there and folds away when it leaves.
   const [present, setPresent] = useState(false);
 
   // Nobody there: the orbit turns on its own, one project at a time — within
   // the chosen direction if there is one — and each lights as it arrives.
-  const touring = !reduced && !present && !dialog && !arriving;
+  const touring = !reduced && !present && !focus && !dialog && !arriving;
   useEffect(() => {
     if (!touring) return;
     const id = window.setInterval(() => {
@@ -436,20 +415,24 @@ export default function GalaxyExhibition() {
   useEffect(() => {
     if (dialog) return; // the dialog owns the keys while it's open
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      if (focusAt >= 0) {
+        if (e.key === 'Escape') closeLot();
+        if (e.key === 'ArrowRight') walk(1);
+        if (e.key === 'ArrowLeft') walk(-1);
+      } else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
         setPresent(true);
         setTurn((t) => t + (e.key === 'ArrowRight' ? 1 : -1));
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [dialog]);
+  }, [dialog, focusAt, closeLot, walk]);
 
   // Drag the ring round. A drag that moved isn't a click on what it let go of.
   const drag = useRef<{ x: number; from: number; moved: boolean } | null>(null);
   const dragged = useRef(false);
   const onDragStart = (e: React.PointerEvent) => {
-    if (e.button !== 0) return;
+    if (e.button !== 0 || focus) return;
     dragged.current = false;
     drag.current = { x: e.clientX, from: target.get(), moved: false };
   };
@@ -477,15 +460,19 @@ export default function GalaxyExhibition() {
       return;
     }
     const it = ITEMS[i];
+    if (it.kind === 'lot') return focus?.id === it.lot.id ? enterLot(it.lot, from) : openLot(it.lot.id);
     if (i !== front) return turnTo(i);
-    if (it.kind === 'lot') enterLot(it.lot, from);
-    else setDialog({});
+    setDialog({});
   };
 
   const stageRef = useRef<HTMLDivElement>(null);
   const box = useStageBox(stageRef);
 
-  const nodeState = (it: Item) => (way && it.way !== way ? 'dim' : 'idle');
+  // with a project open, the ring steps left to leave room for its panel
+  const shift = focus && box && box.vw >= 1024 ? -PANEL_SPACE / 2 : 0;
+
+  const nodeState = (it: Item) =>
+    focus ? (it.kind === 'lot' && focus.id === it.lot.id ? 'active' : 'dim') : way && it.way !== way ? 'dim' : 'idle';
 
   // the flight asks where to land: measured from the ring as laid out, with
   // the look each sphere has there, so it arrives already looking like it
@@ -550,9 +537,9 @@ export default function GalaxyExhibition() {
 
         <motion.header
           initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: arriving ? 0 : 1, y: arriving ? -10 : 0 }}
+          animate={{ opacity: focus || arriving ? 0 : 1, y: focus ? -12 : arriving ? -10 : 0 }}
           transition={{ duration: 0.5, ease: EASE.out }}
-          className="relative pt-24 px-6 text-center"
+          className={`relative pt-24 px-6 text-center ${focus ? 'pointer-events-none' : ''}`}
         >
           <motion.p
             initial={{ opacity: 0, letterSpacing: '0.32em' }}
@@ -623,15 +610,20 @@ export default function GalaxyExhibition() {
             }}
             onPointerDown={onDragStart}
             onPointerUp={onDragEnd}
-            className="relative [container-type:inline-size] select-none touch-pan-y cursor-grab active:cursor-grabbing"
+            className={`relative [container-type:inline-size] select-none touch-pan-y ${focus ? '' : 'cursor-grab active:cursor-grabbing'}`}
             style={{ width: `min(1240px, 100cqw, ${((100 * FIELD.w) / FIELD.h).toFixed(2)}cqh)`, aspectRatio: `${FIELD.w} / ${FIELD.h}` }}
           >
             <motion.div
               className="absolute inset-0"
               initial={reduced || cameByFlight ? false : { opacity: 0, scale: 0.94 }}
-              animate={{ opacity: 1, scale: 1 }}
+              animate={{ opacity: 1, scale: 1, x: shift }}
               transition={{ opacity: { duration: 0.6 }, default: SPRING.camera }}
             >
+              {/* the field itself — with a project open, a click on it steps back out */}
+              {focus && (
+                <button type="button" aria-label="Back to the orbit" onClick={closeLot} className="absolute -inset-[20%] z-0 cursor-zoom-out bg-transparent border-0" />
+              )}
+
               {/* the ring on the floor, and the light at its heart */}
               <motion.div
                 aria-hidden
@@ -675,32 +667,14 @@ export default function GalaxyExhibition() {
                   index={i}
                   pos={pos}
                   isFront={i === front}
+                  back={Math.cos((wrap(i - front) / RING_N) * Math.PI * 2) < 0}
+                  preview={!focus}
                   state={nodeState(it)}
                   hidden={arriving && it.kind === 'lot'}
                   onPick={(from) => pick(i, from)}
                 />
               ))}
 
-              {/* the glance rises under the front sphere, clear of the ring */}
-              <div
-                className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
-                style={{ top: `calc(${RING_SHAPE.cy + RING_SHAPE.ry}% + ${FRONT} / 2 + 40px)`, zIndex: 200 }}
-              >
-                <AnimatePresence mode="wait">
-                  {present && (
-                    <Glance
-                      key={itemId(ITEMS[front])}
-                      item={ITEMS[front]}
-                      numbers={(() => { const it = ITEMS[front]; return it.kind === 'lot' ? liveNumbers[it.lot.id] ?? [] : []; })()}
-                      onOpen={(from) => {
-                        const it = ITEMS[front];
-                        if (it.kind === 'lot') enterLot(it.lot, from);
-                      }}
-                      onSeat={() => setDialog({})}
-                    />
-                  )}
-                </AnimatePresence>
-              </div>
             </motion.div>
           </div>
         </div>
@@ -747,7 +721,7 @@ export default function GalaxyExhibition() {
                     <li key={lot.id}>
                       <button
                         type="button"
-                        onClick={(e) => enterLot(lot, e.currentTarget)}
+                        onClick={() => openLot(lot.id)}
                         className="w-full flex items-center gap-3.5 px-4 py-3.5 text-left bg-transparent border-0 cursor-pointer transition-colors active:bg-paper focus:outline-none focus-visible:bg-paper"
                       >
                         <Sphere lot={lot} className="w-11 h-11 shrink-0 shadow-[-4px_4px_10px_rgba(0,0,0,0.1)]" />
@@ -779,11 +753,28 @@ export default function GalaxyExhibition() {
     </motion.div>
 
     {/* the guide — says where you are and what you can do here */}
-    {/* the guide — it steps aside while the glance is open, which says the rest */}
+    {/* ============ the second look ============ */}
+    <AnimatePresence>
+      {focus && (
+        <FocusPanel
+          lot={focus}
+          numbers={liveNumbers[focus.id] ?? []}
+          position={focusAt + 1}
+          total={RING_LOTS.length}
+          onClose={closeLot}
+          onStep={walk}
+          onEnter={(from) => enterLot(focus, from)}
+          sheetFromBelow={!box || box.vw < 1024}
+        />
+      )}
+    </AnimatePresence>
+
+    {/* the guide — says where you are and what you can do here */}
     <Guide
-      path={['Pyadra', 'Galaxy']}
-      line={narrate({ way, present, phone: !!box && box.vw < 1024 })}
-      hidden={present}
+      path={focus ? ['Pyadra', 'Galaxy', focus.name] : ['Pyadra', 'Galaxy']}
+      line={narrate({ way, focus, present, phone: !!box && box.vw < 1024 })}
+      offsetRight={focus && box && box.vw >= 1024 ? PANEL_SPACE : 0}
+      hidden={!!focus && (!box || box.vw < 1024)}
     />
 
     <BringIdeaDialog open={dialog !== null} onClose={() => setDialog(null)} copy={dialog?.copy} />
