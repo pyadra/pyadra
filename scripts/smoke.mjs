@@ -15,7 +15,10 @@ const BASE = `http://localhost:${PORT}`;
 // [path, expected status(es), optional substring the body must contain]
 const CHECKS = [
   // Pages
-  ['/', [200], 'Pyadra'],
+  ['/', [200], 'taking payments'], // the studio Home (rethink/studio)
+  ['/start', [200], 'Tell us what you want to exist'],
+  ['/start?plan=launch', [200]],
+  ['/museum', [200], 'Pyadra'], // the earlier Home, kept
   ['/exhibitions', [301, 308], null], // the hall redirects to Galaxy while it's the only room
   ['/exhibitions/galaxy', [200]],
   ['/exhibitions/galaxy/orbit', [200], 'Orbit 77'],

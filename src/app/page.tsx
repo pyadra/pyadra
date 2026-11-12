@@ -1,584 +1,405 @@
 'use client';
 
-import {
-  AnimatePresence,
-  motion,
-  useMotionTemplate,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-  useTime,
-  useTransform,
-} from 'framer-motion';
-import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { motion, useReducedMotion } from 'framer-motion';
 import SiteNav from '@/app/components/nav/SiteNav';
-import { useZoomDoor } from '@/app/components/ui/useZoomDoor';
-import { liftOff, type FlightSpot } from '@/app/components/flight/flight';
-import { TYPE } from '@/app/components/ui/type';
-import { INTENTS, galaxyHref, setIntent, type Intent } from '@/app/components/guide/intent';
 import SiteFooter from '@/app/components/nav/SiteFooter';
 import MuseumAtmosphere from '@/app/components/ui/MuseumAtmosphere';
 import RevealText from '@/app/components/ui/RevealText';
+import Magnetic from '@/app/components/ui/Magnetic';
+import { TYPE } from '@/app/components/ui/type';
+import { EASE, RISE } from '@/app/components/ui/motion';
 import { trackPointer } from '@/app/components/ui/pointer';
-import { EASE } from '@/app/components/ui/motion';
 import { LOTS } from '@/app/exhibitions/galaxy/lots';
+import { priceFrom } from '@/app/exhibitions/galaxy/rooms';
+import { FAQ, LIMITS, PLANS, REPLY_WINDOW, STEPS, TIMELINE } from '@/app/studio/offer';
 
 /* ------------------------------------------------------------------ */
-/*  PYADRA — HOME · The Threshold                                      */
+/*  PYADRA — HOME · The studio                                         */
 /*                                                                     */
-/*  The Pyadra symbol IS the home. It assembles, breathes, and can be  */
-/*  met (click → gem and body encounter). The words orbit around it,   */
-/*  not the other way around. One door leads to the exhibition.        */
+/*  The `rethink/studio` proposal (November 2026). The Home stops      */
+/*  being a threshold to a room of finished projects waiting for a     */
+/*  buyer, and says one thing a stranger can act on: send us your      */
+/*  idea, we build it, here is the price and the date.                 */
 /*                                                                     */
-/*  Then it says what Pyadra is, in one line, and asks the visitor     */
-/*  what brought them here. The answer travels with them (intent.ts):  */
-/*  Galaxy lights what fits and the guide speaks to it.                */
+/*  The nine projects stay exactly where they were (Galaxy and their   */
+/*  dashboards). Here they change role: from inventory to proof.       */
+/*  The old Home lives on at /museum.                                  */
+/*                                                                     */
+/*  Every string is in the copy deck first:                            */
+/*  docs/pyadra_obsidian/Pyadra/02_Strategy/Studio_Rethink.md          */
+/*  Every price and day count comes from studio/offer.ts.              */
 /* ------------------------------------------------------------------ */
 
-const CURTAIN_MS = 3200;         // the full ceremony — first visit of a session: long enough to read it
-const CURTAIN_AGAIN_MS = 1100;   // coming back within the session: the name once, then the room
-const GALAXY = '/exhibitions/galaxy';
-const SPRING = { type: 'spring' as const, stiffness: 130, damping: 18, mass: 0.9 };
+const ENTER = 0.75; // the template dissolve (template.tsx) settles first
 
-/* The projects, already in orbit around the symbol — one small sphere per
-   lot, in its own colour, so the Home shows what Galaxy holds before the
-   visitor walks in. Counted from lots.ts: a new project joins the orbit
-   here too. Fixed params, no Math.random() (SSR/hydration safe). */
-const ORBS = LOTS.map((lot, i) => ({
-  id: lot.id,
-  glow: lot.glow,
-  radius: [190, 236, 172, 258, 214, 182, 246, 200, 226][i % 9],
-  speed: (i % 2 ? -1 : 1) * [0.11, 0.08, 0.13, 0.07, 0.1, 0.12, 0.09, 0.14, 0.085][i % 9],
-  phase: Math.round(((i * 2 * Math.PI) / LOTS.length) * 1000) / 1000,
-  size: [20, 14, 18, 13, 16, 20, 14, 17, 13][i % 9],
-}));
+const WORK = LOTS.filter((l) => l.stage === 'ready');
+const OPENABLE = WORK.filter((l) => l.sheet?.live).length;
+/** The count as a word, from the data — it can never fall behind lots.ts. */
+const COUNT = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'][WORK.length] ?? String(WORK.length);
 
-/* One project, endlessly orbiting the symbol — it passes in front of the
-   symbol on the near side of its ellipse and behind it on the far side. */
-function OrbitingOrb({
-  id,
-  radius,
-  speed,
-  phase,
-  size,
-  glow,
-  reduced,
-}: {
-  id: string;
-  radius: number;
-  speed: number;
-  phase: number;
-  size: number;
-  glow: string;
-  reduced: boolean;
-}) {
-  const time = useTime();
-  const v = reduced ? 0 : speed;
-  const angle = useTransform(time, (t) => phase + (t / 1000) * v);
-  const x = useTransform(angle, (a) => Math.cos(a) * radius);
-  const y = useTransform(angle, (a) => Math.sin(a) * radius * 0.36);
-  // nearer (lower on the ellipse) reads bigger and brighter
-  const scale = useTransform(angle, (a) => 0.8 + 0.3 * ((Math.sin(a) + 1) / 2));
-  const zIndex = useTransform(angle, (a) => (Math.sin(a) > 0 ? 20 : 0));
-
-  return (
-    <motion.div
-      aria-hidden
-      data-orb={id}
-      style={{ x, y, scale, zIndex, width: size, height: size }}
-      className={`absolute left-1/2 top-[32%] -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none shadow-[-2px_3px_6px_rgba(26,28,26,0.18)] ${glow}`}
-    >
-      <span className="py-glass" />
-    </motion.div>
-  );
-}
-
-/* ---- The Hero Symbol — custom SVG, click ALWAYS works ----
-   Built directly here (not via PyadraLogo) so the encounter click
-   isn't gated behind the intro completing. Same visual language:
-   gem drops from y:-90, body rises from y:90, corner spark on
-   intro; click → gem drops to +30, body rises to -24, spark bursts
-   at their meeting point. */
-const STROKE = '#059669';
-const SW = 11;
-const SYMBOL_SIZE = 260;
-
-type ZoomTo = (from: Element | null, href: string) => void;
-
-function HeroSymbol({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }) {
-  const router = useRouter();
-  const [met, setMet] = useState(false);
-  const symbolRef = useRef<SVGSVGElement>(null);
-  const height = Math.round((SYMBOL_SIZE * 232) / 240);
-
-  useEffect(() => {
-    router.prefetch(GALAXY);
-  }, [router]);
-
-  // click → they meet (the shrink), then the door opens
-  const enter = () => {
-    if (met) return;
-    setMet(true);
-    setIntent('look');
-    setTimeout(() => zoomTo(symbolRef.current, GALAXY), reduced ? 150 : 650);
-  };
-
-  return (
-    <div className="inline-flex flex-col items-center relative z-10">
-      <motion.button
-        type="button"
-        onClick={enter}
-        aria-label="Pyadra symbol: enter Galaxy"
-        className="cursor-pointer bg-transparent border-0 p-0 block"
-        style={{ lineHeight: 0 }}
-        whileHover={reduced ? undefined : { scale: 1.04 }}
-        whileTap={reduced ? undefined : { scale: 0.96 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 18 }}
-      >
-        <svg
-          ref={symbolRef}
-          width={SYMBOL_SIZE}
-          height={height}
-          viewBox="0 0 240 232"
-          overflow="visible"
-          className="block h-auto"
-          style={{ width: 'min(150px, 38vw)' }}
-        >
-          {/* GEM */}
-          <motion.g
-            initial={reduced ? { y: 0, opacity: 1 } : { y: -90, opacity: 0 }}
-            animate={{ y: met ? 30 : 0, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 130, damping: 16, mass: 1 }}
-          >
-            <path
-              data-flight-gem
-              d="M106,20 L134,20 L150,38 L150,72 L134,90 L106,90 L90,72 L90,38 Z"
-              fill="none"
-              stroke={STROKE}
-              strokeWidth={SW}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            {/* Intro spark (top-right, next to the gem) */}
-            <motion.path
-              d="M168,16 L170.5,23.5 L178,26 L170.5,28.5 L168,36 L165.5,28.5 L158,26 L165.5,23.5 Z"
-              fill={STROKE}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: [0, 1.3, 1], opacity: [0, 1, 0.85] }}
-              transition={{ duration: 0.55, delay: reduced ? 0 : 1.0, ease: 'easeOut' }}
-              style={{ transformOrigin: '168px 26px', transformBox: 'fill-box' }}
-            />
-          </motion.g>
-
-          {/* BODY + SMILE */}
-          <motion.g
-            initial={reduced ? { y: 0, opacity: 1 } : { y: 90, opacity: 0 }}
-            animate={{ y: met ? -24 : 0, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 130, damping: 16, mass: 1, delay: reduced ? 0 : 0.15 }}
-          >
-            <path
-              d="M88,184 Q92,170 93,160 A27,44 0 0 1 147,160 Q148,170 152,184"
-              fill="none"
-              stroke={STROKE}
-              strokeWidth={SW}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M70,196 Q120,214 170,196"
-              fill="none"
-              stroke={STROKE}
-              strokeWidth={SW}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </motion.g>
-
-          {/* Meeting spark — bursts each time they meet */}
-          <motion.path
-            d="M120,124 L122.5,131.5 L130,134 L122.5,136.5 L120,144 L117.5,136.5 L110,134 L117.5,131.5 Z"
-            fill={STROKE}
-            initial={{ scale: 0, opacity: 0 }}
-            animate={met ? { scale: [0, 1.8, 0], opacity: [0, 1, 0] } : { scale: 0, opacity: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-            style={{ transformOrigin: '120px 134px', transformBox: 'fill-box' }}
-          />
-        </svg>
-      </motion.button>
-
-      {/* PYADRA word */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: reduced ? 0 : 1.3 }}
-        className="font-serif font-semibold text-center text-[#1A1C1A]"
-        style={{
-          fontSize: 'clamp(30px, 10vw, 50px)',
-          letterSpacing: '0.32em',
-          textIndent: '0.32em',
-          marginTop: 'clamp(18px, 6vw, 28px)',
-        }}
-      >
-        PYADRA
-      </motion.div>
-
-      {/* Tagline */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: reduced ? 0 : 1.45 }}
-        className="font-mono uppercase text-center text-[#6B8070]"
-        style={{
-          fontSize: 'clamp(9px, 2.8vw, 15px)',
-          letterSpacing: '0.3em',
-          marginTop: 'clamp(10px, 3.5vw, 16px)',
-        }}
-      >
-        Discover. Connect. Build. Buy.
-      </motion.div>
-    </div>
-  );
-}
-
-/* One small line mark per intent — drawn, not an icon font. */
-const INTENT_MARK: Record<Intent, React.ReactNode> = {
-  own: <path d="M8 14a4 4 0 1 1 3.5-6H20v3h-2v2h-2.5v-2h-4A4 4 0 0 1 8 14Zm0-2.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />,
-  run: <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.4 2.4-2.1-.6-.6-2.1 2.4-2.4Z" />,
-  back: <path d="M12 20s-7-4.4-7-9.5A3.8 3.8 0 0 1 12 8a3.8 3.8 0 0 1 7 2.5C19 15.6 12 20 12 20Z" />,
-  idea: <path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.9V16h5v-.2c0-.8.4-1.5 1-1.9A6 6 0 0 0 12 3Z" />,
-  look: <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Zm9.5 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />,
+/** The second door on a row, named by how that project is entered. */
+const doorLabel = (wayIn: string, from: string | null) => {
+  const verb = wayIn === 'support' ? 'Back it' : 'Take it over';
+  return from ? `${verb} · ${from.toLowerCase()}` : 'Its page';
 };
 
-/* The question that turns a visitor into a guest: what brought you here?
-   Each answer is a door — it zooms into Galaxy with what fits lit. */
-function IntentChooser({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }) {
-  const choose = (key: Intent, el: Element) => {
-    setIntent(key);
-    zoomTo(el, galaxyHref(key));
-  };
+const CTA =
+  'cta-glow py-sheen inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3.5 font-sans text-sm font-semibold text-white';
+const GHOST =
+  'inline-flex items-center gap-2 rounded-full px-5 py-3.5 font-sans text-sm font-semibold text-ink-soft ring-1 ring-ink/10 bg-white/60 hover:text-accent-deep hover:ring-accent/40 transition-colors';
+
+/** A section that rises as it enters the screen, its children one after another. */
+function Section({ id, children, className = '' }: { id?: string; children: React.ReactNode; className?: string }) {
+  const reduced = useReducedMotion() ?? false;
   return (
-    <div className="w-full">
-      <RevealText
-        as="p"
-        text="Real projects, already built. Looking for the people who will take them further."
-        className={`${TYPE.statement} max-w-xl mx-auto`}
-        delay={1.5}
-        stagger={0.035}
-      />
-      <motion.p
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: reduced ? 0 : 1.75, ...SPRING }}
-        className={`mt-2 ${TYPE.lead}`}
-      >
-        Come in with money, work or skills.
-      </motion.p>
-
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: reduced ? 0 : 1.9 }}
-        className="mt-7 font-mono font-bold text-[11px] uppercase tracking-[0.18em] text-accent-deep"
-      >
-        What brings you here?
-      </motion.p>
-
-      <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2 md:gap-2.5 text-left">
-        {INTENTS.map((it, i) => {
-          return (
-            <motion.button
-              key={it.key}
-              type="button"
-              onClick={(e) => choose(it.key, e.currentTarget)}
-              onPointerMove={trackPointer}
-              initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              transition={{ delay: reduced ? 0 : 2.0 + i * 0.07, duration: 0.7, ease: EASE.out }}
-              whileHover={reduced ? undefined : { y: -4 }}
-              whileTap={{ scale: 0.97 }}
-              className={`py-spot group relative flex md:flex-col items-center md:items-start gap-3 md:gap-0 text-left rounded-2xl px-4 py-3 md:p-4 cursor-pointer ring-1 transition-[background-color,box-shadow] duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                it.key === 'look'
-                  ? 'bg-transparent ring-ink/10 hover:bg-white/60'
-                  : 'bg-white/70 backdrop-blur-sm ring-ink/6 shadow-sm hover:bg-white hover:shadow-[0_22px_40px_-18px_rgba(4,120,87,0.35)]'
-              }`}
-            >
-              <span className="flex w-9 h-9 shrink-0 items-center justify-center rounded-xl bg-paper text-ink-mute transition-[background-color,color,transform] duration-300 group-hover:bg-accent group-hover:text-white group-hover:-rotate-6">
-                <svg viewBox="0 0 24 24" className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" aria-hidden>
-                  {INTENT_MARK[it.key]}
-                </svg>
-              </span>
-              <span className="min-w-0 flex-1 md:mt-3.5">
-                <span className="block font-sans text-sm font-semibold text-ink">{it.title}</span>
-                <span className="block font-sans text-[13px] leading-snug text-ink-mute">{it.line}</span>
-              </span>
-              <span aria-hidden className="md:hidden shrink-0 text-accent">→</span>
-              <span aria-hidden className="hidden md:block md:absolute md:top-4 md:right-4 text-accent opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">→</span>
-            </motion.button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-/* The logo showcase: halos + orbiting sparks + interactive symbol. */
-function LogoShowcase({ reduced, zoomTo }: { reduced: boolean; zoomTo: ZoomTo }) {
-  return (
-    <div className="relative flex flex-col items-center justify-center py-4">
-      {/* Halo 1 — wide, slow breath */}
-      <motion.div
-        aria-hidden
-        animate={reduced ? undefined : { scale: [1, 1.18, 1], opacity: [0.35, 0.6, 0.35] }}
-        transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.18), transparent 65%)', filter: 'blur(20px)' }}
-      />
-
-      {/* Halo 2 — tighter, counter-phase */}
-      <motion.div
-        aria-hidden
-        animate={reduced ? undefined : { scale: [1.15, 1, 1.15], opacity: [0.5, 0.25, 0.5] }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.22), transparent 60%)', filter: 'blur(12px)' }}
-      />
-
-      {/* the projects, in orbit — Galaxy, seen from the threshold */}
-      {ORBS.map(({ id, ...o }, i) => (
-        <motion.div
-          key={id}
-          aria-hidden
-          // phones get a tighter orbit, so the projects stay on screen
-          className="absolute inset-0 pointer-events-none origin-[50%_32%] scale-[0.62] sm:scale-[0.8] md:scale-100"
-          initial={reduced ? false : { opacity: 0, scale: 0.6 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, ease: EASE.out, delay: reduced ? 0 : 1.1 + i * 0.08 }}
-        >
-          <OrbitingOrb id={id} {...o} reduced={reduced} />
-        </motion.div>
-      ))}
-
-      {/* THE SYMBOL — click always works. */}
-      <HeroSymbol reduced={reduced} zoomTo={zoomTo} />
-    </div>
-  );
-}
-
-/* ---------- observer ticket — the admission stub (home only) ---------- */
-
-function ObserverTicket({ id }: { id: string | null }) {
-  if (!id) return null;
-  return (
-    <motion.aside
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 1.8 }}
-      aria-label="Your observer ticket"
-      className="fixed left-3.5 bottom-3.5 md:left-6 md:bottom-6 z-40 flex items-center gap-3 rounded-md border border-[#1A1C1A]/25 bg-[#EDEFED] px-3 py-2 md:px-3.5 md:py-2.5 shadow-[0_6px_18px_rgba(10,18,14,0.12)]"
+    <motion.section
+      id={id}
+      initial={reduced ? false : 'hidden'}
+      whileInView="show"
+      viewport={{ once: true, margin: '-12% 0px' }}
+      variants={{ hidden: {}, show: { transition: { staggerChildren: 0.07 } } }}
+      className={`relative z-10 mx-auto w-full max-w-6xl scroll-mt-24 px-5 sm:px-8 ${className}`}
     >
-      <div className="flex flex-col gap-0.5">
-        <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-[#6B8070]">
-          Observer №
-        </span>
-        <span className="font-mono text-[15px] font-medium text-[#1A1C1A]">{id}</span>
-      </div>
-      <span
-        aria-hidden
-        className="self-stretch w-px"
-        style={{
-          background:
-            'repeating-linear-gradient(to bottom, rgba(26,28,26,0.35) 0 3px, transparent 3px 7px)',
-        }}
-      />
-      <span
-        className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#047857]"
-        style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
-      >
-        Admitted
-      </span>
-    </motion.aside>
+      {children}
+    </motion.section>
   );
 }
 
-/* ---------- the page ---------- */
+function Heading({ label, title, lead }: { label: string; title: string; lead?: string }) {
+  return (
+    <motion.div variants={RISE} className="max-w-2xl">
+      <div className={`${TYPE.label} !text-accent-deep mb-3`}>{label}</div>
+      <h2 className={TYPE.display}>{title}</h2>
+      {lead && <p className={`${TYPE.lead} mt-4`}>{lead}</p>}
+    </motion.div>
+  );
+}
 
 export default function PyadraHome() {
-  const [curtainUp, setCurtainUp] = useState(false);
-  const [observerId, setObserverId] = useState<string | null>(null);
   const reduced = useReducedMotion() ?? false;
-  const { zoomTo, overlay, zoomProps } = useZoomDoor();
-  const router = useRouter();
-
-  // Into Galaxy. Where there's room for its ring, the spheres circling the
-  // symbol fly there (components/flight) while the Home steps back;
-  // elsewhere — phones, reduced motion — the zoom door.
-  const [leaving, setLeaving] = useState(false);
-  const enterGalaxy: ZoomTo = (from, href) => {
-    if (leaving) return;
-    if (reduced || window.innerWidth < 1024) return zoomTo(from, href);
-    const spot = (el: Element): FlightSpot => {
-      const r = el.getBoundingClientRect();
-      return { x: r.left + r.width / 2, y: r.top + r.height / 2, size: r.width };
-    };
-    const spheres: Record<string, FlightSpot> = {};
-    document.querySelectorAll<HTMLElement>('[data-orb]').forEach((el) => {
-      if (el.dataset.orb) spheres[el.dataset.orb] = spot(el);
-    });
-    if (!Object.keys(spheres).length) return zoomTo(from, href);
-    const gem = document.querySelector('[data-flight-gem]');
-    router.prefetch(href);
-    liftOff(spheres, gem ? spot(gem) : null);
-    setLeaving(true);
-    // the page changes almost at once — the spheres are already moving
-    setTimeout(() => router.push(href), 140);
-  };
-
-  // Every visitor becomes a numbered Observer — Pyadra's quiet signature.
-  // Returning visitors read their stored id; first-timers get registered,
-  // and 'pyadra:observer' tells the footer the number arrived mid-session.
-  useEffect(() => {
-    const stored = window.localStorage.getItem('pyadra_observer_id');
-    if (stored) {
-      setObserverId(stored);
-      return;
-    }
-    fetch('/api/observer')
-      .then((r) => r.json())
-      .then((data) => {
-        // No id means the archive couldn't record the visit — show no ticket
-        // rather than a number that isn't real.
-        if (typeof data?.id !== 'number') return;
-        const formatted = `#${String(data.id).padStart(4, '0')}`;
-        window.localStorage.setItem('pyadra_observer_id', formatted);
-        window.localStorage.setItem('pyadra_observer_num', String(data.id));
-        setObserverId(formatted);
-        window.dispatchEvent(new Event('pyadra:observer'));
-      })
-      .catch(() => {});
-  }, []);
-
-  // the curtain rises — the full two seconds on the first visit of a
-  // session, a breath when the visitor comes back to the threshold
-  useEffect(() => {
-    let seen = false;
-    try {
-      seen = window.sessionStorage.getItem('pyadra_curtain') === '1';
-      window.sessionStorage.setItem('pyadra_curtain', '1');
-    } catch {}
-    const wait = reduced ? 250 : seen ? CURTAIN_AGAIN_MS : CURTAIN_MS;
-    const t = setTimeout(() => setCurtainUp(true), wait);
-    return () => clearTimeout(t);
-  }, [reduced]);
-
-  // museum spotlight follows cursor
-  const spotXraw = useMotionValue(-600);
-  const spotYraw = useMotionValue(-600);
-  const spotX = useSpring(spotXraw, { stiffness: 80, damping: 20 });
-  const spotY = useSpring(spotYraw, { stiffness: 80, damping: 20 });
-  const spotlight = useMotionTemplate`radial-gradient(560px circle at ${spotX}px ${spotY}px, rgba(5,150,105,0.08), transparent 70%)`;
-
-  const onHeroMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    spotXraw.set(e.clientX - rect.left);
-    spotYraw.set(e.clientY - rect.top);
-  };
 
   return (
-    <>
-    <motion.div
-      {...zoomProps}
-      {...(leaving ? { animate: { opacity: 0, y: 24, filter: 'blur(6px)' }, transition: { duration: 0.3, ease: EASE.out } } : {})}
-      className={`bg-[#EDEFED] text-[#1A1C1A] overflow-x-clip antialiased selection:bg-[#059669] selection:text-white ${leaving ? 'py-leaving' : ''}`}
-    >
+    <main className="relative min-h-screen bg-paper text-ink overflow-x-clip">
+      <MuseumAtmosphere dust={28} fixed />
+      <SiteNav actions={[{ label: 'Work', href: '/#work' }, { label: 'Pricing', href: '/#pricing' }]} />
 
-      {/* ============ THE CURTAIN — 3 seconds of black ============ */}
-      <AnimatePresence>
-        {!curtainUp && (
+      {/* ---------------------------------------------------------- */}
+      {/*  Opening — the offer and the calendar, side by side         */}
+      {/* ---------------------------------------------------------- */}
+      <section className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-12 px-5 pb-20 pt-32 sm:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 lg:pb-28 lg:pt-44">
+        <div>
           <motion.div
-            initial={{ y: 0 }}
-            exit={{ y: '-100%' }}
-            transition={{ duration: 0.95, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-[100] bg-[#0A120E] flex flex-col items-center justify-center"
+            initial={reduced ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: ENTER, duration: 0.6, ease: EASE.out }}
+            className={`${TYPE.label} !text-accent-deep mb-5 flex items-center gap-2`}
           >
-            <div
-              aria-hidden
-              className="absolute inset-0 pointer-events-none"
-              style={{ background: 'radial-gradient(55% 45% at 50% 55%, rgba(5,150,105,0.14), transparent 70%)' }}
-            />
-            <motion.p
-              initial={{ opacity: 0, letterSpacing: '0.5em' }}
-              animate={{ opacity: 1, letterSpacing: '0.42em' }}
-              transition={{ duration: 0.9, delay: 0.4, ease: 'easeOut' }}
-              className="relative text-[#EDEFED] text-lg md:text-2xl font-bold uppercase mb-6"
-            >
-              Pyadra
-            </motion.p>
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.9, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="relative h-px w-40 md:w-56 bg-[#10B981] origin-center mb-6"
-            />
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.7, delay: 0.95 }}
-              className="relative font-serif italic text-[#EDEFED]/60 text-sm md:text-base"
-            >
-              Discover. Connect. Build. Buy.
-            </motion.p>
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
+            Pyadra · Product studio
           </motion.div>
-        )}
-      </AnimatePresence>
 
-      {/* shared nav — home is the root, no breadcrumb */}
-      <SiteNav />
-
-      {/* the admission stub — home shows the ticket; elsewhere it lives in the footer */}
-      {curtainUp && <ObserverTicket id={observerId} />}
-
-      {/* ============ HERO — the symbol is the focus ============ */}
-      <section
-        onMouseMove={onHeroMove}
-        className="relative min-h-[100svh] flex items-center justify-center overflow-hidden"
-      >
-        {/* soft color field */}
-        <div aria-hidden className="absolute inset-0 pointer-events-none">
-          <div
-            className="absolute -top-40 -left-40 w-[700px] h-[700px] rounded-full opacity-60"
-            style={{ background: 'radial-gradient(circle, rgba(5,150,105,0.10), transparent 65%)' }}
+          <RevealText
+            as="h1"
+            text="Your idea, live and taking payments in 30 days"
+            className="t-d1 text-ink text-balance"
+            delay={ENTER + 0.1}
+            after={<span className="text-accent">.</span>}
           />
-          <div
-            className="absolute -bottom-56 -right-32 w-[760px] h-[760px] rounded-full opacity-60"
-            style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.10), transparent 65%)' }}
-          />
+
+          <motion.p
+            initial={reduced ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: ENTER + 0.6, duration: 0.7, ease: EASE.out }}
+            className={`${TYPE.lead} mt-6 max-w-xl`}
+          >
+            We are a small team that has taken {COUNT} ideas from a sentence to a working product. Now we do it
+            for yours. One fixed price, agreed before we start, and everything we build is yours.
+          </motion.p>
+
+          <motion.div
+            initial={reduced ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: ENTER + 0.75, duration: 0.7, ease: EASE.out }}
+            className="mt-8 flex flex-wrap items-center gap-3"
+          >
+            <Magnetic>
+              <Link href="/start" className={CTA}>
+                Tell us your idea <span aria-hidden>→</span>
+              </Link>
+            </Magnetic>
+            <Link href="/#work" className={GHOST}>
+              See what we have built
+            </Link>
+          </motion.div>
+
+          <motion.p
+            initial={reduced ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: ENTER + 1, duration: 0.8 }}
+            className={`${TYPE.small} mt-5 !text-ink-mute`}
+          >
+            Free to ask. We answer within {REPLY_WINDOW}.
+          </motion.p>
         </div>
 
-        {/* museum spotlight follows the cursor */}
-        <motion.div aria-hidden className="absolute inset-0 pointer-events-none" style={{ background: spotlight }} />
-
-        {/* galaxy atmosphere — grid, grain, green dust */}
-        <MuseumAtmosphere />
-
-        {/* ---- the composition ---- */}
-        <div className="relative z-10 w-full max-w-5xl mx-auto px-5 md:px-6 flex flex-col items-center text-center gap-5 md:gap-6 pt-20 md:pt-24 pb-16">
-
-          {/* THE LOGO — mounted only after the curtain lifts, so intro
-              plays as black slides away. Symbol + PYADRA + tagline.
-              Nothing else competes with it. */}
-          <div className="relative w-full flex items-center justify-center min-h-[250px] md:min-h-[260px]">
-            {curtainUp && <LogoShowcase reduced={reduced} zoomTo={enterGalaxy} />}
+        {/* the calendar — the Launch build, day by day */}
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: 24, filter: 'blur(8px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ delay: ENTER + 0.45, duration: 0.9, ease: EASE.out }}
+          className="relative rounded-[28px] bg-white/80 p-6 shadow-xl shadow-ink/5 ring-1 ring-ink/5 backdrop-blur-md sm:p-8"
+        >
+          <div className="flex items-baseline justify-between">
+            <div className={TYPE.label}>The launch build</div>
+            <div className={`${TYPE.label} !text-accent-deep`}>{PLANS.find((p) => p.pick)?.price} fixed</div>
           </div>
 
-          {/* WHAT PYADRA IS — AND WHAT BRINGS YOU HERE */}
-          {curtainUp && <IntentChooser reduced={reduced} zoomTo={enterGalaxy} />}
-        </div>
+          <ol className="relative mt-7">
+            {TIMELINE.map((t, i) => {
+              const last = i === TIMELINE.length - 1;
+              return (
+                <motion.li
+                  key={t.day}
+                  initial={reduced ? false : { opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: ENTER + 1 + i * 0.38, duration: 0.6, ease: EASE.out }}
+                  className={`relative pl-8 ${last ? '' : 'pb-6'}`}
+                >
+                  {/* the line to the next day: drawn as the days arrive */}
+                  {!last && (
+                    <motion.span
+                      aria-hidden
+                      initial={reduced ? false : { scaleY: 0 }}
+                      animate={{ scaleY: 1 }}
+                      transition={{ delay: ENTER + 1.15 + i * 0.38, duration: 0.45, ease: EASE.inOut }}
+                      className="absolute -bottom-1.5 left-[5px] top-[17px] w-px origin-top bg-accent/45"
+                    />
+                  )}
+                  <span
+                    aria-hidden
+                    className={`absolute left-0 top-1.5 h-[11px] w-[11px] rounded-full ${
+                      last ? 'bg-accent shadow-[0_0_0_6px_rgba(5,150,105,0.14)]' : 'border-2 border-accent/50 bg-white'
+                    }`}
+                  />
+                  <div className={`${TYPE.label} ${last ? '!text-accent-deep' : ''}`}>{t.day}</div>
+                  <div className={`mt-1 ${last ? TYPE.title : `${TYPE.lead} !text-ink`}`}>{t.what}</div>
+                </motion.li>
+              );
+            })}
+          </ol>
+
+          <div className="mt-7 border-t border-ink/8 pt-5">
+            <p className={TYPE.small}>
+              Not sure yet? Start with a working prototype in {PLANS[0].time} for {PLANS[0].price}.
+            </p>
+          </div>
+        </motion.div>
       </section>
 
+      {/* ---------------------------------------------------------- */}
+      {/*  The proof — our own projects, as a ledger you can open     */}
+      {/* ---------------------------------------------------------- */}
+      <Section id="work" className="pb-24 lg:pb-32">
+        <Heading
+          label={`The proof · ${WORK.length} built, ${OPENABLE} you can open today`}
+          title="We built these for ourselves first."
+          lead="Before asking anyone to trust us with an idea, we shipped our own: apps, stores, a podcast and a cleanup business with real customers. Open any of them."
+        />
+
+        <motion.ul variants={RISE} className="mt-10 overflow-hidden rounded-[28px] bg-white/70 ring-1 ring-ink/5 backdrop-blur-sm">
+          {WORK.map((lot, i) => {
+            const from = priceFrom(lot.id);
+            return (
+              <li
+                key={lot.id}
+                onPointerMove={trackPointer}
+                className={`py-spot grid gap-x-6 gap-y-2 px-5 py-5 sm:px-7 md:grid-cols-[13rem_minmax(0,1fr)_auto] md:items-center ${
+                  i > 0 ? 'border-t border-ink/6' : ''
+                }`}
+              >
+                <div className="min-w-0">
+                  <div className={`${TYPE.label} mb-1.5`}>{lot.kind}</div>
+                  <div className={TYPE.title}>{lot.name}</div>
+                </div>
+
+                <div className="min-w-0">
+                  <p className={`${TYPE.body} !text-ink-soft`}>{lot.subtitle}</p>
+                  <p className={`${TYPE.small} mt-1 !text-ink-mute`}>{lot.proof}</p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 md:justify-end">
+                  {lot.sheet?.live && (
+                    <a
+                      href={lot.sheet.live.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`${TYPE.small} rounded-full bg-paper px-3.5 py-2 !text-ink hover:!text-accent-deep transition-colors`}
+                    >
+                      {lot.sheet.live.label} <span aria-hidden>↗</span>
+                    </a>
+                  )}
+                  {lot.enter_url && (
+                    <Link
+                      href={lot.enter_url}
+                      className={`${TYPE.small} rounded-full px-3.5 py-2 ring-1 ring-ink/10 !text-ink-soft hover:!text-accent-deep hover:ring-accent/40 transition-colors`}
+                    >
+                      {doorLabel(lot.wayIn, from)}
+                    </Link>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </motion.ul>
+
+        <motion.p variants={RISE} className={`${TYPE.small} mt-5 !text-ink-mute`}>
+          Each one is still open to a new owner or operator.{' '}
+          <Link href="/exhibitions/galaxy" className="!text-accent-deep underline-offset-4 hover:underline">
+            See them in Galaxy
+          </Link>
+          .
+        </motion.p>
+      </Section>
+
+      {/* ---------------------------------------------------------- */}
+      {/*  How it goes                                                */}
+      {/* ---------------------------------------------------------- */}
+      <Section id="how" className="pb-24 lg:pb-32">
+        <Heading label="How it goes" title="Four steps, and you can see every one." />
+        <div className="mt-10 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+          {STEPS.map((s) => (
+            <motion.div key={s.n} variants={RISE} className="border-t border-ink/10 pt-5">
+              <div className={`${TYPE.label} !text-accent-deep`}>{s.n}</div>
+              <h3 className={`${TYPE.title} mt-3`}>{s.title}</h3>
+              <p className={`${TYPE.body} mt-3 !text-ink-soft`}>{s.text}</p>
+            </motion.div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ---------------------------------------------------------- */}
+      {/*  Pricing — said out loud                                    */}
+      {/* ---------------------------------------------------------- */}
+      <Section id="pricing" className="pb-24 lg:pb-32">
+        <Heading
+          label="Pricing"
+          title="The price is on the page."
+          lead="No quote to wait for and no hourly meter. If your idea does not fit one of these, we will tell you before you pay anything."
+        />
+        <div className="mt-10 grid gap-5 lg:grid-cols-3">
+          {PLANS.map((p) => (
+            <motion.div
+              key={p.id}
+              variants={RISE}
+              onPointerMove={trackPointer}
+              className={`py-spot panel-lift flex flex-col rounded-[28px] p-7 ring-1 ${
+                p.pick ? 'bg-white ring-accent/40 shadow-xl shadow-accent/10' : 'bg-white/70 ring-ink/5'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <h3 className={TYPE.title}>{p.name}</h3>
+                {p.pick && (
+                  <span className={`${TYPE.label} rounded-full bg-accent/10 px-3 py-1 !text-accent-deep`}>Most asked for</span>
+                )}
+              </div>
+              <div className="mt-5 flex items-baseline gap-2">
+                <span className={TYPE.display}>{p.price}</span>
+                <span className={TYPE.small}>{p.priceNote}</span>
+              </div>
+              <div className={`${TYPE.label} mt-2 !text-accent-deep`}>{p.time}</div>
+              <p className={`${TYPE.body} mt-4 !text-ink-soft`}>{p.line}</p>
+              <ul className="mt-5 space-y-2.5 border-t border-ink/8 pt-5">
+                {p.gets.map((g) => (
+                  <li key={g} className={`${TYPE.small} flex gap-2.5`}>
+                    <span aria-hidden className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-accent" />
+                    {g}
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-auto pt-7">
+                <Link href={`/start?plan=${p.id}`} className={p.pick ? `${CTA} w-full justify-center` : `${GHOST} w-full justify-center`}>
+                  {p.id === 'care' ? 'Ask about Care' : `Start with ${p.name}`}
+                </Link>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+        <motion.p variants={RISE} className={`${TYPE.small} mt-5 !text-ink-mute`}>
+          Prices in Australian dollars. We work with people in Australia and the United States.
+        </motion.p>
+      </Section>
+
+      {/* ---------------------------------------------------------- */}
+      {/*  The limits — what we do not do                             */}
+      {/* ---------------------------------------------------------- */}
+      <Section className="pb-24 lg:pb-32">
+        <Heading label="Straight talk" title="What we will not do." />
+        <div className="mt-10 grid gap-5 md:grid-cols-3">
+          {LIMITS.map((l) => (
+            <motion.div key={l.title} variants={RISE} className="rounded-[28px] bg-ink/[0.035] p-7">
+              <h3 className={TYPE.title}>{l.title}</h3>
+              <p className={`${TYPE.body} mt-3 !text-ink-soft`}>{l.text}</p>
+            </motion.div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ---------------------------------------------------------- */}
+      {/*  Questions                                                  */}
+      {/* ---------------------------------------------------------- */}
+      <Section className="pb-24 lg:pb-32">
+        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <Heading
+            label="Questions"
+            title="Asked before the first call."
+            lead="Anything else, write to pyadra@pyadra.io. A person answers."
+          />
+          <motion.div variants={RISE} className="divide-y divide-ink/8 border-y border-ink/8">
+            {FAQ.map((f) => (
+              <details key={f.q} className="group py-5">
+                <summary className={`${TYPE.lead} !text-ink flex cursor-pointer list-none items-center justify-between gap-6 [&::-webkit-details-marker]:hidden`}>
+                  {f.q}
+                  <span aria-hidden className="text-accent transition-transform duration-300 group-open:rotate-45">+</span>
+                </summary>
+                <p className={`${TYPE.body} mt-3 max-w-xl !text-ink-soft`}>{f.a}</p>
+              </details>
+            ))}
+          </motion.div>
+        </div>
+      </Section>
+
+      {/* ---------------------------------------------------------- */}
+      {/*  The ask, once more                                         */}
+      {/* ---------------------------------------------------------- */}
+      <Section className="pb-20">
+        <motion.div
+          variants={RISE}
+          className="relative overflow-hidden rounded-[32px] bg-white px-6 py-14 text-center ring-1 ring-ink/5 sm:px-12 sm:py-20"
+        >
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-24 mx-auto h-64 w-[36rem] max-w-full rounded-full bg-accent/15 blur-3xl" />
+          <div className="relative">
+            <h2 className={`${TYPE.display} text-balance`}>One paragraph is enough to start.</h2>
+            <p className={`${TYPE.lead} mx-auto mt-4 max-w-md`}>
+              Tell us what you want to exist. We will tell you if we can build it, what it costs and when it lands.
+            </p>
+            <div className="mt-8 flex justify-center">
+              <Link href="/start" className={CTA}>
+                Tell us your idea <span aria-hidden>→</span>
+              </Link>
+            </div>
+            <p className={`${TYPE.small} mt-5 !text-ink-mute`}>
+              Who you will be talking to:{' '}
+              <Link href="/team" className="!text-accent-deep underline-offset-4 hover:underline">
+                meet the team
+              </Link>
+              .
+            </p>
+          </div>
+        </motion.div>
+      </Section>
+
       <SiteFooter />
-    </motion.div>
-    {overlay}
-    </>
+    </main>
   );
 }

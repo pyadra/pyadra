@@ -85,6 +85,15 @@ npm run verify      # tsc + vitest + next build + smoke. No lint in it.
 (EterniCapsule's proof line, "key-locked", Orbit as Glocal, Observer numbers no
 longer invented, the privacy page) plus the reconciled documentation.
 
+**Open proposal — the studio (branch `rethink/studio`, November 12, 2026).**
+A second opinion the owner asked for: Pyadra sells the *building* (your idea,
+fixed price, 30 days) and its own projects become the proof. On that branch `/`
+is the studio Home, the earlier Home lives at `/museum`, `/start` is the brief,
+and every price and promise sits in `src/app/studio/offer.ts`. None of it is an
+owner decision: the figures are proposals. The case and the copy deck:
+`02_Strategy/Studio_Rethink.md`. Do not merge to `main` until the owners confirm
+the offer.
+
 **In progress — Galaxy v5, the orbit as an instrument** (branch
 `feat/galaxy-orbit-instrument`, local, October 26, 2026). Supersedes the 3 · 2 · 2
 grid below: one canvas with four zooms from the Home to the dossier, positions

@@ -143,6 +143,14 @@ function buildEmailContent({ type, project, model, name, email, message }: {
     };
   }
 
+  // A studio brief from /start: the idea, where it is today, the step asked for.
+  if (type === 'studio-brief') {
+    return {
+      subject: `New brief: ${model} — ${name}`,
+      html: `<p><strong>Step asked for:</strong> ${model}</p><p><strong>Where the idea is today:</strong> ${project}</p><p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>The idea:</strong></p><p>${message.replace(/\n/g, '<br>')}</p>`,
+    };
+  }
+
   // Fallback for other contact types
   return {
     subject: `Pyadra Contact: ${type}`,
