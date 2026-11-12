@@ -12,12 +12,12 @@
 /*  backdrop-blur, emerald accent. Same style, everywhere.             */
 /* ------------------------------------------------------------------ */
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import PyadraLogo from '@/app/components/brand/PyadraLogo';
-import BringIdeaDialog from '@/app/components/nav/BringIdeaDialog';
+import { withVia } from '@/app/house/via';
+import { useVia } from '@/app/house/useVia';
 
 export type NavCrumb = { label: string; href?: string };
 export type NavAction = { label: string; href: string };
@@ -50,8 +50,9 @@ export default function SiteNav({
 }: Props) {
   const pathname = usePathname();
   const onStore = !!pathname && pathname.startsWith('/store');
+  const onCommission = !!pathname && pathname.startsWith('/commission');
   const rightActions: NavAction[] = actions ?? (onStore ? [] : [{ label: 'Store', href: '/store' }]);
-  const [showIdea, setShowIdea] = useState(false);
+  const via = useVia();
 
   const pill = (
     <div className="flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-md shadow-lg shadow-[#1A1C1A]/5 ring-1 ring-[#1A1C1A]/5 pl-2 pr-1.5 py-1.5">
@@ -144,15 +145,18 @@ export default function SiteNav({
             {a.label}
           </Link>
         ))}
-        <button
-          type="button"
-          onClick={() => setShowIdea(true)}
-          className="inline-flex items-center gap-1.5 rounded-full bg-[#059669]/10 text-[#047857] px-3 py-1.5 t-d5 font-medium hover:bg-[#059669] hover:text-white transition-colors whitespace-nowrap"
-        >
-          <span aria-hidden className="text-[10px]">✦</span>
-          <span className="hidden sm:inline">Bring your idea</span>
-          <span className="sm:hidden">Idea</span>
-        </button>
+        {/* the one door of the house — every page carries it (rethink/exhibition-of-one).
+            A carrier's code on the address travels with it. */}
+        {!onCommission && (
+          <Link
+            href={withVia('/commission', via)}
+            className="inline-flex items-center gap-1.5 rounded-full bg-[#059669]/10 text-[#047857] px-3 py-1.5 t-d5 font-medium hover:bg-[#059669] hover:text-white transition-colors whitespace-nowrap"
+          >
+            <span aria-hidden className="text-[10px]">✦</span>
+            <span className="hidden sm:inline">Make one for someone</span>
+            <span className="sm:hidden">Make one</span>
+          </Link>
+        )}
         {status && (
           <span
             role="status"
@@ -177,8 +181,6 @@ export default function SiteNav({
         transition: REVEAL_SPRING,
       };
 
-  const ideaDialog = <BringIdeaDialog open={showIdea} onClose={() => setShowIdea(false)} />;
-
   if (variant === 'floating') {
     return (
       <>
@@ -188,7 +190,6 @@ export default function SiteNav({
         >
           {pill}
         </motion.nav>
-        {ideaDialog}
       </>
     );
   }
@@ -203,7 +204,6 @@ export default function SiteNav({
       >
         {pill}
       </motion.header>
-      {ideaDialog}
     </>
   );
 }

@@ -15,7 +15,14 @@ const BASE = `http://localhost:${PORT}`;
 // [path, expected status(es), optional substring the body must contain]
 const CHECKS = [
   // Pages
-  ['/', [200], 'Pyadra'],
+  ['/', [200], 'An exhibition of one'], // the house (rethink/exhibition-of-one)
+  ['/for/la-doctora', [200], 'La doctora'], // the sample room
+  ['/for/no-such-room', [200], 'This room is not open'], // graceful, never a crash
+  ['/commission', [200], 'Tell us about them'],
+  ['/commission?piece=song&via=test-code', [200]],
+  ['/carry', [200], 'Carry it'],
+  ['/ledger', [200], 'The open book'],
+  ['/museum', [200], 'Pyadra'], // the earlier Home, kept
   ['/exhibitions', [301, 308], null], // the hall redirects to Galaxy while it's the only room
   ['/exhibitions/galaxy', [200]],
   ['/exhibitions/galaxy/orbit', [200], 'Orbit 77'],
@@ -46,6 +53,7 @@ const CHECKS = [
   // APIs — must answer, never crash
   ['/api/observer', [200]],
   ['/api/stats/orbit-fund', [200], 'total'],
+  ['/api/stats/house', [200], 'rooms'],
   ['/api/donate', [200]], // GET health check
   ['/api/session?session_id=', [400]], // validates input
 ];

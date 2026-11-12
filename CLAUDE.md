@@ -85,6 +85,18 @@ npm run verify      # tsc + vitest + next build + smoke. No lint in it.
 (EterniCapsule's proof line, "key-locked", Orbit as Glocal, Observer numbers no
 longer invented, the privacy page) plus the reconciled documentation.
 
+**Open proposal — the house (branch `rethink/exhibition-of-one`, November 12,
+2026).** A second opinion the owner asked for: Pyadra sells what its projects
+*make*, as "an exhibition of one" (a small museum room made for one person:
+a song, a sealed letter, a figurine), and people who bring it to others
+("carriers") keep a share with nothing to pay. On that branch `/` is the house,
+the earlier Home lives at `/museum`, `/for/<slug>` is a room, and every price,
+share and string sits in `src/app/house/house.ts`. None of it is an owner
+decision. Migration `0009` is written and **not applied**. A real room is never
+committed: this repository is public. The case and the copy deck:
+`02_Strategy/Exhibition_Of_One.md`. Do not merge to `main` until the owners
+confirm the offer.
+
 **In progress — Galaxy v5, the orbit as an instrument** (branch
 `feat/galaxy-orbit-instrument`, local, October 26, 2026). Supersedes the 3 · 2 · 2
 grid below: one canvas with four zooms from the Home to the dossier, positions

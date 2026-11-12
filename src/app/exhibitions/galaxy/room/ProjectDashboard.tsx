@@ -16,6 +16,7 @@ import { Sphere } from '../Sphere';
 import { ROOMS, DEAL_STEPS, type Option, type Room } from '../rooms';
 import { useLiveNumbers, progressOf } from '../live';
 import { InterestDialog, SupportDialog } from './dialogs';
+import { CARRY_OFFERS } from '@/app/house/house';
 
 /* ------------------------------------------------------------------ */
 /*  PYADRA — the project dashboard                                     */
@@ -82,6 +83,7 @@ function Ways({
 }) {
   const { ways } = room;
   const chosen = ways.options[choice];
+  const carry = CARRY_OFFERS.find((o) => o.lot === lot.id);
   const progress = ways.kind === 'support' ? progressOf(numbers) : null;
   const heading = { acquire: 'Ways in', operate: 'Ways in', support: 'Back it', forming: 'Follow it' }[ways.kind];
   const cta =
@@ -162,6 +164,20 @@ function Ways({
           {cta}
         </motion.button>
         <p className="mt-2 text-center font-sans text-xs text-ink-mute">{foot}</p>
+
+        {/* the door with no price on it (house/house.ts → CARRY_OFFERS) */}
+        {carry && (
+          <Link
+            href="/carry#projects"
+            className="mt-4 flex items-center justify-between gap-3 rounded-2xl bg-accent/[0.07] px-4 py-3 no-underline ring-1 ring-accent/15 transition-colors hover:bg-accent/[0.12]"
+          >
+            <span>
+              <span className="block font-sans text-[13px] font-semibold text-accent-deep">Or carry it, with nothing to pay</span>
+              <span className={`block ${TYPE.small}`}>{carry.share}</span>
+            </span>
+            <span aria-hidden className="text-accent-deep">→</span>
+          </Link>
+        )}
 
         {ways.after.length > 0 && (
           <div className="mt-4 pt-3.5 border-t border-ink/6 flex flex-col gap-2">

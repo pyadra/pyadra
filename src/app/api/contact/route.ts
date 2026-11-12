@@ -143,6 +143,16 @@ function buildEmailContent({ type, project, model, name, email, message }: {
     };
   }
 
+  // The house (rethink/exhibition-of-one): a commission for a room, or
+  // someone asking to carry. Plain rows; the message keeps its lines.
+  if (type === 'exhibition-commission' || type === 'carry-application') {
+    const commission = type === 'exhibition-commission';
+    return {
+      subject: commission ? `New commission: ${project} — ${model}` : `Wants to carry: ${name} — ${model}`,
+      html: `<p><strong>${commission ? 'Commission' : 'Carrier'}:</strong> ${project}</p><p><strong>${commission ? 'Pieces' : 'Would carry'}:</strong> ${model}</p><p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p>${message.replace(/\n/g, '<br>')}</p>`,
+    };
+  }
+
   // Fallback for other contact types
   return {
     subject: `Pyadra Contact: ${type}`,

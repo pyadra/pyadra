@@ -21,6 +21,9 @@ import { useEffect, useState } from 'react';
 
 /** Institutional destinations. Same weight, same style. */
 const LINKS: { label: string; href: string; external?: boolean }[] = [
+  { label: 'Carry it',  href: '/carry' },
+  { label: 'Open book', href: '/ledger' },
+  { label: 'The museum', href: '/museum' },
   { label: 'Manifesto', href: '/manifesto' },
   { label: 'The team',  href: '/team' },
   { label: 'Contact',   href: 'mailto:pyadra@pyadra.io',        external: true },

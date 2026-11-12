@@ -39,13 +39,13 @@ const ibmMono = IBM_Plex_Mono({
 export const metadata = {
   metadataBase: new URL('https://pyadra.io'),
   title: {
-    default: 'Pyadra — Where ideas find the people who make them real',
+    default: 'Pyadra — An exhibition of one',
     template: '%s — Pyadra',
   },
-  description: 'A museum of living projects, documented and verified. Contribute money, work or skills — and own part of something that matters. Discover. Connect. Build. Buy.',
+  description: 'A small museum room made for one person you love: a song written from your story, a letter sealed until the day you choose, a figurine of them.',
   openGraph: {
-    title: 'Pyadra — Where ideas find the people who make them real',
-    description: 'A museum of living projects, documented and verified. Contribute money, work or skills — and own part of something that matters.',
+    title: 'Pyadra — An exhibition of one',
+    description: 'A small museum room made for one person you love: a song written from your story, a letter sealed until the day you choose, a figurine of them.',
     url: 'https://pyadra.io',
     siteName: 'Pyadra',
     locale: 'en_US',
@@ -53,8 +53,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pyadra — Where ideas find the people who make them real',
-    description: 'A museum of living projects, documented and verified. Contribute money, work or skills — and own part of something that matters.',
+    title: 'Pyadra — An exhibition of one',
+    description: 'A small museum room made for one person you love: a song written from your story, a letter sealed until the day you choose, a figurine of them.',
   },
 }
 

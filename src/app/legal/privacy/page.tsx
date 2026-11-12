@@ -22,7 +22,7 @@ export default function Privacy() {
         <h1 className="font-serif font-semibold text-4xl md:text-5xl tracking-tight mb-3">
           Privacy
         </h1>
-        <p className="t-d5 text-[#6B8070] mb-12">Effective September 2026</p>
+        <p className="t-d5 text-[#6B8070] mb-12">Effective November 2026</p>
 
         <div className="space-y-8 t-d4 text-[#3A4A3E] leading-relaxed">
           <p>
@@ -74,6 +74,27 @@ export default function Privacy() {
             Cleanup form, the optional phone number you type. It is sent to our
             inbox by email so we can reply to you; we do not store it in our
             database and we do not use it for marketing lists.
+          </p>
+
+          <p>
+            <strong className="font-semibold text-[#047857]">
+              4a. Commissioning a room, and carrying.
+            </strong>{" "}
+            When you commission an exhibition of one, we receive your name and
+            email and what you write about the person it is for: their name,
+            the occasion and their story. It reaches us by email, like any
+            other message, and we use it only to make the pieces and to answer
+            you. Once a room is made, its pieces (the song, the letters and
+            their opening dates, a picture of the figurine) are kept in our
+            database so the room can be shown to whoever holds its link. A
+            letter is stored as written and shown only from its opening day;
+            treat it as private, not as unreadable by the operator. A room is
+            reached only by its link and is not listed anywhere. Tell us and we
+            delete a room or a letter. If you arrive through a carrier&rsquo;s
+            link, their code is kept in your browser for that visit only (no
+            cookie) and written on your commission, so they can be paid their
+            share. If you ask to carry, we receive your name, email and
+            message the same way.
           </p>
 
           <p>
